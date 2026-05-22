@@ -2,7 +2,7 @@
 // See also: https://pub.dev/packages/pigeon
 @file:Suppress("UNCHECKED_CAST", "ArrayInDataClass")
 
-package fr.helomri.studies_management.antinote_ui.pigeon_posts
+package fr.antinote.studies_management.antinote_app.pigeon_posts
 
 import android.util.Log
 import io.flutter.plugin.common.BasicMessageChannel
@@ -315,7 +315,7 @@ interface NativeSessionManager {
     fun setUp(binaryMessenger: BinaryMessenger, api: NativeSessionManager?, messageChannelSuffix: String = "") {
       val separatedMessageChannelSuffix = if (messageChannelSuffix.isNotEmpty()) ".$messageChannelSuffix" else ""
       run {
-        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.antinote_ui.NativeSessionManager.setCurrentAccountsListener$separatedMessageChannelSuffix", codec)
+        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.antinote_app.NativeSessionManager.setCurrentAccountsListener$separatedMessageChannelSuffix", codec)
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
@@ -333,7 +333,7 @@ interface NativeSessionManager {
         }
       }
       run {
-        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.antinote_ui.NativeSessionManager.scheduleTask$separatedMessageChannelSuffix", codec)
+        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.antinote_app.NativeSessionManager.scheduleTask$separatedMessageChannelSuffix", codec)
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
@@ -355,7 +355,7 @@ interface NativeSessionManager {
         }
       }
       run {
-        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.antinote_ui.NativeSessionManager.finishTask$separatedMessageChannelSuffix", codec)
+        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.antinote_app.NativeSessionManager.finishTask$separatedMessageChannelSuffix", codec)
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
@@ -377,7 +377,7 @@ interface NativeSessionManager {
         }
       }
       run {
-        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.antinote_ui.NativeSessionManager.registerSession$separatedMessageChannelSuffix", codec)
+        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.antinote_app.NativeSessionManager.registerSession$separatedMessageChannelSuffix", codec)
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
@@ -398,7 +398,7 @@ interface NativeSessionManager {
         }
       }
       run {
-        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.antinote_ui.NativeSessionManager.getPollingState$separatedMessageChannelSuffix", codec)
+        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.antinote_app.NativeSessionManager.getPollingState$separatedMessageChannelSuffix", codec)
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
@@ -418,7 +418,7 @@ interface NativeSessionManager {
         }
       }
       run {
-        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.antinote_ui.NativeSessionManager.updatePollingState$separatedMessageChannelSuffix", codec)
+        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.antinote_app.NativeSessionManager.updatePollingState$separatedMessageChannelSuffix", codec)
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
@@ -457,7 +457,7 @@ class PollingManager(private val binaryMessenger: BinaryMessenger, private val m
   fun askToTakePolling(accountUidArg: String, callback: (Result<Boolean>) -> Unit)
 {
     val separatedMessageChannelSuffix = if (messageChannelSuffix.isNotEmpty()) ".$messageChannelSuffix" else ""
-    val channelName = "dev.flutter.pigeon.antinote_ui.PollingManager.askToTakePolling$separatedMessageChannelSuffix"
+    val channelName = "dev.flutter.pigeon.antinote_app.PollingManager.askToTakePolling$separatedMessageChannelSuffix"
     val channel = BasicMessageChannel<Any?>(binaryMessenger, channelName, codec)
     channel.send(listOf(accountUidArg)) {
       if (it is List<*>) {
@@ -477,7 +477,7 @@ class PollingManager(private val binaryMessenger: BinaryMessenger, private val m
   fun startPolling(accountUidArg: String, callback: (Result<Unit>) -> Unit)
 {
     val separatedMessageChannelSuffix = if (messageChannelSuffix.isNotEmpty()) ".$messageChannelSuffix" else ""
-    val channelName = "dev.flutter.pigeon.antinote_ui.PollingManager.startPolling$separatedMessageChannelSuffix"
+    val channelName = "dev.flutter.pigeon.antinote_app.PollingManager.startPolling$separatedMessageChannelSuffix"
     val channel = BasicMessageChannel<Any?>(binaryMessenger, channelName, codec)
     channel.send(listOf(accountUidArg)) {
       if (it is List<*>) {
@@ -494,7 +494,7 @@ class PollingManager(private val binaryMessenger: BinaryMessenger, private val m
   fun serverSignatureChanged(accountUidArg: String, newServerSignatureArg: String, callback: (Result<Unit>) -> Unit)
 {
     val separatedMessageChannelSuffix = if (messageChannelSuffix.isNotEmpty()) ".$messageChannelSuffix" else ""
-    val channelName = "dev.flutter.pigeon.antinote_ui.PollingManager.serverSignatureChanged$separatedMessageChannelSuffix"
+    val channelName = "dev.flutter.pigeon.antinote_app.PollingManager.serverSignatureChanged$separatedMessageChannelSuffix"
     val channel = BasicMessageChannel<Any?>(binaryMessenger, channelName, codec)
     channel.send(listOf(accountUidArg, newServerSignatureArg)) {
       if (it is List<*>) {

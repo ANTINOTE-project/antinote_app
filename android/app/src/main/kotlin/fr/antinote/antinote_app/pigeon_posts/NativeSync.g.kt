@@ -2,7 +2,7 @@
 // See also: https://pub.dev/packages/pigeon
 @file:Suppress("UNCHECKED_CAST", "ArrayInDataClass")
 
-package fr.helomri.studies_management.antinote_ui.pigeon_posts
+package fr.antinote.studies_management.antinote_app.pigeon_posts
 
 import android.util.Log
 import io.flutter.plugin.common.BasicMessageChannel
@@ -310,7 +310,7 @@ interface NativeSyncManager {
     fun setUp(binaryMessenger: BinaryMessenger, api: NativeSyncManager?, messageChannelSuffix: String = "") {
       val separatedMessageChannelSuffix = if (messageChannelSuffix.isNotEmpty()) ".$messageChannelSuffix" else ""
       run {
-        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.antinote_ui.NativeSyncManager.syncFinished$separatedMessageChannelSuffix", codec)
+        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.antinote_app.NativeSyncManager.syncFinished$separatedMessageChannelSuffix", codec)
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>

@@ -9,7 +9,11 @@ import 'dart:typed_data' show Float64List, Int32List, Int64List;
 import 'package:flutter/services.dart';
 import 'package:meta/meta.dart' show immutable, protected, visibleForTesting;
 
-Object? _extractReplyValueOrThrow(List<Object?>? replyList, String channelName, {required bool isNullValid}) {
+Object? _extractReplyValueOrThrow(
+    List<Object?>? replyList,
+    String channelName, {
+    required bool isNullValid,
+}) {
   if (replyList == null) {
     throw PlatformException(
       code: 'channel-error',
@@ -30,6 +34,7 @@ Object? _extractReplyValueOrThrow(List<Object?>? replyList, String channelName, 
   return replyList.firstOrNull;
 }
 
+
 List<Object?> wrapResponse({Object? result, PlatformException? error, bool empty = false}) {
   if (empty) {
     return <Object?>[];
@@ -39,7 +44,6 @@ List<Object?> wrapResponse({Object? result, PlatformException? error, bool empty
   }
   return <Object?>[error.code, error.message, error.details];
 }
-
 bool _deepEquals(Object? a, Object? b) {
   if (identical(a, b)) {
     return true;
@@ -51,7 +55,9 @@ bool _deepEquals(Object? a, Object? b) {
     return a == b;
   }
   if (a is List && b is List) {
-    return a.length == b.length && a.indexed.every(((int, dynamic) item) => _deepEquals(item.$2, b[item.$1]));
+    return a.length == b.length &&
+        a.indexed
+            .every(((int, dynamic) item) => _deepEquals(item.$2, b[item.$1]));
   }
   if (a is Map && b is Map) {
     if (a.length != b.length) {
@@ -100,24 +106,26 @@ int _deepHash(Object? value) {
   return value.hashCode;
 }
 
+
 enum PollingState {
   /// When the instance disables polling (deprecated afaik) or no client has
   /// offered to do the polling.
   unavailable,
-
   /// When the session is actually dead and we haven't reconnected yet.
   dead,
-
   /// When the client responsible for polling has temporarily lost its ability
   /// to do polling.
   paused,
-
   /// When polling works.
   alive,
 }
 
 class ScheduledTask {
-  ScheduledTask({this.session, required this.sessionVersion, required this.taskId});
+  ScheduledTask({
+    this.session,
+    required this.sessionVersion,
+    required this.taskId,
+  });
 
   Uint8List? session;
 
@@ -126,12 +134,15 @@ class ScheduledTask {
   int taskId;
 
   List<Object?> _toList() {
-    return <Object?>[session, sessionVersion, taskId];
+    return <Object?>[
+      session,
+      sessionVersion,
+      taskId,
+    ];
   }
 
   Object encode() {
-    return _toList();
-  }
+    return _toList();  }
 
   static ScheduledTask decode(Object result) {
     result as List<Object?>;
@@ -151,15 +162,14 @@ class ScheduledTask {
     if (identical(this, other)) {
       return true;
     }
-    return _deepEquals(session, other.session) &&
-        _deepEquals(sessionVersion, other.sessionVersion) &&
-        _deepEquals(taskId, other.taskId);
+    return _deepEquals(session, other.session) && _deepEquals(sessionVersion, other.sessionVersion) && _deepEquals(taskId, other.taskId);
   }
 
   @override
   // ignore: avoid_equals_and_hash_code_on_mutable_classes
   int get hashCode => _deepHash(<Object?>[runtimeType, ..._toList()]);
 }
+
 
 class _PigeonCodec extends StandardMessageCodec {
   const _PigeonCodec();
@@ -168,10 +178,10 @@ class _PigeonCodec extends StandardMessageCodec {
     if (value is int) {
       buffer.putUint8(4);
       buffer.putInt64(value);
-    } else if (value is PollingState) {
+    }    else if (value is PollingState) {
       buffer.putUint8(129);
       writeValue(buffer, value.index);
-    } else if (value is ScheduledTask) {
+    }    else if (value is ScheduledTask) {
       buffer.putUint8(130);
       writeValue(buffer, value.encode());
     } else {
@@ -200,8 +210,8 @@ class NativeSessionManager {
   /// available for dependency injection.  If it is left null, the default
   /// BinaryMessenger will be used which routes to the host platform.
   NativeSessionManager({BinaryMessenger? binaryMessenger, String messageChannelSuffix = ''})
-    : pigeonVar_binaryMessenger = binaryMessenger,
-      pigeonVar_messageChannelSuffix = messageChannelSuffix.isNotEmpty ? '.$messageChannelSuffix' : '';
+      : pigeonVar_binaryMessenger = binaryMessenger,
+        pigeonVar_messageChannelSuffix = messageChannelSuffix.isNotEmpty ? '.$messageChannelSuffix' : '';
   final BinaryMessenger? pigeonVar_binaryMessenger;
 
   static const MessageCodec<Object?> pigeonChannelCodec = _PigeonCodec();
@@ -209,8 +219,7 @@ class NativeSessionManager {
   final String pigeonVar_messageChannelSuffix;
 
   Future<void> setCurrentAccountsListener(List<String> accountUid) async {
-    final pigeonVar_channelName =
-        'dev.flutter.pigeon.antinote_app.NativeSessionManager.setCurrentAccountsListener$pigeonVar_messageChannelSuffix';
+    final pigeonVar_channelName = 'dev.flutter.pigeon.antinote_app.NativeSessionManager.setCurrentAccountsListener$pigeonVar_messageChannelSuffix';
     final pigeonVar_channel = BasicMessageChannel<Object?>(
       pigeonVar_channelName,
       pigeonChannelCodec,
@@ -219,62 +228,54 @@ class NativeSessionManager {
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[accountUid]);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
-    _extractReplyValueOrThrow(pigeonVar_replyList, pigeonVar_channelName, isNullValid: true);
+    _extractReplyValueOrThrow(
+        pigeonVar_replyList,
+        pigeonVar_channelName,
+        isNullValid: true,
+    )
+    ;
   }
 
-  Future<ScheduledTask> scheduleTask(
-    String accountUid,
-    List<String> channels,
-    int? lastSessionVersion,
-  ) async {
-    final pigeonVar_channelName =
-        'dev.flutter.pigeon.antinote_app.NativeSessionManager.scheduleTask$pigeonVar_messageChannelSuffix';
+  Future<ScheduledTask> scheduleTask(String accountUid, List<String> channels, int? lastSessionVersion) async {
+    final pigeonVar_channelName = 'dev.flutter.pigeon.antinote_app.NativeSessionManager.scheduleTask$pigeonVar_messageChannelSuffix';
     final pigeonVar_channel = BasicMessageChannel<Object?>(
       pigeonVar_channelName,
       pigeonChannelCodec,
       binaryMessenger: pigeonVar_binaryMessenger,
     );
-    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[
-      accountUid,
-      channels,
-      lastSessionVersion,
-    ]);
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[accountUid, channels, lastSessionVersion]);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
     final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
-      pigeonVar_replyList,
-      pigeonVar_channelName,
-      isNullValid: false,
-    );
+        pigeonVar_replyList,
+        pigeonVar_channelName,
+        isNullValid: false,
+    )
+    ;
     return pigeonVar_replyValue! as ScheduledTask;
   }
 
   Future<int?> finishTask(String accountUid, int taskId, Uint8List? newSession) async {
-    final pigeonVar_channelName =
-        'dev.flutter.pigeon.antinote_app.NativeSessionManager.finishTask$pigeonVar_messageChannelSuffix';
+    final pigeonVar_channelName = 'dev.flutter.pigeon.antinote_app.NativeSessionManager.finishTask$pigeonVar_messageChannelSuffix';
     final pigeonVar_channel = BasicMessageChannel<Object?>(
       pigeonVar_channelName,
       pigeonChannelCodec,
       binaryMessenger: pigeonVar_binaryMessenger,
     );
-    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[
-      accountUid,
-      taskId,
-      newSession,
-    ]);
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[accountUid, taskId, newSession]);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
     final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
-      pigeonVar_replyList,
-      pigeonVar_channelName,
-      isNullValid: true,
-    );
+        pigeonVar_replyList,
+        pigeonVar_channelName,
+        isNullValid: true,
+    )
+    ;
     return pigeonVar_replyValue as int?;
   }
 
   Future<int> registerSession(String accountUid, Uint8List session) async {
-    final pigeonVar_channelName =
-        'dev.flutter.pigeon.antinote_app.NativeSessionManager.registerSession$pigeonVar_messageChannelSuffix';
+    final pigeonVar_channelName = 'dev.flutter.pigeon.antinote_app.NativeSessionManager.registerSession$pigeonVar_messageChannelSuffix';
     final pigeonVar_channel = BasicMessageChannel<Object?>(
       pigeonVar_channelName,
       pigeonChannelCodec,
@@ -284,16 +285,16 @@ class NativeSessionManager {
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
     final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
-      pigeonVar_replyList,
-      pigeonVar_channelName,
-      isNullValid: false,
-    );
+        pigeonVar_replyList,
+        pigeonVar_channelName,
+        isNullValid: false,
+    )
+    ;
     return pigeonVar_replyValue! as int;
   }
 
   Future<PollingState> getPollingState(String accountUid) async {
-    final pigeonVar_channelName =
-        'dev.flutter.pigeon.antinote_app.NativeSessionManager.getPollingState$pigeonVar_messageChannelSuffix';
+    final pigeonVar_channelName = 'dev.flutter.pigeon.antinote_app.NativeSessionManager.getPollingState$pigeonVar_messageChannelSuffix';
     final pigeonVar_channel = BasicMessageChannel<Object?>(
       pigeonVar_channelName,
       pigeonChannelCodec,
@@ -303,33 +304,30 @@ class NativeSessionManager {
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
     final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
-      pigeonVar_replyList,
-      pigeonVar_channelName,
-      isNullValid: false,
-    );
+        pigeonVar_replyList,
+        pigeonVar_channelName,
+        isNullValid: false,
+    )
+    ;
     return pigeonVar_replyValue! as PollingState;
   }
 
-  Future<void> updatePollingState(
-    String accountUid,
-    PollingState newState,
-    String? newServerSignature,
-  ) async {
-    final pigeonVar_channelName =
-        'dev.flutter.pigeon.antinote_app.NativeSessionManager.updatePollingState$pigeonVar_messageChannelSuffix';
+  Future<void> updatePollingState(String accountUid, PollingState newState, String? newServerSignature) async {
+    final pigeonVar_channelName = 'dev.flutter.pigeon.antinote_app.NativeSessionManager.updatePollingState$pigeonVar_messageChannelSuffix';
     final pigeonVar_channel = BasicMessageChannel<Object?>(
       pigeonVar_channelName,
       pigeonChannelCodec,
       binaryMessenger: pigeonVar_binaryMessenger,
     );
-    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[
-      accountUid,
-      newState,
-      newServerSignature,
-    ]);
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[accountUid, newState, newServerSignature]);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
-    _extractReplyValueOrThrow(pigeonVar_replyList, pigeonVar_channelName, isNullValid: true);
+    _extractReplyValueOrThrow(
+        pigeonVar_replyList,
+        pigeonVar_channelName,
+        isNullValid: true,
+    )
+    ;
   }
 }
 
@@ -346,18 +344,12 @@ abstract class PollingManager {
 
   void serverSignatureChanged(String accountUid, String newServerSignature);
 
-  static void setUp(
-    PollingManager? api, {
-    BinaryMessenger? binaryMessenger,
-    String messageChannelSuffix = '',
-  }) {
+  static void setUp(PollingManager? api, {BinaryMessenger? binaryMessenger, String messageChannelSuffix = '',}) {
     messageChannelSuffix = messageChannelSuffix.isNotEmpty ? '.$messageChannelSuffix' : '';
     {
       final pigeonVar_channel = BasicMessageChannel<Object?>(
-        'dev.flutter.pigeon.antinote_app.PollingManager.askToTakePolling$messageChannelSuffix',
-        pigeonChannelCodec,
-        binaryMessenger: binaryMessenger,
-      );
+          'dev.flutter.pigeon.antinote_app.PollingManager.askToTakePolling$messageChannelSuffix', pigeonChannelCodec,
+          binaryMessenger: binaryMessenger);
       if (api == null) {
         pigeonVar_channel.setMessageHandler(null);
       } else {
@@ -369,20 +361,16 @@ abstract class PollingManager {
             return wrapResponse(result: output);
           } on PlatformException catch (e) {
             return wrapResponse(error: e);
-          } catch (e) {
-            return wrapResponse(
-              error: PlatformException(code: 'error', message: e.toString()),
-            );
+          }          catch (e) {
+            return wrapResponse(error: PlatformException(code: 'error', message: e.toString()));
           }
         });
       }
     }
     {
       final pigeonVar_channel = BasicMessageChannel<Object?>(
-        'dev.flutter.pigeon.antinote_app.PollingManager.startPolling$messageChannelSuffix',
-        pigeonChannelCodec,
-        binaryMessenger: binaryMessenger,
-      );
+          'dev.flutter.pigeon.antinote_app.PollingManager.startPolling$messageChannelSuffix', pigeonChannelCodec,
+          binaryMessenger: binaryMessenger);
       if (api == null) {
         pigeonVar_channel.setMessageHandler(null);
       } else {
@@ -394,20 +382,16 @@ abstract class PollingManager {
             return wrapResponse(empty: true);
           } on PlatformException catch (e) {
             return wrapResponse(error: e);
-          } catch (e) {
-            return wrapResponse(
-              error: PlatformException(code: 'error', message: e.toString()),
-            );
+          }          catch (e) {
+            return wrapResponse(error: PlatformException(code: 'error', message: e.toString()));
           }
         });
       }
     }
     {
       final pigeonVar_channel = BasicMessageChannel<Object?>(
-        'dev.flutter.pigeon.antinote_app.PollingManager.serverSignatureChanged$messageChannelSuffix',
-        pigeonChannelCodec,
-        binaryMessenger: binaryMessenger,
-      );
+          'dev.flutter.pigeon.antinote_app.PollingManager.serverSignatureChanged$messageChannelSuffix', pigeonChannelCodec,
+          binaryMessenger: binaryMessenger);
       if (api == null) {
         pigeonVar_channel.setMessageHandler(null);
       } else {
@@ -420,10 +404,8 @@ abstract class PollingManager {
             return wrapResponse(empty: true);
           } on PlatformException catch (e) {
             return wrapResponse(error: e);
-          } catch (e) {
-            return wrapResponse(
-              error: PlatformException(code: 'error', message: e.toString()),
-            );
+          }          catch (e) {
+            return wrapResponse(error: PlatformException(code: 'error', message: e.toString()));
           }
         });
       }

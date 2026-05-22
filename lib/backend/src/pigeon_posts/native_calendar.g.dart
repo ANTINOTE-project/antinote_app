@@ -9,7 +9,11 @@ import 'dart:typed_data' show Float64List, Int32List, Int64List;
 import 'package:flutter/services.dart';
 import 'package:meta/meta.dart' show immutable, protected, visibleForTesting;
 
-Object? _extractReplyValueOrThrow(List<Object?>? replyList, String channelName, {required bool isNullValid}) {
+Object? _extractReplyValueOrThrow(
+    List<Object?>? replyList,
+    String channelName, {
+    required bool isNullValid,
+}) {
   if (replyList == null) {
     throw PlatformException(
       code: 'channel-error',
@@ -41,7 +45,9 @@ bool _deepEquals(Object? a, Object? b) {
     return a == b;
   }
   if (a is List && b is List) {
-    return a.length == b.length && a.indexed.every(((int, dynamic) item) => _deepEquals(item.$2, b[item.$1]));
+    return a.length == b.length &&
+        a.indexed
+            .every(((int, dynamic) item) => _deepEquals(item.$2, b[item.$1]));
   }
   if (a is Map && b is Map) {
     if (a.length != b.length) {
@@ -90,9 +96,17 @@ int _deepHash(Object? value) {
   return value.hashCode;
 }
 
-enum CalendarEventEntryType { clazz }
 
-enum AttendeeType { teacher, group, classroom, helper }
+enum CalendarEventEntryType {
+  clazz,
+}
+
+enum AttendeeType {
+  teacher,
+  group,
+  classroom,
+  helper,
+}
 
 class AttendeeEntry {
   AttendeeEntry({
@@ -111,12 +125,16 @@ class AttendeeEntry {
   AttendeeType type;
 
   List<Object?> _toList() {
-    return <Object?>[name, instanceDomain, visualId, type];
+    return <Object?>[
+      name,
+      instanceDomain,
+      visualId,
+      type,
+    ];
   }
 
   Object encode() {
-    return _toList();
-  }
+    return _toList();  }
 
   static AttendeeEntry decode(Object result) {
     result as List<Object?>;
@@ -137,10 +155,7 @@ class AttendeeEntry {
     if (identical(this, other)) {
       return true;
     }
-    return _deepEquals(name, other.name) &&
-        _deepEquals(instanceDomain, other.instanceDomain) &&
-        _deepEquals(visualId, other.visualId) &&
-        _deepEquals(type, other.type);
+    return _deepEquals(name, other.name) && _deepEquals(instanceDomain, other.instanceDomain) && _deepEquals(visualId, other.visualId) && _deepEquals(type, other.type);
   }
 
   @override
@@ -194,8 +209,7 @@ class ExistingCalendarEventEntry {
   }
 
   Object encode() {
-    return _toList();
-  }
+    return _toList();  }
 
   static ExistingCalendarEventEntry decode(Object result) {
     result as List<Object?>;
@@ -221,15 +235,7 @@ class ExistingCalendarEventEntry {
     if (identical(this, other)) {
       return true;
     }
-    return _deepEquals(accountUid, other.accountUid) &&
-        _deepEquals(calendarId, other.calendarId) &&
-        _deepEquals(id, other.id) &&
-        _deepEquals(originalVisualId, other.originalVisualId) &&
-        _deepEquals(visualId, other.visualId) &&
-        _deepEquals(rrule, other.rrule) &&
-        _deepEquals(startTime, other.startTime) &&
-        _deepEquals(exceptions, other.exceptions) &&
-        _deepEquals(entryType, other.entryType);
+    return _deepEquals(accountUid, other.accountUid) && _deepEquals(calendarId, other.calendarId) && _deepEquals(id, other.id) && _deepEquals(originalVisualId, other.originalVisualId) && _deepEquals(visualId, other.visualId) && _deepEquals(rrule, other.rrule) && _deepEquals(startTime, other.startTime) && _deepEquals(exceptions, other.exceptions) && _deepEquals(entryType, other.entryType);
   }
 
   @override
@@ -269,12 +275,21 @@ class NewExceptionCalendarEventEntry {
   List<AttendeeEntry> attendees;
 
   List<Object?> _toList() {
-    return <Object?>[start, end, title, descriptions, location, color, visualId, canceled, attendees];
+    return <Object?>[
+      start,
+      end,
+      title,
+      descriptions,
+      location,
+      color,
+      visualId,
+      canceled,
+      attendees,
+    ];
   }
 
   Object encode() {
-    return _toList();
-  }
+    return _toList();  }
 
   static NewExceptionCalendarEventEntry decode(Object result) {
     result as List<Object?>;
@@ -300,15 +315,7 @@ class NewExceptionCalendarEventEntry {
     if (identical(this, other)) {
       return true;
     }
-    return _deepEquals(start, other.start) &&
-        _deepEquals(end, other.end) &&
-        _deepEquals(title, other.title) &&
-        _deepEquals(descriptions, other.descriptions) &&
-        _deepEquals(location, other.location) &&
-        _deepEquals(color, other.color) &&
-        _deepEquals(visualId, other.visualId) &&
-        _deepEquals(canceled, other.canceled) &&
-        _deepEquals(attendees, other.attendees);
+    return _deepEquals(start, other.start) && _deepEquals(end, other.end) && _deepEquals(title, other.title) && _deepEquals(descriptions, other.descriptions) && _deepEquals(location, other.location) && _deepEquals(color, other.color) && _deepEquals(visualId, other.visualId) && _deepEquals(canceled, other.canceled) && _deepEquals(attendees, other.attendees);
   }
 
   @override
@@ -394,8 +401,7 @@ class NewRecurringCalendarEventEntry {
   }
 
   Object encode() {
-    return _toList();
-  }
+    return _toList();  }
 
   static NewRecurringCalendarEventEntry decode(Object result) {
     result as List<Object?>;
@@ -429,23 +435,7 @@ class NewRecurringCalendarEventEntry {
     if (identical(this, other)) {
       return true;
     }
-    return _deepEquals(accountUid, other.accountUid) &&
-        _deepEquals(mockStart, other.mockStart) &&
-        _deepEquals(duration, other.duration) &&
-        _deepEquals(rrule, other.rrule) &&
-        _deepEquals(rdate, other.rdate) &&
-        _deepEquals(exdate, other.exdate) &&
-        _deepEquals(calendarId, other.calendarId) &&
-        _deepEquals(title, other.title) &&
-        _deepEquals(descriptions, other.descriptions) &&
-        _deepEquals(location, other.location) &&
-        _deepEquals(color, other.color) &&
-        _deepEquals(allDay, other.allDay) &&
-        _deepEquals(visualId, other.visualId) &&
-        _deepEquals(entryType, other.entryType) &&
-        _deepEquals(canceled, other.canceled) &&
-        _deepEquals(exceptions, other.exceptions) &&
-        _deepEquals(attendees, other.attendees);
+    return _deepEquals(accountUid, other.accountUid) && _deepEquals(mockStart, other.mockStart) && _deepEquals(duration, other.duration) && _deepEquals(rrule, other.rrule) && _deepEquals(rdate, other.rdate) && _deepEquals(exdate, other.exdate) && _deepEquals(calendarId, other.calendarId) && _deepEquals(title, other.title) && _deepEquals(descriptions, other.descriptions) && _deepEquals(location, other.location) && _deepEquals(color, other.color) && _deepEquals(allDay, other.allDay) && _deepEquals(visualId, other.visualId) && _deepEquals(entryType, other.entryType) && _deepEquals(canceled, other.canceled) && _deepEquals(exceptions, other.exceptions) && _deepEquals(attendees, other.attendees);
   }
 
   @override
@@ -473,12 +463,17 @@ class ExistingCalendarEntry {
   int color;
 
   List<Object?> _toList() {
-    return <Object?>[accountUid, resourceVisualId, id, displayName, color];
+    return <Object?>[
+      accountUid,
+      resourceVisualId,
+      id,
+      displayName,
+      color,
+    ];
   }
 
   Object encode() {
-    return _toList();
-  }
+    return _toList();  }
 
   static ExistingCalendarEntry decode(Object result) {
     result as List<Object?>;
@@ -500,11 +495,7 @@ class ExistingCalendarEntry {
     if (identical(this, other)) {
       return true;
     }
-    return _deepEquals(accountUid, other.accountUid) &&
-        _deepEquals(resourceVisualId, other.resourceVisualId) &&
-        _deepEquals(id, other.id) &&
-        _deepEquals(displayName, other.displayName) &&
-        _deepEquals(color, other.color);
+    return _deepEquals(accountUid, other.accountUid) && _deepEquals(resourceVisualId, other.resourceVisualId) && _deepEquals(id, other.id) && _deepEquals(displayName, other.displayName) && _deepEquals(color, other.color);
   }
 
   @override
@@ -529,12 +520,16 @@ class NewCalendarEntry {
   int color;
 
   List<Object?> _toList() {
-    return <Object?>[displayName, accountUid, resourceVisualId, color];
+    return <Object?>[
+      displayName,
+      accountUid,
+      resourceVisualId,
+      color,
+    ];
   }
 
   Object encode() {
-    return _toList();
-  }
+    return _toList();  }
 
   static NewCalendarEntry decode(Object result) {
     result as List<Object?>;
@@ -555,16 +550,14 @@ class NewCalendarEntry {
     if (identical(this, other)) {
       return true;
     }
-    return _deepEquals(displayName, other.displayName) &&
-        _deepEquals(accountUid, other.accountUid) &&
-        _deepEquals(resourceVisualId, other.resourceVisualId) &&
-        _deepEquals(color, other.color);
+    return _deepEquals(displayName, other.displayName) && _deepEquals(accountUid, other.accountUid) && _deepEquals(resourceVisualId, other.resourceVisualId) && _deepEquals(color, other.color);
   }
 
   @override
   // ignore: avoid_equals_and_hash_code_on_mutable_classes
   int get hashCode => _deepHash(<Object?>[runtimeType, ..._toList()]);
 }
+
 
 class _PigeonCodec extends StandardMessageCodec {
   const _PigeonCodec();
@@ -573,28 +566,28 @@ class _PigeonCodec extends StandardMessageCodec {
     if (value is int) {
       buffer.putUint8(4);
       buffer.putInt64(value);
-    } else if (value is CalendarEventEntryType) {
+    }    else if (value is CalendarEventEntryType) {
       buffer.putUint8(129);
       writeValue(buffer, value.index);
-    } else if (value is AttendeeType) {
+    }    else if (value is AttendeeType) {
       buffer.putUint8(130);
       writeValue(buffer, value.index);
-    } else if (value is AttendeeEntry) {
+    }    else if (value is AttendeeEntry) {
       buffer.putUint8(131);
       writeValue(buffer, value.encode());
-    } else if (value is ExistingCalendarEventEntry) {
+    }    else if (value is ExistingCalendarEventEntry) {
       buffer.putUint8(132);
       writeValue(buffer, value.encode());
-    } else if (value is NewExceptionCalendarEventEntry) {
+    }    else if (value is NewExceptionCalendarEventEntry) {
       buffer.putUint8(133);
       writeValue(buffer, value.encode());
-    } else if (value is NewRecurringCalendarEventEntry) {
+    }    else if (value is NewRecurringCalendarEventEntry) {
       buffer.putUint8(134);
       writeValue(buffer, value.encode());
-    } else if (value is ExistingCalendarEntry) {
+    }    else if (value is ExistingCalendarEntry) {
       buffer.putUint8(135);
       writeValue(buffer, value.encode());
-    } else if (value is NewCalendarEntry) {
+    }    else if (value is NewCalendarEntry) {
       buffer.putUint8(136);
       writeValue(buffer, value.encode());
     } else {
@@ -634,8 +627,8 @@ class NativeCalendarManager {
   /// available for dependency injection.  If it is left null, the default
   /// BinaryMessenger will be used which routes to the host platform.
   NativeCalendarManager({BinaryMessenger? binaryMessenger, String messageChannelSuffix = ''})
-    : pigeonVar_binaryMessenger = binaryMessenger,
-      pigeonVar_messageChannelSuffix = messageChannelSuffix.isNotEmpty ? '.$messageChannelSuffix' : '';
+      : pigeonVar_binaryMessenger = binaryMessenger,
+        pigeonVar_messageChannelSuffix = messageChannelSuffix.isNotEmpty ? '.$messageChannelSuffix' : '';
   final BinaryMessenger? pigeonVar_binaryMessenger;
 
   static const MessageCodec<Object?> pigeonChannelCodec = _PigeonCodec();
@@ -643,8 +636,7 @@ class NativeCalendarManager {
   final String pigeonVar_messageChannelSuffix;
 
   Future<List<ExistingCalendarEventEntry>> listExisting(String accountUid, int calendarId) async {
-    final pigeonVar_channelName =
-        'dev.flutter.pigeon.antinote_app.NativeCalendarManager.listExisting$pigeonVar_messageChannelSuffix';
+    final pigeonVar_channelName = 'dev.flutter.pigeon.antinote_app.NativeCalendarManager.listExisting$pigeonVar_messageChannelSuffix';
     final pigeonVar_channel = BasicMessageChannel<Object?>(
       pigeonVar_channelName,
       pigeonChannelCodec,
@@ -654,16 +646,16 @@ class NativeCalendarManager {
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
     final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
-      pigeonVar_replyList,
-      pigeonVar_channelName,
-      isNullValid: false,
-    );
+        pigeonVar_replyList,
+        pigeonVar_channelName,
+        isNullValid: false,
+    )
+    ;
     return (pigeonVar_replyValue! as List<Object?>).cast<ExistingCalendarEventEntry>();
   }
 
   Future<List<ExistingCalendarEntry>> listCalendars(String accountUid) async {
-    final pigeonVar_channelName =
-        'dev.flutter.pigeon.antinote_app.NativeCalendarManager.listCalendars$pigeonVar_messageChannelSuffix';
+    final pigeonVar_channelName = 'dev.flutter.pigeon.antinote_app.NativeCalendarManager.listCalendars$pigeonVar_messageChannelSuffix';
     final pigeonVar_channel = BasicMessageChannel<Object?>(
       pigeonVar_channelName,
       pigeonChannelCodec,
@@ -673,16 +665,16 @@ class NativeCalendarManager {
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
     final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
-      pigeonVar_replyList,
-      pigeonVar_channelName,
-      isNullValid: false,
-    );
+        pigeonVar_replyList,
+        pigeonVar_channelName,
+        isNullValid: false,
+    )
+    ;
     return (pigeonVar_replyValue! as List<Object?>).cast<ExistingCalendarEntry>();
   }
 
   Future<void> deleteCalendar(String accountUid, int calendarId) async {
-    final pigeonVar_channelName =
-        'dev.flutter.pigeon.antinote_app.NativeCalendarManager.deleteCalendar$pigeonVar_messageChannelSuffix';
+    final pigeonVar_channelName = 'dev.flutter.pigeon.antinote_app.NativeCalendarManager.deleteCalendar$pigeonVar_messageChannelSuffix';
     final pigeonVar_channel = BasicMessageChannel<Object?>(
       pigeonVar_channelName,
       pigeonChannelCodec,
@@ -691,12 +683,16 @@ class NativeCalendarManager {
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[accountUid, calendarId]);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
-    _extractReplyValueOrThrow(pigeonVar_replyList, pigeonVar_channelName, isNullValid: true);
+    _extractReplyValueOrThrow(
+        pigeonVar_replyList,
+        pigeonVar_channelName,
+        isNullValid: true,
+    )
+    ;
   }
 
   Future<void> insertNew(List<NewRecurringCalendarEventEntry> entries) async {
-    final pigeonVar_channelName =
-        'dev.flutter.pigeon.antinote_app.NativeCalendarManager.insertNew$pigeonVar_messageChannelSuffix';
+    final pigeonVar_channelName = 'dev.flutter.pigeon.antinote_app.NativeCalendarManager.insertNew$pigeonVar_messageChannelSuffix';
     final pigeonVar_channel = BasicMessageChannel<Object?>(
       pigeonVar_channelName,
       pigeonChannelCodec,
@@ -705,12 +701,16 @@ class NativeCalendarManager {
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[entries]);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
-    _extractReplyValueOrThrow(pigeonVar_replyList, pigeonVar_channelName, isNullValid: true);
+    _extractReplyValueOrThrow(
+        pigeonVar_replyList,
+        pigeonVar_channelName,
+        isNullValid: true,
+    )
+    ;
   }
 
   Future<void> deleteExisting(List<ExistingCalendarEventEntry> entries) async {
-    final pigeonVar_channelName =
-        'dev.flutter.pigeon.antinote_app.NativeCalendarManager.deleteExisting$pigeonVar_messageChannelSuffix';
+    final pigeonVar_channelName = 'dev.flutter.pigeon.antinote_app.NativeCalendarManager.deleteExisting$pigeonVar_messageChannelSuffix';
     final pigeonVar_channel = BasicMessageChannel<Object?>(
       pigeonVar_channelName,
       pigeonChannelCodec,
@@ -719,12 +719,16 @@ class NativeCalendarManager {
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[entries]);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
-    _extractReplyValueOrThrow(pigeonVar_replyList, pigeonVar_channelName, isNullValid: true);
+    _extractReplyValueOrThrow(
+        pigeonVar_replyList,
+        pigeonVar_channelName,
+        isNullValid: true,
+    )
+    ;
   }
 
   Future<ExistingCalendarEntry> insertNewCalendar(NewCalendarEntry calendar) async {
-    final pigeonVar_channelName =
-        'dev.flutter.pigeon.antinote_app.NativeCalendarManager.insertNewCalendar$pigeonVar_messageChannelSuffix';
+    final pigeonVar_channelName = 'dev.flutter.pigeon.antinote_app.NativeCalendarManager.insertNewCalendar$pigeonVar_messageChannelSuffix';
     final pigeonVar_channel = BasicMessageChannel<Object?>(
       pigeonVar_channelName,
       pigeonChannelCodec,
@@ -734,10 +738,11 @@ class NativeCalendarManager {
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
     final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
-      pigeonVar_replyList,
-      pigeonVar_channelName,
-      isNullValid: false,
-    );
+        pigeonVar_replyList,
+        pigeonVar_channelName,
+        isNullValid: false,
+    )
+    ;
     return pigeonVar_replyValue! as ExistingCalendarEntry;
   }
 }

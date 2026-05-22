@@ -13,4 +13,7 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get choseAnAccount => 'Choisir un compte';
+
+  @override
+  String get delete => 'Supprimer';
 }

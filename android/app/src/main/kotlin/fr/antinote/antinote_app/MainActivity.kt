@@ -6,8 +6,8 @@ import fr.antinote.antinote_app.auth.LoginManager
 import fr.antinote.antinote_app.calendar.CalendarManager
 import fr.antinote.antinote_app.pigeon_posts.NativeLoginManager
 import fr.antinote.antinote_app.session.SessionManager
-import fr.helomri.studies_management.antinote_ui.pigeon_posts.NativeCalendarManager
-import fr.helomri.studies_management.antinote_ui.pigeon_posts.NativeSessionManager
+import fr.antinote.studies_management.antinote_app.pigeon_posts.NativeCalendarManager
+import fr.antinote.studies_management.antinote_app.pigeon_posts.NativeSessionManager
 import io.flutter.embedding.android.FlutterActivity
 import io.flutter.embedding.engine.FlutterEngine
 

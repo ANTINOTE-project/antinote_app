@@ -3,5 +3,7 @@
   "appTitle": "ANTINOTE",
   "@appTitle": {},
   "choseAnAccount": "Choisir un compte",
-  "@choseAnAccount": {}
+  "@choseAnAccount": {},
+  "delete": "Supprimer",
+  "@delete": {}
 }

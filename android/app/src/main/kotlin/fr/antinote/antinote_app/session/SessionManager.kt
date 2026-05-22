@@ -11,10 +11,10 @@ import android.os.Message
 import android.os.Messenger
 import android.os.RemoteException
 import android.util.Log
-import fr.helomri.studies_management.antinote_ui.pigeon_posts.NativeSessionManager
-import fr.helomri.studies_management.antinote_ui.pigeon_posts.PollingManager
-import fr.helomri.studies_management.antinote_ui.pigeon_posts.PollingState
-import fr.helomri.studies_management.antinote_ui.pigeon_posts.ScheduledTask
+import fr.antinote.studies_management.antinote_app.pigeon_posts.NativeSessionManager
+import fr.antinote.studies_management.antinote_app.pigeon_posts.PollingManager
+import fr.antinote.studies_management.antinote_app.pigeon_posts.PollingState
+import fr.antinote.studies_management.antinote_app.pigeon_posts.ScheduledTask
 import io.flutter.plugin.common.BinaryMessenger
 
 class SessionManager(val context: Context, binaryMessenger: BinaryMessenger) :

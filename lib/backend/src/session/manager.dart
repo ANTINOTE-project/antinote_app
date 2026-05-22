@@ -1,8 +1,8 @@
 import "dart:async";
 
 import "package:antinote/antinote.dart";
-import "package:antinote_app/backend/src/accounts/storage/base.dart";
 import "package:antinote_app/backend/src/session/holder.dart";
+import "package:antinote_app/frontend/extensions/account_storage.dart";
 import "package:antinote_app/frontend/routing/routes.dart";
 import "package:antinote_app/main.dart";
 import "package:flutter/material.dart";
@@ -28,7 +28,7 @@ class SessionManager extends InheritedModel<TaskType> with WidgetsBindingObserve
   Future<String> ensureAccountUid(BuildContext context) async {
     if (state.lastSeenAccountUid != null) return state.lastSeenAccountUid!;
 
-    final defaultAccount = await AccountStorage.of(context).getDefaultAccount();
+    final defaultAccount = await context.AS.getDefaultAccount();
 
     if (defaultAccount != null) {
       state.lastSeenAccountUid = defaultAccount.uid;
@@ -52,7 +52,7 @@ class SessionManager extends InheritedModel<TaskType> with WidgetsBindingObserve
       throw Exception("Wanted to ensure session existed but context is unmounted...");
     }
 
-    return state.ensureSession(storage: AccountStorage.of(context), accountUid: accountUid);
+    return state.ensureSession(storage: context.AS, accountUid: accountUid);
   }
 
   static SessionManager of(BuildContext context) {
@@ -95,7 +95,7 @@ class SessionManager extends InheritedModel<TaskType> with WidgetsBindingObserve
         await ensureAccountUid(context);
       }
 
-      final as = context == null || !context.mounted ? null : AccountStorage.of(context);
+      final as = context == null || !context.mounted ? null : context.AS;
 
       return state.runTask(
         sessionEnsurer: () {

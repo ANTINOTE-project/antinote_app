@@ -105,6 +105,12 @@ abstract class AppLocalizations {
   /// In fr, this message translates to:
   /// **'Choisir un compte'**
   String get choseAnAccount;
+
+  /// No description provided for @delete.
+  ///
+  /// In fr, this message translates to:
+  /// **'Supprimer'**
+  String get delete;
 }
 
 class _AppLocalizationsDelegate

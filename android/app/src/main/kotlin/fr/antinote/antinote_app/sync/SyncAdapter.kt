@@ -13,10 +13,10 @@ import fr.antinote.antinote_app.auth.LoginManager
 import fr.antinote.antinote_app.calendar.CalendarManager
 import fr.antinote.antinote_app.pigeon_posts.NativeLoginManager
 import fr.antinote.antinote_app.session.SessionManager
-import fr.helomri.studies_management.antinote_ui.pigeon_posts.NativeCalendarManager
-import fr.helomri.studies_management.antinote_ui.pigeon_posts.NativeSessionManager
-import fr.helomri.studies_management.antinote_ui.pigeon_posts.NativeSyncManager
-import fr.helomri.studies_management.antinote_ui.pigeon_posts.SyncResultType
+import fr.antinote.studies_management.antinote_app.pigeon_posts.NativeCalendarManager
+import fr.antinote.studies_management.antinote_app.pigeon_posts.NativeSessionManager
+import fr.antinote.studies_management.antinote_app.pigeon_posts.NativeSyncManager
+import fr.antinote.studies_management.antinote_app.pigeon_posts.SyncResultType
 import io.flutter.FlutterInjector
 import io.flutter.embedding.engine.FlutterEngine
 import io.flutter.embedding.engine.dart.DartExecutor
@@ -62,7 +62,7 @@ class SyncAdapter @JvmOverloads constructor(
             NativeSyncManager.setUp(
                 newEngine.dartExecutor.binaryMessenger,
                 object : NativeSyncManager {
-                    override fun syncFinished(result: fr.helomri.studies_management.antinote_ui.pigeon_posts.SyncResult) {
+                    override fun syncFinished(result: fr.antinote.studies_management.antinote_app.pigeon_posts.SyncResult) {
                         when (result.result) {
                             SyncResultType.SUCCESS -> syncResult.clear()
                             SyncResultType.AUTH -> syncResult.stats.numAuthExceptions++

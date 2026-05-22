@@ -14,7 +14,7 @@ import android.os.RemoteException
 import android.util.Log
 import fr.antinote.antinote_app.R
 import fr.antinote.antinote_app.auth.LoginManager
-import fr.helomri.studies_management.antinote_ui.pigeon_posts.PollingState
+import fr.antinote.studies_management.antinote_app.pigeon_posts.PollingState
 import java.lang.ref.WeakReference
 import java.util.LinkedList
 import java.util.Queue
@@ -130,7 +130,7 @@ const val MSG_POLLING_UPDATED = 7
  *
  * Returns:
  * - `account` (string): The ID of the account whose polling state got fetched.
- * - `state` (int): The polling state for the account (see [fr.helomri.studies_management.antinote_ui.pigeon_posts.PollingState]).
+ * - `state` (int): The polling state for the account (see [fr.antinote.studies_management.antinote_app.pigeon_posts.PollingState]).
  */
 const val MSG_GET_POLLING_STATE = 8
 
@@ -139,7 +139,7 @@ const val MSG_GET_POLLING_STATE = 8
  *
  * Parameters are:
  * - `account` (string): The ID of the account whose polling state will get updated.
- * - `state` (int): The new polling state (see [fr.helomri.studies_management.antinote_ui.pigeon_posts.PollingState]).
+ * - `state` (int): The new polling state (see [fr.antinote.studies_management.antinote_app.pigeon_posts.PollingState]).
  * - `server_signature` (string, optional): The newly enforced server signature, if available.
  *
  * Returns:

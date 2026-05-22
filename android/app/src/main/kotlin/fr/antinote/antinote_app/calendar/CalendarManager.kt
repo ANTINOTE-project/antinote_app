@@ -10,7 +10,7 @@ import android.provider.CalendarContract
 import androidx.annotation.RequiresApi
 import androidx.core.database.getStringOrNull
 import fr.antinote.antinote_app.auth.LoginManager
-import fr.helomri.studies_management.antinote_ui.pigeon_posts.*
+import fr.antinote.studies_management.antinote_app.pigeon_posts.*
 import java.time.OffsetDateTime
 import java.time.ZoneOffset
 import kotlin.time.ExperimentalTime

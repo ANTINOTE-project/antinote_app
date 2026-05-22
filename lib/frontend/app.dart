@@ -13,6 +13,9 @@ class App extends StatelessWidget {
     _router = makeRouter(initialLocation: initialLocation);
   }
 
+  static final navigatorKey = GlobalKey<NavigatorState>();
+
+  static const BorderRadiusGeometry borderRadius = BorderRadius.all(Radius.circular(20));
   static const String fontFamily = "SNPro";
 
   @override
