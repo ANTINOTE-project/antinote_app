@@ -1,6 +1,7 @@
 import "package:antinote_app/backend/backend.dart";
 import "package:antinote_app/backend/src/accounts/storage/widget.dart";
 import "package:antinote_app/frontend/app.dart";
+import "package:antinote_app/frontend/routing/routes.dart";
 import "package:antinote_app/protos/account.pb.dart";
 import "package:flutter/material.dart";
 
@@ -47,7 +48,7 @@ class _MainAppState extends State<MainApp> {
           }
         },
 
-        child: const App(home: Placeholder()),
+        child: App(initialLocation: Routes.auth.login),
       ),
     );
   }

@@ -1,16 +1,29 @@
+import "package:antinote_app/frontend/routing/router.dart";
+import "package:antinote_app/frontend/theme/theme.dart";
 import "package:antinote_app/l10n/app_localizations.dart";
 import "package:flutter_localizations/flutter_localizations.dart";
 import "package:flutter/material.dart";
+import "package:go_router/go_router.dart";
 
 class App extends StatelessWidget {
-  final Widget home;
+  final String initialLocation;
+  late final GoRouter _router;
 
-  const App({super.key, required this.home});
+  App({super.key, required this.initialLocation}) {
+    _router = makeRouter(initialLocation: initialLocation);
+  }
+
+  static const String fontFamily = "SNPro";
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
+    return MaterialApp.router(
+      debugShowCheckedModeBanner: false,
+
       title: "ANTINOTE",
+      theme: buildTheme(),
+
+      routerConfig: _router,
 
       localizationsDelegates: const [
         AppLocalizations.delegate,
@@ -21,8 +34,6 @@ class App extends StatelessWidget {
 
       supportedLocales: AppLocalizations.supportedLocales,
       locale: const Locale("fr"),
-
-      home: home,
     );
   }
 }

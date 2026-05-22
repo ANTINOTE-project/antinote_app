@@ -99,6 +99,12 @@ abstract class AppLocalizations {
   /// In fr, this message translates to:
   /// **'ANTINOTE'**
   String get appTitle;
+
+  /// No description provided for @choseAnAccount.
+  ///
+  /// In fr, this message translates to:
+  /// **'Choisir un compte'**
+  String get choseAnAccount;
 }
 
 class _AppLocalizationsDelegate

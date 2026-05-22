@@ -10,4 +10,7 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get appTitle => 'ANTINOTE';
+
+  @override
+  String get choseAnAccount => 'Choisir un compte';
 }

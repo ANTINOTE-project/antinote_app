@@ -1,4 +1,7 @@
 {
   "@@locale": "fr",
-  "appTitle": "ANTINOTE"
+  "appTitle": "ANTINOTE",
+  "@appTitle": {},
+  "choseAnAccount": "Choisir un compte",
+  "@choseAnAccount": {}
 }

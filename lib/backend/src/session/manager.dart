@@ -3,8 +3,9 @@ import "dart:async";
 import "package:antinote/antinote.dart";
 import "package:antinote_app/backend/src/accounts/storage/base.dart";
 import "package:antinote_app/backend/src/session/holder.dart";
-import "package:antinote_app/ui/ui.dart";
+import "package:antinote_app/frontend/routing/routes.dart";
 import "package:flutter/material.dart";
+import "package:go_router/go_router.dart";
 
 typedef RunCallback<T> = FutureOr<T> Function(PronoteSession session);
 
@@ -40,7 +41,7 @@ class SessionManager extends InheritedModel<TaskType> with WidgetsBindingObserve
       );
     }
 
-    await Navigator.push(context, MaterialPageRoute(builder: (context) => LoginPage()));
+    await context.push(Routes.auth.login);
 
     return state.lastSeenAccountUid!;
   }
