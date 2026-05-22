@@ -4,6 +4,7 @@ import "package:antinote/antinote.dart";
 import "package:antinote_app/backend/src/accounts/storage/base.dart";
 import "package:antinote_app/backend/src/session/holder.dart";
 import "package:antinote_app/frontend/routing/routes.dart";
+import "package:antinote_app/main.dart";
 import "package:flutter/material.dart";
 import "package:go_router/go_router.dart";
 
@@ -169,7 +170,7 @@ class SessionManager extends InheritedModel<TaskType> with WidgetsBindingObserve
   @override
   bool updateShouldNotifyDependent(covariant SessionManager oldWidget, Set<TaskType> dependencies) {
     if (dependencies.contains(TaskType.pollingListener)) {
-      print("Updated a polling listener...");
+      talker.info("Updated a polling listener...");
       return true;
     }
 

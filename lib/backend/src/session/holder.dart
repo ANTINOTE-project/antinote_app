@@ -5,8 +5,8 @@ import "package:antinote/antinote.dart";
 import "package:antinote_app/backend/src/accounts/storage/base.dart";
 import "package:antinote_app/backend/src/pigeon_posts/native_session.g.dart";
 import "package:antinote_app/backend/src/session/manager.dart";
+import "package:antinote_app/main.dart";
 import "package:antinote_app/protos/account.pb.dart";
-import "package:flutter/widgets.dart";
 
 import "../helpers/antinote_account.dart";
 
@@ -100,12 +100,12 @@ class SessionDataHolder {
 
       if (task.session != null && task.sessionVersion > (lastSeenSessionVersion ?? -1)) {
         lastSeenSessionVersion = task.sessionVersion;
+
         try {
           lastSeenSession = await PronoteSession.restoreBinary(task.session!);
-
           await _sessionManager.setCurrentAccountsListener([lastSeenAccountUid!]);
-        } catch (e) {
-          debugPrint("Couldn't read the session sent by the manager");
+        } catch (e, st) {
+          talker.error("Couldn't read the session sent by the manager", e, st);
         }
 
         dirty = true;
@@ -139,8 +139,7 @@ class SessionDataHolder {
           break;
         } on SessionException {
           final errorCounter = lastSeenSession!.stack.order(.communication);
-
-          print("Error counter at $errorCounter");
+          talker.warning("Error counter at $errorCounter");
 
           await lastSeenSession!.access(const DisconnectionAccessor.unlogged());
 
@@ -174,14 +173,14 @@ class SessionDataHolder {
     }
 
     if (channels.contains("communication") && beforeCounter == lastSeenSession!.stack.order(.communication)) {
-      debugPrint(
-        "WARNING: Callback did not send any request but still asked "
+      talker.warning(
+        "Callback did not send any request but still asked "
         "for communication channel...",
       );
     } else if (!channels.contains("communication") &&
         beforeCounter > lastSeenSession!.stack.order(.communication)) {
-      debugPrint(
-        "WARNING: Callback sent communication requests but did not "
+      talker.warning(
+        "Callback sent communication requests but did not "
         "ask for the channel...",
       );
     }
