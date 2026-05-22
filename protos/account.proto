@@ -1,0 +1,30 @@
+syntax = "proto3";
+package antinote_ui;
+option java_package = "fr.helomri.antinote_ui.protos";
+option optimize_for = LITE_RUNTIME;
+
+import "google/protobuf/any.proto";
+
+message AntinoteAccount {
+  // An internal Unique IDentifier used as a primary key to reference accounts
+  // throughout the app.
+  string uid = 1;
+  // The full name of the account holder.
+  string name = 2;
+  // The username of the account.
+  string username = 3;
+  // The name of the establishment for the account.
+  string establishment_name = 4;
+  // The base URL of the instance this points to.
+  string base_url = 5;
+  // The display name of the workspace this account is linked to.
+  string workspace_name = 6;
+  // The actual identifiers for the account. Some informations within it may be
+  // duplicated.
+  google.protobuf.Any token_credentials = 7;
+}
+
+message AccountRegistry {
+  repeated AntinoteAccount accounts = 1;
+  optional string default_account_id = 2;
+}

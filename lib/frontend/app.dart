@@ -16,6 +16,7 @@ class App extends StatelessWidget {
         GlobalWidgetsLocalizations.delegate,
         GlobalCupertinoLocalizations.delegate,
       ],
+
       supportedLocales: AppLocalizations.supportedLocales,
       locale: Locale("fr"),
 
