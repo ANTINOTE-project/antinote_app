@@ -3,14 +3,16 @@ import "package:flutter_localizations/flutter_localizations.dart";
 import "package:flutter/material.dart";
 
 class App extends StatelessWidget {
-  const App({super.key});
+  final Widget home;
+
+  const App({super.key, required this.home});
 
   @override
   Widget build(BuildContext context) {
-    return const MaterialApp(
+    return MaterialApp(
       title: "ANTINOTE",
 
-      localizationsDelegates: [
+      localizationsDelegates: const [
         AppLocalizations.delegate,
         GlobalMaterialLocalizations.delegate,
         GlobalWidgetsLocalizations.delegate,
@@ -18,9 +20,9 @@ class App extends StatelessWidget {
       ],
 
       supportedLocales: AppLocalizations.supportedLocales,
-      locale: Locale("fr"),
+      locale: const Locale("fr"),
 
-      home: Scaffold(),
+      home: home,
     );
   }
 }

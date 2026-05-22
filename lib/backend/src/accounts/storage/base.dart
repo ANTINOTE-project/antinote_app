@@ -1,3 +1,5 @@
+import "package:antinote_app/backend/src/accounts/storage/native.dart";
+import "package:antinote_app/backend/src/accounts/storage/preferences.dart";
 import "package:antinote_app/backend/src/accounts/storage/widget.dart";
 import "package:antinote_app/protos/account.pb.dart";
 import "package:flutter/material.dart";
@@ -10,6 +12,17 @@ abstract class AccountStorage {
     assert(result != null, "No AccountStorage found in context.");
 
     return result!.storage;
+  }
+
+  static AccountStorage getInstance(ValueNotifier<AccountRegistry?> registryNotifier) {
+    return PreferencesAccountStorage.isActive
+        ? PreferencesAccountStorage(
+            getRegistry: () async {
+              registryNotifier.value ??= await PreferencesAccountStorage.readOrCreateRegistry();
+              return registryNotifier.value!;
+            },
+          )
+        : const NativeAccountStorage();
   }
 
   Future<List<AntinoteAccount>> listAccounts();
