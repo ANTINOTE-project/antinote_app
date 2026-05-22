@@ -11,7 +11,7 @@ import "package:antinote_app/backend/src/sync/polling_manager.dart";
 import "package:flutter/foundation.dart";
 import "package:flutter/material.dart";
 
-final _accountStorage = NativeAccountStorage();
+const _accountStorage = NativeAccountStorage();
 final _calendarManager = NativeCalendarManager();
 
 typedef FetchResult = ({

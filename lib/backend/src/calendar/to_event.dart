@@ -177,7 +177,7 @@ extension ToNewRecurringCalendarEventEntry on RecurringClass {
         frequency: Frequency.weekly,
         interval: (calendarPeriodicity?.inDays ?? 7) ~/ 7,
         until: occurrences.last.startTime.copyWith(isUtc: false).toUtc(),
-      ).toString(options: RecurrenceRuleToStringOptions(isTimeUtc: true));
+      ).toString(options: const RecurrenceRuleToStringOptions(isTimeUtc: true));
 
       if (recurrenceRule.startsWith("RRULE:")) {
         recurrenceRule = recurrenceRule.substring(6);

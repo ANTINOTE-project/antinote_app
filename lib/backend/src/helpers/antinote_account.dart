@@ -26,7 +26,7 @@ extension SetCredentials on AntinoteAccount {
 extension CredentialsAsAntinoteAccount on TokenCredentials {
   AntinoteAccount asAntinoteAccount(PronoteSession session) {
     return AntinoteAccount(
-      uid: UuidV4().generate(),
+      uid: const UuidV4().generate(),
       name: session.user.name,
       username: username,
       establishmentName: session.anyInstance.establishmentName.trim(),

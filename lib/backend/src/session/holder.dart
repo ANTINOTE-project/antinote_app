@@ -142,7 +142,7 @@ class SessionDataHolder {
 
           print("Error counter at $errorCounter");
 
-          await lastSeenSession!.access(DisconnectionAccessor.unlogged());
+          await lastSeenSession!.access(const DisconnectionAccessor.unlogged());
 
           if (beforeCounter + 2 >= errorCounter && curTry == 1) {
             // Probably due to an expired session, retrying once.

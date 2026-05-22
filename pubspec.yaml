@@ -18,6 +18,11 @@ dependencies:
   pigeon: ^26.3.4
   protobuf: ^6.0.0
 
+  antinote:
+    git: https://github.com/ANTINOTE-project/antinote.git
+  rrule: ^0.2.18
+  shared_preferences: ^2.5.5
+
 dev_dependencies:
   flutter_test:
     sdk: flutter

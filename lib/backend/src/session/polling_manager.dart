@@ -48,7 +48,7 @@ class SessionPollingManager extends PollingManager {
                 await Future.delayed(Duration(milliseconds: Random().nextInt(maxJitterMilliseconds)));
               }
 
-              final newPoll = await session.access(PollingAccessor());
+              final newPoll = await session.access(const PollingAccessor());
 
               restartCount = 0;
 
