@@ -1,16 +1,15 @@
-import 'package:pigeon/pigeon.dart';
+import "package:pigeon/pigeon.dart";
 
 @ConfigurePigeon(
   PigeonOptions(
-    dartOut: 'lib/backend/src/pigeon_posts/native_login.g.dart',
+    dartOut: "lib/backend/src/pigeon_posts/native_login.g.dart",
     dartOptions: DartOptions(),
-    kotlinOut:
-        'android/app/src/main/kotlin/fr/helomri/antinote_ui/pigeon_posts/NativeLogin.g.kt',
+    kotlinOut: "android/app/src/main/kotlin/fr/helomri/antinote_app/pigeon_posts/NativeLogin.g.kt",
     kotlinOptions: KotlinOptions(
-      errorClassName: 'NativeLoginError',
-      package: 'fr.helomri.antinote_ui.pigeon_posts',
+      errorClassName: "NativeLoginError",
+      package: "fr.helomri.antinote_app.pigeon_posts",
     ),
-    dartPackageName: 'antinote_ui',
+    dartPackageName: "antinote_app",
   ),
 )
 //

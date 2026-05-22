@@ -1,6 +1,6 @@
 syntax = "proto3";
-package antinote_ui;
-option java_package = "fr.helomri.antinote_ui.protos";
+package antinote_app;
+option java_package = "fr.helomri.antinote_app.protos";
 option optimize_for = LITE_RUNTIME;
 
 import "google/protobuf/any.proto";

@@ -9,11 +9,7 @@ import 'dart:typed_data' show Float64List, Int32List, Int64List;
 import 'package:flutter/services.dart';
 import 'package:meta/meta.dart' show immutable, protected, visibleForTesting;
 
-Object? _extractReplyValueOrThrow(
-    List<Object?>? replyList,
-    String channelName, {
-    required bool isNullValid,
-}) {
+Object? _extractReplyValueOrThrow(List<Object?>? replyList, String channelName, {required bool isNullValid}) {
   if (replyList == null) {
     throw PlatformException(
       code: 'channel-error',
@@ -45,9 +41,7 @@ bool _deepEquals(Object? a, Object? b) {
     return a == b;
   }
   if (a is List && b is List) {
-    return a.length == b.length &&
-        a.indexed
-            .every(((int, dynamic) item) => _deepEquals(item.$2, b[item.$1]));
+    return a.length == b.length && a.indexed.every(((int, dynamic) item) => _deepEquals(item.$2, b[item.$1]));
   }
   if (a is Map && b is Map) {
     if (a.length != b.length) {
@@ -96,14 +90,16 @@ int _deepHash(Object? value) {
   return value.hashCode;
 }
 
-
 enum SyncResultType {
   /// When the sync completes successfully.
   success,
+
   /// When we get an invalid login exception.
   auth,
+
   /// When we lose or never get to contact the PRONOTE instance.
   availability,
+
   /// When we have trouble actually parsing the different elements or writing
   /// them to system.
   parsing,
@@ -132,18 +128,12 @@ class SyncResult {
   bool dbIssue;
 
   List<Object?> _toList() {
-    return <Object?>[
-      result,
-      totalEntries,
-      addedEntries,
-      removedEntries,
-      updatedEntries,
-      dbIssue,
-    ];
+    return <Object?>[result, totalEntries, addedEntries, removedEntries, updatedEntries, dbIssue];
   }
 
   Object encode() {
-    return _toList();  }
+    return _toList();
+  }
 
   static SyncResult decode(Object result) {
     result as List<Object?>;
@@ -166,14 +156,18 @@ class SyncResult {
     if (identical(this, other)) {
       return true;
     }
-    return _deepEquals(result, other.result) && _deepEquals(totalEntries, other.totalEntries) && _deepEquals(addedEntries, other.addedEntries) && _deepEquals(removedEntries, other.removedEntries) && _deepEquals(updatedEntries, other.updatedEntries) && _deepEquals(dbIssue, other.dbIssue);
+    return _deepEquals(result, other.result) &&
+        _deepEquals(totalEntries, other.totalEntries) &&
+        _deepEquals(addedEntries, other.addedEntries) &&
+        _deepEquals(removedEntries, other.removedEntries) &&
+        _deepEquals(updatedEntries, other.updatedEntries) &&
+        _deepEquals(dbIssue, other.dbIssue);
   }
 
   @override
   // ignore: avoid_equals_and_hash_code_on_mutable_classes
   int get hashCode => _deepHash(<Object?>[runtimeType, ..._toList()]);
 }
-
 
 class _PigeonCodec extends StandardMessageCodec {
   const _PigeonCodec();
@@ -182,10 +176,10 @@ class _PigeonCodec extends StandardMessageCodec {
     if (value is int) {
       buffer.putUint8(4);
       buffer.putInt64(value);
-    }    else if (value is SyncResultType) {
+    } else if (value is SyncResultType) {
       buffer.putUint8(129);
       writeValue(buffer, value.index);
-    }    else if (value is SyncResult) {
+    } else if (value is SyncResult) {
       buffer.putUint8(130);
       writeValue(buffer, value.encode());
     } else {
@@ -212,8 +206,8 @@ class NativeSyncManager {
   /// available for dependency injection.  If it is left null, the default
   /// BinaryMessenger will be used which routes to the host platform.
   NativeSyncManager({BinaryMessenger? binaryMessenger, String messageChannelSuffix = ''})
-      : pigeonVar_binaryMessenger = binaryMessenger,
-        pigeonVar_messageChannelSuffix = messageChannelSuffix.isNotEmpty ? '.$messageChannelSuffix' : '';
+    : pigeonVar_binaryMessenger = binaryMessenger,
+      pigeonVar_messageChannelSuffix = messageChannelSuffix.isNotEmpty ? '.$messageChannelSuffix' : '';
   final BinaryMessenger? pigeonVar_binaryMessenger;
 
   static const MessageCodec<Object?> pigeonChannelCodec = _PigeonCodec();
@@ -221,7 +215,8 @@ class NativeSyncManager {
   final String pigeonVar_messageChannelSuffix;
 
   Future<void> syncFinished(SyncResult result) async {
-    final pigeonVar_channelName = 'dev.flutter.pigeon.antinote_ui.NativeSyncManager.syncFinished$pigeonVar_messageChannelSuffix';
+    final pigeonVar_channelName =
+        'dev.flutter.pigeon.antinote_app.NativeSyncManager.syncFinished$pigeonVar_messageChannelSuffix';
     final pigeonVar_channel = BasicMessageChannel<Object?>(
       pigeonVar_channelName,
       pigeonChannelCodec,
@@ -230,11 +225,6 @@ class NativeSyncManager {
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[result]);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
-    _extractReplyValueOrThrow(
-        pigeonVar_replyList,
-        pigeonVar_channelName,
-        isNullValid: true,
-    )
-    ;
+    _extractReplyValueOrThrow(pigeonVar_replyList, pigeonVar_channelName, isNullValid: true);
   }
 }

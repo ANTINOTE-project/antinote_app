@@ -1,16 +1,15 @@
-import 'package:pigeon/pigeon.dart';
+import "package:pigeon/pigeon.dart";
 
 @ConfigurePigeon(
   PigeonOptions(
-    dartOut: 'lib/backend/src/pigeon_posts/native_session.g.dart',
+    dartOut: "lib/backend/src/pigeon_posts/native_session.g.dart",
     dartOptions: DartOptions(),
-    kotlinOut:
-        'android/app/src/main/kotlin/fr/helomri/antinote_ui/pigeon_posts/NativeSession.g.kt',
+    kotlinOut: "android/app/src/main/kotlin/fr/helomri/antinote_app/pigeon_posts/NativeSession.g.kt",
     kotlinOptions: KotlinOptions(
-      errorClassName: 'SessionManagerError',
-      package: 'fr.helomri.studies_management.antinote_ui.pigeon_posts',
+      errorClassName: "SessionManagerError",
+      package: "fr.helomri.studies_management.antinote_app.pigeon_posts",
     ),
-    dartPackageName: 'antinote_ui',
+    dartPackageName: "antinote_app",
   ),
 )
 //
@@ -38,11 +37,7 @@ final class ScheduledTask {
   final int sessionVersion;
   final int taskId;
 
-  const ScheduledTask({
-    required this.session,
-    required this.sessionVersion,
-    required this.taskId,
-  });
+  const ScheduledTask({required this.session, required this.sessionVersion, required this.taskId});
 }
 
 /// It is the responsibility of the native side to manage everything going on
@@ -52,11 +47,7 @@ abstract class NativeSessionManager {
   void setCurrentAccountsListener(List<String> accountUid);
 
   @async
-  ScheduledTask scheduleTask(
-    String accountUid,
-    List<String> channels,
-    int? lastSessionVersion,
-  );
+  ScheduledTask scheduleTask(String accountUid, List<String> channels, int? lastSessionVersion);
 
   @async
   int? finishTask(String accountUid, int taskId, Uint8List? newSession);
@@ -67,11 +58,7 @@ abstract class NativeSessionManager {
   @async
   PollingState getPollingState(String accountUid);
 
-  void updatePollingState(
-    String accountUid,
-    PollingState newState,
-    String? newServerSignature,
-  );
+  void updatePollingState(String accountUid, PollingState newState, String? newServerSignature);
 }
 
 @FlutterApi()

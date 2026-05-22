@@ -1,16 +1,15 @@
-import 'package:pigeon/pigeon.dart';
+import "package:pigeon/pigeon.dart";
 
 @ConfigurePigeon(
   PigeonOptions(
-    dartOut: 'lib/backend/src/pigeon_posts/native_sync.g.dart',
+    dartOut: "lib/backend/src/pigeon_posts/native_sync.g.dart",
     dartOptions: DartOptions(),
-    kotlinOut:
-        'android/app/src/main/kotlin/fr/helomri/antinote_ui/pigeon_posts/NativeSync.g.kt',
+    kotlinOut: "android/app/src/main/kotlin/fr/helomri/antinote_app/pigeon_posts/NativeSync.g.kt",
     kotlinOptions: KotlinOptions(
-      errorClassName: 'SyncManagerError',
-      package: 'fr.helomri.studies_management.antinote_ui.pigeon_posts',
+      errorClassName: "SyncManagerError",
+      package: "fr.helomri.studies_management.antinote_app.pigeon_posts",
     ),
-    dartPackageName: 'antinote_ui',
+    dartPackageName: "antinote_app",
   ),
 )
 //

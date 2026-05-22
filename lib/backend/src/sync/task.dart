@@ -1,15 +1,15 @@
-import 'dart:math';
+import "dart:math";
 
-import 'package:antinote/antinote.dart';
-import 'package:antinote_ui/backend/src/accounts/storage/native.dart';
-import 'package:antinote_ui/backend/src/calendar/to_event.dart';
-import 'package:antinote_ui/backend/src/pigeon_posts/native_calendar.g.dart';
-import 'package:antinote_ui/backend/src/pigeon_posts/native_session.g.dart';
-import 'package:antinote_ui/backend/src/pigeon_posts/native_sync.g.dart';
-import 'package:antinote_ui/backend/src/session/holder.dart';
-import 'package:antinote_ui/backend/src/sync/polling_manager.dart';
-import 'package:flutter/foundation.dart';
-import 'package:flutter/material.dart';
+import "package:antinote/antinote.dart";
+import "package:antinote_app/backend/src/accounts/storage/native.dart";
+import "package:antinote_app/backend/src/calendar/to_event.dart";
+import "package:antinote_app/backend/src/pigeon_posts/native_calendar.g.dart";
+import "package:antinote_app/backend/src/pigeon_posts/native_session.g.dart";
+import "package:antinote_app/backend/src/pigeon_posts/native_sync.g.dart";
+import "package:antinote_app/backend/src/session/holder.dart";
+import "package:antinote_app/backend/src/sync/polling_manager.dart";
+import "package:flutter/foundation.dart";
+import "package:flutter/material.dart";
 
 final _accountStorage = NativeAccountStorage();
 final _calendarManager = NativeCalendarManager();
@@ -22,9 +22,7 @@ typedef FetchResult = ({
 });
 
 Future<SyncResult> syncTask(String accountUid) async {
-  final account = await _accountStorage.borrowAccountWithCredentials(
-    accountUid,
-  );
+  final account = await _accountStorage.borrowAccountWithCredentials(accountUid);
 
   final state = SessionDataHolder.create(account);
 
@@ -42,10 +40,7 @@ Future<SyncResult> syncTask(String accountUid) async {
 
           for (final resource in session.user.resources) {
             map[resource] = (await session.access(
-              TimetableAccessor.forYear(
-                resource: session.userResource,
-                session: session,
-              ),
+              TimetableAccessor.forYear(resource: session.userResource, session: session),
             )).asRecurringTimetable(session).recurringClasses;
           }
 
@@ -86,12 +81,7 @@ Future<SyncResult> syncTask(String accountUid) async {
     return syncResult;
   }
 
-  final (
-    timetables: timetables,
-    user: user,
-    instanceDomain: instanceDomain,
-    address: address,
-  ) = fetchResult;
+  final (timetables: timetables, user: user, instanceDomain: instanceDomain, address: address) = fetchResult;
 
   int added = 0;
   int updated = 0;
@@ -112,8 +102,7 @@ Future<SyncResult> syncTask(String accountUid) async {
 
       calendar = await _calendarManager.insertNewCalendar(
         NewCalendarEntry(
-          displayName:
-              'Cours${user.name == resource.name ? '' : ' (${resource.name})'}',
+          displayName: 'Cours${user.name == resource.name ? '' : ' (${resource.name})'}',
           accountUid: accountUid,
           resourceVisualId: resourceVisualId,
           color: Colors.accents[colorId].toARGB32(),
@@ -122,10 +111,7 @@ Future<SyncResult> syncTask(String accountUid) async {
     }
 
     final localEntriesMap = <String, List<ExistingCalendarEventEntry>>{};
-    final rawCalendarEntries = await _calendarManager.listExisting(
-      accountUid,
-      calendar.id,
-    );
+    final rawCalendarEntries = await _calendarManager.listExisting(accountUid, calendar.id);
 
     for (final entry in rawCalendarEntries) {
       final groupId = entry.originalVisualId ?? entry.visualId;
@@ -136,12 +122,7 @@ Future<SyncResult> syncTask(String accountUid) async {
     final toInsert = <NewRecurringCalendarEventEntry>[];
 
     final timetableEntries = timetable.mapL(
-      (e) => e.toNewRecurringCalendarEventEntry(
-        accountUid,
-        calendar!.id,
-        instanceDomain,
-        address,
-      ),
+      (e) => e.toNewRecurringCalendarEventEntry(accountUid, calendar!.id, instanceDomain, address),
       true,
     );
 
@@ -155,10 +136,7 @@ Future<SyncResult> syncTask(String accountUid) async {
         continue;
       }
 
-      final remoteIds = {
-        remoteEntry.visualId,
-        ...remoteEntry.exceptions.map((e) => e.visualId),
-      };
+      final remoteIds = {remoteEntry.visualId, ...remoteEntry.exceptions.map((e) => e.visualId)};
       final localIds = localGroup.map((e) => e.visualId).toSet();
 
       if (!setEquals(remoteIds, localIds)) {

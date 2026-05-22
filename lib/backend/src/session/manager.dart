@@ -1,26 +1,20 @@
-import 'dart:async';
+import "dart:async";
 
-import 'package:antinote/antinote.dart';
-import 'package:antinote_ui/backend/src/accounts/storage/base.dart';
-import 'package:antinote_ui/backend/src/session/holder.dart';
-import 'package:antinote_ui/ui/ui.dart';
-import 'package:flutter/material.dart';
+import "package:antinote/antinote.dart";
+import "package:antinote_app/backend/src/accounts/storage/base.dart";
+import "package:antinote_app/backend/src/session/holder.dart";
+import "package:antinote_app/ui/ui.dart";
+import "package:flutter/material.dart";
 
 typedef RunCallback<T> = FutureOr<T> Function(PronoteSession session);
 
 enum TaskType { normal, pollingListener }
 
-class SessionManager extends InheritedModel<TaskType>
-    with WidgetsBindingObserver {
+class SessionManager extends InheritedModel<TaskType> with WidgetsBindingObserver {
   final SessionDataHolder state;
   final VoidCallback onNewSessionSet;
 
-  const SessionManager({
-    super.key,
-    required this.state,
-    required this.onNewSessionSet,
-    required super.child,
-  });
+  const SessionManager({super.key, required this.state, required this.onNewSessionSet, required super.child});
 
   /// A function made to ensure [SessionDataHolder.lastSeenAccountUid] from
   /// [state] is never [null]. The logic taken is as follows:
@@ -41,45 +35,34 @@ class SessionManager extends InheritedModel<TaskType>
 
     if (!context.mounted) {
       throw Exception(
-        'Context got unmounted by the time we checked if any '
-        'default account existed',
+        "Context got unmounted by the time we checked if any "
+        "default account existed",
       );
     }
 
-    await Navigator.push(
-      context,
-      MaterialPageRoute(builder: (context) => LoginPage()),
-    );
+    await Navigator.push(context, MaterialPageRoute(builder: (context) => LoginPage()));
 
     return state.lastSeenAccountUid!;
   }
 
-  Future<PronoteSession> ensureSession({
-    required BuildContext context,
-    String? accountUid,
-  }) {
+  Future<PronoteSession> ensureSession({required BuildContext context, String? accountUid}) {
     if (!context.mounted) {
-      throw Exception(
-        'Wanted to ensure session existed but context is unmounted...',
-      );
+      throw Exception("Wanted to ensure session existed but context is unmounted...");
     }
 
-    return state.ensureSession(
-      storage: AccountStorage.of(context),
-      accountUid: accountUid,
-    );
+    return state.ensureSession(storage: AccountStorage.of(context), accountUid: accountUid);
   }
 
   static SessionManager of(BuildContext context) {
     final result = context.dependOnInheritedWidgetOfExactType<SessionManager>();
-    assert(result != null, 'No SessionManager in context');
+    assert(result != null, "No SessionManager in context");
 
     return result!;
   }
 
   Future<T> runTask<T>({
     required BuildContext? context,
-    List<String> channels = const ['communication'],
+    List<String> channels = const ["communication"],
     required RunCallback<T> callback,
     bool bypassStateLock = false,
   }) async {
@@ -88,8 +71,8 @@ class SessionManager extends InheritedModel<TaskType>
 
       if (context != null && !context.mounted) {
         throw Exception(
-          'Waited for state lock to lift in order to not repeat requests from this '
-          'client. By that time, the state got unmounted.',
+          "Waited for state lock to lift in order to not repeat requests from this "
+          "client. By that time, the state got unmounted.",
         );
       }
     }
@@ -102,24 +85,22 @@ class SessionManager extends InheritedModel<TaskType>
       if (state.lastSeenAccountUid == null) {
         if (context == null || !context.mounted) {
           throw Exception(
-            'Wanted to run a task without having picked an account '
-            'ID and without a valid context...',
+            "Wanted to run a task without having picked an account "
+            "ID and without a valid context...",
           );
         }
 
         await ensureAccountUid(context);
       }
 
-      final as = context == null || !context.mounted
-          ? null
-          : AccountStorage.of(context);
+      final as = context == null || !context.mounted ? null : AccountStorage.of(context);
 
       return state.runTask(
         sessionEnsurer: () {
           assert(
             as != null,
-            'Wanted to run a task without having a session '
-            'and without a valid context...',
+            "Wanted to run a task without having a session "
+            "and without a valid context...",
           );
 
           return state.ensureSession(storage: as!);
@@ -145,19 +126,13 @@ class SessionManager extends InheritedModel<TaskType>
 
   static Future<T> run<T>({
     required BuildContext context,
-    List<String> channels = const ['communication'],
+    List<String> channels = const ["communication"],
     required RunCallback<T> callback,
   }) async {
-    final result = context.dependOnInheritedWidgetOfExactType<SessionManager>(
-      aspect: TaskType.normal,
-    );
+    final result = context.dependOnInheritedWidgetOfExactType<SessionManager>(aspect: TaskType.normal);
     assert(result != null, 'No "SessionManager" in tree...');
 
-    return result!.runTask(
-      context: context,
-      channels: channels,
-      callback: callback,
-    );
+    return result!.runTask(context: context, channels: channels, callback: callback);
   }
 
   static Future<T> runSubscribe<T>({
@@ -170,11 +145,7 @@ class SessionManager extends InheritedModel<TaskType>
     );
     assert(result != null, 'No "SessionManager" in tree...');
 
-    return result!.runTask(
-      context: context,
-      channels: channels,
-      callback: callback,
-    );
+    return result!.runTask(context: context, channels: channels, callback: callback);
   }
 
   @override
@@ -195,10 +166,7 @@ class SessionManager extends InheritedModel<TaskType>
   }
 
   @override
-  bool updateShouldNotifyDependent(
-    covariant SessionManager oldWidget,
-    Set<TaskType> dependencies,
-  ) {
+  bool updateShouldNotifyDependent(covariant SessionManager oldWidget, Set<TaskType> dependencies) {
     if (dependencies.contains(TaskType.pollingListener)) {
       print("Updated a polling listener...");
       return true;

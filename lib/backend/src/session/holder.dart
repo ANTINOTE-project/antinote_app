@@ -1,14 +1,14 @@
-import 'dart:async';
-import 'dart:io';
+import "dart:async";
+import "dart:io";
 
-import 'package:antinote/antinote.dart';
-import 'package:antinote_ui/backend/src/accounts/storage/base.dart';
-import 'package:antinote_ui/backend/src/pigeon_posts/native_session.g.dart';
-import 'package:antinote_ui/backend/src/session/manager.dart';
-import 'package:antinote_ui/protos/account.pb.dart';
-import 'package:flutter/widgets.dart';
+import "package:antinote/antinote.dart";
+import "package:antinote_app/backend/src/accounts/storage/base.dart";
+import "package:antinote_app/backend/src/pigeon_posts/native_session.g.dart";
+import "package:antinote_app/backend/src/session/manager.dart";
+import "package:antinote_app/protos/account.pb.dart";
+import "package:flutter/widgets.dart";
 
-import '../helpers/antinote_account.dart';
+import "../helpers/antinote_account.dart";
 
 final NativeSessionManager _sessionManager = NativeSessionManager();
 final _nativeSessionManagerSupported = Platform.isAndroid;
@@ -36,17 +36,14 @@ class SessionDataHolder {
       );
 
   Future<PronoteSession> relogin({required AccountStorage storage}) async {
-    var account = (await storage.borrowAccountWithCredentials(
-      lastSeenAccountUid!,
-    ))!;
+    var account = (await storage.borrowAccountWithCredentials(lastSeenAccountUid!))!;
 
     final credentials = account.credentials;
     if (credentials == null) {
       throw Exception("No credentials linked to account ${account.uid}");
     }
 
-    final (refreshCredentials: newCreds, session: session) = await credentials
-        .login();
+    final (refreshCredentials: newCreds, session: session) = await credentials.login();
 
     account = account.setCredentials(newCreds);
     await storage.updateAccount(account, lastSeenAccountUid!);
@@ -65,18 +62,14 @@ class SessionDataHolder {
     return lastSeenSession!;
   }
 
-  Future<PronoteSession> ensureSession({
-    required AccountStorage storage,
-    String? accountUid,
-  }) async {
+  Future<PronoteSession> ensureSession({required AccountStorage storage, String? accountUid}) async {
     assert(
       lastSeenAccountUid != null || accountUid != null,
-      'Tried to ensure session for an '
-      'account UID we did not have...',
+      "Tried to ensure session for an "
+      "account UID we did not have...",
     );
 
-    if (lastSeenSession != null &&
-        (accountUid == null || lastSeenAccountUid == accountUid)) {
+    if (lastSeenSession != null && (accountUid == null || lastSeenAccountUid == accountUid)) {
       return lastSeenSession!;
     }
 
@@ -91,35 +84,28 @@ class SessionDataHolder {
 
   Future<T> runTask<T>({
     required FutureOr<PronoteSession> Function() sessionEnsurer,
-    List<String> channels = const ['communication'],
+    List<String> channels = const ["communication"],
     required RunCallback<T> callback,
   }) async {
     assert(
       lastSeenAccountUid != null,
-      'Tried to run a task but we do not have '
-      'the session\'s account UID',
+      "Tried to run a task but we do not have "
+      "the session's account UID",
     );
 
     late final ScheduledTask? task;
 
     if (_nativeSessionManagerSupported) {
-      task = await _sessionManager.scheduleTask(
-        lastSeenAccountUid!,
-        channels,
-        lastSeenSessionVersion,
-      );
+      task = await _sessionManager.scheduleTask(lastSeenAccountUid!, channels, lastSeenSessionVersion);
 
-      if (task.session != null &&
-          task.sessionVersion > (lastSeenSessionVersion ?? -1)) {
+      if (task.session != null && task.sessionVersion > (lastSeenSessionVersion ?? -1)) {
         lastSeenSessionVersion = task.sessionVersion;
         try {
           lastSeenSession = await PronoteSession.restoreBinary(task.session!);
 
-          await _sessionManager.setCurrentAccountsListener([
-            lastSeenAccountUid!,
-          ]);
+          await _sessionManager.setCurrentAccountsListener([lastSeenAccountUid!]);
         } catch (e) {
-          debugPrint('Couldn\'t read the session sent by the manager');
+          debugPrint("Couldn't read the session sent by the manager");
         }
 
         dirty = true;
@@ -135,8 +121,8 @@ class SessionDataHolder {
       lastSeenSession = await sessionEnsurer();
       assert(
         lastSeenSession != null,
-        'Called session ensurer but session is '
-        'still missing',
+        "Called session ensurer but session is "
+        "still missing",
       );
 
       dirty = true;
@@ -154,7 +140,7 @@ class SessionDataHolder {
         } on SessionException {
           final errorCounter = lastSeenSession!.stack.order(.communication);
 
-          print('Error counter at $errorCounter');
+          print("Error counter at $errorCounter");
 
           await lastSeenSession!.access(DisconnectionAccessor.unlogged());
 
@@ -187,17 +173,16 @@ class SessionDataHolder {
       }
     }
 
-    if (channels.contains('communication') &&
-        beforeCounter == lastSeenSession!.stack.order(.communication)) {
+    if (channels.contains("communication") && beforeCounter == lastSeenSession!.stack.order(.communication)) {
       debugPrint(
-        'WARNING: Callback did not send any request but still asked '
-        'for communication channel...',
+        "WARNING: Callback did not send any request but still asked "
+        "for communication channel...",
       );
-    } else if (!channels.contains('communication') &&
+    } else if (!channels.contains("communication") &&
         beforeCounter > lastSeenSession!.stack.order(.communication)) {
       debugPrint(
-        'WARNING: Callback sent communication requests but did not '
-        'ask for the channel...',
+        "WARNING: Callback sent communication requests but did not "
+        "ask for the channel...",
       );
     }
 

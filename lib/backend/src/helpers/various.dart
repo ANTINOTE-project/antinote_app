@@ -1,6 +1,6 @@
 // Credit: https://stackoverflow.com/a/68847631 (by Raul Mabe)
-import 'package:antinote/antinote.dart';
-import 'package:intl/intl.dart';
+import "package:antinote/antinote.dart";
+import "package:intl/intl.dart";
 
 extension IterableExt<T> on Iterable<T> {
   Iterable<T> superJoin(T separator) {
@@ -18,10 +18,10 @@ extension IterableExt<T> on Iterable<T> {
 }
 
 extension AsRelativeDateString on DateTime {
-  static final DateFormat _shortDateFormatter = DateFormat('EEE, MMM dd');
-  static final DateFormat _numericDateFormatter = DateFormat('dd MMM');
-  static final DateFormat _shortTimeFormatter = DateFormat('HH:mm');
-  static final DateFormat _longDateFormatter = DateFormat('dd/MM/yy');
+  static final DateFormat _shortDateFormatter = DateFormat("EEE, MMM dd");
+  static final DateFormat _numericDateFormatter = DateFormat("dd MMM");
+  static final DateFormat _shortTimeFormatter = DateFormat("HH:mm");
+  static final DateFormat _longDateFormatter = DateFormat("dd/MM/yy");
 
   String asLongNumericDate() {
     return _longDateFormatter.format(this);
@@ -35,21 +35,20 @@ extension AsRelativeDateString on DateTime {
     var dayTitle = _shortDateFormatter.format(this);
     if (DateTime.now().toUtc().toDay() == this) {
       dayTitle = "Aujourd'hui";
-    } else if (DateTime.now().add(Duration(days: 1)).toUtc().toDay() == this) {
-      dayTitle = 'Demain';
-    } else if (DateTime.now().subtract(Duration(days: 1)).toUtc().toDay() ==
-        this) {
-      dayTitle = 'Hier';
+    } else if (DateTime.now().add(const Duration(days: 1)).toUtc().toDay() == this) {
+      dayTitle = "Demain";
+    } else if (DateTime.now().subtract(const Duration(days: 1)).toUtc().toDay() == this) {
+      dayTitle = "Hier";
     }
 
     if (!dayOnly) {
-      dayTitle += ' à ${_shortTimeFormatter.format(this)}';
+      dayTitle += " à ${_shortTimeFormatter.format(this)}";
     }
 
     return dayTitle;
   }
 
-  static final DateFormat _shortWeekdayFormatter = DateFormat('EEE');
+  static final DateFormat _shortWeekdayFormatter = DateFormat("EEE");
 
   String asShortWeekday([bool dayOnly = true]) {
     return _shortWeekdayFormatter.format(this);

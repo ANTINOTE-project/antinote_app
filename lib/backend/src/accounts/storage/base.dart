@@ -1,14 +1,13 @@
-import 'package:antinote_ui/backend/src/accounts/storage/widget.dart';
-import 'package:antinote_ui/protos/account.pb.dart';
-import 'package:flutter/material.dart';
+import "package:antinote_app/backend/src/accounts/storage/widget.dart";
+import "package:antinote_app/protos/account.pb.dart";
+import "package:flutter/material.dart";
 
 abstract class AccountStorage {
   const AccountStorage();
 
   static AccountStorage of(BuildContext context) {
-    final result = context
-        .dependOnInheritedWidgetOfExactType<AccountStorageWidget>();
-    assert(result != null, 'No AccountStorage found in context.');
+    final result = context.dependOnInheritedWidgetOfExactType<AccountStorageWidget>();
+    assert(result != null, "No AccountStorage found in context.");
 
     return result!.storage;
   }

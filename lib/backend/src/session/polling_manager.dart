@@ -1,11 +1,11 @@
-import 'dart:convert';
-import 'dart:io';
-import 'dart:math';
+import "dart:convert";
+import "dart:io";
+import "dart:math";
 
-import 'package:antinote/antinote.dart';
-import 'package:antinote_ui/backend/src/pigeon_posts/native_session.g.dart';
-import 'package:antinote_ui/backend/src/session/holder.dart';
-import 'package:flutter/foundation.dart';
+import "package:antinote/antinote.dart";
+import "package:antinote_app/backend/src/pigeon_posts/native_session.g.dart";
+import "package:antinote_app/backend/src/session/holder.dart";
+import "package:flutter/foundation.dart";
 
 final NativeSessionManager _sessionManager = NativeSessionManager();
 
@@ -21,14 +21,12 @@ class SessionPollingManager extends PollingManager {
     print(
       "Got asked whether to take polling job... Answered ${state.lastSeenAccountUid == accountUid && state.lastSeenSession != null}",
     );
-    return state.lastSeenAccountUid == accountUid &&
-        state.lastSeenSession != null;
+    return state.lastSeenAccountUid == accountUid && state.lastSeenSession != null;
   }
 
   static const _baseDelay = Duration(milliseconds: 500);
   static const maxJitterMilliseconds = 100;
-  static const _maxRetries =
-      8; // This is the max as the session closes after 2 minutes.
+  static const _maxRetries = 8; // This is the max as the session closes after 2 minutes.
 
   @override
   void startPolling(String accountUid) {
@@ -36,8 +34,8 @@ class SessionPollingManager extends PollingManager {
     Future.microtask(() async {
       await state.runTask(
         sessionEnsurer: () => throw UnimplementedError(
-          'Being asked to do '
-          'polling normally implies already listening to the account.',
+          "Being asked to do "
+          "polling normally implies already listening to the account.",
         ),
         callback: (session) async {
           var lastPoll = <String, dynamic>{};
@@ -47,11 +45,7 @@ class SessionPollingManager extends PollingManager {
               await Future.delayed(_baseDelay * (2 ^ restartCount));
 
               if (restartCount > 0) {
-                await Future.delayed(
-                  Duration(
-                    milliseconds: Random().nextInt(maxJitterMilliseconds),
-                  ),
-                );
+                await Future.delayed(Duration(milliseconds: Random().nextInt(maxJitterMilliseconds)));
               }
 
               final newPoll = await session.access(PollingAccessor());
@@ -62,44 +56,30 @@ class SessionPollingManager extends PollingManager {
 
               lastPoll = newPoll;
 
-              await _sessionManager.updatePollingState(
-                accountUid,
-                .alive,
-                jsonEncode(newPoll),
-              );
+              await _sessionManager.updatePollingState(accountUid, .alive, jsonEncode(newPoll));
             } on SessionException {
               await _sessionManager.updatePollingState(accountUid, .dead, null);
               break;
             } on IOException {
               restartCount += 1;
-              print('Polling just failed for the ${restartCount}th time');
+              print("Polling just failed for the ${restartCount}th time");
 
               if (restartCount >= _maxRetries) {
-                await _sessionManager.updatePollingState(
-                  accountUid,
-                  .dead,
-                  null,
-                );
+                await _sessionManager.updatePollingState(accountUid, .dead, null);
                 break;
               } else {
-                await _sessionManager.updatePollingState(
-                  accountUid,
-                  .paused,
-                  null,
-                );
+                await _sessionManager.updatePollingState(accountUid, .paused, null);
               }
             }
           }
         },
-        channels: ['polling'],
+        channels: ["polling"],
       );
     });
   }
 
   @override
   void serverSignatureChanged(String accountUid, String newServerSignature) {
-    state.lastSeenSession?.stack.updateServerSignature(
-      jsonDecode(newServerSignature),
-    );
+    state.lastSeenSession?.stack.updateServerSignature(jsonDecode(newServerSignature));
   }
 }

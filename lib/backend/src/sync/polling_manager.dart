@@ -1,7 +1,7 @@
-import 'dart:convert';
+import "dart:convert";
 
-import 'package:antinote_ui/backend/src/pigeon_posts/native_session.g.dart';
-import 'package:antinote_ui/backend/src/session/holder.dart';
+import "package:antinote_app/backend/src/pigeon_posts/native_session.g.dart";
+import "package:antinote_app/backend/src/session/holder.dart";
 
 class SyncPollingManager extends PollingManager {
   SyncPollingManager({required this.state});
@@ -14,9 +14,7 @@ class SyncPollingManager extends PollingManager {
   @override
   void serverSignatureChanged(String accountUid, String newServerSignature) {
     if (state.lastSeenAccountUid == accountUid) {
-      state.lastSeenSession?.stack.updateServerSignature(
-        jsonDecode(newServerSignature),
-      );
+      state.lastSeenSession?.stack.updateServerSignature(jsonDecode(newServerSignature));
     }
   }
 

@@ -47,26 +47,22 @@ class AntinoteAccount extends $pb.GeneratedMessage {
           [$pb.ExtensionRegistry registry = $pb.ExtensionRegistry.EMPTY]) =>
       create()..mergeFromJson(json, registry);
 
-  static final $pb.BuilderInfo _i = $pb.BuilderInfo(
-      _omitMessageNames ? '' : 'AntinoteAccount',
-      package: const $pb.PackageName(_omitMessageNames ? '' : 'antinote_ui'),
-      createEmptyInstance: create)
+  static final $pb.BuilderInfo _i = $pb.BuilderInfo(_omitMessageNames ? '' : 'AntinoteAccount',
+      package: const $pb.PackageName(_omitMessageNames ? '' : 'antinote_app'), createEmptyInstance: create)
     ..aOS(1, _omitFieldNames ? '' : 'uid')
     ..aOS(2, _omitFieldNames ? '' : 'name')
     ..aOS(3, _omitFieldNames ? '' : 'username')
     ..aOS(4, _omitFieldNames ? '' : 'establishmentName')
     ..aOS(5, _omitFieldNames ? '' : 'baseUrl')
     ..aOS(6, _omitFieldNames ? '' : 'workspaceName')
-    ..aOM<$0.Any>(7, _omitFieldNames ? '' : 'tokenCredentials',
-        subBuilder: $0.Any.create)
+    ..aOM<$0.Any>(7, _omitFieldNames ? '' : 'tokenCredentials', subBuilder: $0.Any.create)
     ..hasRequiredFields = false;
 
   @$core.Deprecated('See https://github.com/google/protobuf.dart/issues/998.')
   AntinoteAccount clone() => deepCopy();
   @$core.Deprecated('See https://github.com/google/protobuf.dart/issues/998.')
   AntinoteAccount copyWith(void Function(AntinoteAccount) updates) =>
-      super.copyWith((message) => updates(message as AntinoteAccount))
-          as AntinoteAccount;
+      super.copyWith((message) => updates(message as AntinoteAccount)) as AntinoteAccount;
 
   @$core.override
   $pb.BuilderInfo get info_ => _i;
@@ -76,8 +72,8 @@ class AntinoteAccount extends $pb.GeneratedMessage {
   @$core.override
   AntinoteAccount createEmptyInstance() => create();
   @$core.pragma('dart2js:noInline')
-  static AntinoteAccount getDefault() => _defaultInstance ??=
-      $pb.GeneratedMessage.$_defaultFor<AntinoteAccount>(create);
+  static AntinoteAccount getDefault() =>
+      _defaultInstance ??= $pb.GeneratedMessage.$_defaultFor<AntinoteAccount>(create);
   static AntinoteAccount? _defaultInstance;
 
   /// An internal Unique IDentifier used as a primary key to reference accounts
@@ -175,12 +171,9 @@ class AccountRegistry extends $pb.GeneratedMessage {
           [$pb.ExtensionRegistry registry = $pb.ExtensionRegistry.EMPTY]) =>
       create()..mergeFromJson(json, registry);
 
-  static final $pb.BuilderInfo _i = $pb.BuilderInfo(
-      _omitMessageNames ? '' : 'AccountRegistry',
-      package: const $pb.PackageName(_omitMessageNames ? '' : 'antinote_ui'),
-      createEmptyInstance: create)
-    ..pPM<AntinoteAccount>(1, _omitFieldNames ? '' : 'accounts',
-        subBuilder: AntinoteAccount.create)
+  static final $pb.BuilderInfo _i = $pb.BuilderInfo(_omitMessageNames ? '' : 'AccountRegistry',
+      package: const $pb.PackageName(_omitMessageNames ? '' : 'antinote_app'), createEmptyInstance: create)
+    ..pPM<AntinoteAccount>(1, _omitFieldNames ? '' : 'accounts', subBuilder: AntinoteAccount.create)
     ..aOS(2, _omitFieldNames ? '' : 'defaultAccountId')
     ..hasRequiredFields = false;
 
@@ -188,8 +181,7 @@ class AccountRegistry extends $pb.GeneratedMessage {
   AccountRegistry clone() => deepCopy();
   @$core.Deprecated('See https://github.com/google/protobuf.dart/issues/998.')
   AccountRegistry copyWith(void Function(AccountRegistry) updates) =>
-      super.copyWith((message) => updates(message as AccountRegistry))
-          as AccountRegistry;
+      super.copyWith((message) => updates(message as AccountRegistry)) as AccountRegistry;
 
   @$core.override
   $pb.BuilderInfo get info_ => _i;
@@ -199,8 +191,8 @@ class AccountRegistry extends $pb.GeneratedMessage {
   @$core.override
   AccountRegistry createEmptyInstance() => create();
   @$core.pragma('dart2js:noInline')
-  static AccountRegistry getDefault() => _defaultInstance ??=
-      $pb.GeneratedMessage.$_defaultFor<AccountRegistry>(create);
+  static AccountRegistry getDefault() =>
+      _defaultInstance ??= $pb.GeneratedMessage.$_defaultFor<AccountRegistry>(create);
   static AccountRegistry? _defaultInstance;
 
   @$pb.TagNumber(1)
@@ -216,7 +208,5 @@ class AccountRegistry extends $pb.GeneratedMessage {
   void clearDefaultAccountId() => $_clearField(2);
 }
 
-const $core.bool _omitFieldNames =
-    $core.bool.fromEnvironment('protobuf.omit_field_names');
-const $core.bool _omitMessageNames =
-    $core.bool.fromEnvironment('protobuf.omit_message_names');
+const $core.bool _omitFieldNames = $core.bool.fromEnvironment('protobuf.omit_field_names');
+const $core.bool _omitMessageNames = $core.bool.fromEnvironment('protobuf.omit_message_names');
