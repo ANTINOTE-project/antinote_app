@@ -1,4 +1,3 @@
-import "package:antinote_app/frontend/extensions/colors.dart";
 import "package:flutter/material.dart";
 
 class LoadingWidget extends StatelessWidget {
@@ -11,7 +10,7 @@ class LoadingWidget extends StatelessWidget {
     return SizedBox(
       width: size,
       height: size,
-      child: CircularProgressIndicator(color: context.c.primary, strokeWidth: size / 7),
+      child: CircularProgressIndicator(strokeWidth: size / 7),
     );
   }
 }

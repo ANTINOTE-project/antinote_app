@@ -2,6 +2,7 @@ import "package:antinote_app/frontend/extensions/colors.dart";
 import "package:antinote_app/frontend/extensions/l10n.dart";
 import "package:antinote_app/frontend/widgets/animated/icon.dart";
 import "package:antinote_app/frontend/widgets/customs/button.dart";
+import "package:antinote_app/frontend/widgets/customs/loading.dart";
 import "package:antinote_app/frontend/widgets/customs/modal.dart";
 import "package:antinote_app/frontend/widgets/pressable.dart";
 import "package:antinote_app/protos/account.pb.dart";
@@ -36,19 +37,15 @@ class AccountWidget extends StatelessWidget {
   void _openMenu(BuildContext context) {
     Modal.show(
       account.name,
+
       Column(
         spacing: 8,
+
         children: [
           if (isDefault)
-            ButtonWidget(
-              onPressed: () => onRemoveDefault(),
-              label: context.l10n.disableAutoLogin,
-            )
+            ButtonWidget(onPressed: () => onRemoveDefault(), label: context.l10n.disableAutoLogin)
           else
-            ButtonWidget(
-              onPressed: () => onSetDefault(),
-              label: context.l10n.enableAutoLogin,
-            ),
+            ButtonWidget(onPressed: () => onSetDefault(), label: context.l10n.enableAutoLogin),
 
           ButtonWidget(
             onPressed: () => onDelete(),
@@ -72,26 +69,25 @@ class AccountWidget extends StatelessWidget {
 
         child: ListTile(
           leading: isLoggingIn
-              ? const CircularProgressIndicator()
+              ? const LoadingWidget(size: 26)
               : IconWidget(
                   size: 26,
                   iconOn: HugeIconsSolid.star,
                   iconOff: HugeIconsSolid.userAccount,
                   value: isDefault,
                 ),
+
           title: Text(account.name, overflow: TextOverflow.ellipsis),
           subtitle: Text(
             [account.establishmentName, account.workspaceName].join("\n"),
             overflow: TextOverflow.ellipsis,
           ),
+
           trailing: Pressable(
             onPressed: () => _openMenu(context),
             behavior: HitTestBehavior.opaque,
 
-            child: Icon(
-              HugeIconsSolid.moreVertical,
-              color: context.c.onSurfaceVariant,
-            ),
+            child: Icon(HugeIconsSolid.moreVertical, color: context.c.onSurfaceVariant),
           ),
         ),
       ),
