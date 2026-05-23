@@ -3,6 +3,7 @@ import "package:antinote_app/frontend/extensions/l10n.dart";
 import "package:antinote_app/frontend/extensions/session_manager.dart";
 import "package:antinote_app/frontend/routing/routes.dart";
 import "package:antinote_app/frontend/widgets/account.dart";
+import "package:antinote_app/frontend/widgets/customs/app_bar.dart";
 import "package:antinote_app/frontend/widgets/customs/button.dart";
 import "package:antinote_app/frontend/widgets/customs/loading.dart";
 import "package:antinote_app/main.dart";
@@ -102,11 +103,7 @@ class _LoginScreenState extends State<LoginScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text(context.l10n.choseAnAccount, style: const TextStyle(fontWeight: FontWeight.bold)),
-        centerTitle: true,
-      ),
-
+      appBar: AppBarWidget(title: context.l10n.choseAnAccount, backButton: false),
       body: _buildBody(),
     );
   }

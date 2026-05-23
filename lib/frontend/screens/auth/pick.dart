@@ -1,3 +1,5 @@
+import "package:antinote_app/frontend/extensions/l10n.dart";
+import "package:antinote_app/frontend/widgets/customs/app_bar.dart";
 import "package:flutter/material.dart";
 
 class LoginPickScreen extends StatelessWidget {
@@ -5,6 +7,6 @@ class LoginPickScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const Placeholder();
+    return Scaffold(appBar: AppBarWidget(title: context.l10n.choseAnAccount));
   }
 }
