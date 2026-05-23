@@ -37,10 +37,10 @@ class _AppState extends State<App> {
 
       title: "ANTINOTE",
 
-      theme: theme.light(),
-      darkTheme: theme.dark(),
-      highContrastTheme: theme.lightHighContrast(),
       highContrastDarkTheme: theme.darkHighContrast(),
+      highContrastTheme: theme.lightHighContrast(),
+      darkTheme: theme.dark(),
+      theme: theme.light(),
 
       routerConfig: _router,
 
