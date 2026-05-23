@@ -7,15 +7,15 @@ import "package:antinote_app/frontend/screens/auth/login.dart";
 import "package:antinote_app/frontend/screens/auth/search/school.dart";
 import "package:antinote_app/frontend/screens/auth/search/select.dart";
 import "package:antinote_app/frontend/screens/auth/search/webview.dart";
-import "package:antinote_app/frontend/screens/home.dart";
+import "package:antinote_app/frontend/screens/shell/shell.dart";
 import "package:go_router/go_router.dart";
 
-GoRouter makeRouter({String initialLocation = Routes.home}) => GoRouter(
+GoRouter makeRouter({String initialLocation = Routes.appShell}) => GoRouter(
   initialLocation: initialLocation,
   navigatorKey: App.navigatorKey,
 
   routes: [
-    GoRoute(path: Routes.home, builder: (_, _) => const HomeScreen()),
+    GoRoute(path: Routes.appShell, builder: (_, _) => const AppShell()),
 
     GoRoute(path: Routes.auth.login, builder: (_, _) => const LoginScreen()),
     GoRoute(path: Routes.auth.pick, builder: (_, _) => const LoginPickScreen()),

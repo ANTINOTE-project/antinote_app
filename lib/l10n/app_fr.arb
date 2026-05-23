@@ -34,5 +34,17 @@
   "@loginSelect": {},
 
   "loginWebview": "Connecte toi à ton compte",
-  "@loginWebview": {}
+  "@loginWebview": {},
+
+  "home": "Accueil",
+  "@home": {},
+
+  "timetable": "Cours",
+  "@timetable": {},
+
+  "grades": "Notes",
+  "@grades": {},
+  
+  "communication": "Communication",
+  "@communication": {}
 }

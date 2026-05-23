@@ -171,6 +171,30 @@ abstract class AppLocalizations {
   /// In fr, this message translates to:
   /// **'Connecte toi à ton compte'**
   String get loginWebview;
+
+  /// No description provided for @home.
+  ///
+  /// In fr, this message translates to:
+  /// **'Accueil'**
+  String get home;
+
+  /// No description provided for @timetable.
+  ///
+  /// In fr, this message translates to:
+  /// **'Cours'**
+  String get timetable;
+
+  /// No description provided for @grades.
+  ///
+  /// In fr, this message translates to:
+  /// **'Notes'**
+  String get grades;
+
+  /// No description provided for @communication.
+  ///
+  /// In fr, this message translates to:
+  /// **'Communication'**
+  String get communication;
 }
 
 class _AppLocalizationsDelegate

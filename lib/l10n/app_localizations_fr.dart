@@ -48,4 +48,16 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get loginWebview => 'Connecte toi à ton compte';
+
+  @override
+  String get home => 'Accueil';
+
+  @override
+  String get timetable => 'Cours';
+
+  @override
+  String get grades => 'Notes';
+
+  @override
+  String get communication => 'Communication';
 }
