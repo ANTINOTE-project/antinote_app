@@ -20,5 +20,5 @@ class _SearchRoute {
 
   String get city => "/auth/search/city";
   String get school => "/auth/search/school";
-  String get credentials => "/auth/search/credentials";
+  String get webview => "/auth/search/webview";
 }

@@ -57,8 +57,8 @@ class LoginPickScreen extends StatelessWidget with WidgetsBindingObserver {
             context: context,
 
             icon: HugeIconsSolid.passwordValidation,
-            title: context.l10n.loginSearch,
-            subtitle: context.l10n.loginSearchSubtitle,
+            title: context.l10n.loginCity,
+            subtitle: context.l10n.loginCitySubtitle,
 
             onPressed: () async {
               await sendResultIfLoggedIn(context, context.push(Routes.auth.search.city));

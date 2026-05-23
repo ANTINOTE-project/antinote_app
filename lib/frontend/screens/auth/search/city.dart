@@ -125,7 +125,7 @@ class _LoginSearchCityScreenState extends State<LoginSearchCityScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBarWidget(title: context.l10n.loginSearch),
+      appBar: AppBarWidget(title: context.l10n.loginCity),
 
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -136,7 +136,7 @@ class _LoginSearchCityScreenState extends State<LoginSearchCityScreen> {
 
             child: FieldWidget(
               controller: _controller,
-              hintText: context.l10n.loginSearchSubtitle,
+              hintText: context.l10n.loginCitySubtitle,
               onChanged: (_) => _onQueryChanged(),
             ),
           ),

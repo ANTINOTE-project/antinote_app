@@ -142,17 +142,29 @@ abstract class AppLocalizations {
   /// **'Scanne un QR code depuis un ordinateur déjà connecté à PRONOTE'**
   String get loginQrCodeSubtitle;
 
-  /// No description provided for @loginSearch.
+  /// No description provided for @loginCity.
   ///
   /// In fr, this message translates to:
   /// **'Recherche ta ville'**
-  String get loginSearch;
+  String get loginCity;
 
-  /// No description provided for @loginSearchSubtitle.
+  /// No description provided for @loginCitySubtitle.
   ///
   /// In fr, this message translates to:
   /// **'Entre le nom de ta ville et choisis ton établissement'**
-  String get loginSearchSubtitle;
+  String get loginCitySubtitle;
+
+  /// No description provided for @loginSchool.
+  ///
+  /// In fr, this message translates to:
+  /// **'Choisis ton établissement'**
+  String get loginSchool;
+
+  /// No description provided for @loginWebview.
+  ///
+  /// In fr, this message translates to:
+  /// **'Connecte toi à ton compte'**
+  String get loginWebview;
 }
 
 class _AppLocalizationsDelegate
