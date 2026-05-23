@@ -49,7 +49,7 @@ class _MainAppState extends State<MainApp> {
           }
         },
 
-        child: App(initialLocation: kDebugMode ? Routes.auth.login : Routes.home),
+        child: const App(initialLocation: Routes.home),
       ),
     );
   }
