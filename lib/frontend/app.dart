@@ -29,31 +29,26 @@ class _AppState extends State<App> {
   Widget build(BuildContext context) {
     const theme = MaterialTheme();
 
-    return CardTheme(
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.all(Radius.circular(20)),
-      ),
-      child: MaterialApp.router(
-        debugShowCheckedModeBanner: false,
+    return MaterialApp.router(
+      debugShowCheckedModeBanner: false,
 
-        title: "ANTINOTE",
+      title: "ANTINOTE",
 
-        highContrastDarkTheme: theme.darkHighContrast(),
-        highContrastTheme: theme.lightHighContrast(),
-        darkTheme: theme.dark(),
-        theme: theme.light(),
+      highContrastDarkTheme: theme.darkHighContrast(),
+      highContrastTheme: theme.lightHighContrast(),
+      darkTheme: theme.dark(),
+      theme: theme.light(),
 
-        routerConfig: _router,
+      routerConfig: _router,
 
-        localizationsDelegates: const [
-          AppLocalizations.delegate,
-          GlobalMaterialLocalizations.delegate,
-          GlobalWidgetsLocalizations.delegate,
-          GlobalCupertinoLocalizations.delegate,
-        ],
+      localizationsDelegates: const [
+        AppLocalizations.delegate,
+        GlobalMaterialLocalizations.delegate,
+        GlobalWidgetsLocalizations.delegate,
+        GlobalCupertinoLocalizations.delegate,
+      ],
 
-        supportedLocales: AppLocalizations.supportedLocales,
-      ),
+      supportedLocales: AppLocalizations.supportedLocales,
     );
   }
 }
