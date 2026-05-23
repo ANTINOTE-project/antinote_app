@@ -1,4 +1,3 @@
-import "package:antinote_app/frontend/app.dart";
 import "package:antinote_app/frontend/extensions/colors.dart";
 import "package:flutter/material.dart";
 
@@ -39,7 +38,10 @@ class FieldWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      decoration: BoxDecoration(color: context.c.surfaceContainer, borderRadius: App.borderRadius),
+      decoration: BoxDecoration(
+        color: context.c.surfaceContainer,
+        borderRadius: const BorderRadius.all(Radius.circular(20)),
+      ),
 
       child: TextField(
         controller: controller,

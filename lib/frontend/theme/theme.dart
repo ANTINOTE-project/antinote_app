@@ -1,4 +1,3 @@
-import "package:antinote_app/frontend/app.dart";
 import "package:flutter/material.dart";
 
 class MaterialTheme {
@@ -332,26 +331,48 @@ class MaterialTheme {
     useMaterial3: true,
     colorScheme: colorScheme,
     textTheme: const TextTheme().apply(
-      fontFamily: App.fontFamily,
+      fontFamily: "SN Pro",
       bodyColor: colorScheme.onSurface,
       displayColor: colorScheme.onSurface,
     ),
     scaffoldBackgroundColor: colorScheme.surface,
     canvasColor: colorScheme.surface,
 
-    cardTheme: const CardThemeData(shape: RoundedRectangleBorder(borderRadius: App.borderRadius)),
-    dialogTheme: const DialogThemeData(shape: RoundedRectangleBorder(borderRadius: App.borderRadius)),
+    cardTheme: const CardThemeData(
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.all(Radius.circular(20)),
+      ),
+    ),
+    dialogTheme: const DialogThemeData(
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.all(Radius.circular(20)),
+      ),
+    ),
     inputDecorationTheme: const InputDecorationTheme(
-      border: OutlineInputBorder(borderRadius: App.borderRadius),
+      border: OutlineInputBorder(
+        borderRadius: BorderRadius.all(Radius.circular(20)),
+      ),
     ),
     filledButtonTheme: FilledButtonThemeData(
-      style: FilledButton.styleFrom(shape: const RoundedRectangleBorder(borderRadius: App.borderRadius)),
+      style: FilledButton.styleFrom(
+        shape: const RoundedRectangleBorder(
+          borderRadius: BorderRadius.all(Radius.circular(20)),
+        ),
+      ),
     ),
     outlinedButtonTheme: OutlinedButtonThemeData(
-      style: OutlinedButton.styleFrom(shape: const RoundedRectangleBorder(borderRadius: App.borderRadius)),
+      style: OutlinedButton.styleFrom(
+        shape: const RoundedRectangleBorder(
+          borderRadius: BorderRadius.all(Radius.circular(20)),
+        ),
+      ),
     ),
     textButtonTheme: TextButtonThemeData(
-      style: TextButton.styleFrom(shape: const RoundedRectangleBorder(borderRadius: App.borderRadius)),
+      style: TextButton.styleFrom(
+        shape: const RoundedRectangleBorder(
+          borderRadius: BorderRadius.all(Radius.circular(20)),
+        ),
+      ),
     ),
   );
 

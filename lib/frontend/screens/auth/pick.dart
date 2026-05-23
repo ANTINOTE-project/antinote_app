@@ -2,7 +2,6 @@ import "dart:async";
 
 import "package:antinote/antinote.dart";
 import "package:antinote_app/backend/src/helpers/antinote_account.dart";
-import "package:antinote_app/frontend/app.dart";
 import "package:antinote_app/frontend/extensions/account_storage.dart";
 import "package:antinote_app/frontend/extensions/colors.dart";
 import "package:antinote_app/frontend/extensions/l10n.dart";
@@ -104,7 +103,7 @@ class LoginPickScreen extends StatelessWidget with WidgetsBindingObserver {
       child: Container(
         decoration: BoxDecoration(
           color: context.c.surfaceContainerHigh,
-          borderRadius: App.borderRadius,
+          borderRadius: const BorderRadius.all(Radius.circular(20)),
         ),
         padding: const EdgeInsets.all(16),
 

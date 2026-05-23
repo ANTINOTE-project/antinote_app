@@ -1,18 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="5f924ac6-083e-424a-ad80-97e74bfe416b" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/Dart_SDK.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/libraries/Dart_SDK.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/runConfigurations/main_dart.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/runConfigurations/main_dart.xml" afterDir="false" />
+    <list default="true" id="5f924ac6-083e-424a-ad80-97e74bfe416b" name="Changes" comment="Moved to custom scroll view">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/antinote_app.iml" beforeDir="false" afterPath="$PROJECT_DIR$/antinote_app.iml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/lib/frontend/app.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/frontend/app.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/frontend/screens/auth/login.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/frontend/screens/auth/login.dart" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/lib/frontend/screens/auth/pick.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/frontend/screens/auth/pick.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/frontend/widgets/account.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/frontend/widgets/account.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/frontend/widgets/customs/app_bar.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/frontend/widgets/customs/app_bar.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/frontend/widgets/pressable.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/frontend/widgets/pressable.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/utils.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/utils.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/frontend/theme/theme.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/frontend/theme/theme.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/frontend/widgets/customs/button.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/frontend/widgets/customs/button.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/frontend/widgets/customs/field.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/frontend/widgets/customs/field.dart" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -80,8 +75,17 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1779555441619</updated>
-      <workItem from="1779555442702" duration="2876000" />
+      <workItem from="1779555442702" duration="3670000" />
     </task>
+    <task id="LOCAL-00001" summary="Moved to custom scroll view">
+      <option name="closed" value="true" />
+      <created>1779558540729</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1779558540729</updated>
+    </task>
+    <option name="localTasksCounter" value="2" />
     <servers />
   </component>
   <component name="ToolWindowManager">
@@ -115,5 +119,9 @@
         </entry>
       </map>
     </option>
+  </component>
+  <component name="VcsManagerConfiguration">
+    <MESSAGE value="Moved to custom scroll view" />
+    <option name="LAST_COMMIT_MESSAGE" value="Moved to custom scroll view" />
   </component>
 </project>
