@@ -65,6 +65,7 @@ class LoginPickScreen extends StatelessWidget with WidgetsBindingObserver {
             },
           ),
 
+          // TODO add qr code login
           // _buildOption(
           //   context: context,
 
