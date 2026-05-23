@@ -138,14 +138,17 @@ class _LoginScreenState extends State<LoginScreen> {
 
                 onRemoveDefault: () async {
                   await context.as.setDefault(null);
+                  await _popLoad();
                 },
 
                 onSetDefault: () async {
                   await context.as.setDefault(account.uid);
+                  await _popLoad();
                 },
 
                 onDelete: () async {
                   await context.as.deleteAccount(account.uid);
+                  await _popLoad();
                 },
               );
             },
