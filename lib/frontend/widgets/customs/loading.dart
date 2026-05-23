@@ -11,7 +11,7 @@ class LoadingWidget extends StatelessWidget {
     return SizedBox(
       width: size,
       height: size,
-      child: CircularProgressIndicator(color: AppTheme.onSurface, strokeWidth: size / 7),
+      child: CircularProgressIndicator(color: AppTheme.primary, strokeWidth: size / 7),
     );
   }
 }

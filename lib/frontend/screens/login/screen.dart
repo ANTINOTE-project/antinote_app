@@ -1,11 +1,15 @@
 import "package:antinote_app/frontend/extensions/account_storage.dart";
 import "package:antinote_app/frontend/extensions/l10n.dart";
+import "package:antinote_app/frontend/routing/routes.dart";
 import "package:antinote_app/frontend/widgets/account.dart";
+import "package:antinote_app/frontend/widgets/customs/button.dart";
 import "package:antinote_app/frontend/widgets/customs/loading.dart";
 import "package:antinote_app/protos/account.pb.dart";
 import "package:antinote_app/utils.dart";
 import "package:flutter/material.dart";
+import "package:flutter/rendering.dart";
 import "package:go_router/go_router.dart";
+import "package:hugeicons_pro/hugeicons.dart";
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -20,7 +24,7 @@ class _LoginScreenState extends State<LoginScreen> {
   String? _defaultAccountUid;
   String? _loggingAccountUid;
 
-  final bool _finishedLogin = false;
+  bool _finishedLogin = false;
   bool _loaded = false;
 
   Future<void> _load() async {
@@ -51,10 +55,19 @@ class _LoginScreenState extends State<LoginScreen> {
     }
   }
 
+  Future<void> _popLoad() async {
+    context.pop();
+    await _load();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text(context.l10n.choseAnAccount)),
+      appBar: AppBar(
+        title: Text(context.l10n.choseAnAccount, style: const TextStyle(fontWeight: FontWeight.bold)),
+        centerTitle: true,
+      ),
+
       body: _buildBody(),
     );
   }
@@ -70,47 +83,74 @@ class _LoginScreenState extends State<LoginScreen> {
   Widget _buildList() {
     final accounts = Utils.guard(_accounts);
 
-    return ListView.builder(
-      padding: const EdgeInsets.symmetric(horizontal: 12),
-      itemCount: accounts.length,
+    return Stack(
+      children: [
+        ListView.builder(
+          padding: const EdgeInsets.only(left: 12, right: 12, bottom: 70),
 
-      itemBuilder: (_, index) {
-        final account = accounts[index];
+          addAutomaticKeepAlives: false,
+          addRepaintBoundaries: false,
 
-        return AccountWidget(
-          account: account,
+          scrollCacheExtent: const ScrollCacheExtent.pixels(500),
 
-          isLoggingIn: _loggingAccountUid == account.uid,
-          isDefault: _defaultAccountUid == account.uid,
+          itemCount: accounts.length,
+          itemExtent: 98,
 
-          onRemoveDefault: () async {
-            await context.AS.setDefault(null);
+          itemBuilder: (_, index) {
+            final account = accounts[index];
 
-            if (mounted) {
-              context.pop();
-              _load();
-            }
+            return AccountWidget(
+              key: ValueKey(account.uid),
+              account: account,
+
+              isLoggingIn: _loggingAccountUid == account.uid,
+              isDefault: _defaultAccountUid == account.uid,
+
+              onRemoveDefault: () async {
+                await context.AS.setDefault(null);
+                if (mounted) await _popLoad();
+              },
+
+              onSetDefault: () async {
+                await context.AS.setDefault(account.uid);
+                if (mounted) await _popLoad();
+              },
+
+              onDelete: () async {
+                await context.AS.deleteAccount(account.uid);
+                if (mounted) await _popLoad();
+              },
+            );
           },
+        ),
 
-          onSetDefault: () async {
-            await context.AS.setDefault(account.uid);
+        Align(
+          alignment: Alignment.bottomCenter,
 
-            if (mounted) {
-              context.pop();
-              _load();
-            }
-          },
+          child: SafeArea(
+            child: Padding(
+              padding: const EdgeInsets.only(left: 12, right: 12, bottom: 12),
 
-          onDelete: () async {
-            await context.AS.deleteAccount(account.uid);
+              child: ButtonWidget(
+                onPressed: () async {
+                  final result = await context.push(Routes.auth.pick);
 
-            if (mounted) {
-              context.pop();
-              _load();
-            }
-          },
-        );
-      },
+                  if (result != null) {
+                    setState(() {
+                      _finishedLogin = true;
+                    });
+
+                    if (mounted) await _popLoad();
+                  }
+                },
+
+                icon: HugeIconsSolid.add02,
+                label: context.l10n.addAnAccount,
+              ),
+            ),
+          ),
+        ),
+      ],
     );
   }
 }

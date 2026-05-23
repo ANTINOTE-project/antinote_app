@@ -106,11 +106,29 @@ abstract class AppLocalizations {
   /// **'Choisir un compte'**
   String get choseAnAccount;
 
+  /// No description provided for @addAnAccount.
+  ///
+  /// In fr, this message translates to:
+  /// **'Ajouter un compte'**
+  String get addAnAccount;
+
   /// No description provided for @delete.
   ///
   /// In fr, this message translates to:
   /// **'Supprimer'**
   String get delete;
+
+  /// No description provided for @disableAutoLogin.
+  ///
+  /// In fr, this message translates to:
+  /// **'Désactiver la connexion automatique'**
+  String get disableAutoLogin;
+
+  /// No description provided for @enableAutoLogin.
+  ///
+  /// In fr, this message translates to:
+  /// **'Activer la connexion automatique'**
+  String get enableAutoLogin;
 }
 
 class _AppLocalizationsDelegate

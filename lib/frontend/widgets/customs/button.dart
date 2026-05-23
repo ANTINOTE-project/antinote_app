@@ -47,7 +47,11 @@ class ButtonWidget extends StatelessWidget {
   }
 
   Color _getTextColor(BuildContext context) {
-    return isEnabled ? AppTheme.onPrimary : AppTheme.outline;
+    return switch ((isEnabled, isDangerous)) {
+      (false, _) => AppTheme.outline,
+      (_, true) => AppTheme.error,
+      _ => AppTheme.onPrimary,
+    };
   }
 
   @override

@@ -15,5 +15,14 @@ class AppLocalizationsFr extends AppLocalizations {
   String get choseAnAccount => 'Choisir un compte';
 
   @override
+  String get addAnAccount => 'Ajouter un compte';
+
+  @override
   String get delete => 'Supprimer';
+
+  @override
+  String get disableAutoLogin => 'Désactiver la connexion automatique';
+
+  @override
+  String get enableAutoLogin => 'Activer la connexion automatique';
 }

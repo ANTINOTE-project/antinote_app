@@ -1,9 +1,19 @@
 {
   "@@locale": "fr",
+  
   "appTitle": "ANTINOTE",
   "@appTitle": {},
+
   "choseAnAccount": "Choisir un compte",
   "@choseAnAccount": {},
+  "addAnAccount": "Ajouter un compte",
+  "@addAnAccount": {},
+  
   "delete": "Supprimer",
-  "@delete": {}
+  "@delete": {},
+
+  "disableAutoLogin": "Désactiver la connexion automatique",
+  "@disableAutoLogin": {},
+  "enableAutoLogin": "Activer la connexion automatique",
+  "@enableAutoLogin": {}
 }

@@ -42,17 +42,9 @@ class AccountWidget extends StatelessWidget {
 
         children: [
           if (isDefault)
-            ButtonWidget(
-              onPressed: () => onRemoveDefault(),
-              icon: HugeIconsSolid.starOff,
-              label: "Retirer par défaut",
-            )
+            ButtonWidget(onPressed: () => onRemoveDefault(), label: context.l10n.disableAutoLogin)
           else
-            ButtonWidget(
-              onPressed: () => onSetDefault(),
-              icon: HugeIconsSolid.star,
-              label: "Définir par défaut",
-            ),
+            ButtonWidget(onPressed: () => onSetDefault(), label: context.l10n.enableAutoLogin),
 
           ButtonWidget(
             onPressed: () => onDelete(),
@@ -70,55 +62,11 @@ class AccountWidget extends StatelessWidget {
     return Pressable(
       child: Container(
         decoration: const BoxDecoration(color: AppTheme.surfaceContainerHigh, borderRadius: App.borderRadius),
+
         padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+        margin: const EdgeInsets.only(bottom: 8),
 
-        height: 110,
-
-        child: Row(
-          spacing: 16,
-          children: [
-            _buildLeading(),
-
-            Expanded(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                crossAxisAlignment: CrossAxisAlignment.start,
-
-                children: [
-                  const Spacer(),
-
-                  Text(
-                    account.name,
-                    style: const TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
-                    overflow: TextOverflow.ellipsis,
-                  ),
-
-                  const Spacer(flex: 3),
-
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-
-                    children: [
-                      Text(
-                        account.establishmentName,
-                        style: const TextStyle(fontWeight: FontWeight.w500, color: AppTheme.onSurfaceVariant),
-                        overflow: TextOverflow.ellipsis,
-                      ),
-
-                      Text(
-                        account.workspaceName,
-                        style: const TextStyle(color: AppTheme.outline),
-                        overflow: TextOverflow.ellipsis,
-                      ),
-                    ],
-                  ),
-                ],
-              ),
-            ),
-
-            _buildTrailing(context),
-          ],
-        ),
+        child: Row(spacing: 16, children: [_buildLeading(), _buildBody(), _buildTrailing(context)]),
       ),
     );
   }
@@ -128,7 +76,7 @@ class AccountWidget extends StatelessWidget {
   }
 
   Widget _buildLeadingLoading() {
-    return const LoadingWidget(size: 20);
+    return const LoadingWidget(size: 26);
   }
 
   Widget _buildLeadingIcon() {
@@ -137,6 +85,45 @@ class AccountWidget extends StatelessWidget {
       iconOn: HugeIconsSolid.star,
       iconOff: HugeIconsSolid.userAccount,
       value: isDefault,
+    );
+  }
+
+  Widget _buildBody() {
+    return Expanded(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        crossAxisAlignment: CrossAxisAlignment.start,
+
+        children: [
+          const Spacer(),
+
+          Text(
+            account.name,
+            style: const TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
+            overflow: TextOverflow.ellipsis,
+          ),
+
+          const Spacer(flex: 3),
+
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+
+            children: [
+              Text(
+                account.establishmentName,
+                style: const TextStyle(fontWeight: FontWeight.w500, color: AppTheme.onSurfaceVariant),
+                overflow: TextOverflow.ellipsis,
+              ),
+
+              Text(
+                account.workspaceName,
+                style: const TextStyle(color: AppTheme.outline),
+                overflow: TextOverflow.ellipsis,
+              ),
+            ],
+          ),
+        ],
+      ),
     );
   }
 
