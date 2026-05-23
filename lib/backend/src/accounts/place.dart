@@ -54,8 +54,9 @@ class City {
     );
 
     try {
-      return (jsonDecode(response.body) as ListJsonNavigator<MapJsonNavigator>)
-          .mapL((e) => e.asCity());
+      return (jsonDecode(response.body) as ListJsonNavigator)
+          .cast<MapJsonNavigator>()
+          .mapL((e) => (e).asCity());
     } catch (_) {
       return [];
     }
