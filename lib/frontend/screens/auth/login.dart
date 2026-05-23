@@ -8,9 +8,7 @@ import "package:antinote_app/frontend/widgets/customs/button.dart";
 import "package:antinote_app/frontend/widgets/customs/loading.dart";
 import "package:antinote_app/main.dart";
 import "package:antinote_app/protos/account.pb.dart";
-import "package:antinote_app/utils.dart";
 import "package:flutter/material.dart";
-import "package:flutter/rendering.dart";
 import "package:go_router/go_router.dart";
 import "package:hugeicons_pro/hugeicons.dart";
 
@@ -87,8 +85,6 @@ class _LoginScreenState extends State<LoginScreen> {
       );
 
       if (mounted) await _popLoad();
-
-      // catch
     } catch (e, st) {
       talker.error("Something happened during login", e, st);
 
@@ -103,8 +99,13 @@ class _LoginScreenState extends State<LoginScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBarWidget(title: context.l10n.choseAnAccount, backButton: false),
+      appBar: AppBarWidget(
+        title: context.l10n.choseAnAccount,
+        backButton: false,
+      ),
       body: _buildBody(),
+      floatingActionButton: _buildAddButton(),
+      floatingActionButtonLocation: .centerFloat,
     );
   }
 
@@ -117,53 +118,38 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 
   Widget _buildList() {
-    final accounts = Utils.guard(_accounts);
+    return Padding(
+      padding: const EdgeInsets.only(left: 12, right: 12, bottom: 70),
+      child: CustomScrollView(
+        slivers: [
+          SliverList.builder(
+            itemBuilder: (context, index) {
+              final account = _accounts?[index];
 
-    return Stack(
-      children: [
-        ListView.builder(
-          padding: const EdgeInsets.only(left: 12, right: 12, bottom: 70),
+              if (account == null) return null;
 
-          addAutomaticKeepAlives: false,
-          addRepaintBoundaries: false,
+              return AccountWidget(
+                account: account,
 
-          scrollCacheExtent: const ScrollCacheExtent.pixels(500),
+                isLoggingIn: _loggingUid == account.uid,
+                isDefault: _defaultUid == account.uid,
 
-          itemCount: accounts.length,
-          itemExtent: 98,
-
-          itemBuilder: (_, index) {
-            final account = accounts[index];
-
-            return AccountWidget(
-              key: ValueKey(account.uid),
-              account: account,
-
-              isLoggingIn: _loggingUid == account.uid,
-              isDefault: _defaultUid == account.uid,
-
-              onPressed: () => _onAccountPressed(account),
-
-              onRemoveDefault: () async {
-                await context.as.setDefault(null);
-                if (mounted) await _popLoad();
-              },
-
-              onSetDefault: () async {
-                await context.as.setDefault(account.uid);
-                if (mounted) await _popLoad();
-              },
-
-              onDelete: () async {
-                await context.as.deleteAccount(account.uid);
-                if (mounted) await _popLoad();
-              },
-            );
-          },
-        ),
-
-        _buildAddButton(),
-      ],
+                onPressed: () => _onAccountPressed(account),
+                onRemoveDefault: () async {
+                  await context.as.setDefault(null);
+                },
+                onSetDefault: () async {
+                  await context.as.setDefault(account.uid);
+                },
+                onDelete: () async {
+                  await context.as.deleteAccount(account.uid);
+                },
+              );
+            },
+            itemCount: _accounts?.length,
+          ),
+        ],
+      ),
     );
   }
 

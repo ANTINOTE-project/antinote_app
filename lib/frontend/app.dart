@@ -1,8 +1,8 @@
 import "package:antinote_app/frontend/routing/router.dart";
 import "package:antinote_app/frontend/theme/theme.dart";
 import "package:antinote_app/l10n/app_localizations.dart";
-import "package:flutter_localizations/flutter_localizations.dart";
 import "package:flutter/material.dart";
+import "package:flutter_localizations/flutter_localizations.dart";
 import "package:go_router/go_router.dart";
 
 class App extends StatefulWidget {
@@ -12,7 +12,9 @@ class App extends StatefulWidget {
 
   static final navigatorKey = GlobalKey<NavigatorState>();
 
-  static const BorderRadiusGeometry borderRadius = BorderRadius.all(Radius.circular(20));
+  static const BorderRadiusGeometry borderRadius = BorderRadius.all(
+    Radius.circular(20),
+  );
   static const String fontFamily = "SNPro";
 
   @override
@@ -52,7 +54,6 @@ class _AppState extends State<App> {
       ],
 
       supportedLocales: AppLocalizations.supportedLocales,
-      locale: const Locale("fr"),
     );
   }
 }

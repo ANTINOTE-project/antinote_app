@@ -14,10 +14,13 @@ import "package:flutter/material.dart";
 import "package:go_router/go_router.dart";
 import "package:hugeicons_pro/hugeicons.dart";
 
-class LoginPickScreen extends StatelessWidget {
+class LoginPickScreen extends StatelessWidget with WidgetsBindingObserver {
   const LoginPickScreen({super.key});
 
-  Future<void> sendResultIfLoggedIn(BuildContext context, FutureOr<Future<LoginResult>?> pushed) async {
+  Future<void> sendResultIfLoggedIn(
+    BuildContext context,
+    FutureOr<Future<LoginResult>?> pushed,
+  ) async {
     final result = await await pushed;
     if (result == null || !context.mounted) return;
 
@@ -34,6 +37,9 @@ class LoginPickScreen extends StatelessWidget {
       context.pop(result);
     }
   }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {}
 
   @override
   Widget build(BuildContext context) {
@@ -59,7 +65,10 @@ class LoginPickScreen extends StatelessWidget {
             subtitle: context.l10n.loginSearchSubtitle,
 
             onPressed: () async {
-              await sendResultIfLoggedIn(context, context.push(Routes.auth.password.search));
+              await sendResultIfLoggedIn(
+                context,
+                context.push(Routes.auth.password.search),
+              );
             },
           ),
 
@@ -71,7 +80,10 @@ class LoginPickScreen extends StatelessWidget {
             subtitle: context.l10n.loginQrCodeSubtitle,
 
             onPressed: () async {
-              await sendResultIfLoggedIn(context, context.push(Routes.auth.qrCode));
+              await sendResultIfLoggedIn(
+                context,
+                context.push(Routes.auth.qrCode),
+              );
             },
           ),
         ],
@@ -90,7 +102,10 @@ class LoginPickScreen extends StatelessWidget {
       onPressed: onPressed,
 
       child: Container(
-        decoration: BoxDecoration(color: context.c.surfaceContainerHigh, borderRadius: App.borderRadius),
+        decoration: BoxDecoration(
+          color: context.c.surfaceContainerHigh,
+          borderRadius: App.borderRadius,
+        ),
         padding: const EdgeInsets.all(16),
 
         child: Row(
@@ -103,13 +118,25 @@ class LoginPickScreen extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(title, style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
-                  Text(subtitle, style: TextStyle(color: context.c.onSurfaceVariant)),
+                  Text(
+                    title,
+                    style: const TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  Text(
+                    subtitle,
+                    style: TextStyle(color: context.c.onSurfaceVariant),
+                  ),
                 ],
               ),
             ),
 
-            Icon(HugeIconsSolid.arrowRight01, color: context.c.onSurfaceVariant),
+            Icon(
+              HugeIconsSolid.arrowRight01,
+              color: context.c.onSurfaceVariant,
+            ),
           ],
         ),
       ),

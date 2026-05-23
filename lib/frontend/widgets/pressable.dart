@@ -1,12 +1,11 @@
-import "package:antinote_app/utils.dart";
 import "package:flutter/material.dart";
 import "package:vibration/vibration.dart";
 
 class Pressable extends StatefulWidget {
   final Widget child;
 
-  final VoidCallback onPressed;
-  final VoidCallback onLongPress;
+  final VoidCallback? onPressed;
+  final VoidCallback? onLongPress;
 
   final bool hasFeedback;
   final bool hasAnimation;
@@ -19,8 +18,8 @@ class Pressable extends StatefulWidget {
 
     required this.child,
 
-    this.onPressed = Utils.noop,
-    this.onLongPress = Utils.noop,
+    this.onPressed,
+    this.onLongPress,
 
     this.hasFeedback = true,
     this.hasAnimation = true,
@@ -33,7 +32,8 @@ class Pressable extends StatefulWidget {
   State<Pressable> createState() => _PressableState();
 }
 
-class _PressableState extends State<Pressable> with SingleTickerProviderStateMixin {
+class _PressableState extends State<Pressable>
+    with SingleTickerProviderStateMixin {
   late AnimationController _controller;
   late Animation<double> _scale;
 
@@ -61,7 +61,7 @@ class _PressableState extends State<Pressable> with SingleTickerProviderStateMix
 
   void _onTap() async {
     await Future.delayed(const Duration(milliseconds: 50));
-    widget.onPressed.call();
+    widget.onPressed?.call();
   }
 
   void _onTapDown() async {
@@ -89,7 +89,7 @@ class _PressableState extends State<Pressable> with SingleTickerProviderStateMix
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: _onTap,
+      onTap: widget.onPressed == null ? null : _onTap,
       onTapDown: (_) => _onTapDown(),
       onTapUp: (_) => _onTapUp(),
       onTapCancel: _onTapUp,

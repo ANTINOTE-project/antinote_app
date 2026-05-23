@@ -8,7 +8,12 @@ class AppBarWidget extends StatelessWidget implements PreferredSizeWidget {
   final bool backButton;
   final List<Widget> actions;
 
-  const AppBarWidget({super.key, required this.title, this.backButton = true, this.actions = const []});
+  const AppBarWidget({
+    super.key,
+    required this.title,
+    this.backButton = true,
+    this.actions = const [],
+  });
 
   @override
   Size get preferredSize => const Size.fromHeight(kToolbarHeight);
@@ -16,7 +21,10 @@ class AppBarWidget extends StatelessWidget implements PreferredSizeWidget {
   @override
   Widget build(BuildContext context) {
     final leading = backButton
-        ? Pressable(onPressed: context.pop, child: const Icon(HugeIconsSolid.arrowLeft01))
+        ? Pressable(
+            onPressed: context.pop,
+            child: const Icon(HugeIconsSolid.arrowLeft01),
+          )
         : null;
 
     return AppBar(
