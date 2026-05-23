@@ -26,7 +26,6 @@ dependencies:
   talker: ^5.1.17
   uuid: ^4.5.3
   vibration: ^3.1.8
-  geolocator: ^14.0.1
   http: ^1.6.0
   webview_flutter: ^4.13.1
 
