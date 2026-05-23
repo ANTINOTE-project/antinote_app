@@ -99,11 +99,10 @@ class _LoginScreenState extends State<LoginScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBarWidget(
-        title: context.l10n.choseAnAccount,
-        backButton: false,
-      ),
+      appBar: AppBarWidget(title: context.l10n.choseAnAccount, backButton: false),
+
       body: _buildBody(),
+
       floatingActionButton: _buildAddButton(),
       floatingActionButtonLocation: .centerFloat,
     );
@@ -120,12 +119,13 @@ class _LoginScreenState extends State<LoginScreen> {
   Widget _buildList() {
     return Padding(
       padding: const EdgeInsets.only(left: 12, right: 12, bottom: 70),
+
       child: CustomScrollView(
         slivers: [
           SliverList.builder(
+            itemCount: _accounts?.length,
             itemBuilder: (context, index) {
               final account = _accounts?[index];
-
               if (account == null) return null;
 
               return AccountWidget(
@@ -135,18 +135,20 @@ class _LoginScreenState extends State<LoginScreen> {
                 isDefault: _defaultUid == account.uid,
 
                 onPressed: () => _onAccountPressed(account),
+
                 onRemoveDefault: () async {
                   await context.as.setDefault(null);
                 },
+
                 onSetDefault: () async {
                   await context.as.setDefault(account.uid);
                 },
+
                 onDelete: () async {
                   await context.as.deleteAccount(account.uid);
                 },
               );
             },
-            itemCount: _accounts?.length,
           ),
         ],
       ),
