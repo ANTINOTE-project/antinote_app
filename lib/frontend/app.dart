@@ -30,11 +30,17 @@ class _AppState extends State<App> {
 
   @override
   Widget build(BuildContext context) {
+    const theme = MaterialTheme();
+
     return MaterialApp.router(
       debugShowCheckedModeBanner: false,
 
       title: "ANTINOTE",
-      theme: buildTheme(),
+
+      theme: theme.light(),
+      darkTheme: theme.dark(),
+      highContrastTheme: theme.lightHighContrast(),
+      highContrastDarkTheme: theme.darkHighContrast(),
 
       routerConfig: _router,
 

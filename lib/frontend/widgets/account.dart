@@ -1,6 +1,6 @@
 import "package:antinote_app/frontend/app.dart";
+import "package:antinote_app/frontend/extensions/colors.dart";
 import "package:antinote_app/frontend/extensions/l10n.dart";
-import "package:antinote_app/frontend/theme/app.dart";
 import "package:antinote_app/frontend/widgets/animated/icon.dart";
 import "package:antinote_app/frontend/widgets/customs/button.dart";
 import "package:antinote_app/frontend/widgets/customs/loading.dart";
@@ -66,12 +66,12 @@ class AccountWidget extends StatelessWidget {
       onPressed: onPressed,
 
       child: Container(
-        decoration: const BoxDecoration(color: AppTheme.surfaceContainerHigh, borderRadius: App.borderRadius),
+        decoration: BoxDecoration(color: context.c.surfaceContainerHigh, borderRadius: App.borderRadius),
 
         padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
         margin: const EdgeInsets.only(bottom: 8),
 
-        child: Row(spacing: 16, children: [_buildLeading(), _buildBody(), _buildTrailing(context)]),
+        child: Row(spacing: 16, children: [_buildLeading(), _buildBody(context), _buildTrailing(context)]),
       ),
     );
   }
@@ -93,7 +93,7 @@ class AccountWidget extends StatelessWidget {
     );
   }
 
-  Widget _buildBody() {
+  Widget _buildBody(BuildContext context) {
     return Expanded(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -116,13 +116,13 @@ class AccountWidget extends StatelessWidget {
             children: [
               Text(
                 account.establishmentName,
-                style: const TextStyle(fontWeight: FontWeight.w500, color: AppTheme.onSurfaceVariant),
+                style: TextStyle(fontWeight: FontWeight.w500, color: context.c.onSurfaceVariant),
                 overflow: TextOverflow.ellipsis,
               ),
 
               Text(
                 account.workspaceName,
-                style: const TextStyle(color: AppTheme.outline),
+                style: TextStyle(color: context.c.outline),
                 overflow: TextOverflow.ellipsis,
               ),
             ],
@@ -136,6 +136,6 @@ class AccountWidget extends StatelessWidget {
     onPressed: () => _openMenu(context),
     behavior: HitTestBehavior.opaque,
 
-    child: const Icon(HugeIconsSolid.moreVertical, color: AppTheme.onSurfaceVariant),
+    child: Icon(HugeIconsSolid.moreVertical, color: context.c.onSurfaceVariant),
   );
 }

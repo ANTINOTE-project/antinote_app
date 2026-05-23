@@ -1,4 +1,4 @@
-import "package:antinote_app/frontend/theme/app.dart";
+import "package:antinote_app/frontend/extensions/colors.dart";
 import "package:flutter/material.dart";
 import "package:vibration/vibration.dart";
 
@@ -66,8 +66,8 @@ class _IconWidgetState extends State<IconWidget> with SingleTickerProviderStateM
 
   @override
   Widget build(BuildContext context) {
-    final colorOn = widget.colorOn ?? AppTheme.primary;
-    final colorOff = widget.colorOff ?? AppTheme.onSurfaceVariant;
+    final colorOn = widget.colorOn ?? context.c.primary;
+    final colorOff = widget.colorOff ?? context.c.onSurfaceVariant;
 
     return FadeTransition(
       opacity: _controller,

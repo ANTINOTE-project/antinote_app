@@ -4,10 +4,10 @@ import "package:antinote/antinote.dart";
 import "package:antinote_app/backend/src/helpers/antinote_account.dart";
 import "package:antinote_app/frontend/app.dart";
 import "package:antinote_app/frontend/extensions/account_storage.dart";
+import "package:antinote_app/frontend/extensions/colors.dart";
 import "package:antinote_app/frontend/extensions/l10n.dart";
 import "package:antinote_app/frontend/extensions/session_manager.dart";
 import "package:antinote_app/frontend/routing/routes.dart";
-import "package:antinote_app/frontend/theme/app.dart";
 import "package:antinote_app/frontend/widgets/customs/app_bar.dart";
 import "package:antinote_app/frontend/widgets/pressable.dart";
 import "package:flutter/material.dart";
@@ -22,10 +22,10 @@ class LoginPickScreen extends StatelessWidget {
     if (result == null || !context.mounted) return;
 
     final account = result.refreshCredentials.asAntinoteAccount(result.session);
-    await context.AS.addAccount(account);
+    await context.as.addAccount(account);
 
     if (context.mounted) {
-      final state = context.SM.state;
+      final state = context.sm.state;
 
       state.lastSeenAccountUid = account.uid;
       state.lastSeenSession = result.session;
@@ -52,6 +52,8 @@ class LoginPickScreen extends StatelessWidget {
 
         children: [
           _buildOption(
+            context: context,
+
             icon: HugeIconsSolid.passwordValidation,
             title: context.l10n.loginSearch,
             subtitle: context.l10n.loginSearchSubtitle,
@@ -62,6 +64,8 @@ class LoginPickScreen extends StatelessWidget {
           ),
 
           _buildOption(
+            context: context,
+
             icon: HugeIconsSolid.qrCode01,
             title: context.l10n.loginQrCode,
             subtitle: context.l10n.loginQrCodeSubtitle,
@@ -76,6 +80,7 @@ class LoginPickScreen extends StatelessWidget {
   }
 
   Widget _buildOption({
+    required BuildContext context,
     required IconData icon,
     required String title,
     required String subtitle,
@@ -85,26 +90,26 @@ class LoginPickScreen extends StatelessWidget {
       onPressed: onPressed,
 
       child: Container(
-        decoration: const BoxDecoration(color: AppTheme.surfaceContainerHigh, borderRadius: App.borderRadius),
+        decoration: BoxDecoration(color: context.c.surfaceContainerHigh, borderRadius: App.borderRadius),
         padding: const EdgeInsets.all(16),
 
         child: Row(
           spacing: 16,
 
           children: [
-            Icon(icon, size: 32, color: AppTheme.primary),
+            Icon(icon, size: 32, color: context.c.primary),
 
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(title, style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
-                  Text(subtitle, style: const TextStyle(color: AppTheme.onSurfaceVariant)),
+                  Text(subtitle, style: TextStyle(color: context.c.onSurfaceVariant)),
                 ],
               ),
             ),
 
-            const Icon(HugeIconsSolid.arrowRight01, color: AppTheme.onSurfaceVariant),
+            Icon(HugeIconsSolid.arrowRight01, color: context.c.onSurfaceVariant),
           ],
         ),
       ),

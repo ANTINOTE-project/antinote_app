@@ -28,7 +28,7 @@ class SessionManager extends InheritedModel<TaskType> with WidgetsBindingObserve
   Future<String> ensureAccountUid(BuildContext context) async {
     if (state.lastSeenAccountUid != null) return state.lastSeenAccountUid!;
 
-    final defaultAccount = await context.AS.getDefaultAccount();
+    final defaultAccount = await context.as.getDefaultAccount();
 
     if (defaultAccount != null) {
       state.lastSeenAccountUid = defaultAccount.uid;
@@ -52,7 +52,7 @@ class SessionManager extends InheritedModel<TaskType> with WidgetsBindingObserve
       throw Exception("Wanted to ensure session existed but context is unmounted...");
     }
 
-    return state.ensureSession(storage: context.AS, accountUid: accountUid);
+    return state.ensureSession(storage: context.as, accountUid: accountUid);
   }
 
   static SessionManager of(BuildContext context) {
@@ -95,7 +95,7 @@ class SessionManager extends InheritedModel<TaskType> with WidgetsBindingObserve
         await ensureAccountUid(context);
       }
 
-      final as = context == null || !context.mounted ? null : context.AS;
+      final as = context == null || !context.mounted ? null : context.as;
 
       return state.runTask(
         sessionEnsurer: () {

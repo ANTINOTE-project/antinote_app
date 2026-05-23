@@ -1,5 +1,5 @@
 import "package:antinote_app/frontend/app.dart";
-import "package:antinote_app/frontend/theme/app.dart";
+import "package:antinote_app/frontend/extensions/colors.dart";
 import "package:flutter/material.dart";
 
 class FieldWidget extends StatelessWidget {
@@ -39,7 +39,7 @@ class FieldWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      decoration: const BoxDecoration(color: AppTheme.surfaceContainer, borderRadius: App.borderRadius),
+      decoration: BoxDecoration(color: context.c.surfaceContainer, borderRadius: App.borderRadius),
 
       child: TextField(
         controller: controller,
@@ -58,7 +58,7 @@ class FieldWidget extends StatelessWidget {
 
           contentPadding: const EdgeInsets.symmetric(horizontal: 16),
 
-          hintStyle: const TextStyle(color: AppTheme.onSurfaceVariant),
+          hintStyle: TextStyle(color: context.c.onSurfaceVariant),
           hintText: hintText,
           hintMaxLines: 1,
 

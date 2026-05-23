@@ -145,7 +145,7 @@ abstract class AppLocalizations {
   /// No description provided for @loginSearch.
   ///
   /// In fr, this message translates to:
-  /// **'Recherche ton établissement'**
+  /// **'Recherche ta ville'**
   String get loginSearch;
 
   /// No description provided for @loginSearchSubtitle.

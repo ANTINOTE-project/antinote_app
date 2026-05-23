@@ -1,5 +1,5 @@
 import "package:antinote_app/frontend/app.dart";
-import "package:antinote_app/frontend/theme/app.dart";
+import "package:antinote_app/frontend/extensions/colors.dart";
 import "package:antinote_app/frontend/widgets/animated/icon.dart";
 import "package:antinote_app/frontend/widgets/customs/loading.dart";
 import "package:antinote_app/frontend/widgets/pressable.dart";
@@ -39,18 +39,18 @@ class ButtonWidget extends StatelessWidget {
 
   Color _getButtonColor(BuildContext context) {
     return switch ((isEnabled, isDangerous, isSecondary)) {
-      (false, _, _) => AppTheme.onInverseSurface,
-      (_, true, _) => AppTheme.errorContainer,
-      (_, _, true) => AppTheme.surfaceContainerHigh,
-      _ => AppTheme.primary,
+      (false, _, _) => context.c.onInverseSurface,
+      (_, true, _) => context.c.errorContainer,
+      (_, _, true) => context.c.surfaceContainerHigh,
+      _ => context.c.primary,
     };
   }
 
   Color _getTextColor(BuildContext context) {
     return switch ((isEnabled, isDangerous)) {
-      (false, _) => AppTheme.outline,
-      (_, true) => AppTheme.error,
-      _ => AppTheme.onPrimary,
+      (false, _) => context.c.outline,
+      (_, true) => context.c.error,
+      _ => context.c.onPrimary,
     };
   }
 

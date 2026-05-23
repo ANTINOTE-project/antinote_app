@@ -30,10 +30,10 @@ class _LoginScreenState extends State<LoginScreen> {
   bool _loaded = false;
 
   Future<void> _load() async {
-    final accounts = await context.AS.listAccounts();
+    final accounts = await context.as.listAccounts();
 
     if (mounted) {
-      final defaultAccount = await context.AS.getDefaultAccount();
+      final defaultAccount = await context.as.getDefaultAccount();
 
       setState(() {
         _accounts = accounts;
@@ -69,7 +69,7 @@ class _LoginScreenState extends State<LoginScreen> {
       _loggingUid = account.uid;
     });
 
-    final sm = context.SM;
+    final sm = context.sm;
     final beforeUid = sm.state.lastSeenAccountUid;
 
     try {
@@ -145,17 +145,17 @@ class _LoginScreenState extends State<LoginScreen> {
               onPressed: () => _onAccountPressed(account),
 
               onRemoveDefault: () async {
-                await context.AS.setDefault(null);
+                await context.as.setDefault(null);
                 if (mounted) await _popLoad();
               },
 
               onSetDefault: () async {
-                await context.AS.setDefault(account.uid);
+                await context.as.setDefault(account.uid);
                 if (mounted) await _popLoad();
               },
 
               onDelete: () async {
-                await context.AS.deleteAccount(account.uid);
+                await context.as.deleteAccount(account.uid);
                 if (mounted) await _popLoad();
               },
             );

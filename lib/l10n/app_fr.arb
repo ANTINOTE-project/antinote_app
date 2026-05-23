@@ -22,7 +22,7 @@
   "loginQrCodeSubtitle": "Scanne un QR code depuis un ordinateur déjà connecté à PRONOTE",
   "@loginQrCodeSubtitle": {},
 
-  "loginSearch": "Recherche ton établissement",
+  "loginSearch": "Recherche ta ville",
   "@loginSearch": {},
   "loginSearchSubtitle": "Entre le nom de ta ville et choisis ton établissement",
   "@loginSearchSubtitle": {}

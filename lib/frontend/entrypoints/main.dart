@@ -3,6 +3,7 @@ import "package:antinote_app/backend/src/accounts/storage/widget.dart";
 import "package:antinote_app/frontend/app.dart";
 import "package:antinote_app/frontend/routing/routes.dart";
 import "package:antinote_app/protos/account.pb.dart";
+import "package:flutter/foundation.dart";
 import "package:flutter/material.dart";
 
 void mainEntrypoint() {
@@ -48,7 +49,7 @@ class _MainAppState extends State<MainApp> {
           }
         },
 
-        child: App(initialLocation: Routes.auth.login),
+        child: App(initialLocation: kDebugMode ? Routes.auth.login : Routes.home),
       ),
     );
   }

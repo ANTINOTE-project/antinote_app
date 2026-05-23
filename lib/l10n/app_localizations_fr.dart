@@ -34,7 +34,7 @@ class AppLocalizationsFr extends AppLocalizations {
       'Scanne un QR code depuis un ordinateur déjà connecté à PRONOTE';
 
   @override
-  String get loginSearch => 'Recherche ton établissement';
+  String get loginSearch => 'Recherche ta ville';
 
   @override
   String get loginSearchSubtitle =>
