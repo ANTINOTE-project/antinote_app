@@ -65,17 +65,17 @@ class LoginPickScreen extends StatelessWidget with WidgetsBindingObserver {
             },
           ),
 
-          _buildOption(
-            context: context,
+          // _buildOption(
+          //   context: context,
 
-            icon: HugeIconsSolid.qrCode01,
-            title: context.l10n.loginQrCode,
-            subtitle: context.l10n.loginQrCodeSubtitle,
+          //   icon: HugeIconsSolid.qrCode01,
+          //   title: context.l10n.loginQrCode,
+          //   subtitle: context.l10n.loginQrCodeSubtitle,
 
-            onPressed: () async {
-              await sendResultIfLoggedIn(context, context.push(Routes.auth.qrCode));
-            },
-          ),
+          //   onPressed: () async {
+          //     await sendResultIfLoggedIn(context, context.push(Routes.auth.qrCode));
+          //   },
+          // ),
         ],
       ),
     );
