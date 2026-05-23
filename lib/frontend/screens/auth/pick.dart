@@ -16,8 +16,8 @@ import "package:hugeicons_pro/hugeicons.dart";
 class LoginPickScreen extends StatelessWidget with WidgetsBindingObserver {
   const LoginPickScreen({super.key});
 
-  Future<void> sendResultIfLoggedIn(BuildContext context, FutureOr<Future<LoginResult>?> pushed) async {
-    final result = await await pushed;
+  Future<void> sendResultIfLoggedIn(BuildContext context, Future<LoginResult?> pushed) async {
+    final result = await pushed;
     if (result == null || !context.mounted) return;
 
     final account = result.refreshCredentials.asAntinoteAccount(result.session);
@@ -61,7 +61,7 @@ class LoginPickScreen extends StatelessWidget with WidgetsBindingObserver {
             subtitle: context.l10n.loginCitySubtitle,
 
             onPressed: () async {
-              await sendResultIfLoggedIn(context, context.push(Routes.auth.search.city));
+              await sendResultIfLoggedIn(context, context.push<LoginResult>(Routes.auth.search.city));
             },
           ),
 

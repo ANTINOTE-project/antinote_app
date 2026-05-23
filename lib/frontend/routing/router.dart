@@ -30,7 +30,7 @@ GoRouter makeRouter({String initialLocation = Routes.home}) => GoRouter(
       },
     ),
     GoRoute(
-      path: Routes.auth.search.webview,
+      path: Routes.auth.search.select,
       builder: (_, s) {
         final extra = s.extra as Map<String, dynamic>;
         return LoginSearchSelect(parameters: extra["parameters"] as MobileInstanceParameters);

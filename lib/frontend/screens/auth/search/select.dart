@@ -3,6 +3,7 @@ import "package:antinote_app/frontend/extensions/l10n.dart";
 import "package:antinote_app/frontend/routing/routes.dart";
 import "package:antinote_app/frontend/widgets/customs/app_bar.dart";
 import "package:antinote_app/frontend/widgets/pressable.dart";
+import "package:diacritic/diacritic.dart";
 import "package:flutter/material.dart";
 import "package:go_router/go_router.dart";
 import "package:hugeicons_pro/hugeicons.dart";
@@ -17,6 +18,27 @@ class LoginSearchSelect extends StatefulWidget {
 }
 
 class _LoginSearchSelectState extends State<LoginSearchSelect> {
+  static const _iconMap = <String, IconData>{
+    "direction": HugeIconsSolid.manager,
+    "professeurs": HugeIconsSolid.teacher,
+    "vie scolaire": HugeIconsSolid.school,
+    "parents": HugeIconsSolid.manWoman,
+    "accompagnants": HugeIconsSolid.userGroup,
+    "eleves": HugeIconsSolid.student,
+  };
+
+  IconData _getIconForLabel(String label) {
+    final cleanLabel = removeDiacritics(label.toLowerCase().trim());
+
+    for (final e in _iconMap.entries) {
+      if (cleanLabel.contains(e.key)) {
+        return e.value;
+      }
+    }
+
+    return HugeIconsSolid.gridView;
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -41,10 +63,14 @@ class _LoginSearchSelectState extends State<LoginSearchSelect> {
 
               return Pressable(
                 onPressed: () async {
-                  context.push(
+                  final result = await context.push<LoginResult>(
                     Routes.auth.search.webview,
                     extra: {"parameters": widget.parameters, "workspace": workspace},
                   );
+
+                  if (result != null && mounted) {
+                    context.pop(result);
+                  }
                 },
 
                 child: Card(
@@ -55,7 +81,7 @@ class _LoginSearchSelectState extends State<LoginSearchSelect> {
                       spacing: 10,
 
                       children: [
-                        const Icon(HugeIconsSolid.school),
+                        Icon(_getIconForLabel(workspace.label)),
 
                         Expanded(
                           child: Text(
@@ -67,6 +93,8 @@ class _LoginSearchSelectState extends State<LoginSearchSelect> {
                             style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                           ),
                         ),
+
+                        const Icon(HugeIconsSolid.arrowRight01),
                       ],
                     ),
                   ),

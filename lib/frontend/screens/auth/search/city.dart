@@ -1,6 +1,7 @@
 import "dart:async";
 import "dart:developer";
 
+import "package:antinote/antinote.dart";
 import "package:antinote_app/backend/src/accounts/place.dart";
 import "package:antinote_app/frontend/extensions/colors.dart";
 import "package:antinote_app/frontend/extensions/l10n.dart";
@@ -95,11 +96,15 @@ class _LoginSearchCityScreenState extends State<LoginSearchCityScreen> {
               final city = _cities[index];
 
               return Pressable(
-                onPressed: () {
-                  context.push(
+                onPressed: () async {
+                  final result = await context.push<LoginResult>(
                     Routes.auth.search.school,
                     extra: {"lat": city.latitude, "long": city.longitude},
                   );
+
+                  if (result != null && mounted) {
+                    context.pop(result);
+                  }
                 },
 
                 child: Card(

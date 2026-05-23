@@ -59,8 +59,17 @@ class _LoginSearchSchoolScreenState extends State<LoginSearchSchoolScreen> {
               return Pressable(
                 onPressed: () async {
                   try {
-                    final parameters = MobileInstanceParameters.fetch(instance.baseUrl);
-                    context.push(Routes.auth.search.select, extra: {"parameters": parameters});
+                    final parameters = await MobileInstanceParameters.fetch(instance.baseUrl);
+                    if (!mounted) return;
+
+                    final result = await context.push<LoginResult>(
+                      Routes.auth.search.select,
+                      extra: {"parameters": parameters},
+                    );
+
+                    if (result != null && mounted) {
+                      context.pop(result);
+                    }
 
                     // catch
                   } catch (e, st) {
