@@ -8,6 +8,14 @@ import "package:antinote_app/frontend/screens/shell/screens/timetable.dart";
 import "package:flutter/material.dart";
 import "package:hugeicons_pro/hugeicons.dart";
 
+typedef ScreenDestination = ({
+  IconData icon,
+  String label,
+  Widget screen,
+  String category,
+  List<int> associatedTabIds,
+});
+
 class AppShell extends StatefulWidget {
   const AppShell({super.key});
 
@@ -16,11 +24,10 @@ class AppShell extends StatefulWidget {
 }
 
 class _AppShellState extends State<AppShell> {
-  late final _screens = [
+  late final List<ScreenDestination> _screens = [
     (
       icon: HugeIconsSolid.home01,
       label: context.l10n.home,
-      tooltip: null,
       screen: const TimetableScreen(),
       category: "home",
       associatedTabIds: [],
@@ -28,7 +35,6 @@ class _AppShellState extends State<AppShell> {
     (
       icon: HugeIconsSolid.calendar01,
       label: context.l10n.timetable,
-      tooltip: null,
       screen: const TimetableScreen(),
       category: "timetable",
       associatedTabIds: [16, 88, 89],
@@ -36,7 +42,6 @@ class _AppShellState extends State<AppShell> {
     (
       icon: HugeIconsSolid.school,
       label: context.l10n.grades,
-      tooltip: null,
       screen: const GradesScreen(),
       category: "grades",
       associatedTabIds: [13, 41, 198],
@@ -44,7 +49,6 @@ class _AppShellState extends State<AppShell> {
     (
       icon: HugeIconsSolid.inbox,
       label: context.l10n.communication,
-      tooltip: null,
       screen: const CommunicationScreen(),
       category: "communication",
       associatedTabIds: [8, 131],
@@ -52,6 +56,9 @@ class _AppShellState extends State<AppShell> {
   ];
 
   Stream<NotificationPreviewState>? notificationStream;
+
+  late final _pageController = PageController();
+  int currentPage = 0;
 
   @override
   void didChangeDependencies() async {
@@ -65,15 +72,21 @@ class _AppShellState extends State<AppShell> {
     );
   }
 
-  int curPage = 0;
+  @override
+  void dispose() {
+    _pageController.dispose();
+    super.dispose();
+  }
 
   void onDestinationSelected(int destinationIndex) {
     context.sm.storage["main_category"] = _screens[destinationIndex].category;
     context.sm.updateCurrentScreenId();
 
-    setState(() {
-      curPage = destinationIndex;
-    });
+    _pageController.animateToPage(
+      destinationIndex,
+      duration: const Duration(milliseconds: 300),
+      curve: Curves.fastOutSlowIn,
+    );
   }
 
   @override
@@ -85,34 +98,51 @@ class _AppShellState extends State<AppShell> {
         final notifications = snapshot.data?.notifications ?? [];
 
         return Scaffold(
-          bottomNavigationBar: NavigationBar(
-            destinations: _screens
-                .map((e) {
-                  final notificationCount = notifications
-                      .where((element) => e.associatedTabIds.contains(element.tab))
-                      .fold(0, (previousValue, element) => previousValue + element.count);
+          extendBody: true,
 
-                  return NavigationDestination(
-                    icon: Badge.count(
-                      count: notificationCount,
-                      isLabelVisible: notificationCount > 0,
-                      child: Icon(e.icon),
-                    ),
-                    label: e.label,
-                    tooltip: e.tooltip,
-                    selectedIcon: Badge.count(
-                      count: notificationCount,
-                      isLabelVisible: notificationCount > 0,
-                      child: Icon(e.icon, fill: 1),
-                    ),
-                  );
-                })
-                .toList(growable: false),
-            selectedIndex: curPage,
-            onDestinationSelected: onDestinationSelected,
+          body: PageView(
+            controller: _pageController,
+            onPageChanged: (index) => setState(() => currentPage = index),
+            children: _screens.map((e) => e.screen).toList(),
+          ),
+
+          bottomNavigationBar: SafeArea(
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(24),
+
+                child: NavigationBar(
+                  destinations: _screens
+                      .map((e) => _buildDestination(e, notifications))
+                      .toList(growable: false),
+
+                  onDestinationSelected: onDestinationSelected,
+                  selectedIndex: currentPage,
+                ),
+              ),
+            ),
           ),
         );
       },
+    );
+  }
+
+  NavigationDestination _buildDestination(ScreenDestination e, List<NotificationPreview> notifications) {
+    final notificationCount = notifications
+        .where((element) => e.associatedTabIds.contains(element.tab))
+        .fold(0, (prev, element) => prev + element.count);
+
+    return NavigationDestination(
+      icon: Badge.count(count: notificationCount, isLabelVisible: notificationCount > 0, child: Icon(e.icon)),
+      label: e.label,
+
+      selectedIcon: Badge.count(
+        count: notificationCount,
+        isLabelVisible: notificationCount > 0,
+        child: Icon(e.icon, fill: 1),
+      ),
     );
   }
 }

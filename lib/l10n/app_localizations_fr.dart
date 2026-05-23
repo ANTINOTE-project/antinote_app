@@ -59,5 +59,5 @@ class AppLocalizationsFr extends AppLocalizations {
   String get grades => 'Notes';
 
   @override
-  String get communication => 'Communication';
+  String get communication => 'Infos';
 }

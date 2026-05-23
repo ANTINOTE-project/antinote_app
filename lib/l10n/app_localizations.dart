@@ -193,7 +193,7 @@ abstract class AppLocalizations {
   /// No description provided for @communication.
   ///
   /// In fr, this message translates to:
-  /// **'Communication'**
+  /// **'Infos'**
   String get communication;
 }
 
