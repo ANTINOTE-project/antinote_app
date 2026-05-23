@@ -25,4 +25,18 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get enableAutoLogin => 'Activer la connexion automatique';
+
+  @override
+  String get loginQrCode => 'QR Code';
+
+  @override
+  String get loginQrCodeSubtitle =>
+      'Scanne un QR code depuis un ordinateur déjà connecté à PRONOTE';
+
+  @override
+  String get loginSearch => 'Recherche ton établissement';
+
+  @override
+  String get loginSearchSubtitle =>
+      'Entre le nom de ta ville et choisis ton établissement';
 }

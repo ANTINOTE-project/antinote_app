@@ -129,6 +129,30 @@ abstract class AppLocalizations {
   /// In fr, this message translates to:
   /// **'Activer la connexion automatique'**
   String get enableAutoLogin;
+
+  /// No description provided for @loginQrCode.
+  ///
+  /// In fr, this message translates to:
+  /// **'QR Code'**
+  String get loginQrCode;
+
+  /// No description provided for @loginQrCodeSubtitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Scanne un QR code depuis un ordinateur déjà connecté à PRONOTE'**
+  String get loginQrCodeSubtitle;
+
+  /// No description provided for @loginSearch.
+  ///
+  /// In fr, this message translates to:
+  /// **'Recherche ton établissement'**
+  String get loginSearch;
+
+  /// No description provided for @loginSearchSubtitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Entre le nom de ta ville et choisis ton établissement'**
+  String get loginSearchSubtitle;
 }
 
 class _AppLocalizationsDelegate

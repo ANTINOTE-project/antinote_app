@@ -5,18 +5,28 @@ import "package:flutter_localizations/flutter_localizations.dart";
 import "package:flutter/material.dart";
 import "package:go_router/go_router.dart";
 
-class App extends StatelessWidget {
+class App extends StatefulWidget {
   final String initialLocation;
-  late final GoRouter _router;
 
-  App({super.key, required this.initialLocation}) {
-    _router = makeRouter(initialLocation: initialLocation);
-  }
+  const App({super.key, required this.initialLocation});
 
   static final navigatorKey = GlobalKey<NavigatorState>();
 
   static const BorderRadiusGeometry borderRadius = BorderRadius.all(Radius.circular(20));
   static const String fontFamily = "SNPro";
+
+  @override
+  State<App> createState() => _AppState();
+}
+
+class _AppState extends State<App> {
+  late final GoRouter _router;
+
+  @override
+  void initState() {
+    super.initState();
+    _router = makeRouter(initialLocation: widget.initialLocation);
+  }
 
   @override
   Widget build(BuildContext context) {

@@ -162,29 +162,33 @@ class _LoginScreenState extends State<LoginScreen> {
           },
         ),
 
-        Align(
-          alignment: Alignment.bottomCenter,
+        _buildAddButton(),
+      ],
+    );
+  }
 
-          child: SafeArea(
-            child: Padding(
-              padding: const EdgeInsets.only(left: 12, right: 12, bottom: 12),
+  Widget _buildAddButton() {
+    return Align(
+      alignment: Alignment.bottomCenter,
 
-              child: ButtonWidget(
-                onPressed: () async {
-                  final result = await context.push(Routes.auth.pick);
+      child: SafeArea(
+        child: Padding(
+          padding: const EdgeInsets.only(left: 12, right: 12, bottom: 12),
 
-                  if (result != null && mounted) {
-                    await _popLoad();
-                  }
-                },
+          child: ButtonWidget(
+            onPressed: () async {
+              final result = await context.push(Routes.auth.pick);
 
-                icon: HugeIconsSolid.add02,
-                label: context.l10n.addAnAccount,
-              ),
-            ),
+              if (result != null && mounted) {
+                await _load();
+              }
+            },
+
+            icon: HugeIconsSolid.add02,
+            label: context.l10n.addAnAccount,
           ),
         ),
-      ],
+      ),
     );
   }
 }
