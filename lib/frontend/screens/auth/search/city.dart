@@ -1,4 +1,5 @@
 import "dart:async";
+import "dart:developer";
 
 import "package:antinote_app/backend/src/accounts/place.dart";
 import "package:antinote_app/frontend/extensions/colors.dart";
@@ -47,7 +48,13 @@ class _LoginSearchCityScreenState extends State<LoginSearchCityScreen> {
   Future<void> _searchCities(String query) async {
     if (query.length <= 3) return;
 
-    _cities = await City.fetchCitiesAroundPlace(query);
+    final cities = await City.fetchCitiesAroundPlace(query);
+
+    setState(() {
+      _cities = cities;
+    });
+
+    log(_cities.length.toString());
   }
 
   @override
@@ -97,10 +104,7 @@ class _LoginSearchCityScreenState extends State<LoginSearchCityScreen> {
 
                 child: Card(
                   child: Padding(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 12,
-                      vertical: 16,
-                    ),
+                    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 16),
 
                     child: Row(
                       spacing: 10,
@@ -119,19 +123,13 @@ class _LoginSearchCityScreenState extends State<LoginSearchCityScreen> {
                         Expanded(
                           child: Text(
                             city.name,
-                            style: const TextStyle(
-                              fontSize: 16,
-                              fontWeight: FontWeight.bold,
-                            ),
+                            style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                           ),
                         ),
 
                         Text(
                           city.postalCode,
-                          style: TextStyle(
-                            color: context.c.inversePrimary,
-                            fontWeight: FontWeight.w500,
-                          ),
+                          style: TextStyle(color: context.c.inversePrimary, fontWeight: FontWeight.w500),
                         ),
                       ],
                     ),

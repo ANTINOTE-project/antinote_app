@@ -30,6 +30,9 @@
   "loginSchool": "Choisis ton établissement",
   "@loginSchool": {},
 
+  "loginSelect": "Choisis ton espace",
+  "@loginSelect": {},
+
   "loginWebview": "Connecte toi à ton compte",
   "@loginWebview": {}
 }

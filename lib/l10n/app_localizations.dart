@@ -160,6 +160,12 @@ abstract class AppLocalizations {
   /// **'Choisis ton établissement'**
   String get loginSchool;
 
+  /// No description provided for @loginSelect.
+  ///
+  /// In fr, this message translates to:
+  /// **'Choisis ton espace'**
+  String get loginSelect;
+
   /// No description provided for @loginWebview.
   ///
   /// In fr, this message translates to:

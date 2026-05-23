@@ -44,5 +44,8 @@ class AppLocalizationsFr extends AppLocalizations {
   String get loginSchool => 'Choisis ton établissement';
 
   @override
+  String get loginSelect => 'Choisis ton espace';
+
+  @override
   String get loginWebview => 'Connecte toi à ton compte';
 }

@@ -20,5 +20,6 @@ class _SearchRoute {
 
   String get city => "/auth/search/city";
   String get school => "/auth/search/school";
+  String get select => "/auth/search/select";
   String get webview => "/auth/search/webview";
 }

@@ -7,9 +7,10 @@ import "package:go_router/go_router.dart";
 import "package:webview_flutter/webview_flutter.dart";
 
 class LoginSearchWebview extends StatefulWidget {
-  final String baseUrl;
+  final MobileInstanceParameters parameters;
+  final Workspace workspace;
 
-  const LoginSearchWebview({super.key, required this.baseUrl});
+  const LoginSearchWebview({super.key, required this.parameters, required this.workspace});
 
   @override
   State<LoginSearchWebview> createState() => _LoginSearchWebviewState();

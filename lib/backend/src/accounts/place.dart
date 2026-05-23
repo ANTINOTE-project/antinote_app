@@ -48,15 +48,12 @@ class City {
       "addressdetails": "1",
     });
 
-    final response = await http.get(
-      uri,
-      headers: {"User-Agent": "Antinote/1.0"},
-    );
+    final response = await http.get(uri, headers: {"User-Agent": "Antinote/1.0"});
 
     try {
-      return (jsonDecode(response.body) as ListJsonNavigator)
-          .cast<MapJsonNavigator>()
-          .mapL((e) => (e).asCity());
+      return (jsonDecode(response.body) as ListJsonNavigator).cast<MapJsonNavigator>().mapL(
+        (e) => (e).asCity(),
+      );
     } catch (_) {
       return [];
     }

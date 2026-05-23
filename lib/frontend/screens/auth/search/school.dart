@@ -4,6 +4,7 @@ import "package:antinote_app/frontend/extensions/l10n.dart";
 import "package:antinote_app/frontend/routing/routes.dart";
 import "package:antinote_app/frontend/widgets/customs/app_bar.dart";
 import "package:antinote_app/frontend/widgets/pressable.dart";
+import "package:antinote_app/main.dart";
 import "package:flutter/material.dart";
 import "package:go_router/go_router.dart";
 import "package:hugeicons_pro/hugeicons.dart";
@@ -56,8 +57,15 @@ class _LoginSearchSchoolScreenState extends State<LoginSearchSchoolScreen> {
               final instance = _instances[index];
 
               return Pressable(
-                onPressed: () {
-                  context.push(Routes.auth.search.webview, extra: {"baseUrl": instance.baseUrl});
+                onPressed: () async {
+                  try {
+                    final parameters = MobileInstanceParameters.fetch(instance.baseUrl);
+                    context.push(Routes.auth.search.select, extra: {"parameters": parameters});
+
+                    // catch
+                  } catch (e, st) {
+                    talker.error("Error during fetch of parameters", e, st);
+                  }
                 },
 
                 child: Card(
