@@ -1,9 +1,11 @@
 import "package:antinote_app/frontend/extensions/account_storage.dart";
 import "package:antinote_app/frontend/extensions/l10n.dart";
+import "package:antinote_app/frontend/extensions/session_manager.dart";
 import "package:antinote_app/frontend/routing/routes.dart";
 import "package:antinote_app/frontend/widgets/account.dart";
 import "package:antinote_app/frontend/widgets/customs/button.dart";
 import "package:antinote_app/frontend/widgets/customs/loading.dart";
+import "package:antinote_app/main.dart";
 import "package:antinote_app/protos/account.pb.dart";
 import "package:antinote_app/utils.dart";
 import "package:flutter/material.dart";
@@ -21,10 +23,9 @@ class LoginScreen extends StatefulWidget {
 class _LoginScreenState extends State<LoginScreen> {
   List<AntinoteAccount>? _accounts;
 
-  String? _defaultAccountUid;
-  String? _loggingAccountUid;
+  String? _defaultUid;
+  String? _loggingUid;
 
-  bool _finishedLogin = false;
   bool _loaded = false;
 
   Future<void> _load() async {
@@ -35,7 +36,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
       setState(() {
         _accounts = accounts;
-        _defaultAccountUid = defaultAccount?.uid;
+        _defaultUid = defaultAccount?.uid;
       });
     }
   }
@@ -58,6 +59,44 @@ class _LoginScreenState extends State<LoginScreen> {
   Future<void> _popLoad() async {
     context.pop();
     await _load();
+  }
+
+  Future<void> _onAccountPressed(AntinoteAccount account) async {
+    if (_loggingUid != null) return;
+
+    setState(() {
+      _loggingUid = account.uid;
+    });
+
+    final sm = context.SM;
+    final beforeUid = sm.state.lastSeenAccountUid;
+
+    try {
+      sm.state.lastSeenAccountUid = _loggingUid;
+
+      await sm.runTask(
+        context: context,
+
+        bypassStateLock: true,
+        channels: const [],
+
+        callback: (session) {
+          talker.info("Logged in with session ID ${session.stack.sessionId}!");
+        },
+      );
+
+      if (mounted) await _popLoad();
+
+      // catch
+    } catch (e, st) {
+      talker.error("Something happened during login", e, st);
+
+      sm.state.lastSeenAccountUid = beforeUid;
+
+      setState(() {
+        _loggingUid = null;
+      });
+    }
   }
 
   @override
@@ -103,8 +142,10 @@ class _LoginScreenState extends State<LoginScreen> {
               key: ValueKey(account.uid),
               account: account,
 
-              isLoggingIn: _loggingAccountUid == account.uid,
-              isDefault: _defaultAccountUid == account.uid,
+              isLoggingIn: _loggingUid == account.uid,
+              isDefault: _defaultUid == account.uid,
+
+              onPressed: () => _onAccountPressed(account),
 
               onRemoveDefault: () async {
                 await context.AS.setDefault(null);
@@ -135,12 +176,8 @@ class _LoginScreenState extends State<LoginScreen> {
                 onPressed: () async {
                   final result = await context.push(Routes.auth.pick);
 
-                  if (result != null) {
-                    setState(() {
-                      _finishedLogin = true;
-                    });
-
-                    if (mounted) await _popLoad();
+                  if (result != null && mounted) {
+                    await _popLoad();
                   }
                 },
 

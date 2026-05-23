@@ -13,6 +13,7 @@ import "package:hugeicons_pro/hugeicons.dart";
 
 class AccountWidget extends StatelessWidget {
   final AntinoteAccount account;
+  final VoidCallback onPressed;
 
   final bool isLoggingIn;
   final bool isDefault;
@@ -23,7 +24,9 @@ class AccountWidget extends StatelessWidget {
 
   const AccountWidget({
     super.key,
+
     required this.account,
+    required this.onPressed,
 
     required this.isLoggingIn,
     required this.isDefault,
@@ -60,6 +63,8 @@ class AccountWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Pressable(
+      onPressed: onPressed,
+
       child: Container(
         decoration: const BoxDecoration(color: AppTheme.surfaceContainerHigh, borderRadius: App.borderRadius),
 
