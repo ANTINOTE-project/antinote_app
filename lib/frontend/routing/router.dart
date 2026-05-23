@@ -1,5 +1,6 @@
 import "package:antinote/antinote.dart";
 import "package:antinote_app/frontend/app.dart";
+import "package:antinote_app/frontend/extensions/session_manager.dart";
 import "package:antinote_app/frontend/routing/routes.dart";
 import "package:antinote_app/frontend/screens/auth/search/city.dart";
 import "package:antinote_app/frontend/screens/auth/pick.dart";
@@ -13,6 +14,17 @@ import "package:go_router/go_router.dart";
 GoRouter makeRouter({String initialLocation = Routes.appShell}) => GoRouter(
   initialLocation: initialLocation,
   navigatorKey: App.navigatorKey,
+
+  redirect: (context, state) async {
+    final uid = context.sm.state.lastSeenAccountUid;
+    final isOnAuth = state.matchedLocation.startsWith("/auth");
+
+    if (uid == null && !isOnAuth) {
+      return Routes.auth.login;
+    }
+
+    return null;
+  },
 
   routes: [
     GoRoute(path: Routes.appShell, builder: (_, _) => const AppShell()),

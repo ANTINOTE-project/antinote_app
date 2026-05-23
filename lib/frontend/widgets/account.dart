@@ -77,7 +77,12 @@ class AccountWidget extends StatelessWidget {
                   value: isDefault,
                 ),
 
-          title: Text(account.name, overflow: TextOverflow.ellipsis),
+          title: Text(
+            account.name,
+            overflow: TextOverflow.ellipsis,
+            style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+          ),
+
           subtitle: Text(
             [account.establishmentName, account.workspaceName].join("\n"),
             overflow: TextOverflow.ellipsis,

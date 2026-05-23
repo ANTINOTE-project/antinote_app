@@ -4,7 +4,9 @@ import "package:antinote_app/frontend/extensions/screen_manager.dart";
 import "package:antinote_app/frontend/extensions/l10n.dart";
 import "package:antinote_app/frontend/screens/shell/screens/communication.dart";
 import "package:antinote_app/frontend/screens/shell/screens/grades.dart";
+import "package:antinote_app/frontend/screens/shell/screens/home.dart";
 import "package:antinote_app/frontend/screens/shell/screens/timetable.dart";
+import "package:antinote_app/main.dart";
 import "package:flutter/material.dart";
 import "package:hugeicons_pro/hugeicons.dart";
 
@@ -28,7 +30,7 @@ class _AppShellState extends State<AppShell> {
     (
       icon: HugeIconsSolid.home01,
       label: context.l10n.home,
-      screen: const TimetableScreen(),
+      screen: const HomeScreen(),
       category: "home",
       associatedTabIds: [],
     ),
@@ -40,7 +42,7 @@ class _AppShellState extends State<AppShell> {
       associatedTabIds: [16, 88, 89],
     ),
     (
-      icon: HugeIconsSolid.school,
+      icon: HugeIconsSolid.graduateMale,
       label: context.l10n.grades,
       screen: const GradesScreen(),
       category: "grades",
@@ -64,12 +66,17 @@ class _AppShellState extends State<AppShell> {
   void didChangeDependencies() async {
     super.didChangeDependencies();
 
+    talker.info("🟡 Before runSubscribe");
+    talker.info("🟡 Before runSubscribe, uid: ${SessionManager.of(context).state.lastSeenAccountUid}");
+
     notificationStream = await SessionManager.runSubscribe(
       context: context,
       callback: (session) {
         return session.notifications;
       },
     );
+
+    talker.info("🟡 Before runSubscribe");
   }
 
   @override

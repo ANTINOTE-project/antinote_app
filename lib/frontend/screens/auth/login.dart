@@ -84,7 +84,9 @@ class _LoginScreenState extends State<LoginScreen> {
         },
       );
 
-      if (mounted) await _popLoad();
+      if (mounted) await _load();
+
+      // catch
     } catch (e, st) {
       talker.error("Something happened during login", e, st);
 
