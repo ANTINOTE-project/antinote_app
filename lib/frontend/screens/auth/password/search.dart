@@ -11,14 +11,18 @@ class City {
   final String name;
   final double latitude;
   final double longitude;
+  final String postalCode;
 
-  const City({required this.name, required this.latitude, required this.longitude});
+  const City({required this.name, required this.latitude, required this.longitude, required this.postalCode});
 
   factory City.fromJson(Map<String, dynamic> json) {
     return City(
-      name: json["display_name"] as String,
+      name: json["name"] as String,
       latitude: double.parse(json["lat"] as String),
       longitude: double.parse(json["lon"] as String),
+      postalCode: json["display_name"] != null
+          ? RegExp(r"\b\d{5}\b").firstMatch(json["display_name"] as String)?.group(0) ?? ""
+          : "",
     );
   }
 }
@@ -98,18 +102,39 @@ class _LoginSearchScreenState extends State<LoginSearchScreen> {
   }
 
   Widget _buildList() {
-    return ListView.builder(
-      itemCount: _cities.length,
-      itemBuilder: (_, index) {
-        final city = _cities[index];
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 12),
 
-        return ListTile(
-          title: Text(city.name),
-          onTap: () {
-            // TODO Select screen
-          },
-        );
-      },
+      child: CustomScrollView(
+        slivers: [
+          SliverList.builder(
+            itemCount: _cities.length,
+
+            itemBuilder: (_, index) {
+              final city = _cities[index];
+
+              return Card(
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 16),
+
+                  child: Row(
+                    children: [
+                      Expanded(
+                        child: Text(
+                          city.name,
+                          style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                        ),
+                      ),
+
+                      Text(city.postalCode, style: const TextStyle(fontWeight: FontWeight.bold)),
+                    ],
+                  ),
+                ),
+              );
+            },
+          ),
+        ],
+      ),
     );
   }
 }

@@ -12,9 +12,7 @@ class App extends StatefulWidget {
 
   static final navigatorKey = GlobalKey<NavigatorState>();
 
-  static const BorderRadiusGeometry borderRadius = BorderRadius.all(
-    Radius.circular(20),
-  );
+  static const borderRadius = BorderRadius.all(Radius.circular(20));
   static const String fontFamily = "SNPro";
 
   @override

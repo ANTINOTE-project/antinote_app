@@ -330,7 +330,6 @@ class MaterialTheme {
 
   ThemeData theme(ColorScheme colorScheme) => ThemeData(
     useMaterial3: true,
-    brightness: colorScheme.brightness,
     colorScheme: colorScheme,
     textTheme: const TextTheme().apply(
       fontFamily: App.fontFamily,
@@ -339,6 +338,21 @@ class MaterialTheme {
     ),
     scaffoldBackgroundColor: colorScheme.surface,
     canvasColor: colorScheme.surface,
+
+    cardTheme: const CardThemeData(shape: RoundedRectangleBorder(borderRadius: App.borderRadius)),
+    dialogTheme: const DialogThemeData(shape: RoundedRectangleBorder(borderRadius: App.borderRadius)),
+    inputDecorationTheme: const InputDecorationTheme(
+      border: OutlineInputBorder(borderRadius: App.borderRadius),
+    ),
+    filledButtonTheme: FilledButtonThemeData(
+      style: FilledButton.styleFrom(shape: const RoundedRectangleBorder(borderRadius: App.borderRadius)),
+    ),
+    outlinedButtonTheme: OutlinedButtonThemeData(
+      style: OutlinedButton.styleFrom(shape: const RoundedRectangleBorder(borderRadius: App.borderRadius)),
+    ),
+    textButtonTheme: TextButtonThemeData(
+      style: TextButton.styleFrom(shape: const RoundedRectangleBorder(borderRadius: App.borderRadius)),
+    ),
   );
 
   List<ExtendedColor> get extendedColors => [];
