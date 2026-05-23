@@ -12,13 +12,13 @@ class _AuthRoute {
   String get pick => "/auth/pick";
   String get qrCode => "/auth/qr_code";
 
-  final password = const _PasswordRoute();
+  final search = const _SearchRoute();
 }
 
-class _PasswordRoute {
-  const _PasswordRoute();
+class _SearchRoute {
+  const _SearchRoute();
 
-  String get search => "/auth/password/search";
-  String get select => "/auth/password/select";
-  String get credentials => "/auth/password/credentials";
+  String get city => "/auth/search/city";
+  String get school => "/auth/search/school";
+  String get credentials => "/auth/search/credentials";
 }

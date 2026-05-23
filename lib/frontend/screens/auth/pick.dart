@@ -16,10 +16,7 @@ import "package:hugeicons_pro/hugeicons.dart";
 class LoginPickScreen extends StatelessWidget with WidgetsBindingObserver {
   const LoginPickScreen({super.key});
 
-  Future<void> sendResultIfLoggedIn(
-    BuildContext context,
-    FutureOr<Future<LoginResult>?> pushed,
-  ) async {
+  Future<void> sendResultIfLoggedIn(BuildContext context, FutureOr<Future<LoginResult>?> pushed) async {
     final result = await await pushed;
     if (result == null || !context.mounted) return;
 
@@ -64,10 +61,7 @@ class LoginPickScreen extends StatelessWidget with WidgetsBindingObserver {
             subtitle: context.l10n.loginSearchSubtitle,
 
             onPressed: () async {
-              await sendResultIfLoggedIn(
-                context,
-                context.push(Routes.auth.password.search),
-              );
+              await sendResultIfLoggedIn(context, context.push(Routes.auth.search.city));
             },
           ),
 
@@ -79,10 +73,7 @@ class LoginPickScreen extends StatelessWidget with WidgetsBindingObserver {
             subtitle: context.l10n.loginQrCodeSubtitle,
 
             onPressed: () async {
-              await sendResultIfLoggedIn(
-                context,
-                context.push(Routes.auth.qrCode),
-              );
+              await sendResultIfLoggedIn(context, context.push(Routes.auth.qrCode));
             },
           ),
         ],
@@ -117,25 +108,13 @@ class LoginPickScreen extends StatelessWidget with WidgetsBindingObserver {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(
-                    title,
-                    style: const TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                  Text(
-                    subtitle,
-                    style: TextStyle(color: context.c.onSurfaceVariant),
-                  ),
+                  Text(title, style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+                  Text(subtitle, style: TextStyle(color: context.c.onSurfaceVariant)),
                 ],
               ),
             ),
 
-            Icon(
-              HugeIconsSolid.arrowRight01,
-              color: context.c.onSurfaceVariant,
-            ),
+            Icon(HugeIconsSolid.arrowRight01, color: context.c.onSurfaceVariant),
           ],
         ),
       ),
