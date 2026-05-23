@@ -67,8 +67,8 @@ extension AsCity on MapJsonNavigator {
   City asCity() {
     return City(
       name: get("name"),
-      latitude: get("lat"),
-      longitude: get("lon"),
+      latitude: double.parse(get("lat")),
+      longitude: double.parse(get("lon")),
       postalCode: getM("address").get("postcode"),
       placeType: PlaceType.fromString(get("addresstype")),
     );
