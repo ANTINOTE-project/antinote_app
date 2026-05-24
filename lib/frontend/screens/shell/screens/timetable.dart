@@ -1,8 +1,11 @@
 import "dart:async";
 
 import "package:antinote/antinote.dart";
+import "package:antinote_app/backend/backend.dart";
+import "package:antinote_app/frontend/screens/auth/search/widgets/item.dart";
 import "package:antinote_app/frontend/screens/screen.dart";
 import "package:antinote_app/frontend/widgets/customs/loading.dart";
+import "package:antinote_app/main.dart";
 import "package:antinote_app/utils.dart";
 import "package:flutter/material.dart";
 
@@ -18,43 +21,85 @@ class _TimetableScreenState extends State<TimetableScreen>
         AutomaticKeepAliveClientMixin<TimetableScreen>,
         ScreenMixin<TimetableScreen> {
   late SpecificInstanceParameters scheduleDisplayData;
-  Map<DateTime, List<Class>> _classes = {};
+  final Map<DateTime, ValueNotifier<List<Class>?>> _classes = {};
+  late List<DateRange> currentGroups;
 
   @override
   bool get wantKeepAlive => true;
 
-  PageController? controller;
+  PageController? pageController;
+  ScrollController scrollController = TrackingScrollController();
 
   @override
   Widget buildLoaded(
     BuildContext context,
     RefreshIndicatorBuilder buildRefreshIndicator,
   ) {
-    super.build(context);
-
     final days = DateRange(
       start: scheduleDisplayData.firstDate,
       end: scheduleDisplayData.lastDate,
     ).listDays();
 
-    // PageView.builder(itemBuilder: (context, index) {}, itemCount: days.length);
+    final daysConfiguration = WeekMappedViewConfiguration.defaultConfigs
+        .pickConfig(context);
+    currentGroups = daysConfiguration.daysToRangeList(
+      days,
+      scheduleDisplayData,
+    );
 
-    // return buildRefreshIndicator(
-    //   child: ListView.builder(
-    //     itemCount: _classes!.length,
-    //     itemBuilder: (context, index) {
-    //       final clazz = _classes![index];
-    //
-    //       return Card(
-    //         child: ListTile(
-    //           title: Text(clazz.id),
-    //           subtitle: Text("${clazz.startDate} → ${clazz.endDate}"),
-    //         ),
-    //       );
-    //     },
-    //   ),
-    // );
-    return Container();
+    return buildRefreshIndicator(
+      child: PageView.builder(
+        itemBuilder: (context, index) {
+          final dayGroup = currentGroups[index];
+          final days = dayGroup.listDays();
+
+          return RefreshIndicator(
+            onRefresh: () => reload(fromRefreshIndicator: true),
+            child: CustomScrollView(
+              slivers: [
+                SliverAppBar(title: Text(dayGroup.pprint()), pinned: true),
+                SliverFillRemaining(
+                  child: Flex(
+                    direction: .horizontal,
+                    children: [
+                      for (final day in days)
+                        ValueListenableBuilder(
+                          valueListenable: _classes[day]!,
+                          builder: (context, classes, child) {
+                            if (classes != null) {
+                              return Flexible(
+                                child: ListView.builder(
+                                  controller: scrollController,
+                                  itemBuilder: (context, index) {
+                                    final clazz = classes[index];
+                                    return ListItemCard(
+                                      onPressed: null,
+                                      title: clazz.id,
+                                    );
+                                  },
+                                  itemCount: classes.length,
+                                ),
+                              );
+                            } else {
+                              return const Expanded(
+                                child: Center(
+                                  child: CircularProgressIndicator(),
+                                ),
+                              );
+                            }
+                          },
+                        ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          );
+        },
+        controller: pageController,
+        itemCount: currentGroups.length,
+      ),
+    );
   }
 
   @override
@@ -62,32 +107,76 @@ class _TimetableScreenState extends State<TimetableScreen>
     BuildContext context,
     RefreshIndicatorBuilder buildRefreshIndicator,
   ) {
-    super.build(context);
+    return buildRefreshIndicator(
+      child: const Center(child: LoadingWidget(size: 30)),
+    );
+  }
 
-    return const Center(child: LoadingWidget(size: 30));
+  Future<void> updateClasses(DateRange days, {PronoteSession? session}) async {
+    talker.info("Fetching days ${days.pprint()}");
+    Future<void> update(PronoteSession session) async {
+      final loadedDays = {for (final day in days.listDays()) day: <Class>[]};
+
+      await session.ensurePage(16);
+
+      for (final clazz in (await session.access(
+        TimetableAccessor.forRange(
+          resource: session.userResource,
+          from: days.start,
+          to: days.end,
+        ),
+      )).classes) {
+        loadedDays[clazz.startDate.toDay()]!.add(clazz);
+      }
+
+      for (final loadedDay in loadedDays.entries) {
+        _classes[loadedDay.key]!.value = loadedDay.value;
+      }
+    }
+
+    if (session != null) {
+      await update(session);
+    } else {
+      await SessionManager.execute(context: context, callback: update);
+    }
   }
 
   @override
   FutureOr<void> loadActiveDataFromSession(PronoteSession session) async {
     scheduleDisplayData = session.instance;
 
-    await session.ensurePage(16);
+    final days = DateRange(
+      start: scheduleDisplayData.firstDate,
+      end: scheduleDisplayData.lastDate,
+    ).listDays();
 
-    if (controller == null) {
-      controller = PageController();
-    }
-
-    final result = await session.access(
-      TimetableAccessor.forRange(
-        resource: session.userResource,
-        from: DateTime.now()
-            .add(const Duration(days: 4))
-            .copyWith(isUtc: true)
-            .toDay(),
-        to: null,
-      ),
+    final daysConfiguration = WeekMappedViewConfiguration.defaultConfigs
+        .pickConfig(context);
+    currentGroups = daysConfiguration.daysToRangeList(
+      days,
+      scheduleDisplayData,
     );
 
-    // _classes = result.classes;
+    final int currentGroupIndex;
+
+    if (pageController == null ||
+        !pageController!.hasClients ||
+        pageController?.page == null) {
+      currentGroupIndex = currentGroups.indexWhere(
+        (element) => element.contains(scheduleDisplayData.nextBusinessDay),
+      );
+    } else {
+      currentGroupIndex = pageController!.page!.round();
+    }
+
+    if (pageController == null) {
+      for (final day in days) {
+        _classes[day] = ValueNotifier(null);
+      }
+
+      pageController = PageController(initialPage: currentGroupIndex);
+    }
+
+    await updateClasses(currentGroups[currentGroupIndex], session: session);
   }
 }

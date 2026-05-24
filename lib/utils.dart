@@ -98,12 +98,15 @@ final class WeekMappedViewConfiguration {
     weekConfig,
   ];
 
-  List<DateRange> daysToRangeList(List<DateTime> days, PronoteSession session) {
+  List<DateRange> daysToRangeList(
+    List<DateTime> days,
+    SpecificInstanceParameters parameters,
+  ) {
     // We need to align the groups by week in this case.
     if (snapToWeeks) {
       final Map<int, DateRange> ranges = {};
       for (final day in days) {
-        final weekNumber = day.toPronoteWeekNumber(session);
+        final weekNumber = parameters.getWeekNumberForDate(day);
         if (ranges.containsKey(weekNumber)) {
           ranges[weekNumber] = DateRange(
             start: ranges[weekNumber]!.start,
