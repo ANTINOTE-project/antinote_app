@@ -2,6 +2,7 @@ import "dart:async";
 
 import "package:antinote/antinote.dart";
 import "package:antinote_app/frontend/screens/screen.dart";
+import "package:antinote_app/frontend/screens/shell/screens/grades/app_bar.dart";
 import "package:antinote_app/frontend/widgets/customs/loading.dart";
 import "package:flutter/material.dart";
 
@@ -31,44 +32,15 @@ class _GradesScreenState extends State<GradesScreen>
           physics: const NeverScrollableScrollPhysics(),
 
           slivers: [
-            SliverSafeArea(
-              left: false,
-              right: false,
-              bottom: false,
+            GradesAppBar(
+              maxWidth: constraints.maxWidth,
 
-              sliver: SliverAppBar(
-                leadingWidth: constraints.maxWidth,
-                primary: false,
+              getSelectedPeriod: () => _selectedPeriod,
+              periods: _periods,
 
-                leading: ListView.builder(
-                  padding: const EdgeInsets.symmetric(horizontal: 8),
-                  itemCount: _periods.length,
-
-                  scrollDirection: .horizontal,
-                  shrinkWrap: true,
-
-                  itemBuilder: (context, index) {
-                    final period = _periods[index];
-
-                    return Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 3),
-
-                      child: ChoiceChip(
-                        selected: period == _selectedPeriod,
-                        label: Text(period.name),
-
-                        onSelected: (value) async {
-                          if (value) {
-                            setState(() {
-                              _selectedPeriod = period;
-                            });
-                          }
-                        },
-                      ),
-                    );
-                  },
-                ),
-              ),
+              setSelectedPeriod: (newPeriod) {
+                setState(() => _selectedPeriod = newPeriod);
+              },
             ),
           ],
         );
@@ -88,10 +60,10 @@ class _GradesScreenState extends State<GradesScreen>
   FutureOr<void> loadActiveDataFromSession(PronoteSession session) async {
     await session.ensurePage(198);
 
-    _periods = session.instance.periods;
     _selectedPeriod ??= session.instance.defaultPeriod(DateTime.now());
+    _periods = session.instance.periods;
 
-    if (!context.mounted) {
+    if (!mounted) {
       throw Exception(
         "By the time we ensured the correct page was set, the context got unmounted",
       );
