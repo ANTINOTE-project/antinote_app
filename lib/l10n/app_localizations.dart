@@ -202,6 +202,12 @@ abstract class AppLocalizations {
   /// **'Notes'**
   String get grades;
 
+  /// No description provided for @report.
+  ///
+  /// In fr, this message translates to:
+  /// **'Bulletin'**
+  String get report;
+
   /// No description provided for @communication.
   ///
   /// In fr, this message translates to:

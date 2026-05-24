@@ -65,5 +65,8 @@ class AppLocalizationsFr extends AppLocalizations {
   String get grades => 'Notes';
 
   @override
+  String get report => 'Bulletin';
+
+  @override
   String get communication => 'Infos';
 }

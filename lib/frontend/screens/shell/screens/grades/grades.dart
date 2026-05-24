@@ -1,10 +1,14 @@
 import "dart:async";
 
-import "package:antinote/antinote.dart";
+import "package:antinote/antinote.dart" hide Tab;
+import "package:antinote_app/frontend/extensions/l10n.dart";
 import "package:antinote_app/frontend/screens/screen.dart";
 import "package:antinote_app/frontend/screens/shell/screens/grades/app_bar.dart";
+import "package:antinote_app/frontend/screens/shell/screens/grades/body.dart";
 import "package:antinote_app/frontend/widgets/customs/loading.dart";
 import "package:flutter/material.dart";
+
+typedef GradesTab = ({Widget dest, Widget widget, String category});
 
 class GradesScreen extends StatefulWidget {
   const GradesScreen({super.key});
@@ -18,8 +22,32 @@ class _GradesScreenState extends State<GradesScreen>
         TickerProviderStateMixin<GradesScreen>,
         AutomaticKeepAliveClientMixin<GradesScreen>,
         ScreenMixin<GradesScreen> {
+  static List<GradesTab> _tabs(BuildContext context) {
+    return [
+      (
+        dest: Tab(child: Text(context.l10n.grades)),
+        widget: const SizedBox.shrink(),
+        category: "grades",
+      ),
+      (
+        dest: Tab(child: Text(context.l10n.grades)),
+        widget: const SizedBox.shrink(),
+        category: "report",
+      ),
+    ];
+  }
+
   late List<Period> _periods;
   Period? _selectedPeriod;
+
+  late TabController _controller;
+
+  @override
+  void initState() {
+    super.initState();
+
+    _controller = TabController(length: _tabs(context).length, vsync: this);
+  }
 
   @override
   Widget buildLoaded(
@@ -42,6 +70,8 @@ class _GradesScreenState extends State<GradesScreen>
                 setState(() => _selectedPeriod = newPeriod);
               },
             ),
+
+            GradesBody(controller: _controller, tabs: _tabs(context)),
           ],
         );
       },

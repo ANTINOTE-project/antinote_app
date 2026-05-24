@@ -1,6 +1,6 @@
 {
   "@@locale": "fr",
-  
+
   "appTitle": "ANTINOTE",
   "@appTitle": {},
 
@@ -8,7 +8,7 @@
   "@choseAnAccount": {},
   "addAnAccount": "Ajouter un compte",
   "@addAnAccount": {},
-  
+
   "delete": "Supprimer",
   "@delete": {},
 
@@ -37,7 +37,7 @@
   "@activateCas": {},
 
   "loginCredentials": "Renseigne tes identifiants",
-  "@loginCredentials" : {},
+  "@loginCredentials": {},
 
   "loginWebview": "Connecte toi à ton compte",
   "@loginWebview": {},
@@ -50,7 +50,10 @@
 
   "grades": "Notes",
   "@grades": {},
-  
+
+  "report": "Bulletin",
+  "@report": {},
+
   "communication": "Infos",
   "@communication": {}
 }
