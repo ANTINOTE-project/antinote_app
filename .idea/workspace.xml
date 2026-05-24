@@ -6,19 +6,8 @@
     </shared>
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="5f924ac6-083e-424a-ad80-97e74bfe416b" name="Changes" comment="Refactoring">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/backend/src/accounts/place.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/backend/src/accounts/place.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/frontend/app.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/frontend/app.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/frontend/routing/router.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/frontend/routing/router.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/frontend/screens/auth/search/city.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/frontend/screens/auth/search/city.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/frontend/screens/auth/search/select.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/frontend/screens/auth/search/select.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/frontend/screens/auth/search/widgets/item.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/frontend/screens/auth/search/widgets/item.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/frontend/widgets/account.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/frontend/widgets/account.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/frontend/widgets/customs/modal.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/frontend/widgets/customs/modal.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/l10n/app_fr.arb" beforeDir="false" afterPath="$PROJECT_DIR$/lib/l10n/app_fr.arb" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/l10n/app_localizations.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/l10n/app_localizations.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/l10n/app_localizations_fr.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/l10n/app_localizations_fr.dart" afterDir="false" />
+    <list default="true" id="5f924ac6-083e-424a-ad80-97e74bfe416b" name="Changes" comment="Added normal login">
+      <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -115,7 +104,7 @@
       <option name="presentableId" value="Default" />
       <updated>1779555441619</updated>
       <workItem from="1779555442702" duration="10164000" />
-      <workItem from="1779610426472" duration="4648000" />
+      <workItem from="1779610426472" duration="4775000" />
     </task>
     <task id="LOCAL-00001" summary="Moved to custom scroll view">
       <option name="closed" value="true" />
@@ -149,7 +138,15 @@
       <option name="project" value="LOCAL" />
       <updated>1779612232842</updated>
     </task>
-    <option name="localTasksCounter" value="5" />
+    <task id="LOCAL-00005" summary="Added normal login">
+      <option name="closed" value="true" />
+      <created>1779615102811</created>
+      <option name="number" value="00005" />
+      <option name="presentableId" value="LOCAL-00005" />
+      <option name="project" value="LOCAL" />
+      <updated>1779615102811</updated>
+    </task>
+    <option name="localTasksCounter" value="6" />
     <servers />
   </component>
   <component name="ToolWindowManager">
@@ -187,7 +184,8 @@
   <component name="VcsManagerConfiguration">
     <MESSAGE value="Moved to custom scroll view" />
     <MESSAGE value="Refactoring" />
-    <option name="LAST_COMMIT_MESSAGE" value="Refactoring" />
+    <MESSAGE value="Added normal login" />
+    <option name="LAST_COMMIT_MESSAGE" value="Added normal login" />
   </component>
   <component name="XSLT-Support.FileAssociations.UIState">
     <expand />
