@@ -3,7 +3,6 @@ import "package:antinote_app/frontend/extensions/l10n.dart";
 import "package:antinote_app/frontend/routing/routes.dart";
 import "package:antinote_app/frontend/screens/auth/search/widgets/item.dart";
 import "package:antinote_app/frontend/widgets/customs/app_bar.dart";
-import "package:diacritic/diacritic.dart";
 import "package:flutter/material.dart";
 import "package:go_router/go_router.dart";
 import "package:hugeicons_pro/hugeicons.dart";
@@ -18,26 +17,14 @@ class LoginSearchSelect extends StatefulWidget {
 }
 
 class _LoginSearchSelectState extends State<LoginSearchSelect> {
-  static const _iconMap = <String, IconData>{
-    "direction": HugeIconsSolid.manager,
-    "professeurs": HugeIconsSolid.teacher,
-    "vie scolaire": HugeIconsSolid.school,
-    "parents": HugeIconsSolid.manWoman,
-    "accompagnants": HugeIconsSolid.userGroup,
-    "eleves": HugeIconsSolid.student,
+  static const _iconMap = <WorkspaceType, IconData>{
+    .mobileAdministrateur: HugeIconsSolid.manager,
+    .mobileProfesseur: HugeIconsSolid.teacher,
+    .mobileEtablissement: HugeIconsSolid.school,
+    .mobileParent: HugeIconsSolid.manWoman,
+    .mobileAccompagnant: HugeIconsSolid.userGroup,
+    .mobileEleve: HugeIconsSolid.student,
   };
-
-  IconData _getIconForLabel(String label) {
-    final cleanLabel = removeDiacritics(label.toLowerCase().trim());
-
-    for (final e in _iconMap.entries) {
-      if (cleanLabel.contains(e.key)) {
-        return e.value;
-      }
-    }
-
-    return HugeIconsSolid.gridView;
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -65,7 +52,10 @@ class _LoginSearchSelectState extends State<LoginSearchSelect> {
                 onPressed: () async {
                   final result = await context.push<LoginResult>(
                     Routes.auth.search.webview,
-                    extra: {"parameters": widget.parameters, "workspace": workspace},
+                    extra: {
+                      "parameters": widget.parameters,
+                      "workspace": workspace,
+                    },
                   );
 
                   if (result != null && mounted) {
@@ -73,7 +63,7 @@ class _LoginSearchSelectState extends State<LoginSearchSelect> {
                   }
                 },
 
-                leading: _getIconForLabel(workspace.label),
+                leading: Icon(_iconMap[workspace.type]),
                 label: workspace.label,
                 trailing: const Icon(HugeIconsSolid.arrowRight01),
               );

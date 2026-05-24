@@ -1,6 +1,5 @@
 import "package:antinote/antinote.dart";
 import "package:antinote_app/backend/src/session/manager.dart";
-import "package:antinote_app/frontend/extensions/screen_manager.dart";
 import "package:antinote_app/frontend/extensions/l10n.dart";
 import "package:antinote_app/frontend/screens/shell/screens/communication.dart";
 import "package:antinote_app/frontend/screens/shell/screens/grades.dart";
@@ -58,7 +57,6 @@ class _AppShellState extends State<AppShell> {
 
   Stream<NotificationPreviewState>? notificationStream;
 
-  late final _pageController = PageController();
   int currentPage = 0;
 
   @override
@@ -74,23 +72,6 @@ class _AppShellState extends State<AppShell> {
   }
 
   @override
-  void dispose() {
-    _pageController.dispose();
-    super.dispose();
-  }
-
-  void onDestinationSelected(int destinationIndex) {
-    context.sm.storage["main_category"] = _screens[destinationIndex].category;
-    context.sm.updateCurrentScreenId();
-
-    _pageController.animateToPage(
-      destinationIndex,
-      duration: const Duration(milliseconds: 300),
-      curve: Curves.fastOutSlowIn,
-    );
-  }
-
-  @override
   Widget build(BuildContext context) {
     return StreamBuilder(
       stream: notificationStream,
@@ -100,11 +81,9 @@ class _AppShellState extends State<AppShell> {
 
         return Scaffold(
           extendBody: true,
-
-          body: PageView(
-            controller: _pageController,
-            onPageChanged: (index) => setState(() => currentPage = index),
-            children: _screens.map((e) => e.screen).toList(),
+          body: IndexedStack(
+            index: currentPage,
+            children: _screens.mapL((e) => e.screen),
           ),
 
           bottomNavigationBar: SafeArea(
@@ -118,8 +97,9 @@ class _AppShellState extends State<AppShell> {
                   destinations: _screens
                       .map((e) => _buildDestination(e, notifications))
                       .toList(growable: false),
-
-                  onDestinationSelected: onDestinationSelected,
+                  onDestinationSelected: (value) => setState(() {
+                    currentPage = value;
+                  }),
                   selectedIndex: currentPage,
                 ),
               ),
@@ -130,13 +110,20 @@ class _AppShellState extends State<AppShell> {
     );
   }
 
-  NavigationDestination _buildDestination(ScreenDestination e, List<NotificationPreview> notifications) {
+  NavigationDestination _buildDestination(
+    ScreenDestination e,
+    List<NotificationPreview> notifications,
+  ) {
     final notificationCount = notifications
         .where((element) => e.associatedTabIds.contains(element.tab))
         .fold(0, (prev, element) => prev + element.count);
 
     return NavigationDestination(
-      icon: Badge.count(count: notificationCount, isLabelVisible: notificationCount > 0, child: Icon(e.icon)),
+      icon: Badge.count(
+        count: notificationCount,
+        isLabelVisible: notificationCount > 0,
+        child: Icon(e.icon),
+      ),
       label: e.label,
 
       selectedIcon: Badge.count(

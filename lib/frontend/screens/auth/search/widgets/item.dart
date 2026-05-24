@@ -4,7 +4,7 @@ import "package:flutter/material.dart";
 class ListItemCard extends StatelessWidget {
   final VoidCallback onPressed;
 
-  final IconData leading;
+  final Widget leading;
   final String label;
   final Widget trailing;
 
@@ -30,7 +30,7 @@ class ListItemCard extends StatelessWidget {
             spacing: 10,
 
             children: [
-              Icon(leading),
+              leading,
 
               Expanded(
                 child: Text(
@@ -39,7 +39,10 @@ class ListItemCard extends StatelessWidget {
                   maxLines: 1,
                   overflow: .ellipsis,
 
-                  style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                  style: const TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
               ),
 

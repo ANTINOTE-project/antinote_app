@@ -107,7 +107,7 @@ class _LoginSearchCityScreenState extends State<LoginSearchCityScreen> {
                   }
                 },
 
-                leading: switch (city.placeType) {
+                leading: Icon(switch (city.placeType) {
                   .city => HugeIconsSolid.building01,
                   .town => HugeIconsSolid.building02,
                   .village => HugeIconsSolid.home01,
@@ -115,12 +115,15 @@ class _LoginSearchCityScreenState extends State<LoginSearchCityScreen> {
                   .suburb => HugeIconsSolid.house04,
                   .municipality => HugeIconsSolid.city01,
                   .other => HugeIconsSolid.location01,
-                },
+                }),
 
                 label: city.name,
                 trailing: Text(
                   city.postalCode,
-                  style: TextStyle(color: context.c.inversePrimary, fontWeight: FontWeight.w500),
+                  style: TextStyle(
+                    color: context.c.inversePrimary,
+                    fontWeight: FontWeight.w500,
+                  ),
                 ),
               );
             },

@@ -74,7 +74,7 @@ class LoginManager(val context: Context) : NativeLoginManager {
 
         fun accountForUid(context: Context, accountKey: String): Account {
             val am = AccountManager.get(context)
-            return am.accounts.first { am.getUserData(it, KEY_UID) == accountKey }
+            return am.getAccountsByType(context.getString(R.string.account_type)).first { am.getUserData(it, KEY_UID) == accountKey }
         }
     }
 
@@ -83,7 +83,7 @@ class LoginManager(val context: Context) : NativeLoginManager {
         val manager = AccountManager.get(context)
 
         Log.i(TAG, "In total, there are ${manager.accounts.size} accounts")
-        for (account in manager.accounts) {
+        for (account in manager.getAccountsByType(context.getString(R.string.account_type))) {
             Log.d(TAG, "-> '${account.name}:${account.type}'")
         }
 
@@ -128,7 +128,7 @@ class LoginManager(val context: Context) : NativeLoginManager {
     override fun deleteAccount(uid: String) {
         val manager = AccountManager.get(context)
 
-        manager.removeAccountExplicitly(manager.accounts.find {
+        manager.removeAccountExplicitly(manager.getAccountsByType(context.getString(R.string.account_type)).find {
             return@find manager.getUserData(
                 it,
                 KEY_UID
@@ -139,7 +139,7 @@ class LoginManager(val context: Context) : NativeLoginManager {
     override fun deleteAllAccounts() {
         val manager = AccountManager.get(context)
 
-        for (account in manager.accounts) {
+        for (account in manager.getAccountsByType(context.getString(R.string.account_type))) {
             if (account.type == context.getString(R.string.account_type)
             ) {
                 manager.removeAccountExplicitly(account)
@@ -150,7 +150,7 @@ class LoginManager(val context: Context) : NativeLoginManager {
     override fun updateAccount(newRawAccount: ByteArray, uid: String) {
         val newAccount = AntinoteAccount.parseFrom(newRawAccount)
         val manager = AccountManager.get(context)
-        val account = manager.accounts.find {
+        val account = manager.getAccountsByType(context.getString(R.string.account_type)).find {
             it.type == context.getString(R.string.account_type) && manager.getUserData(
                 it,
                 KEY_UID
@@ -170,7 +170,7 @@ class LoginManager(val context: Context) : NativeLoginManager {
     override fun listAccounts(): List<ByteArray> {
         val manager = AccountManager.get(context)
 
-        return manager.accounts.map {
+        return manager.getAccountsByType(context.getString(R.string.account_type)).map {
             it.asAntinoteAccount(manager).toByteArray()
         }
     }
@@ -178,14 +178,14 @@ class LoginManager(val context: Context) : NativeLoginManager {
     override fun getAccountWithCredentials(uid: String): ByteArray? {
         val manager = AccountManager.get(context)
 
-        return manager.accounts.singleOrNull { manager.getUserData(it, KEY_UID) == uid }
+        return manager.getAccountsByType(context.getString(R.string.account_type)).singleOrNull { manager.getUserData(it, KEY_UID) == uid }
             ?.asAntinoteAccount(manager, true)?.toByteArray()
     }
 
     override fun getDefaultAccount(): ByteArray? {
         val manager = AccountManager.get(context)
 
-        val defaultAccount = manager.accounts.firstOrNull {
+        val defaultAccount = manager.getAccountsByType(context.getString(R.string.account_type)).firstOrNull {
             manager.getUserData(it, KEY_IS_DEFAULT) == "true"
         }
 
@@ -195,7 +195,7 @@ class LoginManager(val context: Context) : NativeLoginManager {
     override fun setDefaultAccount(uid: String?) {
         val manager = AccountManager.get(context)
 
-        manager.accounts.forEach {
+        manager.getAccountsByType(context.getString(R.string.account_type)).forEach {
             manager.setUserData(
                 it,
                 KEY_IS_DEFAULT,
@@ -209,7 +209,7 @@ class LoginManager(val context: Context) : NativeLoginManager {
 
         return AntinoteAccount.parseFrom(rawAccount).toBuilder().apply {
             tokenCredentials =
-                Any.parseFrom(Base64.decode(manager.getPassword(manager.accounts.find { it.name == name })))
+                Any.parseFrom(Base64.decode(manager.getPassword(manager.getAccountsByType(context.getString(R.string.account_type)).find { it.name == name })))
         }.build().toByteArray()
     }
 }
