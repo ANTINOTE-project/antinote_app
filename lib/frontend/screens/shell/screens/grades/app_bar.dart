@@ -1,7 +1,10 @@
-import "package:antinote/antinote.dart";
+import "package:antinote/antinote.dart" hide Tab;
 import "package:flutter/material.dart";
 
 class GradesAppBar extends StatelessWidget {
+  final TabController controller;
+  final List<String> tabsName;
+
   final List<Period> periods;
   final double maxWidth;
 
@@ -10,9 +13,12 @@ class GradesAppBar extends StatelessWidget {
 
   const GradesAppBar({
     super.key,
-    required this.maxWidth,
+
+    required this.controller,
+    required this.tabsName,
 
     required this.periods,
+    required this.maxWidth,
 
     required this.setSelectedPeriod,
     required this.getSelectedPeriod,
@@ -28,6 +34,11 @@ class GradesAppBar extends StatelessWidget {
       sliver: SliverAppBar(
         leadingWidth: maxWidth,
         primary: false,
+
+        bottom: TabBar(
+          controller: controller,
+          tabs: tabsName.mapL((e) => Tab(child: Text(e))),
+        ),
 
         leading: ListView.builder(
           padding: const EdgeInsets.symmetric(horizontal: 8),

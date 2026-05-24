@@ -8,7 +8,7 @@ import "package:antinote_app/frontend/screens/shell/screens/grades/body.dart";
 import "package:antinote_app/frontend/widgets/customs/loading.dart";
 import "package:flutter/material.dart";
 
-typedef GradesTab = ({Widget dest, Widget widget, String category});
+typedef GradesTab = ({Widget widget, String category});
 
 class GradesScreen extends StatefulWidget {
   const GradesScreen({super.key});
@@ -22,20 +22,10 @@ class _GradesScreenState extends State<GradesScreen>
         TickerProviderStateMixin<GradesScreen>,
         AutomaticKeepAliveClientMixin<GradesScreen>,
         ScreenMixin<GradesScreen> {
-  static List<GradesTab> _tabs(BuildContext context) {
-    return [
-      (
-        dest: Tab(child: Text(context.l10n.grades)),
-        widget: const SizedBox.shrink(),
-        category: "grades",
-      ),
-      (
-        dest: Tab(child: Text(context.l10n.grades)),
-        widget: const SizedBox.shrink(),
-        category: "report",
-      ),
-    ];
-  }
+  static const List<GradesTab> _tabs = [
+    (widget: SizedBox.shrink(), category: "grades"),
+    (widget: SizedBox.shrink(), category: "report"),
+  ];
 
   late List<Period> _periods;
   Period? _selectedPeriod;
@@ -46,7 +36,7 @@ class _GradesScreenState extends State<GradesScreen>
   void initState() {
     super.initState();
 
-    _controller = TabController(length: _tabs(context).length, vsync: this);
+    _controller = TabController(length: _tabs.length, vsync: this);
   }
 
   @override
@@ -63,6 +53,9 @@ class _GradesScreenState extends State<GradesScreen>
             GradesAppBar(
               maxWidth: constraints.maxWidth,
 
+              tabsName: [context.l10n.grades, context.l10n.report],
+              controller: _controller,
+
               getSelectedPeriod: () => _selectedPeriod,
               periods: _periods,
 
@@ -71,7 +64,7 @@ class _GradesScreenState extends State<GradesScreen>
               },
             ),
 
-            GradesBody(controller: _controller, tabs: _tabs(context)),
+            GradesBody(controller: _controller, tabs: _tabs),
           ],
         );
       },
