@@ -13,15 +13,10 @@ class LoginSearchSchoolScreen extends StatefulWidget {
   final double lat;
   final double long;
 
-  const LoginSearchSchoolScreen({
-    super.key,
-    required this.lat,
-    required this.long,
-  });
+  const LoginSearchSchoolScreen({super.key, required this.lat, required this.long});
 
   @override
-  State<LoginSearchSchoolScreen> createState() =>
-      _LoginSearchSchoolScreenState();
+  State<LoginSearchSchoolScreen> createState() => _LoginSearchSchoolScreenState();
 }
 
 class _LoginSearchSchoolScreenState extends State<LoginSearchSchoolScreen> {
@@ -64,9 +59,7 @@ class _LoginSearchSchoolScreenState extends State<LoginSearchSchoolScreen> {
               return ListItemCard(
                 onPressed: () async {
                   try {
-                    final parameters = await MobileInstanceParameters.fetch(
-                      instance.baseUrl,
-                    );
+                    final parameters = await MobileInstanceParameters.fetch(instance.baseUrl);
                     if (!mounted) return;
 
                     final result = await context.push<LoginResult>(
@@ -89,10 +82,7 @@ class _LoginSearchSchoolScreenState extends State<LoginSearchSchoolScreen> {
 
                 trailing: Text(
                   "${instance.distance.toStringAsFixed(2)} km",
-                  style: TextStyle(
-                    color: context.c.inversePrimary,
-                    fontWeight: FontWeight.w500,
-                  ),
+                  style: TextStyle(color: context.c.inversePrimary, fontWeight: FontWeight.w500),
                 ),
               );
             },

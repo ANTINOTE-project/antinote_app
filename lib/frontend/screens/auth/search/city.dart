@@ -1,5 +1,4 @@
 import "dart:async";
-import "dart:developer";
 
 import "package:antinote/antinote.dart";
 import "package:antinote_app/backend/src/accounts/place.dart";
