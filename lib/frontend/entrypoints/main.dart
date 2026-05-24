@@ -2,7 +2,6 @@ import "package:antinote_app/backend/backend.dart";
 import "package:antinote_app/backend/src/accounts/storage/widget.dart";
 import "package:antinote_app/frontend/app.dart";
 import "package:antinote_app/frontend/routing/routes.dart";
-import "package:antinote_app/frontend/screens/shell/manager.dart";
 import "package:antinote_app/protos/account.pb.dart";
 import "package:flutter/material.dart";
 
@@ -20,10 +19,6 @@ class MainApp extends StatefulWidget {
 class _MainAppState extends State<MainApp> {
   late final SessionDataHolder _state;
   AccountRegistry? _registry;
-
-  String? _screenId = "home";
-  final Map<String, dynamic> _storage = {};
-  Map<String, dynamic> _listenedStorage = {};
 
   @override
   void initState() {
@@ -53,16 +48,7 @@ class _MainAppState extends State<MainApp> {
           }
         },
 
-        child: ScreenManager(
-          listenedStorage: _listenedStorage,
-          screenId: _screenId,
-          storage: _storage,
-
-          setScreenId: (id) => setState(() => _screenId = id),
-          setListenedStorage: (s) => setState(() => _listenedStorage = s),
-
-          child: const App(initialLocation: Routes.appShell),
-        ),
+        child: const App(initialLocation: Routes.appShell),
       ),
     );
   }

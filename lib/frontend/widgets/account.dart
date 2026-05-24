@@ -7,6 +7,7 @@ import "package:antinote_app/frontend/widgets/customs/modal.dart";
 import "package:antinote_app/frontend/widgets/pressable.dart";
 import "package:antinote_app/protos/account.pb.dart";
 import "package:flutter/material.dart";
+import "package:go_router/go_router.dart";
 import "package:hugeicons_pro/hugeicons.dart";
 
 class AccountWidget extends StatelessWidget {
@@ -14,6 +15,7 @@ class AccountWidget extends StatelessWidget {
   final VoidCallback onPressed;
 
   final bool isLoggingIn;
+  final bool loggable;
   final bool isDefault;
 
   final Future<void> Function() onSetDefault;
@@ -27,6 +29,7 @@ class AccountWidget extends StatelessWidget {
     required this.onPressed,
 
     required this.isLoggingIn,
+    required this.loggable,
     required this.isDefault,
 
     required this.onSetDefault,
@@ -44,17 +47,32 @@ class AccountWidget extends StatelessWidget {
         children: [
           if (isDefault)
             ButtonWidget(
-              onPressed: () => onRemoveDefault(),
+              onPressed: () {
+                onRemoveDefault();
+                if (context.mounted) {
+                  context.pop();
+                }
+              },
               label: context.l10n.disableAutoLogin,
             )
           else
             ButtonWidget(
-              onPressed: () => onSetDefault(),
+              onPressed: () {
+                onSetDefault();
+                if (context.mounted) {
+                  context.pop();
+                }
+              },
               label: context.l10n.enableAutoLogin,
             ),
 
           ButtonWidget(
-            onPressed: () => onDelete(),
+            onPressed: () async {
+              await onDelete();
+              if (context.mounted) {
+                context.pop();
+              }
+            },
             isDangerous: true,
             icon: HugeIconsSolid.delete02,
             label: context.l10n.delete,
@@ -74,6 +92,7 @@ class AccountWidget extends StatelessWidget {
         margin: const EdgeInsets.only(bottom: 8),
 
         child: ListTile(
+          enabled: loggable,
           leading: isLoggingIn
               ? const LoadingWidget(size: 26)
               : IconWidget(
@@ -95,7 +114,7 @@ class AccountWidget extends StatelessWidget {
           ),
 
           trailing: Pressable(
-            onPressed: () => _openMenu(context),
+            onPressed: loggable ? () => _openMenu(context) : null,
             behavior: HitTestBehavior.opaque,
 
             child: Icon(

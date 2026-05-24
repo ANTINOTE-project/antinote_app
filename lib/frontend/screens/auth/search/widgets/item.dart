@@ -1,3 +1,4 @@
+import "package:antinote_app/frontend/extensions/colors.dart";
 import "package:antinote_app/frontend/widgets/pressable.dart";
 import "package:flutter/material.dart";
 import "package:flutter_shaders_ui/flutter_shaders_ui.dart";
@@ -30,22 +31,21 @@ class ListItemCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return Pressable(
       onPressed: onPressed,
-
       child: ShimmerEffect(
         enabled: isLoading,
-
+        angle: .1,
+        speed: 4,
+        width: 2,
+        color: context.c.surfaceContainerHigh,
         child: Card(
           color: color,
-        
           child: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 16),
-        
             child: Row(
               spacing: 10,
-        
               children: [
                 ?leading,
-        
+
                 Expanded(
                   child: Text.rich(
                     TextSpan(
@@ -57,7 +57,7 @@ class ListItemCard extends StatelessWidget {
                             fontWeight: FontWeight.bold,
                           ),
                         ),
-        
+
                         if (subtitle != null)
                           TextSpan(
                             text: "\n$subtitle",
@@ -68,12 +68,12 @@ class ListItemCard extends StatelessWidget {
                           ),
                       ],
                     ),
-        
+
                     maxLines: subtitle == null ? 1 : 2,
                     overflow: .ellipsis,
                   ),
                 ),
-        
+
                 ?trailing,
               ],
             ),

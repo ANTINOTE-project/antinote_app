@@ -85,7 +85,7 @@ class _LoginSearchCityScreenState extends State<LoginSearchCityScreen> {
 
                   if (snapshot.connectionState == .waiting ||
                       snapshot.connectionState == .active ||
-                      !snapshot.hasData) {
+                      snapshot.hasData) {
                     return CustomScrollView(
                       slivers: [
                         SliverList.builder(

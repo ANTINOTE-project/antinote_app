@@ -13,10 +13,15 @@ class LoginSearchSchoolScreen extends StatefulWidget {
   final double lat;
   final double long;
 
-  const LoginSearchSchoolScreen({super.key, required this.lat, required this.long});
+  const LoginSearchSchoolScreen({
+    super.key,
+    required this.lat,
+    required this.long,
+  });
 
   @override
-  State<LoginSearchSchoolScreen> createState() => _LoginSearchSchoolScreenState();
+  State<LoginSearchSchoolScreen> createState() =>
+      _LoginSearchSchoolScreenState();
 }
 
 class _LoginSearchSchoolScreenState extends State<LoginSearchSchoolScreen> {
@@ -53,21 +58,23 @@ class _LoginSearchSchoolScreenState extends State<LoginSearchSchoolScreen> {
           SliverList.builder(
             itemCount: _instances.length,
 
-            itemBuilder: (_, index) {
+            itemBuilder: (context, index) {
               final instance = _instances[index];
 
               return ListItemCard(
                 onPressed: () async {
                   try {
-                    final parameters = await MobileInstanceParameters.fetch(instance.baseUrl);
-                    if (!mounted) return;
+                    final parameters = await MobileInstanceParameters.fetch(
+                      instance.baseUrl,
+                    );
+                    if (!context.mounted) return;
 
                     final result = await context.push<LoginResult>(
                       Routes.auth.search.select,
                       extra: {"parameters": parameters},
                     );
 
-                    if (result != null && mounted) {
+                    if (result != null && context.mounted) {
                       context.pop(result);
                     }
 
@@ -82,7 +89,10 @@ class _LoginSearchSchoolScreenState extends State<LoginSearchSchoolScreen> {
 
                 trailing: Text(
                   "${instance.distance.toStringAsFixed(2)} km",
-                  style: TextStyle(color: context.c.inversePrimary, fontWeight: FontWeight.w500),
+                  style: TextStyle(
+                    color: context.c.inversePrimary,
+                    fontWeight: FontWeight.w500,
+                  ),
                 ),
               );
             },

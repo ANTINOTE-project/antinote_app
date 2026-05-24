@@ -86,12 +86,11 @@ class _LoginSearchSelectState extends State<LoginSearchSelect> {
 
             SliverList.builder(
               itemCount: widget.parameters.workspaces.length,
-              itemBuilder: (_, index) {
+              itemBuilder: (context, index) {
                 final workspace = widget.parameters.workspaces[index];
 
                 return ListItemCard(
                   onPressed: () async => await onSelected(context, workspace),
-
                   leading: Icon(_iconMap[workspace.type]),
                   label: workspace.label,
                   trailing: const Icon(HugeIconsSolid.arrowRight01),

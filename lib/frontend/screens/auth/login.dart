@@ -19,7 +19,7 @@ class LoginScreen extends StatefulWidget {
   State<LoginScreen> createState() => _LoginScreenState();
 }
 
-class _LoginScreenState extends State<LoginScreen> {
+class _LoginScreenState extends State<LoginScreen> with WidgetsBindingObserver {
   List<AntinoteAccount>? _accounts;
 
   String? _defaultUid;
@@ -43,6 +43,15 @@ class _LoginScreenState extends State<LoginScreen> {
   @override
   void initState() {
     super.initState();
+
+    WidgetsFlutterBinding.ensureInitialized().addObserver(this);
+  }
+
+  @override
+  void dispose() {
+    WidgetsFlutterBinding.ensureInitialized().removeObserver(this);
+
+    super.dispose();
   }
 
   @override
@@ -53,11 +62,6 @@ class _LoginScreenState extends State<LoginScreen> {
       _loaded = true;
       _load();
     }
-  }
-
-  Future<void> _popLoad() async {
-    context.pop();
-    await _load();
   }
 
   Future<void> _onAccountPressed(AntinoteAccount account) async {
@@ -85,8 +89,6 @@ class _LoginScreenState extends State<LoginScreen> {
       );
 
       if (mounted) await _load();
-
-      // catch
     } catch (e, st) {
       talker.error("Something happened during login", e, st);
 
@@ -100,13 +102,18 @@ class _LoginScreenState extends State<LoginScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBarWidget(title: context.l10n.choseAnAccount, backButton: false),
+    return PopScope(
+      child: Scaffold(
+        appBar: AppBarWidget(
+          title: context.l10n.choseAnAccount,
+          backButton: false,
+        ),
 
-      body: _buildBody(),
+        body: _buildBody(),
 
-      floatingActionButton: _buildAddButton(),
-      floatingActionButtonLocation: .centerFloat,
+        floatingActionButton: _buildAddButton(),
+        floatingActionButtonLocation: .centerFloat,
+      ),
     );
   }
 
@@ -134,23 +141,19 @@ class _LoginScreenState extends State<LoginScreen> {
                 account: account,
 
                 isLoggingIn: _loggingUid == account.uid,
+                loggable: _loggingUid == null,
                 isDefault: _defaultUid == account.uid,
 
                 onPressed: () => _onAccountPressed(account),
 
                 onRemoveDefault: () async {
                   await context.as.setDefault(null);
-                  await _popLoad();
                 },
-
                 onSetDefault: () async {
                   await context.as.setDefault(account.uid);
-                  await _popLoad();
                 },
-
                 onDelete: () async {
                   await context.as.deleteAccount(account.uid);
-                  await _popLoad();
                 },
               );
             },
