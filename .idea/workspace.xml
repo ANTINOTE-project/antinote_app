@@ -10,7 +10,12 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="5f924ac6-083e-424a-ad80-97e74bfe416b" name="Changes" comment="Added normal login">
+      <change beforePath="$PROJECT_DIR$/.idea/dictionaries/project.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/dictionaries/project.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/libraries/Dart_Packages.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/libraries/Dart_Packages.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/frontend/screens/auth/search/city.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/frontend/screens/auth/search/city.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/frontend/screens/auth/search/widgets/item.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/frontend/screens/auth/search/widgets/item.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pubspec.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/pubspec.yaml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -41,6 +46,9 @@
       </list>
     </option>
   </component>
+  <component name="FormatOnSaveOptions">
+    <option name="myRunOnSave" value="true" />
+  </component>
   <component name="Git.Settings">
     <option name="INCOMING_COMMITS_CHECK_STRATEGY" value="FETCH" />
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
@@ -57,6 +65,12 @@
     &quot;accountId&quot;: &quot;906bdc41-0c43-4890-8c94-ffd36dee1cc8&quot;
   }
 }</component>
+  <component name="OptimizeOnSaveOptions">
+    <option name="myRunOnSave" value="true" />
+  </component>
+  <component name="ProblemsViewState">
+    <option name="selectedTabId" value="CurrentFile" />
+  </component>
   <component name="ProjectColorInfo">{
   &quot;associatedIndex&quot;: 7,
   &quot;fromUser&quot;: false
@@ -85,7 +99,9 @@
     "RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252": "true",
     "RunOnceActivity.git.unshallow": "true",
     "RunOnceActivity.typescript.service.memoryLimit.init": "true",
+    "code.cleanup.on.save": "true",
     "codeWithMe.voiceChat.enabledByDefault": "false",
+    "com.google.services.firebase.aqiPopupShown": "true",
     "dart.analysis.tool.window.visible": "false",
     "git-widget-placeholder": "main",
     "git.auto.fetch.suggestion.counter": "1",
@@ -97,7 +113,9 @@
     "project.structure.last.edited": "Modules",
     "project.structure.proportion": "0.0",
     "project.structure.side.proportion": "0.0",
-    "settings.editor.selected.configurable": "preferences.keymap",
+    "rearrange.code.on.save": "true",
+    "run.code.analysis.last.selected.profile": "pProject Default",
+    "settings.editor.selected.configurable": "actions.on.save",
     "show.migrate.to.gradle.popup": "false",
     "vue.rearranger.settings.migration": "true"
   }
