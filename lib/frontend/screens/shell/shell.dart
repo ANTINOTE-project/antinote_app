@@ -109,7 +109,7 @@ class _AppShellState extends State<AppShell> {
 
           bottomNavigationBar: SafeArea(
             child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
 
               child: ClipRRect(
                 borderRadius: BorderRadius.circular(24),
@@ -122,6 +122,7 @@ class _AppShellState extends State<AppShell> {
                     currentPage = value;
                   }),
                   selectedIndex: currentPage,
+                  height: 70,
                 ),
               ),
             ),
