@@ -60,7 +60,7 @@ class _LoginSearchCityScreenState extends State<LoginSearchCityScreen> {
   }
 
   Future<void> _searchCities(String query) async {
-    if (query.length <= 3) return;
+    if (query.length < 3) return;
 
     setState(() {
       _cities = City.fetchCitiesAroundPlace(query);

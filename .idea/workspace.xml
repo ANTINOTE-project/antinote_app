@@ -9,14 +9,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="5f924ac6-083e-424a-ad80-97e74bfe416b" name="Changes" comment="Added normal login">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/frontend/screens/auth/search/city.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/frontend/screens/auth/search/city.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/frontend/screens/auth/search/school.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/frontend/screens/auth/search/school.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/frontend/screens/auth/search/select.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/frontend/screens/auth/search/select.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/frontend/screens/auth/search/widgets/item.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/frontend/screens/auth/search/widgets/item.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/pubspec.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/pubspec.yaml" afterDir="false" />
-    </list>
+    <list default="true" id="5f924ac6-083e-424a-ad80-97e74bfe416b" name="Changes" comment="Added normal login" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
