@@ -1,5 +1,5 @@
 import "package:antinote/antinote.dart";
-import "package:antinote_app/frontend/screens/shell/screens/grades/grades.dart";
+import "package:antinote_app/frontend/screens/shell/screens/grades/index.dart";
 import "package:flutter/material.dart";
 
 class GradesBody extends StatelessWidget {

@@ -9,7 +9,7 @@ class GradesAppBar extends StatelessWidget {
   final double maxWidth;
 
   final void Function(Period period) setSelectedPeriod;
-  final Period? Function() getSelectedPeriod;
+  final Period Function() getSelectedPeriod;
 
   const GradesAppBar({
     super.key,

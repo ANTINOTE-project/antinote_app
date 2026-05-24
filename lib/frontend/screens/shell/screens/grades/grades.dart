@@ -1,42 +1,30 @@
 import "dart:async";
 
-import "package:antinote/antinote.dart" hide Tab;
-import "package:antinote_app/frontend/extensions/l10n.dart";
+import "package:antinote/antinote.dart";
 import "package:antinote_app/frontend/screens/screen.dart";
-import "package:antinote_app/frontend/screens/shell/screens/grades/app_bar.dart";
-import "package:antinote_app/frontend/screens/shell/screens/grades/body.dart";
 import "package:antinote_app/frontend/widgets/customs/loading.dart";
 import "package:flutter/material.dart";
 
-typedef GradesTab = ({Widget widget, String category});
+class GradesList extends StatefulWidget {
+  final Period period;
 
-class GradesScreen extends StatefulWidget {
-  const GradesScreen({super.key});
+  const GradesList({super.key, required this.period});
 
   @override
-  State<GradesScreen> createState() => _GradesScreenState();
+  State<GradesList> createState() => _GradesListState();
 }
 
-class _GradesScreenState extends State<GradesScreen>
-    with
-        TickerProviderStateMixin<GradesScreen>,
-        AutomaticKeepAliveClientMixin<GradesScreen>,
-        ScreenMixin<GradesScreen> {
-  static const List<GradesTab> _tabs = [
-    (widget: SizedBox.shrink(), category: "grades"),
-    (widget: SizedBox.shrink(), category: "report"),
-  ];
-
-  late List<Period> _periods;
-  Period? _selectedPeriod;
-
-  late TabController _controller;
+class _GradesListState extends State<GradesList>
+    with AutomaticKeepAliveClientMixin<GradesList>, ScreenMixin<GradesList> {
+  late LatestGradesPage _data;
 
   @override
-  void initState() {
-    super.initState();
+  void didUpdateWidget(GradesList oldWidget) {
+    super.didUpdateWidget(oldWidget);
 
-    _controller = TabController(length: _tabs.length, vsync: this);
+    if (oldWidget.period != widget.period) {
+      reload();
+    }
   }
 
   @override
@@ -44,30 +32,38 @@ class _GradesScreenState extends State<GradesScreen>
     BuildContext context,
     RefreshIndicatorBuilder buildRefreshIndicator,
   ) {
-    return LayoutBuilder(
-      builder: (context, constraints) {
-        return CustomScrollView(
-          physics: const NeverScrollableScrollPhysics(),
+    final organizedData = <Service, List<Exam>>{
+      for (final service in _data.services!) service: [],
+    };
 
-          slivers: [
-            GradesAppBar(
-              maxWidth: constraints.maxWidth,
+    for (final exam in _data.exams) {
+      final service = organizedData.keys.firstWhere(
+        (element) => element.id == exam.service.id,
+      );
 
-              tabsName: [context.l10n.grades, context.l10n.report],
-              controller: _controller,
+      organizedData[service]!.add(exam);
+    }
 
-              getSelectedPeriod: () => _selectedPeriod,
-              periods: _periods,
+    return CustomScrollView(
+      slivers: [
+        for (final MapEntry(key: service, value: exams)
+            in organizedData.entries)
+          SliverMainAxisGroup(
+            slivers: [
+              SliverToBoxAdapter(child: Text(service.name)),
 
-              setSelectedPeriod: (period) {
-                setState(() => _selectedPeriod = period);
-              },
-            ),
+              SliverList.builder(
+                itemCount: exams.length,
+                itemBuilder: (context, index) {
+                  final exam = exams[index];
+                  return Text(exam.comment ?? "Pas de nom");
+                },
+              ),
+            ],
+          ),
 
-            GradesBody(controller: _controller, tabs: _tabs),
-          ],
-        );
-      },
+        const SliverPadding(padding: EdgeInsets.only(bottom: 128)),
+      ],
     );
   }
 
@@ -76,27 +72,18 @@ class _GradesScreenState extends State<GradesScreen>
     BuildContext context,
     RefreshIndicatorBuilder buildRefreshIndicator,
   ) {
-    return const Center(child: LoadingWidget(size: 30));
+    return buildRefreshIndicator(
+      child: const Center(child: LoadingWidget(size: 30)),
+    );
   }
 
   @override
   FutureOr<void> loadActiveDataFromSession(PronoteSession session) async {
     await session.ensurePage(198);
 
-    _selectedPeriod ??= session.instance.defaultPeriod(DateTime.now());
-    _periods = session.instance.periods;
-
-    if (!mounted) {
-      throw Exception(
-        "By the time we ensured the correct page was set, the context got unmounted",
-      );
-    }
-
-    // return session.access(
-    //   LatestGradesPageAccessor(
-    //     period: asdasd.getOrPutAndListenPeriod(context, session),
-    //   ),
-    // );
+    _data = await session.access(
+      LatestGradesPageAccessor(period: widget.period),
+    );
   }
 
   @override
