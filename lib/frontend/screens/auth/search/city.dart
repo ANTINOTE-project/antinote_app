@@ -1,4 +1,5 @@
 import "dart:async";
+import "dart:math";
 
 import "package:antinote/antinote.dart";
 import "package:antinote_app/backend/src/accounts/place.dart";
@@ -10,6 +11,7 @@ import "package:antinote_app/frontend/widgets/customs/field.dart";
 import "package:flutter/material.dart";
 import "package:go_router/go_router.dart";
 import "package:hugeicons_pro/hugeicons.dart";
+import "package:skeletonizer/skeletonizer.dart";
 
 class LoginSearchCityScreen extends StatefulWidget {
   const LoginSearchCityScreen({super.key});
@@ -19,6 +21,19 @@ class LoginSearchCityScreen extends StatefulWidget {
 }
 
 class _LoginSearchCityScreenState extends State<LoginSearchCityScreen> {
+  final _mockCities = List.generate(15, (i) {
+    final r = Random(i);
+
+    return (
+      title: String.fromCharCodes(
+        List.generate(r.nextInt(8) + 6, (_) => r.nextInt(26) + 97),
+      ),
+      subtitle: String.fromCharCodes(
+        List.generate(r.nextInt(12) + 8, (_) => r.nextInt(26) + 97),
+      ),
+    );
+  });
+
   final _controller = TextEditingController();
 
   Future<List<City>>? _cities;
@@ -52,6 +67,12 @@ class _LoginSearchCityScreenState extends State<LoginSearchCityScreen> {
     });
   }
 
+  static bool _isLoading(AsyncSnapshot snapshot) {
+    return snapshot.connectionState == .waiting ||
+        snapshot.connectionState == .active ||
+        !snapshot.hasData;
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -80,26 +101,46 @@ class _LoginSearchCityScreenState extends State<LoginSearchCityScreen> {
 
                 builder: (context, snapshot) {
                   if (snapshot.connectionState == .none) {
-                    return const SizedBox.shrink();
+                    return Center(
+                      child: Column(
+                        mainAxisAlignment: .center,
+                        spacing: 6,
+
+                        children: [
+                          const Icon(HugeIconsSolid.mapsSearch, size: 48),
+
+                          Text(
+                            context.l10n.loginCity,
+                            style: const TextStyle(fontWeight: FontWeight.w500),
+                          ),
+                        ],
+                      ),
+                    );
                   }
 
-                  if (snapshot.connectionState == .waiting ||
-                      snapshot.connectionState == .active ||
-                      snapshot.hasData) {
-                    return CustomScrollView(
-                      slivers: [
-                        SliverList.builder(
-                          itemCount: 15,
+                  if (_isLoading(snapshot)) {
+                    return Skeletonizer(
+                      child: CustomScrollView(
+                        slivers: [
+                          SliverList.builder(
+                            itemCount: _mockCities.length,
 
-                          itemBuilder: (context, index) {
-                            return const ListItemCard(
-                              isLoading: true,
-                              onPressed: null,
-                              label: null,
-                            );
-                          },
-                        ),
-                      ],
+                            itemBuilder: (context, index) {
+                              final mock = _mockCities[index];
+
+                              return ListItemCard(
+                                isLoading: true,
+                                onPressed: null,
+
+                                leading: const Icon(HugeIconsSolid.aspectRatio),
+
+                                title: mock.title,
+                                subtitle: mock.subtitle,
+                              );
+                            },
+                          ),
+                        ],
+                      ),
                     );
                   }
 
@@ -138,7 +179,7 @@ class _LoginSearchCityScreenState extends State<LoginSearchCityScreen> {
                               .other => HugeIconsSolid.location01,
                             }),
 
-                            label: city.name,
+                            title: city.name,
                             subtitle: city.address,
                           );
                         },

@@ -70,7 +70,7 @@ class _LoginSearchSelectState extends State<LoginSearchSelect> {
               SliverToBoxAdapter(
                 child: ListItemCard(
                   onPressed: null,
-                  label: context.l10n.activateCas,
+                  title: context.l10n.activateCas,
                   color: context.c.surfaceContainerHigh,
                   trailing: Switch(
                     value: casLoginActive,
@@ -92,7 +92,7 @@ class _LoginSearchSelectState extends State<LoginSearchSelect> {
                 return ListItemCard(
                   onPressed: () async => await onSelected(context, workspace),
                   leading: Icon(_iconMap[workspace.type]),
-                  label: workspace.label,
+                  title: workspace.label,
                   trailing: const Icon(HugeIconsSolid.arrowRight01),
                 );
               },

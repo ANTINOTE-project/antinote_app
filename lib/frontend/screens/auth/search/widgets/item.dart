@@ -1,13 +1,11 @@
-import "package:antinote_app/frontend/extensions/colors.dart";
 import "package:antinote_app/frontend/widgets/pressable.dart";
 import "package:flutter/material.dart";
-import "package:flutter_shaders_ui/flutter_shaders_ui.dart";
 
 class ListItemCard extends StatelessWidget {
   final VoidCallback? onPressed;
 
   final Widget? leading;
-  final String? label;
+  final String? title;
   final String? subtitle;
   final Widget? trailing;
 
@@ -19,7 +17,7 @@ class ListItemCard extends StatelessWidget {
     required this.onPressed,
 
     this.leading,
-    required this.label,
+    required this.title,
     this.subtitle,
     this.trailing,
 
@@ -30,54 +28,22 @@ class ListItemCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Pressable(
+      hasFeedback: !isLoading,
       onPressed: onPressed,
-      child: ShimmerEffect(
-        enabled: isLoading,
-        angle: .1,
-        speed: 4,
-        width: 2,
-        color: context.c.surfaceContainerHigh,
-        child: Card(
-          color: color,
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 16),
-            child: Row(
-              spacing: 10,
-              children: [
-                ?leading,
 
-                Expanded(
-                  child: Text.rich(
-                    TextSpan(
-                      children: [
-                        TextSpan(
-                          text: label?.trim(),
-                          style: const TextStyle(
-                            fontSize: 16,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
+      child: Card(
+        color: color,
 
-                        if (subtitle != null)
-                          TextSpan(
-                            text: "\n$subtitle",
-                            style: const TextStyle(
-                              fontSize: 16,
-                              fontWeight: FontWeight.w300,
-                            ),
-                          ),
-                      ],
-                    ),
+        child: ListTile(
+          leading: leading,
+          trailing: trailing,
 
-                    maxLines: subtitle == null ? 1 : 2,
-                    overflow: .ellipsis,
-                  ),
-                ),
-
-                ?trailing,
-              ],
-            ),
-          ),
+          title: title != null
+              ? Text(title!, maxLines: 1, overflow: .ellipsis)
+              : null,
+          subtitle: subtitle != null
+              ? Text(subtitle!, maxLines: 1, overflow: .ellipsis)
+              : null,
         ),
       ),
     );

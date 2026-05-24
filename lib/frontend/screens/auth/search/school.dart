@@ -85,7 +85,7 @@ class _LoginSearchSchoolScreenState extends State<LoginSearchSchoolScreen> {
                 },
 
                 leading: const Icon(HugeIconsSolid.school),
-                label: instance.name,
+                title: instance.name,
 
                 trailing: Text(
                   "${instance.distance.toStringAsFixed(2)} km",
