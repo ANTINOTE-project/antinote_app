@@ -3,6 +3,7 @@ import "dart:async";
 import "package:antinote/antinote.dart";
 import "package:antinote_app/frontend/screens/screen.dart";
 import "package:antinote_app/frontend/widgets/customs/loading.dart";
+import "package:antinote_app/utils.dart";
 import "package:flutter/material.dart";
 
 class TimetableScreen extends StatefulWidget {
@@ -13,30 +14,47 @@ class TimetableScreen extends StatefulWidget {
 }
 
 class _TimetableScreenState extends State<TimetableScreen>
-    with ScreenMixin<TimetableScreen> {
-  SpecificInstanceParameters? scheduleDisplayData;
-  List<Class>? _classes;
+    with
+        AutomaticKeepAliveClientMixin<TimetableScreen>,
+        ScreenMixin<TimetableScreen> {
+  late SpecificInstanceParameters scheduleDisplayData;
+  Map<DateTime, List<Class>> _classes = {};
+
+  @override
+  bool get wantKeepAlive => true;
+
+  PageController? controller;
 
   @override
   Widget buildLoaded(
     BuildContext context,
     RefreshIndicatorBuilder buildRefreshIndicator,
   ) {
-    return buildRefreshIndicator(
-      child: ListView.builder(
-        itemCount: _classes!.length,
-        itemBuilder: (context, index) {
-          final clazz = _classes![index];
+    super.build(context);
 
-          return Card(
-            child: ListTile(
-              title: Text(clazz.id),
-              subtitle: Text("${clazz.startDate} → ${clazz.endDate}"),
-            ),
-          );
-        },
-      ),
-    );
+    final days = DateRange(
+      start: scheduleDisplayData.firstDate,
+      end: scheduleDisplayData.lastDate,
+    ).listDays();
+
+    // PageView.builder(itemBuilder: (context, index) {}, itemCount: days.length);
+
+    // return buildRefreshIndicator(
+    //   child: ListView.builder(
+    //     itemCount: _classes!.length,
+    //     itemBuilder: (context, index) {
+    //       final clazz = _classes![index];
+    //
+    //       return Card(
+    //         child: ListTile(
+    //           title: Text(clazz.id),
+    //           subtitle: Text("${clazz.startDate} → ${clazz.endDate}"),
+    //         ),
+    //       );
+    //     },
+    //   ),
+    // );
+    return Container();
   }
 
   @override
@@ -44,6 +62,8 @@ class _TimetableScreenState extends State<TimetableScreen>
     BuildContext context,
     RefreshIndicatorBuilder buildRefreshIndicator,
   ) {
+    super.build(context);
+
     return const Center(child: LoadingWidget(size: 30));
   }
 
@@ -52,6 +72,10 @@ class _TimetableScreenState extends State<TimetableScreen>
     scheduleDisplayData = session.instance;
 
     await session.ensurePage(16);
+
+    if (controller == null) {
+      controller = PageController();
+    }
 
     final result = await session.access(
       TimetableAccessor.forRange(
@@ -64,6 +88,6 @@ class _TimetableScreenState extends State<TimetableScreen>
       ),
     );
 
-    _classes = result.classes;
+    // _classes = result.classes;
   }
 }

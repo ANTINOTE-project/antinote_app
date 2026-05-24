@@ -105,6 +105,10 @@ mixin ScreenMixin<T extends StatefulWidget> on State<T> {
   @override
   @mustCallSuper
   Widget build(BuildContext context) {
+    if (this is AutomaticKeepAliveClientMixin<T>) {
+      super.build(context);
+    }
+
     Future<void> refreshFunction() async =>
         await reload(fromRefreshIndicator: true);
 
