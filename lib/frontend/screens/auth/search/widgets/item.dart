@@ -1,14 +1,16 @@
 import "package:antinote_app/frontend/widgets/pressable.dart";
 import "package:flutter/material.dart";
+import "package:flutter_shaders_ui/flutter_shaders_ui.dart";
 
 class ListItemCard extends StatelessWidget {
   final VoidCallback? onPressed;
 
   final Widget? leading;
-  final String label;
+  final String? label;
   final String? subtitle;
   final Widget? trailing;
 
+  final bool isLoading;
   final Color? color;
 
   const ListItemCard({
@@ -20,6 +22,7 @@ class ListItemCard extends StatelessWidget {
     this.subtitle,
     this.trailing,
 
+    this.isLoading = false,
     this.color,
   });
 
@@ -28,48 +31,52 @@ class ListItemCard extends StatelessWidget {
     return Pressable(
       onPressed: onPressed,
 
-      child: Card(
-        color: color,
+      child: ShimmerEffect(
+        enabled: isLoading,
 
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 16),
-
-          child: Row(
-            spacing: 10,
-
-            children: [
-              ?leading,
-
-              Expanded(
-                child: Text.rich(
-                  TextSpan(
-                    children: [
-                      TextSpan(
-                        text: label.trim(),
-                        style: const TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-
-                      if (subtitle != null)
+        child: Card(
+          color: color,
+        
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 16),
+        
+            child: Row(
+              spacing: 10,
+        
+              children: [
+                ?leading,
+        
+                Expanded(
+                  child: Text.rich(
+                    TextSpan(
+                      children: [
                         TextSpan(
-                          text: "\n$subtitle",
+                          text: label?.trim(),
                           style: const TextStyle(
                             fontSize: 16,
-                            fontWeight: FontWeight.w300,
+                            fontWeight: FontWeight.bold,
                           ),
                         ),
-                    ],
+        
+                        if (subtitle != null)
+                          TextSpan(
+                            text: "\n$subtitle",
+                            style: const TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.w300,
+                            ),
+                          ),
+                      ],
+                    ),
+        
+                    maxLines: subtitle == null ? 1 : 2,
+                    overflow: .ellipsis,
                   ),
-
-                  maxLines: subtitle == null ? 1 : 2,
-                  overflow: .ellipsis,
                 ),
-              ),
-
-              ?trailing,
-            ],
+        
+                ?trailing,
+              ],
+            ),
           ),
         ),
       ),

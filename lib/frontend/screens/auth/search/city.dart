@@ -21,7 +21,7 @@ class LoginSearchCityScreen extends StatefulWidget {
 class _LoginSearchCityScreenState extends State<LoginSearchCityScreen> {
   final _controller = TextEditingController();
 
-  List<City> _cities = [];
+  Future<List<City>>? _cities;
   Timer? _debounce;
 
   @override
@@ -39,7 +39,7 @@ class _LoginSearchCityScreenState extends State<LoginSearchCityScreen> {
       if (_controller.text.trim().length >= 3) {
         _searchCities(_controller.text.trim());
       } else {
-        setState(() => _cities = []);
+        setState(() => _cities = null);
       }
     });
   }
@@ -47,10 +47,8 @@ class _LoginSearchCityScreenState extends State<LoginSearchCityScreen> {
   Future<void> _searchCities(String query) async {
     if (query.length <= 3) return;
 
-    final cities = await City.fetchCitiesAroundPlace(query);
-
     setState(() {
-      _cities = cities;
+      _cities = City.fetchCitiesAroundPlace(query);
     });
   }
 
@@ -73,50 +71,83 @@ class _LoginSearchCityScreenState extends State<LoginSearchCityScreen> {
             ),
           ),
 
-          Expanded(child: _buildList()),
-        ],
-      ),
-    );
-  }
+          Expanded(
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 12),
 
-  Widget _buildList() {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 12),
+              child: FutureBuilder(
+                future: _cities,
 
-      child: CustomScrollView(
-        slivers: [
-          SliverList.builder(
-            itemCount: _cities.length,
-
-            itemBuilder: (_, index) {
-              final city = _cities[index];
-
-              return ListItemCard(
-                onPressed: () async {
-                  final result = await context.push<LoginResult>(
-                    Routes.auth.search.school,
-                    extra: {"lat": city.latitude, "long": city.longitude},
-                  );
-
-                  if (result != null && mounted) {
-                    context.pop(result);
+                builder: (context, snapshot) {
+                  if (snapshot.connectionState == .none) {
+                    return const SizedBox.shrink();
                   }
+
+                  if (snapshot.connectionState == .waiting ||
+                      snapshot.connectionState == .active ||
+                      !snapshot.hasData) {
+                    return CustomScrollView(
+                      slivers: [
+                        SliverList.builder(
+                          itemCount: 15,
+
+                          itemBuilder: (context, index) {
+                            return const ListItemCard(
+                              isLoading: true,
+                              onPressed: null,
+                              label: null,
+                            );
+                          },
+                        ),
+                      ],
+                    );
+                  }
+
+                  final cities = snapshot.requireData;
+
+                  return CustomScrollView(
+                    slivers: [
+                      SliverList.builder(
+                        itemCount: cities.length,
+
+                        itemBuilder: (context, index) {
+                          final city = cities[index];
+
+                          return ListItemCard(
+                            onPressed: () async {
+                              final result = await context.push<LoginResult>(
+                                Routes.auth.search.school,
+                                extra: {
+                                  "lat": city.latitude,
+                                  "long": city.longitude,
+                                },
+                              );
+
+                              if (result != null && context.mounted) {
+                                context.pop(result);
+                              }
+                            },
+
+                            leading: Icon(switch (city.placeType) {
+                              .city => HugeIconsSolid.building01,
+                              .town => HugeIconsSolid.building02,
+                              .village => HugeIconsSolid.home01,
+                              .hamlet => HugeIconsSolid.house01,
+                              .suburb => HugeIconsSolid.house04,
+                              .municipality => HugeIconsSolid.city01,
+                              .other => HugeIconsSolid.location01,
+                            }),
+
+                            label: city.name,
+                            subtitle: city.address,
+                          );
+                        },
+                      ),
+                    ],
+                  );
                 },
-
-                leading: Icon(switch (city.placeType) {
-                  .city => HugeIconsSolid.building01,
-                  .town => HugeIconsSolid.building02,
-                  .village => HugeIconsSolid.home01,
-                  .hamlet => HugeIconsSolid.house01,
-                  .suburb => HugeIconsSolid.house04,
-                  .municipality => HugeIconsSolid.city01,
-                  .other => HugeIconsSolid.location01,
-                }),
-
-                label: city.name,
-                subtitle: city.address,
-              );
-            },
+              ),
+            ),
           ),
         ],
       ),
