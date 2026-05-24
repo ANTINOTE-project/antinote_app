@@ -1,7 +1,6 @@
 import "dart:async";
 
 import "package:antinote/antinote.dart";
-import "package:antinote_app/backend/src/helpers/various.dart";
 import "package:antinote_app/frontend/screens/screen.dart";
 import "package:antinote_app/frontend/widgets/customs/loading.dart";
 import "package:flutter/material.dart";
@@ -18,7 +17,7 @@ class _GradesScreenState extends State<GradesScreen>
         TickerProviderStateMixin<GradesScreen>,
         AutomaticKeepAliveClientMixin<GradesScreen>,
         ScreenMixin<GradesScreen> {
-  late List<Period> _availablePeriods;
+  late List<Period> _periods;
   Period? _selectedPeriod;
 
   @override
@@ -43,27 +42,27 @@ class _GradesScreenState extends State<GradesScreen>
 
                 leading: ListView.builder(
                   padding: const EdgeInsets.symmetric(horizontal: 8),
-                  itemCount: _availablePeriods.length,
+                  itemCount: _periods.length,
 
                   scrollDirection: .horizontal,
                   shrinkWrap: true,
 
                   itemBuilder: (context, index) {
-                    final period = _availablePeriods[index];
+                    final period = _periods[index];
 
                     return Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 3),
-                      child: ChoiceChip(
-                        label: Text(period.name),
-                        tooltip:
-                            'Du ${period.startDate?.asLongNumericDate() ?? 'jamais'} au ${period.endDate?.asLongNumericDate() ?? 'jamais'}',
-                        selected: period == _selectedPeriod,
-                        onSelected: (value) async {
-                          if (!value) return;
 
-                          setState(() {
-                            _selectedPeriod = period;
-                          });
+                      child: ChoiceChip(
+                        selected: period == _selectedPeriod,
+                        label: Text(period.name),
+
+                        onSelected: (value) async {
+                          if (value) {
+                            setState(() {
+                              _selectedPeriod = period;
+                            });
+                          }
                         },
                       ),
                     );
@@ -89,7 +88,7 @@ class _GradesScreenState extends State<GradesScreen>
   FutureOr<void> loadActiveDataFromSession(PronoteSession session) async {
     await session.ensurePage(198);
 
-    _availablePeriods = session.instance.periods;
+    _periods = session.instance.periods;
     _selectedPeriod ??= session.instance.defaultPeriod(DateTime.now());
 
     if (!context.mounted) {
