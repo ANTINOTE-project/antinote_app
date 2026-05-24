@@ -34,7 +34,7 @@ extension DateTimeInDateRange on DateRange {
     for (
       DateTime date = start.copyWith();
       !date.isAfter(end);
-      date = date.add(Duration(days: 1))
+      date = date.add(const Duration(days: 1))
     ) {
       days.add(date);
     }

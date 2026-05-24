@@ -1,56 +1,33 @@
 {
   "@@locale": "fr",
-  
   "appTitle": "ANTINOTE",
-  "@appTitle": {},
 
   "choseAnAccount": "Choisir un compte",
-  "@choseAnAccount": {},
   "addAnAccount": "Ajouter un compte",
-  "@addAnAccount": {},
-  
   "delete": "Supprimer",
-  "@delete": {},
 
   "disableAutoLogin": "Désactiver la connexion automatique",
-  "@disableAutoLogin": {},
   "enableAutoLogin": "Activer la connexion automatique",
-  "@enableAutoLogin": {},
 
   "loginQrCode": "QR Code",
-  "@loginQrCode": {},
   "loginQrCodeSubtitle": "Scanne un QR code depuis un ordinateur déjà connecté à PRONOTE",
-  "@loginQrCodeSubtitle": {},
 
   "loginCity": "Recherche ta ville",
-  "@loginCity": {},
   "loginCitySubtitle": "Entre le nom de ta ville et choisis ton établissement",
-  "@loginCitySubtitle": {},
 
   "loginSchool": "Choisis ton établissement",
-  "@loginSchool": {},
-
   "loginSelect": "Choisis ton espace",
-  "@loginSelect": {},
 
   "activateCas": "Se connecter via ENT",
-  "@activateCas": {},
-
   "loginCredentials": "Renseigne tes identifiants",
-  "@loginCredentials" : {},
-
   "loginWebview": "Connecte toi à ton compte",
-  "@loginWebview": {},
 
   "home": "Accueil",
-  "@home": {},
-
   "timetable": "Cours",
-  "@timetable": {},
-
   "grades": "Notes",
-  "@grades": {},
-  
+  "report": "Bulletin",
   "communication": "Infos",
-  "@communication": {}
+
+  "gradeOf": "Note de {service}",
+  "@gradeOf": {}
 }
