@@ -6,6 +6,7 @@ import "package:antinote_app/frontend/extensions/colors.dart";
 import "package:antinote_app/frontend/extensions/l10n.dart";
 import "package:antinote_app/frontend/screens/screen.dart";
 import "package:antinote_app/frontend/widgets/customs/loading.dart";
+import "package:antinote_app/frontend/widgets/pressable.dart";
 import "package:antinote_app/utils.dart";
 import "package:flutter/material.dart";
 
@@ -100,31 +101,52 @@ class _ServiceWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final hasSelfAverage = service.selfAverage != null;
+    final color = Color(service.color!);
 
-    return Padding(
-      padding: const EdgeInsets.only(top: 10, bottom: 6, left: 2),
+    return Pressable(
+      child: Padding(
+        padding: const EdgeInsets.only(top: 10, bottom: 6, left: 2),
 
-      child: Row(
-        spacing: 8,
+        child: Row(
+          spacing: 8,
 
-        children: [
-          Expanded(
-            child: Text(
-              service.name,
+          children: [
+            Expanded(
+              child: Text(
+                service.name,
 
-              maxLines: 1,
-              overflow: .ellipsis,
+                maxLines: 1,
+                overflow: .ellipsis,
 
-              style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                style: TextStyle(fontSize: 21, fontWeight: FontWeight.bold, color: color),
+              ),
             ),
-          ),
 
-          if (hasSelfAverage)
-            Text(
-              "${service.selfAverage!.value} / ${service.theoreticalMaxGrade!.value}",
-              style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
-            ),
-        ],
+            if (hasSelfAverage)
+              Text.rich(
+                TextSpan(
+                  children: [
+                    TextSpan(
+                      text: Utils.formatNumber(service.selfAverage!.value),
+                      style: TextStyle(color: color, fontSize: 22, fontWeight: FontWeight.w900),
+                    ),
+
+                    const WidgetSpan(child: SizedBox(width: 2)),
+
+                    TextSpan(
+                      text: "/${Utils.formatNumber(service.theoreticalMaxGrade!.value)}",
+
+                      style: TextStyle(
+                        color: context.c.onSurfaceVariant,
+                        fontSize: 15,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+          ],
+        ),
       ),
     );
   }
@@ -167,25 +189,74 @@ class _ExamWidget extends StatelessWidget {
         ? exam.comment!.trim()
         : context.l10n.gradeOf(exam.service.name);
 
-    final grade =
-        "${Utils.formatNumber(exam.selfGrade.value)}/${Utils.formatNumber(exam.theoreticalMaxGrade.value)}";
+    final color = Color(exam.service.color!);
 
-    return Container(
-      decoration: BoxDecoration(color: context.c.surfaceContainerHigh, borderRadius: borderRadius),
-
-      child: ListTile(
-        title: Text(
-          title,
-
-          maxLines: 1,
-          overflow: .ellipsis,
-
-          style: const TextStyle(fontWeight: FontWeight.w500),
+    return Pressable(
+      // Si tu vois ça stp laisse le container
+      child: Container(
+        decoration: BoxDecoration(
+          color: context.c.surfaceContainerHigh,
+          borderRadius: borderRadius,
         ),
 
-        subtitle: Text(exam.date.asRelativeDate(context)),
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
 
-        trailing: Text(grade),
+          child: Row(
+            spacing: 16,
+
+            children: [
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+
+                  children: [
+                    Text(
+                      title,
+
+                      maxLines: 1,
+                      overflow: .ellipsis,
+
+                      style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w800),
+                    ),
+
+                    Text(
+                      exam.date.asRelativeDate(context),
+
+                      style: TextStyle(
+                        fontSize: 12,
+                        fontWeight: FontWeight.w600,
+                        color: context.c.onSurfaceVariant,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+
+              Text.rich(
+                TextSpan(
+                  children: [
+                    TextSpan(
+                      text: Utils.formatNumber(exam.selfGrade.value),
+                      style: TextStyle(color: color, fontSize: 19, fontWeight: FontWeight.w900),
+                    ),
+
+                    const WidgetSpan(child: SizedBox(width: 2)),
+
+                    TextSpan(
+                      text: "/${Utils.formatNumber(exam.theoreticalMaxGrade.value)}",
+                      style: TextStyle(
+                        color: context.c.onSurfaceVariant,
+                        fontSize: 15,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        ),
       ),
     );
   }
