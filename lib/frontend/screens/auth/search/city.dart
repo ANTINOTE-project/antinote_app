@@ -1,9 +1,7 @@
 import "dart:async";
-import "dart:developer";
 
 import "package:antinote/antinote.dart";
 import "package:antinote_app/backend/src/accounts/place.dart";
-import "package:antinote_app/frontend/extensions/colors.dart";
 import "package:antinote_app/frontend/extensions/l10n.dart";
 import "package:antinote_app/frontend/routing/routes.dart";
 import "package:antinote_app/frontend/screens/auth/search/widgets/item.dart";
@@ -116,13 +114,7 @@ class _LoginSearchCityScreenState extends State<LoginSearchCityScreen> {
                 }),
 
                 label: city.name,
-                trailing: Text(
-                  city.postalCode,
-                  style: TextStyle(
-                    color: context.c.inversePrimary,
-                    fontWeight: FontWeight.w500,
-                  ),
-                ),
+                subtitle: city.address,
               );
             },
           ),

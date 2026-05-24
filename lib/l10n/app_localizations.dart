@@ -166,6 +166,18 @@ abstract class AppLocalizations {
   /// **'Choisis ton espace'**
   String get loginSelect;
 
+  /// No description provided for @activateCas.
+  ///
+  /// In fr, this message translates to:
+  /// **'Se connecter via ENT'**
+  String get activateCas;
+
+  /// No description provided for @loginCredentials.
+  ///
+  /// In fr, this message translates to:
+  /// **'Renseigne tes identifiants'**
+  String get loginCredentials;
+
   /// No description provided for @loginWebview.
   ///
   /// In fr, this message translates to:

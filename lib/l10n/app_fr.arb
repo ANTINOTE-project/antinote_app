@@ -33,6 +33,12 @@
   "loginSelect": "Choisis ton espace",
   "@loginSelect": {},
 
+  "activateCas": "Se connecter via ENT",
+  "@activateCas": {},
+
+  "loginCredentials": "Renseigne tes identifiants",
+  "@loginCredentials" : {},
+
   "loginWebview": "Connecte toi à ton compte",
   "@loginWebview": {},
 

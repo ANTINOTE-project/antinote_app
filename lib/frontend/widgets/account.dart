@@ -36,16 +36,22 @@ class AccountWidget extends StatelessWidget {
 
   void _openMenu(BuildContext context) {
     Modal.show(
+      context,
       account.name,
-
       Column(
         spacing: 8,
 
         children: [
           if (isDefault)
-            ButtonWidget(onPressed: () => onRemoveDefault(), label: context.l10n.disableAutoLogin)
+            ButtonWidget(
+              onPressed: () => onRemoveDefault(),
+              label: context.l10n.disableAutoLogin,
+            )
           else
-            ButtonWidget(onPressed: () => onSetDefault(), label: context.l10n.enableAutoLogin),
+            ButtonWidget(
+              onPressed: () => onSetDefault(),
+              label: context.l10n.enableAutoLogin,
+            ),
 
           ButtonWidget(
             onPressed: () => onDelete(),
@@ -92,7 +98,10 @@ class AccountWidget extends StatelessWidget {
             onPressed: () => _openMenu(context),
             behavior: HitTestBehavior.opaque,
 
-            child: Icon(HugeIconsSolid.moreVertical, color: context.c.onSurfaceVariant),
+            child: Icon(
+              HugeIconsSolid.moreVertical,
+              color: context.c.onSurfaceVariant,
+            ),
           ),
         ),
       ),

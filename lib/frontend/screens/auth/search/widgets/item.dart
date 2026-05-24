@@ -2,19 +2,25 @@ import "package:antinote_app/frontend/widgets/pressable.dart";
 import "package:flutter/material.dart";
 
 class ListItemCard extends StatelessWidget {
-  final VoidCallback onPressed;
+  final VoidCallback? onPressed;
 
-  final Widget leading;
+  final Widget? leading;
   final String label;
-  final Widget trailing;
+  final String? subtitle;
+  final Widget? trailing;
+
+  final Color? color;
 
   const ListItemCard({
     super.key,
     required this.onPressed,
 
-    required this.leading,
+    this.leading,
     required this.label,
-    required this.trailing,
+    this.subtitle,
+    this.trailing,
+
+    this.color,
   });
 
   @override
@@ -23,6 +29,8 @@ class ListItemCard extends StatelessWidget {
       onPressed: onPressed,
 
       child: Card(
+        color: color,
+
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 16),
 
@@ -30,23 +38,37 @@ class ListItemCard extends StatelessWidget {
             spacing: 10,
 
             children: [
-              leading,
+              ?leading,
 
               Expanded(
-                child: Text(
-                  label.trim(),
+                child: Text.rich(
+                  TextSpan(
+                    children: [
+                      TextSpan(
+                        text: label.trim(),
+                        style: const TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
 
-                  maxLines: 1,
-                  overflow: .ellipsis,
-
-                  style: const TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.bold,
+                      if (subtitle != null)
+                        TextSpan(
+                          text: "\n$subtitle",
+                          style: const TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.w300,
+                          ),
+                        ),
+                    ],
                   ),
+
+                  maxLines: subtitle == null ? 1 : 2,
+                  overflow: .ellipsis,
                 ),
               ),
 
-              trailing,
+              ?trailing,
             ],
           ),
         ),

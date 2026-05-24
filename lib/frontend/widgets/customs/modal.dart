@@ -1,15 +1,15 @@
-import "package:antinote_app/frontend/app.dart";
 import "package:flutter/material.dart";
 
 class Modal {
   Modal._();
 
-  static Future<T?> show<T>(String title, Widget child) async {
-    final state = App.navigatorKey.currentState;
-    if (state == null) return null;
-
+  static Future<T?> show<T>(
+    BuildContext context,
+    String title,
+    Widget child,
+  ) async {
     return await showModalBottomSheet<T>(
-      context: state.context,
+      context: context,
       isScrollControlled: true,
 
       builder: (_) => _Modal(title: title, child: child),
@@ -37,7 +37,13 @@ class _Modal extends StatelessWidget {
             spacing: 16,
 
             children: [
-              Text(title, style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold)),
+              Text(
+                title,
+                style: const TextStyle(
+                  fontSize: 24,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
               child,
             ],
           ),

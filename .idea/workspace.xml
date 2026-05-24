@@ -8,12 +8,17 @@
   <component name="ChangeListManager">
     <list default="true" id="5f924ac6-083e-424a-ad80-97e74bfe416b" name="Changes" comment="Refactoring">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/backend/src/accounts/place.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/backend/src/accounts/place.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/frontend/app.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/frontend/app.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/frontend/routing/router.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/frontend/routing/router.dart" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/lib/frontend/screens/auth/search/city.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/frontend/screens/auth/search/city.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/frontend/screens/auth/search/school.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/frontend/screens/auth/search/school.dart" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/lib/frontend/screens/auth/search/select.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/frontend/screens/auth/search/select.dart" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/lib/frontend/screens/auth/search/widgets/item.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/frontend/screens/auth/search/widgets/item.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/frontend/screens/shell/shell.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/frontend/screens/shell/shell.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/pubspec.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/pubspec.yaml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/frontend/widgets/account.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/frontend/widgets/account.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/frontend/widgets/customs/modal.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/frontend/widgets/customs/modal.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/l10n/app_fr.arb" beforeDir="false" afterPath="$PROJECT_DIR$/lib/l10n/app_fr.arb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/l10n/app_localizations.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/l10n/app_localizations.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/l10n/app_localizations_fr.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/l10n/app_localizations_fr.dart" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -77,29 +82,31 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent">{
-  &quot;keyToString&quot;: {
-    &quot;Flutter.main.dart.executor&quot;: &quot;Debug&quot;,
-    &quot;ModuleVcsDetector.initialDetectionPerformed&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.typescript.service.memoryLimit.init&quot;: &quot;true&quot;,
-    &quot;codeWithMe.voiceChat.enabledByDefault&quot;: &quot;false&quot;,
-    &quot;dart.analysis.tool.window.visible&quot;: &quot;false&quot;,
-    &quot;git-widget-placeholder&quot;: &quot;main&quot;,
-    &quot;git.auto.fetch.suggestion.counter&quot;: &quot;1&quot;,
-    &quot;io.flutter.reload.alreadyRun&quot;: &quot;true&quot;,
-    &quot;kotlin-language-version-configured&quot;: &quot;true&quot;,
-    &quot;last_opened_file_path&quot;: &quot;/home/theskyblockman/ides/dart/antinote_app&quot;,
-    &quot;project.structure.last.edited&quot;: &quot;Modules&quot;,
-    &quot;project.structure.proportion&quot;: &quot;0.0&quot;,
-    &quot;project.structure.side.proportion&quot;: &quot;0.0&quot;,
-    &quot;settings.editor.selected.configurable&quot;: &quot;org.jetbrains.plugins.github.ui.GithubSettingsConfigurable&quot;,
-    &quot;show.migrate.to.gradle.popup&quot;: &quot;false&quot;,
-    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "Flutter.main.dart.executor": "Debug",
+    "ModuleVcsDetector.initialDetectionPerformed": "true",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252": "true",
+    "RunOnceActivity.git.unshallow": "true",
+    "RunOnceActivity.typescript.service.memoryLimit.init": "true",
+    "codeWithMe.voiceChat.enabledByDefault": "false",
+    "dart.analysis.tool.window.visible": "false",
+    "git-widget-placeholder": "main",
+    "git.auto.fetch.suggestion.counter": "1",
+    "io.flutter.reload.alreadyRun": "true",
+    "kotlin-language-version-configured": "true",
+    "last_opened_file_path": "/home/theskyblockman/ides/dart/antinote_app",
+    "node.js.detected.package.eslint": "true",
+    "node.js.selected.package.eslint": "(autodetect)",
+    "project.structure.last.edited": "Modules",
+    "project.structure.proportion": "0.0",
+    "project.structure.side.proportion": "0.0",
+    "settings.editor.selected.configurable": "preferences.keymap",
+    "show.migrate.to.gradle.popup": "false",
+    "vue.rearranger.settings.migration": "true"
   }
-}</component>
+}]]></component>
   <component name="TaskManager">
     <task active="true" id="Default" summary="Default task">
       <changelist id="5f924ac6-083e-424a-ad80-97e74bfe416b" name="Changes" comment="" />
@@ -108,7 +115,7 @@
       <option name="presentableId" value="Default" />
       <updated>1779555441619</updated>
       <workItem from="1779555442702" duration="10164000" />
-      <workItem from="1779610426472" duration="1518000" />
+      <workItem from="1779610426472" duration="4648000" />
     </task>
     <task id="LOCAL-00001" summary="Moved to custom scroll view">
       <option name="closed" value="true" />
@@ -134,7 +141,15 @@
       <option name="project" value="LOCAL" />
       <updated>1779565387403</updated>
     </task>
-    <option name="localTasksCounter" value="4" />
+    <task id="LOCAL-00004" summary="Refactoring">
+      <option name="closed" value="true" />
+      <created>1779612232842</created>
+      <option name="number" value="00004" />
+      <option name="presentableId" value="LOCAL-00004" />
+      <option name="project" value="LOCAL" />
+      <updated>1779612232842</updated>
+    </task>
+    <option name="localTasksCounter" value="5" />
     <servers />
   </component>
   <component name="ToolWindowManager">
@@ -173,5 +188,9 @@
     <MESSAGE value="Moved to custom scroll view" />
     <MESSAGE value="Refactoring" />
     <option name="LAST_COMMIT_MESSAGE" value="Refactoring" />
+  </component>
+  <component name="XSLT-Support.FileAssociations.UIState">
+    <expand />
+    <select />
   </component>
 </project>

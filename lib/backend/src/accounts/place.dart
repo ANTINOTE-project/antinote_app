@@ -1,6 +1,7 @@
 import "dart:convert";
 
 import "package:antinote/antinote.dart";
+import "package:flutter/cupertino.dart";
 import "package:http/http.dart" as http;
 
 enum PlaceType {
@@ -25,16 +26,18 @@ enum PlaceType {
 
 class City {
   final String name;
+  final String address;
   final double latitude;
   final double longitude;
-  final String postalCode;
+  final String? region;
   final PlaceType placeType;
 
   const City({
     required this.name,
+    required this.address,
     required this.latitude,
     required this.longitude,
-    required this.postalCode,
+    required this.region,
     this.placeType = PlaceType.other,
   });
 
@@ -43,18 +46,21 @@ class City {
       "q": query,
       "format": "json",
       "limit": "15",
-      "countrycodes": "fr",
       "featuretype": "settlement",
       "addressdetails": "1",
     });
 
-    final response = await http.get(uri, headers: {"User-Agent": "Antinote/1.0"});
+    final response = await http.get(
+      uri,
+      headers: {"User-Agent": "Antinote/1.0"},
+    );
 
     try {
-      return (jsonDecode(response.body) as ListJsonNavigator).cast<MapJsonNavigator>().mapL(
-        (e) => (e).asCity(),
-      );
-    } catch (_) {
+      return (jsonDecode(response.body) as ListJsonNavigator)
+          .cast<MapJsonNavigator>()
+          .mapL((e) => (e).asCity());
+    } catch (e, st) {
+      debugPrintStack(stackTrace: st, label: e.toString());
       return [];
     }
   }
@@ -64,9 +70,10 @@ extension AsCity on MapJsonNavigator {
   City asCity() {
     return City(
       name: get("name"),
+      address: get("display_name"),
       latitude: double.parse(get("lat")),
       longitude: double.parse(get("lon")),
-      postalCode: getM("address").get("postcode"),
+      region: getM("address").get("region"),
       placeType: PlaceType.fromString(get("addresstype")),
     );
   }

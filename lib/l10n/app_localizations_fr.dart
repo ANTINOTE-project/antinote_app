@@ -47,6 +47,12 @@ class AppLocalizationsFr extends AppLocalizations {
   String get loginSelect => 'Choisis ton espace';
 
   @override
+  String get activateCas => 'Se connecter via ENT';
+
+  @override
+  String get loginCredentials => 'Renseigne tes identifiants';
+
+  @override
   String get loginWebview => 'Connecte toi à ton compte';
 
   @override

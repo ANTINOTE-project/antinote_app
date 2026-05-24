@@ -10,8 +10,6 @@ class App extends StatefulWidget {
 
   const App({super.key, required this.initialLocation});
 
-  static final navigatorKey = GlobalKey<NavigatorState>();
-
   @override
   State<App> createState() => _AppState();
 }
