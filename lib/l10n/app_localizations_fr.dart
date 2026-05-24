@@ -69,4 +69,9 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get communication => 'Infos';
+
+  @override
+  String gradeOf(Object service) {
+    return 'Note de $service';
+  }
 }

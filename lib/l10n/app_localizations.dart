@@ -213,6 +213,12 @@ abstract class AppLocalizations {
   /// In fr, this message translates to:
   /// **'Infos'**
   String get communication;
+
+  /// No description provided for @gradeOf.
+  ///
+  /// In fr, this message translates to:
+  /// **'Note de {service}'**
+  String gradeOf(Object service);
 }
 
 class _AppLocalizationsDelegate
