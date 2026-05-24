@@ -26,10 +26,10 @@ class _LoginSearchCityScreenState extends State<LoginSearchCityScreen> {
 
     return (
       title: String.fromCharCodes(
-        List.generate(r.nextInt(8) + 6, (_) => r.nextInt(26) + 97),
+        List.generate(r.nextInt(10) + 12, (_) => r.nextInt(26) + 97),
       ),
       subtitle: String.fromCharCodes(
-        List.generate(r.nextInt(12) + 8, (_) => r.nextInt(26) + 97),
+        List.generate(r.nextInt(15) + 20, (_) => r.nextInt(26) + 97),
       ),
     );
   });
