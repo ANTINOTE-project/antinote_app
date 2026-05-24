@@ -7,43 +7,61 @@ import "package:antinote_app/backend/src/pigeon_posts/native_session.g.dart";
 import "package:antinote_app/backend/src/session/manager.dart";
 import "package:antinote_app/main.dart";
 import "package:antinote_app/protos/account.pb.dart";
+import "package:flutter/foundation.dart";
 
 import "../helpers/antinote_account.dart";
 
 final NativeSessionManager _sessionManager = NativeSessionManager();
 final _nativeSessionManagerSupported = Platform.isAndroid;
 
-class SessionDataHolder {
-  PronoteSession? lastSeenSession;
+class SessionDataHolder extends ChangeNotifier {
+  PronoteSession? _curSession;
+
+  PronoteSession? get lastSeenSession => _curSession;
+  set lastSeenSession(PronoteSession? newValue) {
+    if (_curSession == newValue) return;
+
+    final shouldNotify =
+        newValue?.stack.sessionId != _curSession?.stack.sessionId;
+
+    _curSession = newValue;
+
+    if (shouldNotify) {
+      notifyListeners();
+    }
+  }
+
   int? lastSeenSessionVersion;
   String? lastSeenAccountUid;
   Completer<void>? stateLock;
-  bool dirty = false;
 
-  SessionDataHolder({
-    required this.lastSeenSession,
+  SessionDataHolder._({
+    required this._curSession,
     required this.lastSeenSessionVersion,
     required this.lastSeenAccountUid,
     required this.stateLock,
   });
 
   SessionDataHolder.create([AntinoteAccount? account])
-    : this(
-        lastSeenSession: null,
+    : this._(
+        curSession: null,
         lastSeenSessionVersion: null,
         lastSeenAccountUid: account?.uid,
         stateLock: null,
       );
 
   Future<PronoteSession> relogin({required AccountStorage storage}) async {
-    var account = (await storage.borrowAccountWithCredentials(lastSeenAccountUid!))!;
+    var account = (await storage.borrowAccountWithCredentials(
+      lastSeenAccountUid!,
+    ))!;
 
     final credentials = account.credentials;
     if (credentials == null) {
       throw Exception("No credentials linked to account ${account.uid}");
     }
 
-    final (refreshCredentials: newCreds, session: session) = await credentials.login();
+    final (refreshCredentials: newCreds, session: session) = await credentials
+        .login();
 
     account = account.setCredentials(newCreds);
     await storage.updateAccount(account, lastSeenAccountUid!);
@@ -57,19 +75,22 @@ class SessionDataHolder {
     } else {
       lastSeenSessionVersion = 0;
     }
-    dirty = true;
 
     return lastSeenSession!;
   }
 
-  Future<PronoteSession> ensureSession({required AccountStorage storage, String? accountUid}) async {
+  Future<PronoteSession> ensureSession({
+    required AccountStorage storage,
+    String? accountUid,
+  }) async {
     assert(
       lastSeenAccountUid != null || accountUid != null,
       "Tried to ensure session for an "
       "account UID we did not have...",
     );
 
-    if (lastSeenSession != null && (accountUid == null || lastSeenAccountUid == accountUid)) {
+    if (lastSeenSession != null &&
+        (accountUid == null || lastSeenAccountUid == accountUid)) {
       return lastSeenSession!;
     }
 
@@ -96,19 +117,24 @@ class SessionDataHolder {
     late final ScheduledTask? task;
 
     if (_nativeSessionManagerSupported) {
-      task = await _sessionManager.scheduleTask(lastSeenAccountUid!, channels, lastSeenSessionVersion);
+      task = await _sessionManager.scheduleTask(
+        lastSeenAccountUid!,
+        channels,
+        lastSeenSessionVersion,
+      );
 
-      if (task.session != null && task.sessionVersion > (lastSeenSessionVersion ?? -1)) {
+      if (task.session != null &&
+          task.sessionVersion > (lastSeenSessionVersion ?? -1)) {
         lastSeenSessionVersion = task.sessionVersion;
 
         try {
           lastSeenSession = await PronoteSession.restoreBinary(task.session!);
-          await _sessionManager.setCurrentAccountsListener([lastSeenAccountUid!]);
+          await _sessionManager.setCurrentAccountsListener([
+            lastSeenAccountUid!,
+          ]);
         } catch (e, st) {
           talker.error("Couldn't read the session sent by the manager", e, st);
         }
-
-        dirty = true;
       }
     } else {
       task = null;
@@ -124,8 +150,6 @@ class SessionDataHolder {
         "Called session ensurer but session is "
         "still missing",
       );
-
-      dirty = true;
     }
 
     final beforeCounter = lastSeenSession!.stack.order(.communication);
@@ -146,9 +170,7 @@ class SessionDataHolder {
           if (beforeCounter + 2 >= errorCounter && curTry == 1) {
             // Probably due to an expired session, retrying once.
             // TODO: Print information about the session exception.
-            lastSeenSession = null;
             lastSeenSession = await sessionEnsurer();
-            dirty = true;
           } else {
             // Caused by the actual callback. No need to retry...
             rethrow;
@@ -157,7 +179,6 @@ class SessionDataHolder {
       }
     } on SessionException {
       lastSeenSession = null;
-      dirty = true;
 
       rethrow;
     } finally {
@@ -172,12 +193,15 @@ class SessionDataHolder {
       }
     }
 
-    if (channels.contains("communication") && beforeCounter == lastSeenSession!.stack.order(.communication)) {
+    if (lastSeenSession != null &&
+        channels.contains("communication") &&
+        beforeCounter == lastSeenSession!.stack.order(.communication)) {
       talker.warning(
         "Callback did not send any request but still asked "
         "for communication channel...",
       );
-    } else if (!channels.contains("communication") &&
+    } else if (lastSeenSession != null &&
+        !channels.contains("communication") &&
         beforeCounter > lastSeenSession!.stack.order(.communication)) {
       talker.warning(
         "Callback sent communication requests but did not "

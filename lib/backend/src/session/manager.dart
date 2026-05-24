@@ -4,19 +4,15 @@ import "package:antinote/antinote.dart";
 import "package:antinote_app/backend/src/session/holder.dart";
 import "package:antinote_app/frontend/extensions/account_storage.dart";
 import "package:antinote_app/frontend/routing/routes.dart";
-import "package:antinote_app/main.dart";
 import "package:flutter/material.dart";
 import "package:go_router/go_router.dart";
 
 typedef RunCallback<T> = FutureOr<T> Function(PronoteSession session);
 
-enum TaskType { normal, pollingListener }
-
-class SessionManager extends InheritedModel<TaskType> with WidgetsBindingObserver {
+class SessionManager extends InheritedWidget {
   final SessionDataHolder state;
-  final VoidCallback onNewSessionSet;
 
-  const SessionManager({super.key, required this.state, required this.onNewSessionSet, required super.child});
+  const SessionManager({super.key, required this.state, required super.child});
 
   /// A function made to ensure [SessionDataHolder.lastSeenAccountUid] from
   /// [state] is never [null]. The logic taken is as follows:
@@ -47,9 +43,14 @@ class SessionManager extends InheritedModel<TaskType> with WidgetsBindingObserve
     return state.lastSeenAccountUid!;
   }
 
-  Future<PronoteSession> ensureSession({required BuildContext context, String? accountUid}) {
+  Future<PronoteSession> ensureSession({
+    required BuildContext context,
+    String? accountUid,
+  }) {
     if (!context.mounted) {
-      throw Exception("Wanted to ensure session existed but context is unmounted...");
+      throw Exception(
+        "Wanted to ensure session existed but context is unmounted...",
+      );
     }
 
     return state.ensureSession(storage: context.as, accountUid: accountUid);
@@ -118,62 +119,44 @@ class SessionManager extends InheritedModel<TaskType> with WidgetsBindingObserve
           lock?.complete();
         }
       }
-
-      if (state.dirty) {
-        onNewSessionSet();
-        state.dirty = false;
-      }
     }
   }
 
-  static Future<T> run<T>({
+  static Future<T> execute<T>({
     required BuildContext context,
     List<String> channels = const ["communication"],
     required RunCallback<T> callback,
   }) async {
-    final result = context.dependOnInheritedWidgetOfExactType<SessionManager>(aspect: TaskType.normal);
+    final result = context.dependOnInheritedWidgetOfExactType<SessionManager>();
     assert(result != null, 'No "SessionManager" in tree...');
 
-    return result!.runTask(context: context, channels: channels, callback: callback);
-  }
-
-  static Future<T> runSubscribe<T>({
-    required BuildContext context,
-    List<String> channels = const [],
-    required RunCallback<T> callback,
-  }) async {
-    final result = context.dependOnInheritedWidgetOfExactType<SessionManager>(
-      aspect: TaskType.pollingListener,
+    return result!.runTask(
+      context: context,
+      channels: channels,
+      callback: callback,
     );
+  }
+
+  static void subscribeSession({
+    required BuildContext context,
+    required VoidCallback callback,
+  }) {
+    final result = context.dependOnInheritedWidgetOfExactType<SessionManager>();
     assert(result != null, 'No "SessionManager" in tree...');
 
-    return result!.runTask(context: context, channels: channels, callback: callback);
+    result!.state.addListener(callback);
+  }
+
+  static void unsubscribeSession({
+    required BuildContext context,
+    required VoidCallback callback,
+  }) {
+    final result = context.dependOnInheritedWidgetOfExactType<SessionManager>();
+    assert(result != null, 'No "SessionManager" in tree...');
+
+    result!.state.removeListener(callback);
   }
 
   @override
-  void didChangeAppLifecycleState(AppLifecycleState state) {
-    if (state != .resumed) return;
-
-    WidgetsBinding.instance.removeObserver(this);
-  }
-
-  @override
-  bool updateShouldNotify(covariant SessionManager old) {
-    if (state.dirty) {
-      state.dirty = false;
-      return true;
-    }
-
-    return false;
-  }
-
-  @override
-  bool updateShouldNotifyDependent(covariant SessionManager oldWidget, Set<TaskType> dependencies) {
-    if (dependencies.contains(TaskType.pollingListener)) {
-      talker.info("Updated a polling listener...");
-      return true;
-    }
-
-    return false;
-  }
+  bool updateShouldNotify(covariant InheritedWidget oldWidget) => false;
 }

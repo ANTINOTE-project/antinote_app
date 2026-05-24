@@ -1,5 +1,4 @@
 import "package:antinote/antinote.dart";
-import "package:antinote_app/frontend/extensions/session_manager.dart";
 import "package:antinote_app/frontend/routing/routes.dart";
 import "package:antinote_app/frontend/screens/auth/login.dart";
 import "package:antinote_app/frontend/screens/auth/pick.dart";
@@ -12,17 +11,6 @@ import "package:go_router/go_router.dart";
 
 GoRouter makeRouter({String initialLocation = Routes.appShell}) => GoRouter(
   initialLocation: initialLocation,
-  redirect: (context, state) async {
-    final uid = context.sm.state.lastSeenAccountUid;
-    final isOnAuth = state.matchedLocation.startsWith("/auth");
-
-    if (uid == null && !isOnAuth) {
-      return Routes.auth.login;
-    }
-
-    return null;
-  },
-
   routes: [
     GoRoute(path: Routes.appShell, builder: (_, _) => const AppShell()),
 
@@ -31,13 +19,13 @@ GoRouter makeRouter({String initialLocation = Routes.appShell}) => GoRouter(
 
     GoRoute(
       path: Routes.auth.search.city,
-      builder: (_, _) => const LoginSearchCityScreen(),
+      builder: (context, state) => const LoginSearchCityScreen(),
     ),
     GoRoute(
       path: Routes.auth.search.school,
 
-      builder: (_, s) {
-        final extra = s.extra as Map<String, dynamic>;
+      builder: (context, state) {
+        final extra = state.extra as Map<String, dynamic>;
         return LoginSearchSchoolScreen(
           lat: extra["lat"] as double,
           long: extra["long"] as double,
@@ -46,8 +34,8 @@ GoRouter makeRouter({String initialLocation = Routes.appShell}) => GoRouter(
     ),
     GoRoute(
       path: Routes.auth.search.select,
-      builder: (_, s) {
-        final extra = s.extra as Map<String, dynamic>;
+      builder: (context, state) {
+        final extra = state.extra as Map<String, dynamic>;
         return LoginSearchSelect(
           parameters: extra["parameters"] as MobileInstanceParameters,
         );
@@ -55,8 +43,8 @@ GoRouter makeRouter({String initialLocation = Routes.appShell}) => GoRouter(
     ),
     GoRoute(
       path: Routes.auth.search.webview,
-      builder: (_, s) {
-        final extra = s.extra as Map<String, dynamic>;
+      builder: (context, state) {
+        final extra = state.extra as Map<String, dynamic>;
         return LoginSearchWebview(
           parameters: extra["parameters"] as MobileInstanceParameters,
           workspace: extra["workspace"] as Workspace,

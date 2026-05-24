@@ -44,12 +44,12 @@ class _LoginScreenState extends State<LoginScreen> with WidgetsBindingObserver {
   void initState() {
     super.initState();
 
-    WidgetsFlutterBinding.ensureInitialized().addObserver(this);
+    WidgetsBinding.instance.addObserver(this);
   }
 
   @override
   void dispose() {
-    WidgetsFlutterBinding.ensureInitialized().removeObserver(this);
+    WidgetsBinding.instance.removeObserver(this);
 
     super.dispose();
   }
@@ -88,9 +88,13 @@ class _LoginScreenState extends State<LoginScreen> with WidgetsBindingObserver {
         },
       );
 
-      if (mounted) await _load();
+      WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+        if (context.mounted) {
+          context.pop();
+        }
+      });
     } catch (e, st) {
-      talker.error("Something happened during login", e, st);
+      talker.error("Login failed", e, st);
 
       sm.state.lastSeenAccountUid = beforeUid;
 
@@ -103,6 +107,7 @@ class _LoginScreenState extends State<LoginScreen> with WidgetsBindingObserver {
   @override
   Widget build(BuildContext context) {
     return PopScope(
+      canPop: context.sm.state.lastSeenAccountUid != null,
       child: Scaffold(
         appBar: AppBarWidget(
           title: context.l10n.choseAnAccount,

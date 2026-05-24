@@ -57,19 +57,40 @@ class _AppShellState extends State<AppShell> {
 
   Stream<NotificationPreviewState>? notificationStream;
 
-  int currentPage = 0;
-
-  @override
-  void didChangeDependencies() async {
-    super.didChangeDependencies();
-
-    notificationStream = await SessionManager.runSubscribe(
+  void loadNotificationStream() {
+    SessionManager.execute(
       context: context,
       callback: (session) {
-        return session.notifications;
+        if (!mounted) return;
+
+        setState(() {
+          notificationStream = session.notifications;
+        });
       },
     );
   }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+
+    SessionManager.subscribeSession(
+      context: context,
+      callback: loadNotificationStream,
+    );
+  }
+
+  @override
+  void dispose() {
+    SessionManager.unsubscribeSession(
+      context: context,
+      callback: loadNotificationStream,
+    );
+
+    super.dispose();
+  }
+
+  int currentPage = 0;
 
   @override
   Widget build(BuildContext context) {

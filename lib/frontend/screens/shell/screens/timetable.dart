@@ -1,5 +1,7 @@
+import "dart:async";
+
 import "package:antinote/antinote.dart";
-import "package:antinote_app/backend/src/session/manager.dart";
+import "package:antinote_app/frontend/screens/screen.dart";
 import "package:antinote_app/frontend/widgets/customs/loading.dart";
 import "package:flutter/material.dart";
 
@@ -10,68 +12,58 @@ class TimetableScreen extends StatefulWidget {
   State<TimetableScreen> createState() => _TimetableScreenState();
 }
 
-class _TimetableScreenState extends State<TimetableScreen> with AutomaticKeepAliveClientMixin {
-  Future<SpecificInstanceParameters>? scheduleDisplayData;
-  Future<List<Class>>? _classes;
+class _TimetableScreenState extends State<TimetableScreen>
+    with ScreenMixin<TimetableScreen> {
+  SpecificInstanceParameters? scheduleDisplayData;
+  List<Class>? _classes;
 
   @override
-  bool get wantKeepAlive => true;
+  Widget buildLoaded(
+    BuildContext context,
+    RefreshIndicatorBuilder buildRefreshIndicator,
+  ) {
+    return buildRefreshIndicator(
+      child: ListView.builder(
+        itemCount: _classes!.length,
+        itemBuilder: (context, index) {
+          final clazz = _classes![index];
 
-  @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-
-    scheduleDisplayData ??= SessionManager.run(
-      context: context,
-      channels: [],
-      callback: (session) {
-        return session.instance;
-      },
-    );
-
-    _classes ??= SessionManager.run(
-      context: context,
-      channels: [],
-
-      callback: (session) async {
-        await session.ensurePage(16);
-
-        final result = await session.access(
-          TimetableAccessor.forRange(
-            resource: session.userResource,
-            from: DateTime.now().copyWith(isUtc: true).toDay(),
-            to: null,
-          ),
-        );
-
-        return result.classes;
-      },
+          return Card(
+            child: ListTile(
+              title: Text(clazz.id),
+              subtitle: Text("${clazz.startDate} → ${clazz.endDate}"),
+            ),
+          );
+        },
+      ),
     );
   }
 
   @override
-  Widget build(BuildContext context) {
-    super.build(context);
+  Widget buildLoading(
+    BuildContext context,
+    RefreshIndicatorBuilder buildRefreshIndicator,
+  ) {
+    return const Center(child: LoadingWidget(size: 30));
+  }
 
-    return FutureBuilder<List<Class>>(
-      future: _classes,
+  @override
+  FutureOr<void> loadActiveDataFromSession(PronoteSession session) async {
+    scheduleDisplayData = session.instance;
 
-      builder: (context, snapshot) {
-        if (!snapshot.hasData) {
-          return const Center(child: LoadingWidget(size: 30));
-        }
+    await session.ensurePage(16);
 
-        return ListView.builder(
-          itemCount: snapshot.data!.length,
-          itemBuilder: (context, index) {
-            final clazz = snapshot.data![index];
-
-            return Card(
-              child: ListTile(title: Text(clazz.id), subtitle: Text("${clazz.startDate} → ${clazz.endDate}")),
-            );
-          },
-        );
-      },
+    final result = await session.access(
+      TimetableAccessor.forRange(
+        resource: session.userResource,
+        from: DateTime.now()
+            .add(const Duration(days: 4))
+            .copyWith(isUtc: true)
+            .toDay(),
+        to: null,
+      ),
     );
+
+    _classes = result.classes;
   }
 }

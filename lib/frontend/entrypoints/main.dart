@@ -36,18 +36,6 @@ class _MainAppState extends State<MainApp> {
 
       child: SessionManager(
         state: _state,
-
-        onNewSessionSet: () {
-          // Never can be too sure... Although TODO Sometimes onNewSessionSet is
-          // called on multiple frames at once
-          if (mounted) {
-            setState(() {
-              /* Updates the whole app so that widgets subscribed to any
-          listener/stream from the previous session subscribe to the new one */
-            });
-          }
-        },
-
         child: const App(initialLocation: Routes.appShell),
       ),
     );
