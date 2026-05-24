@@ -1,6 +1,6 @@
 import "package:antinote/antinote.dart";
 import "package:antinote_app/backend/src/session/manager.dart";
-import "package:antinote_app/main.dart";
+import "package:antinote_app/frontend/widgets/customs/loading.dart";
 import "package:flutter/material.dart";
 
 class TimetableScreen extends StatefulWidget {
@@ -34,9 +34,7 @@ class _TimetableScreenState extends State<TimetableScreen> with AutomaticKeepAli
       channels: [],
 
       callback: (session) async {
-        talker.info("🟡 Starting ensurePage...");
         await session.ensurePage(16);
-        talker.info("🟢 ensurePage done");
 
         final result = await session.access(
           TimetableAccessor.forRange(
@@ -46,7 +44,6 @@ class _TimetableScreenState extends State<TimetableScreen> with AutomaticKeepAli
           ),
         );
 
-        talker.info("🟢 Got ${result.classes.length} classes");
         return result.classes;
       },
     );
@@ -61,8 +58,7 @@ class _TimetableScreenState extends State<TimetableScreen> with AutomaticKeepAli
 
       builder: (context, snapshot) {
         if (!snapshot.hasData) {
-          talker.info("⏳ State: ${snapshot.connectionState}, error: ${snapshot.error}");
-          return const Center(child: CircularProgressIndicator());
+          return const Center(child: LoadingWidget(size: 30));
         }
 
         return ListView.builder(
