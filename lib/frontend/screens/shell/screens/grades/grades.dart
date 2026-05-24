@@ -59,8 +59,8 @@ class _GradesScreenState extends State<GradesScreen>
               getSelectedPeriod: () => _selectedPeriod,
               periods: _periods,
 
-              setSelectedPeriod: (newPeriod) {
-                setState(() => _selectedPeriod = newPeriod);
+              setSelectedPeriod: (period) {
+                setState(() => _selectedPeriod = period);
               },
             ),
 

@@ -8,7 +8,7 @@ class GradesAppBar extends StatelessWidget {
   final List<Period> periods;
   final double maxWidth;
 
-  final void Function(Period newPeriod) setSelectedPeriod;
+  final void Function(Period period) setSelectedPeriod;
   final Period? Function() getSelectedPeriod;
 
   const GradesAppBar({
@@ -35,9 +35,21 @@ class GradesAppBar extends StatelessWidget {
         leadingWidth: maxWidth,
         primary: false,
 
-        bottom: TabBar(
-          controller: controller,
-          tabs: tabsName.mapL((e) => Tab(child: Text(e))),
+        bottom: PreferredSize(
+          preferredSize: const Size.fromHeight(kTextTabBarHeight),
+
+          child: TabBar(
+            controller: controller,
+
+            tabs: tabsName.mapL(
+              (name) => Tab(
+                child: Text(
+                  name,
+                  style: const TextStyle(fontWeight: FontWeight.w700),
+                ),
+              ),
+            ),
+          ),
         ),
 
         leading: ListView.builder(
