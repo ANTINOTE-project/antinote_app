@@ -14,21 +14,22 @@ mixin ScreenMixin<T extends StatefulWidget> on State<T> {
   bool loaded = false;
   Future<void>? _loader;
 
-  bool ignoreNewSessions = false;
-
   bool initialized = false;
   void _sessionUpdateCallback() {
     if (!mounted) return;
 
-    ignoreNewSessions = true;
+    SessionManager.unsubscribeSession(context: context, callback: reload);
+
     try {
       _loader = SessionManager.execute(
         context: context,
         channels: loadChannels,
         callback: (session) async {
-          ignoreNewSessions = false;
-
           await loadActiveDataFromSession(session);
+
+          if (mounted) {
+            SessionManager.subscribeSession(context: context, callback: reload);
+          }
 
           if (mounted) {
             setState(() {
@@ -39,7 +40,7 @@ mixin ScreenMixin<T extends StatefulWidget> on State<T> {
         },
       );
     } on SessionException {
-      ignoreNewSessions = false;
+      SessionManager.subscribeSession(context: context, callback: reload);
     }
   }
 
@@ -84,7 +85,7 @@ mixin ScreenMixin<T extends StatefulWidget> on State<T> {
   ) => buildLoading(context, buildRefreshIndicator);
 
   Future<void> reload({bool fromRefreshIndicator = false}) async {
-    if (_loader != null || ignoreNewSessions) {
+    if (_loader != null) {
       return _loader;
     }
 

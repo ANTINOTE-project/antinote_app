@@ -140,37 +140,44 @@ class SessionDataHolder extends ChangeNotifier {
       task = null;
     }
 
-    if (lastSeenSession == null) {
+    bool needToApply = false;
+    PronoteSession? currentlyAppliedSession = lastSeenSession;
+
+    if (currentlyAppliedSession == null) {
       if (_nativeSessionManagerSupported) {
         await _sessionManager.setCurrentAccountsListener([lastSeenAccountUid!]);
       }
-      lastSeenSession = await sessionEnsurer();
-      assert(
-        lastSeenSession != null,
-        "Called session ensurer but session is "
-        "still missing",
-      );
+      currentlyAppliedSession = await sessionEnsurer();
+      needToApply = true;
     }
 
-    final beforeCounter = lastSeenSession!.stack.order(.communication);
+    final beforeCounter = currentlyAppliedSession.stack.order(.communication);
 
     late T callbackResult;
     try {
       for (var curTry = 1; curTry <= 2; curTry++) {
         try {
-          callbackResult = await callback.call(lastSeenSession!);
+          callbackResult = await callback.call(currentlyAppliedSession!);
 
           break;
         } on SessionException {
-          final errorCounter = lastSeenSession!.stack.order(.communication);
+          final errorCounter = currentlyAppliedSession!.stack.order(
+            .communication,
+          );
           talker.warning("Error counter at $errorCounter");
 
-          await lastSeenSession!.access(const DisconnectionAccessor.unlogged());
+          await currentlyAppliedSession.access(
+            const DisconnectionAccessor.unlogged(),
+          );
 
           if (beforeCounter + 2 >= errorCounter && curTry == 1) {
+            talker.info("Restarting session to retry callback...");
+
             // Probably due to an expired session, retrying once.
             // TODO: Print information about the session exception.
-            lastSeenSession = await sessionEnsurer();
+            _curSession = null;
+            currentlyAppliedSession = await sessionEnsurer();
+            needToApply = true;
           } else {
             // Caused by the actual callback. No need to retry...
             rethrow;
@@ -186,11 +193,15 @@ class SessionDataHolder extends ChangeNotifier {
         final newVersion = await _sessionManager.finishTask(
           lastSeenAccountUid!,
           task.taskId,
-          lastSeenSession?.exportBinary(),
+          currentlyAppliedSession?.exportBinary(),
         );
 
         lastSeenSessionVersion = newVersion;
       }
+    }
+
+    if (needToApply) {
+      lastSeenSession = currentlyAppliedSession;
     }
 
     if (lastSeenSession != null &&
