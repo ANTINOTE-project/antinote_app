@@ -4,6 +4,10 @@ import "package:flutter/material.dart";
 
 class Utils {
   Utils._();
+
+  static String formatNumber(double value) {
+    return value % 1 == 0 ? value.toInt().toString() : value.toString();
+  }
 }
 
 class ReversedCurve extends Curve {
@@ -23,9 +27,9 @@ extension AsDateRange on DateTime {
 }
 
 extension DateRangeUtils on DateRange {
-  String pprint() => start == end
-      ? start.asRelativeDate()
-      : "${start.asRelativeDate()} — ${end.asRelativeDate()}";
+  String pprint(BuildContext context) => start == end
+      ? start.asRelativeDate(context)
+      : "${start.asRelativeDate(context)} — ${end.asRelativeDate(context)}";
 }
 
 extension DateTimeInDateRange on DateRange {
@@ -98,29 +102,22 @@ final class WeekMappedViewConfiguration {
     weekConfig,
   ];
 
-  List<DateRange> daysToRangeList(
-    List<DateTime> days,
-    SpecificInstanceParameters parameters,
-  ) {
+  List<DateRange> daysToRangeList(List<DateTime> days, SpecificInstanceParameters parameters) {
     // We need to align the groups by week in this case.
     if (snapToWeeks) {
       final Map<int, DateRange> ranges = {};
       for (final day in days) {
         final weekNumber = parameters.getWeekNumberForDate(day);
         if (ranges.containsKey(weekNumber)) {
-          ranges[weekNumber] = DateRange(
-            start: ranges[weekNumber]!.start,
-            end: day,
-          );
+          ranges[weekNumber] = DateRange(start: ranges[weekNumber]!.start, end: day);
         } else {
           ranges[weekNumber] = DateRange(start: day, end: day);
         }
       }
 
-      return (ranges.entries.toList(growable: false)
-            ..sort((a, b) => a.key.compareTo(b.key)))
-          .map((e) => e.value)
-          .toList(growable: false);
+      return (ranges.entries.toList(
+        growable: false,
+      )..sort((a, b) => a.key.compareTo(b.key))).map((e) => e.value).toList(growable: false);
     }
 
     final List<DateRange> ranges = [];
@@ -140,11 +137,7 @@ extension PickViewConfiguration on Iterable<WeekMappedViewConfiguration> {
     return firstWhere(
       (element) => element.minWidth <= width && element.maxWidth > width,
       orElse: () =>
-          singleOrNull ??
-          firstWhere(
-            (element) => element.minWidth <= width,
-            orElse: () => first,
-          ),
+          singleOrNull ?? firstWhere((element) => element.minWidth <= width, orElse: () => first),
     );
   }
 }

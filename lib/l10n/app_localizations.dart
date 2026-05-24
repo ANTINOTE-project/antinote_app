@@ -100,6 +100,24 @@ abstract class AppLocalizations {
   /// **'ANTINOTE'**
   String get appTitle;
 
+  /// No description provided for @today.
+  ///
+  /// In fr, this message translates to:
+  /// **'Aujourd\'hui'**
+  String get today;
+
+  /// No description provided for @tomorrow.
+  ///
+  /// In fr, this message translates to:
+  /// **'Demain'**
+  String get tomorrow;
+
+  /// No description provided for @yesterday.
+  ///
+  /// In fr, this message translates to:
+  /// **'Hier'**
+  String get yesterday;
+
   /// No description provided for @choseAnAccount.
   ///
   /// In fr, this message translates to:

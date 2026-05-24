@@ -12,6 +12,15 @@ class AppLocalizationsFr extends AppLocalizations {
   String get appTitle => 'ANTINOTE';
 
   @override
+  String get today => 'Aujourd\'hui';
+
+  @override
+  String get tomorrow => 'Demain';
+
+  @override
+  String get yesterday => 'Hier';
+
+  @override
   String get choseAnAccount => 'Choisir un compte';
 
   @override

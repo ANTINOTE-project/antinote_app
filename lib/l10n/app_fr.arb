@@ -2,6 +2,10 @@
   "@@locale": "fr",
   "appTitle": "ANTINOTE",
 
+  "today": "Aujourd'hui",
+  "tomorrow": "Demain",
+  "yesterday": "Hier",
+
   "choseAnAccount": "Choisir un compte",
   "addAnAccount": "Ajouter un compte",
   "delete": "Supprimer",

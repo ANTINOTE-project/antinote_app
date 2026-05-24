@@ -17,9 +17,7 @@ class TimetableScreen extends StatefulWidget {
 }
 
 class _TimetableScreenState extends State<TimetableScreen>
-    with
-        AutomaticKeepAliveClientMixin<TimetableScreen>,
-        ScreenMixin<TimetableScreen> {
+    with AutomaticKeepAliveClientMixin<TimetableScreen>, ScreenMixin<TimetableScreen> {
   late SpecificInstanceParameters scheduleDisplayData;
   final Map<DateTime, ValueNotifier<List<Class>?>> _classes = {};
   late List<DateRange> currentGroups;
@@ -31,21 +29,14 @@ class _TimetableScreenState extends State<TimetableScreen>
   ScrollController scrollController = TrackingScrollController();
 
   @override
-  Widget buildLoaded(
-    BuildContext context,
-    RefreshIndicatorBuilder buildRefreshIndicator,
-  ) {
+  Widget buildLoaded(BuildContext context, RefreshIndicatorBuilder buildRefreshIndicator) {
     final days = DateRange(
       start: scheduleDisplayData.firstDate,
       end: scheduleDisplayData.lastDate,
     ).listDays();
 
-    final daysConfiguration = WeekMappedViewConfiguration.defaultConfigs
-        .pickConfig(context);
-    currentGroups = daysConfiguration.daysToRangeList(
-      days,
-      scheduleDisplayData,
-    );
+    final daysConfiguration = WeekMappedViewConfiguration.defaultConfigs.pickConfig(context);
+    currentGroups = daysConfiguration.daysToRangeList(days, scheduleDisplayData);
 
     return buildRefreshIndicator(
       child: PageView.builder(
@@ -57,7 +48,7 @@ class _TimetableScreenState extends State<TimetableScreen>
             onRefresh: () => reload(fromRefreshIndicator: true),
             child: CustomScrollView(
               slivers: [
-                SliverAppBar(title: Text(dayGroup.pprint()), pinned: true),
+                SliverAppBar(title: Text(dayGroup.pprint(context)), pinned: true),
                 SliverFillRemaining(
                   child: Flex(
                     direction: .horizontal,
@@ -72,19 +63,14 @@ class _TimetableScreenState extends State<TimetableScreen>
                                   controller: scrollController,
                                   itemBuilder: (context, index) {
                                     final clazz = classes[index];
-                                    return ListItemCard(
-                                      onPressed: null,
-                                      title: clazz.id,
-                                    );
+                                    return ListItemCard(onPressed: null, title: clazz.id);
                                   },
                                   itemCount: classes.length,
                                 ),
                               );
                             } else {
                               return const Expanded(
-                                child: Center(
-                                  child: CircularProgressIndicator(),
-                                ),
+                                child: Center(child: CircularProgressIndicator()),
                               );
                             }
                           },
@@ -103,28 +89,19 @@ class _TimetableScreenState extends State<TimetableScreen>
   }
 
   @override
-  Widget buildLoading(
-    BuildContext context,
-    RefreshIndicatorBuilder buildRefreshIndicator,
-  ) {
-    return buildRefreshIndicator(
-      child: const Center(child: LoadingWidget(size: 30)),
-    );
+  Widget buildLoading(BuildContext context, RefreshIndicatorBuilder buildRefreshIndicator) {
+    return buildRefreshIndicator(child: const Center(child: LoadingWidget(size: 30)));
   }
 
   Future<void> updateClasses(DateRange days, {PronoteSession? session}) async {
-    talker.info("Fetching days ${days.pprint()}");
+    talker.info("Fetching days ${days.pprint(context)}");
     Future<void> update(PronoteSession session) async {
       final loadedDays = {for (final day in days.listDays()) day: <Class>[]};
 
       await session.ensurePage(16);
 
       for (final clazz in (await session.access(
-        TimetableAccessor.forRange(
-          resource: session.userResource,
-          from: days.start,
-          to: days.end,
-        ),
+        TimetableAccessor.forRange(resource: session.userResource, from: days.start, to: days.end),
       )).classes) {
         loadedDays[clazz.startDate.toDay()]!.add(clazz);
       }
@@ -150,18 +127,12 @@ class _TimetableScreenState extends State<TimetableScreen>
       end: scheduleDisplayData.lastDate,
     ).listDays();
 
-    final daysConfiguration = WeekMappedViewConfiguration.defaultConfigs
-        .pickConfig(context);
-    currentGroups = daysConfiguration.daysToRangeList(
-      days,
-      scheduleDisplayData,
-    );
+    final daysConfiguration = WeekMappedViewConfiguration.defaultConfigs.pickConfig(context);
+    currentGroups = daysConfiguration.daysToRangeList(days, scheduleDisplayData);
 
     final int currentGroupIndex;
 
-    if (pageController == null ||
-        !pageController!.hasClients ||
-        pageController?.page == null) {
+    if (pageController == null || !pageController!.hasClients || pageController?.page == null) {
       currentGroupIndex = currentGroups.indexWhere(
         (element) => element.contains(scheduleDisplayData.nextBusinessDay),
       );

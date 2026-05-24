@@ -1,5 +1,7 @@
 // Credit: https://stackoverflow.com/a/68847631 (by Raul Mabe)
 import "package:antinote/antinote.dart";
+import "package:antinote_app/frontend/extensions/l10n.dart";
+import "package:flutter/material.dart";
 import "package:intl/intl.dart";
 
 extension IterableExt<T> on Iterable<T> {
@@ -31,14 +33,18 @@ extension AsRelativeDateString on DateTime {
     return _numericDateFormatter.format(this);
   }
 
-  String asRelativeDate([bool dayOnly = true]) {
+  String asRelativeDate(BuildContext context, [bool dayOnly = true]) {
     var dayTitle = _shortDateFormatter.format(this);
-    if (DateTime.now().toUtc().toDay() == this) {
-      dayTitle = "Aujourd'hui";
-    } else if (DateTime.now().add(const Duration(days: 1)).toUtc().toDay() == this) {
-      dayTitle = "Demain";
-    } else if (DateTime.now().subtract(const Duration(days: 1)).toUtc().toDay() == this) {
-      dayTitle = "Hier";
+
+    final today = DateTime.now().toUtc().toDay();
+    final thisDay = toUtc().toDay();
+
+    if (today == thisDay) {
+      dayTitle = context.l10n.today;
+    } else if (today.add(const Duration(days: 1)) == thisDay) {
+      dayTitle = context.l10n.tomorrow;
+    } else if (today.subtract(const Duration(days: 1)) == thisDay) {
+      dayTitle = context.l10n.yesterday;
     }
 
     if (!dayOnly) {
