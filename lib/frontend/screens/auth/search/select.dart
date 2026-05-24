@@ -1,8 +1,8 @@
 import "package:antinote/antinote.dart";
 import "package:antinote_app/frontend/extensions/l10n.dart";
 import "package:antinote_app/frontend/routing/routes.dart";
+import "package:antinote_app/frontend/screens/auth/search/widgets/item.dart";
 import "package:antinote_app/frontend/widgets/customs/app_bar.dart";
-import "package:antinote_app/frontend/widgets/pressable.dart";
 import "package:diacritic/diacritic.dart";
 import "package:flutter/material.dart";
 import "package:go_router/go_router.dart";
@@ -61,7 +61,7 @@ class _LoginSearchSelectState extends State<LoginSearchSelect> {
             itemBuilder: (_, index) {
               final workspace = workspaces[index];
 
-              return Pressable(
+              return ListItemCard(
                 onPressed: () async {
                   final result = await context.push<LoginResult>(
                     Routes.auth.search.webview,
@@ -73,32 +73,9 @@ class _LoginSearchSelectState extends State<LoginSearchSelect> {
                   }
                 },
 
-                child: Card(
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 16),
-
-                    child: Row(
-                      spacing: 10,
-
-                      children: [
-                        Icon(_getIconForLabel(workspace.label)),
-
-                        Expanded(
-                          child: Text(
-                            workspace.label.trim(),
-
-                            maxLines: 1,
-                            overflow: .ellipsis,
-
-                            style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-                          ),
-                        ),
-
-                        const Icon(HugeIconsSolid.arrowRight01),
-                      ],
-                    ),
-                  ),
-                ),
+                leading: _getIconForLabel(workspace.label),
+                label: workspace.label,
+                trailing: const Icon(HugeIconsSolid.arrowRight01),
               );
             },
           ),

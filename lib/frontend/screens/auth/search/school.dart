@@ -2,8 +2,8 @@ import "package:antinote/antinote.dart";
 import "package:antinote_app/frontend/extensions/colors.dart";
 import "package:antinote_app/frontend/extensions/l10n.dart";
 import "package:antinote_app/frontend/routing/routes.dart";
+import "package:antinote_app/frontend/screens/auth/search/widgets/item.dart";
 import "package:antinote_app/frontend/widgets/customs/app_bar.dart";
-import "package:antinote_app/frontend/widgets/pressable.dart";
 import "package:antinote_app/main.dart";
 import "package:flutter/material.dart";
 import "package:go_router/go_router.dart";
@@ -56,7 +56,7 @@ class _LoginSearchSchoolScreenState extends State<LoginSearchSchoolScreen> {
             itemBuilder: (_, index) {
               final instance = _instances[index];
 
-              return Pressable(
+              return ListItemCard(
                 onPressed: () async {
                   try {
                     final parameters = await MobileInstanceParameters.fetch(instance.baseUrl);
@@ -77,34 +77,12 @@ class _LoginSearchSchoolScreenState extends State<LoginSearchSchoolScreen> {
                   }
                 },
 
-                child: Card(
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 16),
+                leading: HugeIconsSolid.school,
+                label: instance.name,
 
-                    child: Row(
-                      spacing: 10,
-
-                      children: [
-                        const Icon(HugeIconsSolid.school),
-
-                        Expanded(
-                          child: Text(
-                            instance.name.trim(),
-
-                            maxLines: 1,
-                            overflow: .ellipsis,
-
-                            style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-                          ),
-                        ),
-
-                        Text(
-                          "${instance.distance.toStringAsFixed(2)} km",
-                          style: TextStyle(color: context.c.inversePrimary, fontWeight: FontWeight.w500),
-                        ),
-                      ],
-                    ),
-                  ),
+                trailing: Text(
+                  "${instance.distance.toStringAsFixed(2)} km",
+                  style: TextStyle(color: context.c.inversePrimary, fontWeight: FontWeight.w500),
                 ),
               );
             },

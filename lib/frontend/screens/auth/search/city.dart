@@ -6,9 +6,9 @@ import "package:antinote_app/backend/src/accounts/place.dart";
 import "package:antinote_app/frontend/extensions/colors.dart";
 import "package:antinote_app/frontend/extensions/l10n.dart";
 import "package:antinote_app/frontend/routing/routes.dart";
+import "package:antinote_app/frontend/screens/auth/search/widgets/item.dart";
 import "package:antinote_app/frontend/widgets/customs/app_bar.dart";
 import "package:antinote_app/frontend/widgets/customs/field.dart";
-import "package:antinote_app/frontend/widgets/pressable.dart";
 import "package:flutter/material.dart";
 import "package:go_router/go_router.dart";
 import "package:hugeicons_pro/hugeicons.dart";
@@ -95,7 +95,7 @@ class _LoginSearchCityScreenState extends State<LoginSearchCityScreen> {
             itemBuilder: (_, index) {
               final city = _cities[index];
 
-              return Pressable(
+              return ListItemCard(
                 onPressed: () async {
                   final result = await context.push<LoginResult>(
                     Routes.auth.search.school,
@@ -107,38 +107,20 @@ class _LoginSearchCityScreenState extends State<LoginSearchCityScreen> {
                   }
                 },
 
-                child: Card(
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 16),
+                leading: switch (city.placeType) {
+                  .city => HugeIconsSolid.building01,
+                  .town => HugeIconsSolid.building02,
+                  .village => HugeIconsSolid.home01,
+                  .hamlet => HugeIconsSolid.house01,
+                  .suburb => HugeIconsSolid.house04,
+                  .municipality => HugeIconsSolid.city01,
+                  .other => HugeIconsSolid.location01,
+                },
 
-                    child: Row(
-                      spacing: 10,
-
-                      children: [
-                        Icon(switch (city.placeType) {
-                          .city => HugeIconsSolid.building01,
-                          .town => HugeIconsSolid.building02,
-                          .village => HugeIconsSolid.home01,
-                          .hamlet => HugeIconsSolid.house01,
-                          .suburb => HugeIconsSolid.house04,
-                          .municipality => HugeIconsSolid.city01,
-                          .other => HugeIconsSolid.location01,
-                        }),
-
-                        Expanded(
-                          child: Text(
-                            city.name,
-                            style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-                          ),
-                        ),
-
-                        Text(
-                          city.postalCode,
-                          style: TextStyle(color: context.c.inversePrimary, fontWeight: FontWeight.w500),
-                        ),
-                      ],
-                    ),
-                  ),
+                label: city.name,
+                trailing: Text(
+                  city.postalCode,
+                  style: TextStyle(color: context.c.inversePrimary, fontWeight: FontWeight.w500),
                 ),
               );
             },
