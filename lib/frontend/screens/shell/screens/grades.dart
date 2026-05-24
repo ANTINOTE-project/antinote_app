@@ -1,5 +1,9 @@
+import "dart:async";
+
 import "package:antinote/antinote.dart";
-import "package:antinote_app/backend/backend.dart";
+import "package:antinote_app/backend/src/helpers/various.dart";
+import "package:antinote_app/frontend/screens/screen.dart";
+import "package:antinote_app/frontend/widgets/customs/loading.dart";
 import "package:flutter/material.dart";
 
 class GradesScreen extends StatefulWidget {
@@ -10,30 +14,97 @@ class GradesScreen extends StatefulWidget {
 }
 
 class _GradesScreenState extends State<GradesScreen>
-    with TickerProviderStateMixin<GradesScreen> {
-  late TabController controller = TabController(length: 2, vsync: this);
-  Future<List<Period>>? loadedPeriods;
+    with
+        TickerProviderStateMixin<GradesScreen>,
+        AutomaticKeepAliveClientMixin<GradesScreen>,
+        ScreenMixin<GradesScreen> {
+  late List<Period> _availablePeriods;
+  Period? _selectedPeriod;
 
   @override
-  Widget build(BuildContext context) {
-    return CustomScrollView(
-      slivers: [
-        SliverAppBar(
-          actions: [
-            IconButton(
-              onPressed: () {
-                SessionManager.execute(
-                  context: context,
-                  callback: (session) async {
-                    await session.access(const DisconnectionAccessor.logged());
+  Widget buildLoaded(
+    BuildContext context,
+    RefreshIndicatorBuilder buildRefreshIndicator,
+  ) {
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        return CustomScrollView(
+          physics: const NeverScrollableScrollPhysics(),
+
+          slivers: [
+            SliverSafeArea(
+              left: false,
+              right: false,
+              bottom: false,
+
+              sliver: SliverAppBar(
+                leadingWidth: constraints.maxWidth,
+                primary: false,
+
+                leading: ListView.builder(
+                  padding: const EdgeInsets.symmetric(horizontal: 8),
+                  itemCount: _availablePeriods.length,
+
+                  scrollDirection: .horizontal,
+                  shrinkWrap: true,
+
+                  itemBuilder: (context, index) {
+                    final period = _availablePeriods[index];
+
+                    return Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 3),
+                      child: ChoiceChip(
+                        label: Text(period.name),
+                        tooltip:
+                            'Du ${period.startDate?.asLongNumericDate() ?? 'jamais'} au ${period.endDate?.asLongNumericDate() ?? 'jamais'}',
+                        selected: period == _selectedPeriod,
+                        onSelected: (value) async {
+                          if (!value) return;
+
+                          setState(() {
+                            _selectedPeriod = period;
+                          });
+                        },
+                      ),
+                    );
                   },
-                );
-              },
-              icon: const Icon(Icons.eighteen_mp),
+                ),
+              ),
             ),
           ],
-        ),
-      ],
+        );
+      },
     );
   }
+
+  @override
+  Widget buildLoading(
+    BuildContext context,
+    RefreshIndicatorBuilder buildRefreshIndicator,
+  ) {
+    return const Center(child: LoadingWidget(size: 30));
+  }
+
+  @override
+  FutureOr<void> loadActiveDataFromSession(PronoteSession session) async {
+    await session.ensurePage(198);
+
+    _availablePeriods = session.instance.periods;
+    _selectedPeriod ??= session.instance.defaultPeriod(DateTime.now());
+
+    if (!context.mounted) {
+      throw Exception(
+        "By the time we ensured the correct page was set, the context got unmounted",
+      );
+    }
+
+    // return session.access(
+    //   LatestGradesPageAccessor(
+    //     period: asdasd.getOrPutAndListenPeriod(context, session),
+    //   ),
+    // );
+  }
+
+  @override
+  bool get wantKeepAlive => true;
 }

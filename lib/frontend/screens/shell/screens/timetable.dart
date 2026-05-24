@@ -18,7 +18,7 @@ class _TimetableScreenState extends State<TimetableScreen>
         AutomaticKeepAliveClientMixin<TimetableScreen>,
         ScreenMixin<TimetableScreen> {
   late SpecificInstanceParameters scheduleDisplayData;
-  Map<DateTime, List<Class>> _classes = {};
+  final Map<DateTime, List<Class>> _classes = {};
 
   @override
   bool get wantKeepAlive => true;
@@ -73,9 +73,7 @@ class _TimetableScreenState extends State<TimetableScreen>
 
     await session.ensurePage(16);
 
-    if (controller == null) {
-      controller = PageController();
-    }
+    controller ??= PageController();
 
     final result = await session.access(
       TimetableAccessor.forRange(
