@@ -54,8 +54,6 @@ class _LoginSearchCityScreenState extends State<LoginSearchCityScreen> {
     setState(() {
       _cities = cities;
     });
-
-    log(_cities.length.toString());
   }
 
   @override
