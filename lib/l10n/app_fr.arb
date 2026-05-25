@@ -41,6 +41,7 @@
   "cancelled": "ANNULÉ",
   "detention": "Retenue",
   "noSubject": "Pas de matière",
+  "noRoom": "Pas de salle",
 
   "recipient": "À {recipient}",
   "self": "moi",

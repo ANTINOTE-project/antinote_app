@@ -284,6 +284,12 @@ abstract class AppLocalizations {
   /// **'Pas de matière'**
   String get noSubject;
 
+  /// No description provided for @noRoom.
+  ///
+  /// In fr, this message translates to:
+  /// **'Pas de salle'**
+  String get noRoom;
+
   /// No description provided for @recipient.
   ///
   /// In fr, this message translates to:

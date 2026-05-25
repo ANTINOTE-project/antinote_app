@@ -106,6 +106,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get noSubject => 'Pas de matière';
 
   @override
+  String get noRoom => 'Pas de salle';
+
+  @override
   String recipient(Object recipient) {
     return 'À $recipient';
   }

@@ -2,7 +2,9 @@ import "package:antinote/antinote.dart";
 import "package:antinote_app/frontend/extensions/colors.dart";
 import "package:antinote_app/frontend/extensions/l10n.dart";
 import "package:antinote_app/frontend/screens/shell/screens/timetable/index.dart";
+import "package:antinote_app/frontend/widgets/pressable.dart";
 import "package:flutter/material.dart";
+import "package:hugeicons_pro/hugeicons.dart";
 
 typedef ClassInfo = ({
   String baseTitle,
@@ -10,6 +12,8 @@ typedef ClassInfo = ({
   String attendants,
   String? groups,
   String? location,
+  DateTime start,
+  DateTime end,
   int? accentColor,
   bool cancelled,
   bool isExam,
@@ -21,6 +25,17 @@ class TimetableBody extends StatelessWidget {
 
   const TimetableBody({super.key, required this.days, required this.classes});
 
+  Map<(DateTime, DateTime), List<Class>> _groupByTime(List<Class> classes) {
+    final Map<(DateTime, DateTime), List<Class>> grouped = {};
+
+    for (final c in classes) {
+      final key = (c.startDate, c.endDate);
+      grouped.putIfAbsent(key, () => []).add(c);
+    }
+
+    return grouped;
+  }
+
   @override
   Widget build(BuildContext context) {
     return SliverCrossAxisGroup(
@@ -29,19 +44,26 @@ class TimetableBody extends StatelessWidget {
           ValueListenableBuilder(
             valueListenable: classes[day]!,
 
-            builder: (context, classes, child) {
-              if (classes != null) {
-                return SliverPadding(
-                  padding: const EdgeInsets.symmetric(horizontal: 12),
-
-                  sliver: SliverList.builder(
-                    itemCount: classes.length,
-                    itemBuilder: (context, index) => _ClassWidget(clazz: classes[index]),
-                  ),
-                );
+            builder: (context, dayClasses, child) {
+              if (dayClasses == null) {
+                return const SliverFillRemaining(child: Center(child: CircularProgressIndicator()));
               }
 
-              return const SliverFillRemaining(child: Center(child: CircularProgressIndicator()));
+              final grouped = _groupByTime(dayClasses);
+              final entries = grouped.entries.toList();
+
+              return SliverPadding(
+                padding: const EdgeInsets.symmetric(horizontal: 12),
+
+                sliver: SliverList.builder(
+                  itemCount: entries.length,
+
+                  itemBuilder: (context, index) {
+                    final entry = entries[index];
+                    return _TimeRow(start: entry.key.$1, end: entry.key.$2, classes: entry.value);
+                  },
+                ),
+              );
             },
           ),
       ],
@@ -49,10 +71,110 @@ class TimetableBody extends StatelessWidget {
   }
 }
 
+class _TimeRow extends StatefulWidget {
+  final DateTime start;
+  final DateTime end;
+  final List<Class> classes;
+
+  const _TimeRow({required this.start, required this.end, required this.classes});
+
+  @override
+  State<_TimeRow> createState() => _TimeRowState();
+}
+
+class _TimeRowState extends State<_TimeRow> {
+  Class get _currentClass => widget.classes[_classIndex];
+  int _classIndex = 0;
+
+  String _fmt(DateTime dt) {
+    return '${dt.hour.toString().padLeft(2, '0')}:${dt.minute.toString().padLeft(2, '0')}';
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 8),
+
+      child: IntrinsicHeight(
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          spacing: 8,
+
+          children: [
+            SizedBox(
+              width: 48,
+
+              child: Column(
+                mainAxisAlignment: .center,
+
+                children: [
+                  Text(_fmt(widget.start), style: const TextStyle(fontWeight: .w900)),
+
+                  Text(
+                    _fmt(widget.end),
+                    style: TextStyle(fontWeight: .w600, color: context.c.outline),
+                  ),
+                ],
+              ),
+            ),
+
+            Expanded(
+              child: AnimatedSwitcher(
+                duration: const Duration(milliseconds: 300),
+
+                switchInCurve: Curves.easeInOutCubic,
+                switchOutCurve: Curves.easeInOutCubic,
+
+                transitionBuilder: (child, animation) {
+                  final offsetAnimation = Tween<Offset>(
+                    begin: const Offset(0.2, 0),
+                    end: Offset.zero,
+                  ).animate(CurvedAnimation(parent: animation, curve: Curves.fastOutSlowIn));
+
+                  return SlideTransition(
+                    position: offsetAnimation,
+                    child: FadeTransition(opacity: animation, child: child),
+                  );
+                },
+
+                child: _ClassWidget(key: ValueKey(_currentClass), clazz: _currentClass),
+              ),
+            ),
+
+            if (widget.classes.length > 1)
+              Pressable(
+                onPressed: () {
+                  setState(() {
+                    _classIndex = (_classIndex + 1) % widget.classes.length;
+                  });
+                },
+
+                child: Container(
+                  decoration: BoxDecoration(
+                    color: context.c.surfaceContainerHigh,
+                    borderRadius: const .all(.circular(20)),
+                  ),
+
+                  width: 30,
+
+                  child: Icon(
+                    _classIndex == widget.classes.length - 1
+                        ? HugeIconsSolid.arrowLeft01
+                        : HugeIconsSolid.arrowRight01,
+                  ),
+                ),
+              ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
 class _ClassWidget extends StatelessWidget {
   final Class clazz;
 
-  const _ClassWidget({required this.clazz});
+  const _ClassWidget({super.key, required this.clazz});
 
   static String _formatAttendants(List teachers, List personal) => [
     teachers.map((e) => e.name).join(", "),
@@ -80,27 +202,39 @@ class _ClassWidget extends StatelessWidget {
         attendants: _formatAttendants(teachers, personal),
         groups: groups.isEmpty ? null : groups.map((e) => e.label).join(", "),
         location: classrooms.map((e) => e.label).join(", "),
+        start: clazz.startDate,
+        end: clazz.endDate,
         accentColor: _resolveAccentColor(subject?.backgroundColor, bg),
         cancelled: canceled || exempted != null,
         isExam: preview?.isTest ?? false,
       ),
 
-    Activity(title: final title, attendants: final attendants) => (
-      baseTitle: title,
-      status: null,
-      attendants: attendants.join(", "),
-      groups: null,
-      location: null,
-      accentColor: _resolveAccentColor(null, clazz.backgroundColor),
-      cancelled: false,
-      isExam: false,
-    ),
+    Activity(
+      title: final title,
+      attendants: final attendants,
+      startDate: final startDate,
+      endDate: final endDate,
+    ) =>
+      (
+        baseTitle: title,
+        status: null,
+        attendants: attendants.join(", "),
+        groups: null,
+        location: null,
+        start: startDate,
+        end: endDate,
+        accentColor: _resolveAccentColor(null, clazz.backgroundColor),
+        cancelled: false,
+        isExam: false,
+      ),
 
     Detention(
       title: final title,
       teachers: final teachers,
       personals: final personal,
       classrooms: final classrooms,
+      startDate: final startDate,
+      endDate: final endDate,
     ) =>
       (
         baseTitle: title ?? context.l10n.detention,
@@ -108,6 +242,8 @@ class _ClassWidget extends StatelessWidget {
         attendants: _formatAttendants(teachers, personal),
         groups: null,
         location: classrooms.map((e) => e.label).join(", "),
+        start: startDate,
+        end: endDate,
         accentColor: _resolveAccentColor(null, clazz.backgroundColor),
         cancelled: false,
         isExam: false,
@@ -118,17 +254,68 @@ class _ClassWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     final info = _info(context);
 
-    final colorValue = info.accentColor?.classAccentToBackgroundColor(
-      isLightTheme: context.c.brightness == .light,
-    );
+    final isLightTheme = context.c.brightness == .light;
+    final colorValue = info.accentColor?.classAccentToBackgroundColor(isLightTheme: isLightTheme);
 
     final color = colorValue != null ? Color(colorValue) : null;
+    final location = info.location ?? context.l10n.noRoom;
 
-    return Container(
-      decoration: BoxDecoration(color: color, borderRadius: const .all(.circular(20))),
-      padding: const .symmetric(horizontal: 12, vertical: 8),
+    return Pressable(
+      child: Container(
+        decoration: BoxDecoration(color: color, borderRadius: const .all(.circular(20))),
+        padding: const .symmetric(horizontal: 12, vertical: 8),
 
-      child: Column(children: [if (info.status != null) Text(info.status!), Text(info.baseTitle)]),
+        child: Column(
+          crossAxisAlignment: .start,
+          spacing: 16,
+
+          children: [
+            Text(info.baseTitle, style: const TextStyle(fontSize: 18, fontWeight: .w800)),
+
+            Row(
+              spacing: 6,
+
+              children: [
+                Row(
+                  spacing: 4,
+
+                  children: [
+                    Icon(HugeIconsSolid.pinLocation01, color: context.c.onSurfaceVariant),
+
+                    Text(
+                      location,
+
+                      maxLines: 1,
+                      overflow: .ellipsis,
+
+                      style: TextStyle(
+                        fontSize: 15,
+                        fontWeight: .w600,
+                        color: context.c.onSurfaceVariant,
+                      ),
+                    ),
+                  ],
+                ),
+
+                VerticalDivider(width: 1, thickness: 1, color: context.c.outlineVariant),
+
+                Text(
+                  info.attendants,
+
+                  maxLines: 1,
+                  overflow: .ellipsis,
+
+                  style: TextStyle(
+                    fontSize: 15,
+                    fontWeight: .w600,
+                    color: context.c.onSurfaceVariant,
+                  ),
+                ),
+              ],
+            ),
+          ],
+        ),
+      ),
     );
   }
 }
