@@ -18,15 +18,10 @@ class TimetableScreen extends StatefulWidget {
 }
 
 class _TimetableScreenState extends State<TimetableScreen>
-    with
-        AutomaticKeepAliveClientMixin<TimetableScreen>,
-        ScreenMixin<TimetableScreen> {
+    with ScreenMixin<TimetableScreen> {
   late SpecificInstanceParameters scheduleDisplayData;
   final Map<DateTime, ValueNotifier<List<Class>?>> _classes = {};
   late List<DateRange> currentGroups;
-
-  @override
-  bool get wantKeepAlive => true;
 
   PageController? pageController;
 

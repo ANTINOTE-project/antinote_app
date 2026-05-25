@@ -27,7 +27,8 @@ List<(DateTime, double, double?)> _buildEvolution(List<Exam> exams) {
     double? classAvg;
 
     if (exam.classAverage != null) {
-      classSum += exam.classAverage!.value / exam.theoreticalMaxGrade.value * 20;
+      classSum +=
+          exam.classAverage!.value / exam.theoreticalMaxGrade.value * 20;
       classCount++;
       classAvg = classSum / classCount;
     }
@@ -47,8 +48,7 @@ class GradesList extends StatefulWidget {
   State<GradesList> createState() => _GradesListState();
 }
 
-class _GradesListState extends State<GradesList>
-    with AutomaticKeepAliveClientMixin<GradesList>, ScreenMixin<GradesList> {
+class _GradesListState extends State<GradesList> with ScreenMixin<GradesList> {
   late LatestGradesPage _data;
 
   @override
@@ -61,11 +61,18 @@ class _GradesListState extends State<GradesList>
   }
 
   @override
-  Widget buildLoaded(BuildContext context, RefreshIndicatorBuilder buildRefreshIndicator) {
-    final organizedData = <Service, List<Exam>>{for (final service in _data.services!) service: []};
+  Widget buildLoaded(
+    BuildContext context,
+    RefreshIndicatorBuilder buildRefreshIndicator,
+  ) {
+    final organizedData = <Service, List<Exam>>{
+      for (final service in _data.services!) service: [],
+    };
 
     for (final exam in _data.exams) {
-      final service = organizedData.keys.firstWhere((element) => element.id == exam.service.id);
+      final service = organizedData.keys.firstWhere(
+        (element) => element.id == exam.service.id,
+      );
 
       organizedData[service]!.add(exam);
     }
@@ -75,18 +82,14 @@ class _GradesListState extends State<GradesList>
         slivers: [
           _AverageWidget(data: _data),
 
-          for (final MapEntry(key: service, value: exams) in organizedData.entries)
+          for (final MapEntry(key: service, value: exams)
+              in organizedData.entries)
             SliverPadding(
               padding: const EdgeInsets.symmetric(horizontal: 12),
 
               sliver: SliverMainAxisGroup(
                 slivers: [
-                  SliverPersistentHeader(
-                    floating: true,
-                    pinned: true,
-
-                    delegate: _ServiceWidget(service: service),
-                  ),
+                  PinnedHeaderSliver(child: ServiceWidget(service: service)),
 
                   SliverList.builder(
                     itemCount: exams.length,
@@ -115,20 +118,24 @@ class _GradesListState extends State<GradesList>
   }
 
   @override
-  Widget buildLoading(BuildContext context, RefreshIndicatorBuilder buildRefreshIndicator) {
-    return buildRefreshIndicator(child: const Center(child: LoadingWidget(size: 30)));
+  Widget buildLoading(
+    BuildContext context,
+    RefreshIndicatorBuilder buildRefreshIndicator,
+  ) {
+    return buildRefreshIndicator(
+      child: const Center(child: LoadingWidget(size: 30)),
+    );
   }
 
   @override
   FutureOr<void> loadActiveDataFromSession(PronoteSession session) async {
     await session.ensurePage(198);
 
-    final period = session.instance.periods.firstWhere((e) => e.visualId == widget.periodId);
+    final period = session.instance.periods.firstWhere(
+      (e) => e.visualId == widget.periodId,
+    );
     _data = await session.access(LatestGradesPageAccessor(period: period));
   }
-
-  @override
-  bool get wantKeepAlive => true;
 }
 
 class _AverageWidget extends StatefulWidget {
@@ -239,10 +246,20 @@ class _AverageWidgetState extends State<_AverageWidget> {
                       onTapUp: (d) {
                         if (_points.length < 2) return;
 
-                        final x = d.localPosition.dx.clamp(0.0, constraints.maxWidth);
-                        final index = (x / constraints.maxWidth * (_points.length - 1)).round();
+                        final x = d.localPosition.dx.clamp(
+                          0.0,
+                          constraints.maxWidth,
+                        );
+                        final index =
+                            (x / constraints.maxWidth * (_points.length - 1))
+                                .round();
 
-                        setState(() => _selectedIndex = index.clamp(0, _points.length - 1));
+                        setState(
+                          () => _selectedIndex = index.clamp(
+                            0,
+                            _points.length - 1,
+                          ),
+                        );
                       },
 
                       child: CustomPaint(
@@ -296,10 +313,17 @@ class _EvolutionPainter extends CustomPainter {
       for (final (_, self, classAvg) in points) ...[self, ?classAvg],
     ];
 
-    final minVal = (allValues.reduce((a, b) => a < b ? a : b) - 1).clamp(0.0, 20.0);
-    final maxVal = (allValues.reduce((a, b) => a > b ? a : b) + 1).clamp(0.0, 20.0);
+    final minVal = (allValues.reduce((a, b) => a < b ? a : b) - 1).clamp(
+      0.0,
+      20.0,
+    );
+    final maxVal = (allValues.reduce((a, b) => a > b ? a : b) + 1).clamp(
+      0.0,
+      20.0,
+    );
 
-    double toY(double value) => (1 - (value - minVal) / (maxVal - minVal)) * size.height;
+    double toY(double value) =>
+        (1 - (value - minVal) / (maxVal - minVal)) * size.height;
 
     final selfPaint = Paint()
       ..color = selfColor
@@ -345,12 +369,24 @@ class _EvolutionPainter extends CustomPainter {
     final (_, self, classAvg) = points[selectedIndex];
     final x = selectedIndex / (points.length - 1) * size.width;
 
-    canvas.drawCircle(Offset(x, toY(self)), 9.5, Paint()..color = dotBorderColor);
+    canvas.drawCircle(
+      Offset(x, toY(self)),
+      9.5,
+      Paint()..color = dotBorderColor,
+    );
     canvas.drawCircle(Offset(x, toY(self)), 7.5, Paint()..color = selfColor);
 
     if (classAvg != null) {
-      canvas.drawCircle(Offset(x, toY(classAvg)), 9.5, Paint()..color = dotBorderColor);
-      canvas.drawCircle(Offset(x, toY(classAvg)), 7.5, Paint()..color = classColor);
+      canvas.drawCircle(
+        Offset(x, toY(classAvg)),
+        9.5,
+        Paint()..color = dotBorderColor,
+      );
+      canvas.drawCircle(
+        Offset(x, toY(classAvg)),
+        7.5,
+        Paint()..color = classColor,
+      );
     }
   }
 
@@ -363,19 +399,13 @@ class _EvolutionPainter extends CustomPainter {
   }
 }
 
-class _ServiceWidget extends SliverPersistentHeaderDelegate {
+class ServiceWidget extends StatelessWidget {
   final Service service;
 
-  const _ServiceWidget({required this.service});
+  const ServiceWidget({super.key, required this.service});
 
   @override
-  double get minExtent => 68;
-
-  @override
-  double get maxExtent => 68;
-
-  @override
-  Widget build(BuildContext context, double shrinkOffset, bool overlapsContent) {
+  Widget build(BuildContext context) {
     final (color, bgColor) = Utils.adaptColorPair(service.color!, context.c);
     final hasSelfAverage = service.selfAverage != null;
 
@@ -402,7 +432,11 @@ class _ServiceWidget extends SliverPersistentHeaderDelegate {
                     service.name,
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
-                    style: TextStyle(fontSize: 21, fontWeight: FontWeight.bold, color: color),
+                    style: TextStyle(
+                      fontSize: 21,
+                      fontWeight: FontWeight.bold,
+                      color: color,
+                    ),
                   ),
                 ),
 
@@ -412,13 +446,18 @@ class _ServiceWidget extends SliverPersistentHeaderDelegate {
                       children: [
                         TextSpan(
                           text: Utils.formatNumber(service.selfAverage!.value),
-                          style: TextStyle(color: color, fontSize: 22, fontWeight: FontWeight.w900),
+                          style: TextStyle(
+                            color: color,
+                            fontSize: 22,
+                            fontWeight: FontWeight.w900,
+                          ),
                         ),
 
                         const WidgetSpan(child: SizedBox(width: 2)),
 
                         TextSpan(
-                          text: "/${Utils.formatNumber(service.theoreticalMaxGrade!.value)}",
+                          text:
+                              "/${Utils.formatNumber(service.theoreticalMaxGrade!.value)}",
                           style: TextStyle(
                             color: context.c.onSurfaceVariant,
                             fontSize: 15,
@@ -435,9 +474,6 @@ class _ServiceWidget extends SliverPersistentHeaderDelegate {
       ),
     );
   }
-
-  @override
-  bool shouldRebuild(_ServiceWidget old) => old.service != service;
 }
 
 class _ExamWidget extends StatelessWidget {
@@ -446,7 +482,11 @@ class _ExamWidget extends StatelessWidget {
   final bool isFirst;
   final bool isLast;
 
-  const _ExamWidget({required this.exam, required this.isFirst, required this.isLast});
+  const _ExamWidget({
+    required this.exam,
+    required this.isFirst,
+    required this.isLast,
+  });
 
   static const radius = Radius.circular(16);
   static const defaultRadius = Radius.circular(6);
@@ -477,7 +517,10 @@ class _ExamWidget extends StatelessWidget {
         ? exam.comment!.trim()
         : context.l10n.gradeOf(exam.service.name);
 
-    final (color, bgColor) = Utils.adaptColorPair(exam.service.color!, context.c);
+    final (color, bgColor) = Utils.adaptColorPair(
+      exam.service.color!,
+      context.c,
+    );
 
     return Pressable(
       // Si tu vois ça stp laisse le container
@@ -502,7 +545,10 @@ class _ExamWidget extends StatelessWidget {
                       maxLines: 1,
                       overflow: .ellipsis,
 
-                      style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w800),
+                      style: const TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.w800,
+                      ),
                     ),
 
                     Text(
@@ -523,13 +569,18 @@ class _ExamWidget extends StatelessWidget {
                   children: [
                     TextSpan(
                       text: Utils.formatNumber(exam.selfGrade.value),
-                      style: TextStyle(color: color, fontSize: 19, fontWeight: FontWeight.w900),
+                      style: TextStyle(
+                        color: color,
+                        fontSize: 19,
+                        fontWeight: FontWeight.w900,
+                      ),
                     ),
 
                     const WidgetSpan(child: SizedBox(width: 2)),
 
                     TextSpan(
-                      text: "/${Utils.formatNumber(exam.theoreticalMaxGrade.value)}",
+                      text:
+                          "/${Utils.formatNumber(exam.theoreticalMaxGrade.value)}",
                       style: TextStyle(
                         color: context.c.onSurfaceVariant,
                         fontSize: 15,
