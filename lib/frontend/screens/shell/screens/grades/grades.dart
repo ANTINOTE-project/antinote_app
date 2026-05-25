@@ -11,9 +11,9 @@ import "package:antinote_app/utils.dart";
 import "package:flutter/material.dart";
 
 class GradesList extends StatefulWidget {
-  final Period period;
+  final VisualId periodId;
 
-  const GradesList({super.key, required this.period});
+  const GradesList({super.key, required this.periodId});
 
   @override
   State<GradesList> createState() => _GradesListState();
@@ -27,7 +27,7 @@ class _GradesListState extends State<GradesList>
   void didUpdateWidget(GradesList oldWidget) {
     super.didUpdateWidget(oldWidget);
 
-    if (oldWidget.period != widget.period) {
+    if (oldWidget.periodId != widget.periodId) {
       reload();
     }
   }
@@ -88,7 +88,8 @@ class _GradesListState extends State<GradesList>
   FutureOr<void> loadActiveDataFromSession(PronoteSession session) async {
     await session.ensurePage(198);
 
-    _data = await session.access(LatestGradesPageAccessor(period: widget.period));
+    final period = session.instance.periods.firstWhere((e) => e.visualId == widget.periodId);
+    _data = await session.access(LatestGradesPageAccessor(period: period));
   }
 
   @override

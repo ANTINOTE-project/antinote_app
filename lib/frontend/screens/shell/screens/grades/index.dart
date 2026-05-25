@@ -36,12 +36,9 @@ class _GradesScreenState extends State<GradesScreen>
   }
 
   @override
-  Widget buildLoaded(
-    BuildContext context,
-    RefreshIndicatorBuilder buildRefreshIndicator,
-  ) {
+  Widget buildLoaded(BuildContext context, RefreshIndicatorBuilder buildRefreshIndicator) {
     final List<GradesTab> tabs = [
-      (widget: GradesList(period: _selectedPeriod), category: "grades"),
+      (widget: GradesList(periodId: _selectedPeriod.visualId), category: "grades"),
       (widget: const SizedBox.shrink(), category: "report"),
     ];
 
@@ -73,13 +70,8 @@ class _GradesScreenState extends State<GradesScreen>
   }
 
   @override
-  Widget buildLoading(
-    BuildContext context,
-    RefreshIndicatorBuilder buildRefreshIndicator,
-  ) {
-    return buildRefreshIndicator(
-      child: const Center(child: LoadingWidget(size: 30)),
-    );
+  Widget buildLoading(BuildContext context, RefreshIndicatorBuilder buildRefreshIndicator) {
+    return buildRefreshIndicator(child: const Center(child: LoadingWidget(size: 30)));
   }
 
   @override
