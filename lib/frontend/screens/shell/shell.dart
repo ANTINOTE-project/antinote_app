@@ -119,10 +119,16 @@ class _AppShellState extends State<AppShell> {
                 SafeArea(
                   right: false,
                   left: false,
+
                   child: Padding(
-                    padding: const .symmetric(horizontal: 8, vertical: 0),
+                    padding: const .symmetric(horizontal: 8),
+
                     child: ClipRRect(
-                      borderRadius: .circular(24),
+                      borderRadius: const .only(
+                        topRight: .circular(24),
+                        bottomRight: .circular(24),
+                      ),
+
                       child: NavigationRail(
                         backgroundColor: context.c.surfaceContainerHigh,
                         destinations: _screens.mapL((e) {
@@ -136,6 +142,7 @@ class _AppShellState extends State<AppShell> {
                               isLabelVisible: notificationCount > 0,
                               child: Icon(e.icon),
                             ),
+
                             selectedIcon: Badge.count(
                               count: notificationCount,
                               isLabelVisible: notificationCount > 0,
@@ -144,10 +151,12 @@ class _AppShellState extends State<AppShell> {
                             label: Text(e.label),
                           );
                         }),
+
                         selectedIndex: currentPage,
                         onDestinationSelected: (value) => setState(() {
                           currentPage = value;
                         }),
+
                         labelType: .all,
                         scrollable: true,
                       ),
@@ -170,8 +179,10 @@ class _AppShellState extends State<AppShell> {
               : SafeArea(
                   child: Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 12),
+
                     child: ClipRRect(
-                      borderRadius: BorderRadius.circular(24),
+                      borderRadius: const .only(topLeft: .circular(24), topRight: .circular(24)),
+
                       child: NavigationBar(
                         destinations: _screens
                             .map((e) => _buildDestination(e, notifications))
@@ -179,6 +190,7 @@ class _AppShellState extends State<AppShell> {
                         onDestinationSelected: (value) => setState(() {
                           currentPage = value;
                         }),
+
                         selectedIndex: currentPage,
                         height: 70,
                       ),
