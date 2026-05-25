@@ -44,6 +44,8 @@ class _GradesListState extends State<GradesList>
 
     return CustomScrollView(
       slivers: [
+        _AverageWidget(data: _data),
+
         for (final MapEntry(key: service, value: exams) in organizedData.entries)
           SliverPadding(
             padding: const EdgeInsets.symmetric(horizontal: 12),
@@ -72,7 +74,7 @@ class _GradesListState extends State<GradesList>
             ),
           ),
 
-        const SliverPadding(padding: EdgeInsets.only(bottom: 128)),
+        const SliverPadding(padding: EdgeInsets.only(bottom: 90)),
       ],
     );
   }
@@ -93,6 +95,32 @@ class _GradesListState extends State<GradesList>
   bool get wantKeepAlive => true;
 }
 
+class _AverageWidget extends StatelessWidget {
+  final LatestGradesPage data;
+
+  const _AverageWidget({required this.data});
+
+  @override
+  Widget build(BuildContext context) {
+    return SliverToBoxAdapter(
+      child: Padding(
+        padding: const EdgeInsets.only(top: 20, left: 12, right: 12),
+
+        child: Pressable(
+          child: Container(
+            decoration: BoxDecoration(
+              color: context.c.surfaceContainerHigh,
+              borderRadius: BorderRadius.circular(20),
+            ),
+
+            height: 300,
+          ),
+        ),
+      ),
+    );
+  }
+}
+
 class _ServiceWidget extends StatelessWidget {
   final Service service;
 
@@ -105,7 +133,7 @@ class _ServiceWidget extends StatelessWidget {
 
     return Pressable(
       child: Padding(
-        padding: const EdgeInsets.only(top: 10, bottom: 6, left: 2),
+        padding: const EdgeInsets.only(top: 16, bottom: 6, left: 2, right: 2),
 
         child: Row(
           spacing: 8,
