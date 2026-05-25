@@ -5,6 +5,7 @@ import "package:antinote_app/backend/backend.dart";
 import "package:antinote_app/frontend/extensions/colors.dart";
 import "package:antinote_app/frontend/extensions/l10n.dart";
 import "package:antinote_app/frontend/screens/screen.dart";
+import "package:antinote_app/frontend/widgets/customs/list.dart";
 import "package:antinote_app/frontend/widgets/customs/loading.dart";
 import "package:antinote_app/frontend/widgets/pressable.dart";
 import "package:antinote_app/utils.dart";
@@ -309,22 +310,10 @@ class _SubjectsWidget extends StatelessWidget {
               slivers: [
                 PinnedHeaderSliver(child: _ServiceWidget(service: entry.key)),
 
-                SliverList.builder(
-                  itemCount: entry.value.length,
-
-                  itemBuilder: (context, index) {
-                    final exams = entry.value;
-
-                    return Padding(
-                      padding: const EdgeInsets.symmetric(vertical: 2),
-
-                      child: _ExamWidget(
-                        exam: exams[index],
-
-                        isFirst: index == 0,
-                        isLast: index == entry.value.length - 1,
-                      ),
-                    );
+                ListWidget<Exam>(
+                  items: entry.value,
+                  itemBuilder: (context, item, borderRadius) {
+                    return _ExamWidget(exam: item, borderRadius: borderRadius);
                   },
                 ),
               ],
@@ -404,102 +393,44 @@ class _ServiceWidget extends StatelessWidget {
 }
 
 class _ExamWidget extends StatelessWidget {
+  final BorderRadius borderRadius;
   final Exam exam;
 
-  final bool isFirst;
-  final bool isLast;
-
-  const _ExamWidget({required this.exam, required this.isFirst, required this.isLast});
-
-  static const radius = Radius.circular(16);
-  static const defaultRadius = Radius.circular(6);
+  const _ExamWidget({required this.exam, required this.borderRadius});
 
   @override
   Widget build(BuildContext context) {
-    final borderRadius = switch ((isFirst, isLast)) {
-      (true, true) => const BorderRadius.all(radius),
-
-      (true, _) => const BorderRadius.only(
-        topLeft: radius,
-        topRight: radius,
-        bottomLeft: defaultRadius,
-        bottomRight: defaultRadius,
-      ),
-
-      (_, true) => const BorderRadius.only(
-        topLeft: defaultRadius,
-        topRight: defaultRadius,
-        bottomLeft: radius,
-        bottomRight: radius,
-      ),
-
-      _ => const BorderRadius.all(defaultRadius),
-    };
-
     final (color, bgColor) = Utils.adaptColorPair(exam.service.color, context.c);
+
     final title = Utils.getExamComment(context, exam);
+    final subtitle = exam.date.asRelativeDate(context);
 
-    return Pressable(
-      child: Container(
-        decoration: BoxDecoration(color: bgColor, borderRadius: borderRadius),
+    return ItemWidget(
+      borderRadius: borderRadius,
+      backgroundColor: bgColor,
 
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+      title: title,
+      subtitle: subtitle,
 
-          child: Row(
-            spacing: 16,
+      trailing: Text.rich(
+        TextSpan(
+          children: [
+            TextSpan(
+              text: Utils.formatNumber(exam.selfGrade.value),
+              style: TextStyle(color: color, fontSize: 19, fontWeight: FontWeight.w900),
+            ),
 
-            children: [
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
+            const WidgetSpan(child: SizedBox(width: 2)),
 
-                  children: [
-                    Text(
-                      title,
-
-                      maxLines: 1,
-                      overflow: .ellipsis,
-
-                      style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w800),
-                    ),
-
-                    Text(
-                      exam.date.asRelativeDate(context),
-
-                      style: TextStyle(
-                        fontSize: 12,
-                        fontWeight: FontWeight.w600,
-                        color: context.c.onSurfaceVariant,
-                      ),
-                    ),
-                  ],
-                ),
+            TextSpan(
+              text: "/${Utils.formatNumber(exam.theoreticalMaxGrade.value)}",
+              style: TextStyle(
+                color: context.c.onSurfaceVariant,
+                fontSize: 15,
+                fontWeight: FontWeight.bold,
               ),
-
-              Text.rich(
-                TextSpan(
-                  children: [
-                    TextSpan(
-                      text: Utils.formatNumber(exam.selfGrade.value),
-                      style: TextStyle(color: color, fontSize: 19, fontWeight: FontWeight.w900),
-                    ),
-
-                    const WidgetSpan(child: SizedBox(width: 2)),
-
-                    TextSpan(
-                      text: "/${Utils.formatNumber(exam.theoreticalMaxGrade.value)}",
-                      style: TextStyle(
-                        color: context.c.onSurfaceVariant,
-                        fontSize: 15,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ],
-          ),
+            ),
+          ],
         ),
       ),
     );
