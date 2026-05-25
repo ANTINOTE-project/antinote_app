@@ -151,7 +151,9 @@ class _CommunicationScreenState extends State<CommunicationScreen>
     final curPage = session.stack.clientSignature?.get("onglet");
     final toLoad = filter.allowedTypes.toSet();
 
-    for (final commType in filter.allowedTypes) {
+    for (final commType in filter.allowedTypes.where(
+      (element) => session.user.hasAccessToTab(element.pageId),
+    )) {
       if (commType.pageId == curPage) {
         threads.addAll(await loadThreads(session, commType));
         toLoad.remove(commType);
