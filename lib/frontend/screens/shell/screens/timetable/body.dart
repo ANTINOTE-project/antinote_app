@@ -2,7 +2,6 @@ import "package:antinote/antinote.dart";
 import "package:antinote_app/frontend/extensions/colors.dart";
 import "package:antinote_app/frontend/extensions/l10n.dart";
 import "package:antinote_app/frontend/screens/shell/screens/timetable/index.dart";
-import "package:antinote_app/utils.dart";
 import "package:flutter/material.dart";
 
 typedef ClassInfo = ({
@@ -11,6 +10,7 @@ typedef ClassInfo = ({
   String attendants,
   String? groups,
   String? location,
+  int? accentColor,
   bool cancelled,
   bool isExam,
 });
@@ -59,6 +59,8 @@ class _ClassWidget extends StatelessWidget {
     if (personal.isNotEmpty) '(+ ${personal.map((e) => e.name).join(', ')})',
   ].join(" ");
 
+  static int? _resolveAccentColor(int? subjectBg, int? classBg) => subjectBg ?? (classBg);
+
   ClassInfo _info(BuildContext context) => switch (clazz) {
     Lesson(
       subject: final subject,
@@ -70,6 +72,7 @@ class _ClassWidget extends StatelessWidget {
       groups: final groups,
       classrooms: final classrooms,
       notebookEntryPreview: final preview,
+      backgroundColor: final bg,
     ) =>
       (
         baseTitle: subject?.name ?? context.l10n.noSubject,
@@ -77,6 +80,7 @@ class _ClassWidget extends StatelessWidget {
         attendants: _formatAttendants(teachers, personal),
         groups: groups.isEmpty ? null : groups.map((e) => e.label).join(", "),
         location: classrooms.map((e) => e.label).join(", "),
+        accentColor: _resolveAccentColor(subject?.backgroundColor, bg),
         cancelled: canceled || exempted != null,
         isExam: preview?.isTest ?? false,
       ),
@@ -87,6 +91,7 @@ class _ClassWidget extends StatelessWidget {
       attendants: attendants.join(", "),
       groups: null,
       location: null,
+      accentColor: _resolveAccentColor(null, clazz.backgroundColor),
       cancelled: false,
       isExam: false,
     ),
@@ -103,6 +108,7 @@ class _ClassWidget extends StatelessWidget {
         attendants: _formatAttendants(teachers, personal),
         groups: null,
         location: classrooms.map((e) => e.label).join(", "),
+        accentColor: _resolveAccentColor(null, clazz.backgroundColor),
         cancelled: false,
         isExam: false,
       ),
@@ -110,16 +116,17 @@ class _ClassWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final (color, bgColor) = Utils.adaptColorPair(clazz.backgroundColor, context.c);
     final info = _info(context);
 
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+    final colorValue = info.accentColor?.classAccentToBackgroundColor(
+      isLightTheme: context.c.brightness == .light,
+    );
 
-      decoration: BoxDecoration(
-        color: bgColor,
-        borderRadius: const BorderRadius.all(Radius.circular(20)),
-      ),
+    final color = colorValue != null ? Color(colorValue) : null;
+
+    return Container(
+      decoration: BoxDecoration(color: color, borderRadius: const .all(.circular(20))),
+      padding: const .symmetric(horizontal: 12, vertical: 8),
 
       child: Column(children: [if (info.status != null) Text(info.status!), Text(info.baseTitle)]),
     );
