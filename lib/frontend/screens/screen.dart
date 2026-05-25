@@ -14,11 +14,11 @@ mixin ScreenMixin<T extends StatefulWidget> on State<T> {
   bool loaded = false;
   Future<void>? _loader;
 
-  bool initialized = false;
+  SessionManager? manager;
   void _sessionUpdateCallback() {
     if (!mounted) return;
 
-    SessionManager.unsubscribeSession(context: context, callback: reload);
+    manager?.unsubscribeSession(callback: reload);
 
     try {
       _loader = SessionManager.execute(
@@ -28,7 +28,7 @@ mixin ScreenMixin<T extends StatefulWidget> on State<T> {
           await loadActiveDataFromSession(session);
 
           if (mounted) {
-            SessionManager.subscribeSession(context: context, callback: reload);
+            manager?.subscribeSession(callback: reload);
           }
 
           if (mounted) {
@@ -40,26 +40,27 @@ mixin ScreenMixin<T extends StatefulWidget> on State<T> {
         },
       );
     } on SessionException {
-      SessionManager.subscribeSession(context: context, callback: reload);
+      manager?.subscribeSession(callback: reload);
     }
   }
 
   @override
-  void didChangeDependencies() {
+  Future<void> didChangeDependencies() async {
     super.didChangeDependencies();
 
-    if (!initialized) {
-      SessionManager.subscribeSession(context: context, callback: reload);
+    if (manager == null) {
+      manager = SessionManager.of(context);
 
-      initialized = true;
-
-      reload();
+      manager!.subscribeSession(callback: reload);
+      await reload();
+    } else {
+      manager = SessionManager.of(context);
     }
   }
 
   @override
   void dispose() {
-    SessionManager.unsubscribeSession(context: context, callback: reload);
+    manager?.unsubscribeSession(callback: reload);
     super.dispose();
   }
 

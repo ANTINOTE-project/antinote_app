@@ -98,7 +98,7 @@ class SessionManager extends InheritedWidget {
 
       final as = context == null || !context.mounted ? null : context.as;
 
-      return state.runTask(
+      return await state.runTask(
         sessionEnsurer: () {
           assert(
             as != null,
@@ -137,24 +137,12 @@ class SessionManager extends InheritedWidget {
     );
   }
 
-  static void subscribeSession({
-    required BuildContext context,
-    required VoidCallback callback,
-  }) {
-    final result = context.dependOnInheritedWidgetOfExactType<SessionManager>();
-    assert(result != null, 'No "SessionManager" in tree...');
-
-    result!.state.addListener(callback);
+  void subscribeSession({required VoidCallback callback}) {
+    state.addListener(callback);
   }
 
-  static void unsubscribeSession({
-    required BuildContext context,
-    required VoidCallback callback,
-  }) {
-    final result = context.dependOnInheritedWidgetOfExactType<SessionManager>();
-    assert(result != null, 'No "SessionManager" in tree...');
-
-    result!.state.removeListener(callback);
+  void unsubscribeSession({required VoidCallback callback}) {
+    state.removeListener(callback);
   }
 
   @override

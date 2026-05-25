@@ -1,10 +1,12 @@
 import "package:antinote/antinote.dart";
 import "package:antinote_app/backend/src/session/manager.dart";
+import "package:antinote_app/frontend/extensions/colors.dart";
 import "package:antinote_app/frontend/extensions/l10n.dart";
 import "package:antinote_app/frontend/screens/shell/screens/communication.dart";
 import "package:antinote_app/frontend/screens/shell/screens/grades/index.dart";
 import "package:antinote_app/frontend/screens/shell/screens/home.dart";
 import "package:antinote_app/frontend/screens/shell/screens/timetable.dart";
+import "package:antinote_app/utils.dart";
 import "package:flutter/material.dart";
 import "package:hugeicons_pro/hugeicons.dart";
 
@@ -70,22 +72,24 @@ class _AppShellState extends State<AppShell> {
     );
   }
 
+  SessionManager? manager;
+
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
 
-    SessionManager.subscribeSession(
-      context: context,
-      callback: loadNotificationStream,
-    );
+    if (manager == null) {
+      manager = SessionManager.of(context);
+
+      manager!.subscribeSession(callback: loadNotificationStream);
+    } else {
+      manager = SessionManager.of(context);
+    }
   }
 
   @override
   void dispose() {
-    SessionManager.unsubscribeSession(
-      context: context,
-      callback: loadNotificationStream,
-    );
+    manager?.unsubscribeSession(callback: loadNotificationStream);
 
     super.dispose();
   }
@@ -94,6 +98,8 @@ class _AppShellState extends State<AppShell> {
 
   @override
   Widget build(BuildContext context) {
+    final screenSize = MediaQuery.sizeOf(context);
+
     return StreamBuilder(
       stream: notificationStream,
 
@@ -102,31 +108,88 @@ class _AppShellState extends State<AppShell> {
 
         return Scaffold(
           extendBody: true,
-          body: IndexedStack(
-            index: currentPage,
-            children: _screens.mapL((e) => e.screen),
-          ),
+          body: Row(
+            children: [
+              if (screenSize.width > screenSize.height)
+                SafeArea(
+                  right: false,
+                  left: false,
+                  child: Padding(
+                    padding: const .symmetric(horizontal: 8, vertical: 0),
+                    child: ClipRRect(
+                      borderRadius: .circular(24),
+                      child: NavigationRail(
+                        backgroundColor: context.c.surfaceContainerHigh,
+                        destinations: _screens.mapL((e) {
+                          final notificationCount = notifications
+                              .where(
+                                (element) =>
+                                    e.associatedTabIds.contains(element.tab),
+                              )
+                              .fold(
+                                0,
+                                (previousValue, element) =>
+                                    previousValue + element.count,
+                              );
 
-          bottomNavigationBar: SafeArea(
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-
-              child: ClipRRect(
-                borderRadius: BorderRadius.circular(24),
-
-                child: NavigationBar(
-                  destinations: _screens
-                      .map((e) => _buildDestination(e, notifications))
-                      .toList(growable: false),
-                  onDestinationSelected: (value) => setState(() {
-                    currentPage = value;
-                  }),
-                  selectedIndex: currentPage,
-                  height: 70,
+                          return NavigationRailDestination(
+                            icon: Badge.count(
+                              count: notificationCount,
+                              isLabelVisible: notificationCount > 0,
+                              child: Icon(e.icon),
+                            ),
+                            selectedIcon: Badge.count(
+                              count: notificationCount,
+                              isLabelVisible: notificationCount > 0,
+                              child: Icon(e.icon, fill: 1),
+                            ),
+                            label: Text(e.label),
+                          );
+                        }),
+                        selectedIndex: currentPage,
+                        onDestinationSelected: (value) => setState(() {
+                          currentPage = value;
+                        }),
+                        labelType: .all,
+                        scrollable: true,
+                      ),
+                    ),
+                  ),
+                ),
+              Expanded(
+                child: AnimatedSwitcher(
+                  duration: const Duration(milliseconds: 300),
+                  switchInCurve: Curves.fastOutSlowIn,
+                  switchOutCurve: const ReversedCurve(Curves.fastOutSlowIn),
+                  child: _screens[currentPage].screen,
                 ),
               ),
-            ),
+            ],
           ),
+
+          bottomNavigationBar: screenSize.width > screenSize.height
+              ? null
+              : SafeArea(
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 12,
+                      vertical: 0,
+                    ),
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(24),
+                      child: NavigationBar(
+                        destinations: _screens
+                            .map((e) => _buildDestination(e, notifications))
+                            .toList(growable: false),
+                        onDestinationSelected: (value) => setState(() {
+                          currentPage = value;
+                        }),
+                        selectedIndex: currentPage,
+                        height: 70,
+                      ),
+                    ),
+                  ),
+                ),
         );
       },
     );
