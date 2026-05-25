@@ -86,7 +86,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get services => 'Matières';
 
   @override
-  String gradeOf(String service) {
+  String gradeOf(Object service) {
     return 'Note de $service';
   }
 
@@ -97,7 +97,16 @@ class AppLocalizationsEn extends AppLocalizations {
   String get averageClass => 'Moy. classe';
 
   @override
-  String recipient(String recipient) {
+  String get cancelled => 'ANNULÉ';
+
+  @override
+  String get detention => 'Retenue';
+
+  @override
+  String get noSubject => 'Pas de matière';
+
+  @override
+  String recipient(Object recipient) {
     return 'À $recipient';
   }
 

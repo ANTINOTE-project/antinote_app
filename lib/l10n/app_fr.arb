@@ -35,24 +35,14 @@
   "latestGrades": "Dernières notes",
   "services": "Matières",
   "gradeOf": "Note de {service}",
-  "@gradeOf": {
-    "placeholders": {
-      "service": {
-        "type": "String"
-      }
-    }
-  },
   "averageSelf": "Moy. générale",
   "averageClass": "Moy. classe",
 
+  "cancelled": "ANNULÉ",
+  "detention": "Retenue",
+  "noSubject": "Pas de matière",
+
   "recipient": "À {recipient}",
-  "@recipient": {
-    "placeholders": {
-      "recipient": {
-        "type": "String"
-      }
-    }
-  },
   "self": "moi",
 
   "nominativePoll": "Sondage nominatif",

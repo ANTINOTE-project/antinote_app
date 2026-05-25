@@ -1,7 +1,7 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
-import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
-import 'intl/messages_all.dart';
+import "package:flutter/material.dart";
+import "package:intl/intl.dart";
+import "intl/messages_all.dart";
 
 // **************************************************************************
 // Generator: Flutter Intl IDE plugin
@@ -20,7 +20,7 @@ class S {
   static S get current {
     assert(
       _current != null,
-      'No instance of S was loaded. Try to initialize the S delegate before accessing S.current.',
+      "No instance of S was loaded. Try to initialize the S delegate before accessing S.current.",
     );
     return _current!;
   }
@@ -45,7 +45,7 @@ class S {
     final instance = S.maybeOf(context);
     assert(
       instance != null,
-      'No instance of S present in the widget tree. Did you add S.delegate in localizationsDelegates?',
+      "No instance of S present in the widget tree. Did you add S.delegate in localizationsDelegates?",
     );
     return instance!;
   }
@@ -59,7 +59,7 @@ class AppLocalizationDelegate extends LocalizationsDelegate<S> {
   const AppLocalizationDelegate();
 
   List<Locale> get supportedLocales {
-    return const <Locale>[Locale.fromSubtags(languageCode: 'en')];
+    return const <Locale>[Locale.fromSubtags(languageCode: "en")];
   }
 
   @override

@@ -252,7 +252,7 @@ abstract class AppLocalizations {
   ///
   /// In fr, this message translates to:
   /// **'Note de {service}'**
-  String gradeOf(String service);
+  String gradeOf(Object service);
 
   /// No description provided for @averageSelf.
   ///
@@ -266,11 +266,29 @@ abstract class AppLocalizations {
   /// **'Moy. classe'**
   String get averageClass;
 
+  /// No description provided for @cancelled.
+  ///
+  /// In fr, this message translates to:
+  /// **'ANNULÉ'**
+  String get cancelled;
+
+  /// No description provided for @detention.
+  ///
+  /// In fr, this message translates to:
+  /// **'Retenue'**
+  String get detention;
+
+  /// No description provided for @noSubject.
+  ///
+  /// In fr, this message translates to:
+  /// **'Pas de matière'**
+  String get noSubject;
+
   /// No description provided for @recipient.
   ///
   /// In fr, this message translates to:
   /// **'À {recipient}'**
-  String recipient(String recipient);
+  String recipient(Object recipient);
 
   /// No description provided for @self.
   ///
