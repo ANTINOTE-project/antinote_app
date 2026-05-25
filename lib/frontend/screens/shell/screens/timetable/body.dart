@@ -288,7 +288,11 @@ class _ClassWidget extends StatelessWidget {
 
     return Pressable(
       child: Container(
-        decoration: BoxDecoration(color: color, borderRadius: const .all(.circular(20))),
+        decoration: BoxDecoration(
+          color: info.cancelled ? context.c.errorContainer : color,
+          borderRadius: const .all(.circular(20)),
+        ),
+
         padding: const .symmetric(horizontal: 12, vertical: 8),
 
         child: Column(
@@ -296,7 +300,14 @@ class _ClassWidget extends StatelessWidget {
           spacing: 16,
 
           children: [
-            Text(info.baseTitle, style: const TextStyle(fontSize: 18, fontWeight: .w800)),
+            Text(
+              info.baseTitle,
+              style: TextStyle(
+                color: info.cancelled ? context.c.error : context.c.onPrimary,
+                fontSize: 18,
+                fontWeight: .w800,
+              ),
+            ),
 
             Column(
               spacing: 6,
