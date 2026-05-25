@@ -50,6 +50,13 @@ class AppLocalizationsFr extends AppLocalizations {
       'Entre le nom de ta ville et choisis ton établissement';
 
   @override
+  String get loginUrl => 'Rentre l\'adresse du PRONOTE de ton établissement';
+
+  @override
+  String get loginUrlSubtitle =>
+      'Renseigne l\'URL de ton espace PRONOTE pour t\'y connecter directement';
+
+  @override
   String get loginSchool => 'Choisis ton établissement';
 
   @override
@@ -127,4 +134,29 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get raMessage => 'J\'ai pris connaissance de cette information';
+
+  @override
+  String get couldNotLoad => 'L\'instance m\'a pas pu être chargée...';
+
+  @override
+  String get instanceName => 'Nom d\'instance';
+
+  @override
+  String instanceNameValue(Object mainName, Object loginName) {
+    return '$mainName ($loginName quand déconnecté)';
+  }
+
+  @override
+  String get remoteVersion => 'Version de l\'instance';
+
+  @override
+  String get remoteYear => 'Année';
+
+  @override
+  String remoteYearSubtitle(Object end, Object start) {
+    return '$start ➔ $end';
+  }
+
+  @override
+  String get remotePeriods => 'Périodes';
 }

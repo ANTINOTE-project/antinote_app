@@ -19,6 +19,9 @@
   "loginCity": "Recherche ta ville",
   "loginCitySubtitle": "Entre le nom de ta ville et choisis ton établissement",
 
+  "loginUrl": "Rentre l'adresse du PRONOTE de ton établissement",
+  "loginUrlSubtitle": "Renseigne l'URL de ton espace PRONOTE pour t'y connecter directement",
+
   "loginSchool": "Choisis ton établissement",
   "loginSelect": "Choisis ton espace",
 
@@ -50,5 +53,33 @@
   "nominativePoll": "Sondage nominatif",
   "anonymousPoll": "Sondage anonyme",
 
-  "raMessage": "J'ai pris connaissance de cette information"
+  "raMessage": "J'ai pris connaissance de cette information",
+
+  "couldNotLoad": "L'instance m'a pas pu être chargée...",
+
+  "instanceName": "Nom d'instance",
+  "instanceNameValue": "{mainName} ({loginName} quand déconnecté)",
+  "@instanceNameValue": {
+    "placeholders": {
+      "mainName": {},
+      "loginName": {}
+    }
+  },
+
+  "remoteVersion": "Version de l'instance",
+
+  "remoteYear": "Année",
+  "remoteYearSubtitle": "{start} ➔ {end}",
+  "@remoteYearSubtitle": {
+    "start": {
+      "isCustomDateFormat": "true",
+      "format": "dd/MM/yy"
+    },
+    "end": {
+      "isCustomDateFormat": "true",
+      "format": "dd/MM/yy"
+    }
+  },
+
+  "remotePeriods": "Périodes"
 }

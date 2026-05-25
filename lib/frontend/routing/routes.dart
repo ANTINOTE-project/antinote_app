@@ -20,6 +20,7 @@ class _SearchRoute {
   const _SearchRoute();
 
   String get city => "/auth/search/city";
+  String get url => "/auth/search/url";
   String get school => "/auth/search/school";
   String get select => "/auth/search/select";
   String get webview => "/auth/search/webview";

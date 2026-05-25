@@ -1,3 +1,4 @@
+import "package:antinote_app/frontend/extensions/colors.dart";
 import "package:antinote_app/frontend/widgets/pressable.dart";
 import "package:flutter/material.dart";
 
@@ -85,7 +86,7 @@ class ItemWidget extends StatelessWidget {
 
       child: Container(
         decoration: BoxDecoration(
-          color: backgroundColor,
+          color: backgroundColor ?? context.c.surfaceContainer,
           borderRadius: borderRadius,
         ),
         padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
@@ -100,7 +101,13 @@ class ItemWidget extends StatelessWidget {
 
                 children: [
                   DefaultTextStyle(
-                    style: const TextStyle(fontSize: 16, fontWeight: .w800),
+                    style: TextStyle(
+                      fontSize: 16,
+                      fontWeight: .w800,
+                      color: backgroundColor == null
+                          ? context.c.onPrimaryContainer
+                          : null,
+                    ),
                     maxLines: 1,
                     overflow: .ellipsis,
                     child: title,
@@ -108,7 +115,13 @@ class ItemWidget extends StatelessWidget {
 
                   if (subtitle != null)
                     DefaultTextStyle(
-                      style: const TextStyle(fontSize: 12, fontWeight: .w600),
+                      style: TextStyle(
+                        fontSize: 12,
+                        fontWeight: .w600,
+                        color: backgroundColor == null
+                            ? context.c.onPrimaryContainer
+                            : null,
+                      ),
                       child: subtitle!,
                     ),
                 ],

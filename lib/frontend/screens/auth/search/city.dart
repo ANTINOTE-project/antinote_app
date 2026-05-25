@@ -84,7 +84,7 @@ class _LoginSearchCityScreenState extends State<LoginSearchCityScreen> {
         children: [
           Padding(
             padding: const EdgeInsets.all(12),
-
+            // TODO: Faire en sorte que ça n'overflow pas.
             child: FieldWidget(
               controller: _controller,
               hintText: context.l10n.loginCitySubtitle,

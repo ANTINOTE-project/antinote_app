@@ -16,7 +16,10 @@ import "package:hugeicons_pro/hugeicons.dart";
 class LoginPickScreen extends StatelessWidget with WidgetsBindingObserver {
   const LoginPickScreen({super.key});
 
-  Future<void> sendResultIfLoggedIn(BuildContext context, Future<LoginResult?> pushed) async {
+  Future<void> sendResultIfLoggedIn(
+    BuildContext context,
+    Future<LoginResult?> pushed,
+  ) async {
     final result = await pushed;
     if (result == null || !context.mounted) return;
 
@@ -56,7 +59,7 @@ class LoginPickScreen extends StatelessWidget with WidgetsBindingObserver {
           _buildOption(
             context: context,
 
-            icon: HugeIconsSolid.passwordValidation,
+            icon: HugeIconsSolid.maping,
             title: context.l10n.loginCity,
             subtitle: context.l10n.loginCitySubtitle,
 
@@ -64,6 +67,19 @@ class LoginPickScreen extends StatelessWidget with WidgetsBindingObserver {
               await sendResultIfLoggedIn(
                 context,
                 context.push<LoginResult>(Routes.auth.search.city),
+              );
+            },
+          ),
+
+          _buildOption(
+            context: context,
+            icon: HugeIconsSolid.link04,
+            title: context.l10n.loginUrl,
+            subtitle: context.l10n.loginUrlSubtitle,
+            onPressed: () async {
+              await sendResultIfLoggedIn(
+                context,
+                context.push<LoginResult>(Routes.auth.search.url),
               );
             },
           ),
@@ -113,13 +129,25 @@ class LoginPickScreen extends StatelessWidget with WidgetsBindingObserver {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(title, style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
-                  Text(subtitle, style: TextStyle(color: context.c.onSurfaceVariant)),
+                  Text(
+                    title,
+                    style: const TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  Text(
+                    subtitle,
+                    style: TextStyle(color: context.c.onSurfaceVariant),
+                  ),
                 ],
               ),
             ),
 
-            Icon(HugeIconsSolid.arrowRight01, color: context.c.onSurfaceVariant),
+            Icon(
+              HugeIconsSolid.arrowRight01,
+              color: context.c.onSurfaceVariant,
+            ),
           ],
         ),
       ),

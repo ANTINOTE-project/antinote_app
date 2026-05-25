@@ -223,6 +223,10 @@ class NewsQuestionWidget extends StatelessWidget {
             .withoutReceiptAcknowledgment,
           ].contains(question.responseType)) ...[
             const Divider(),
+            NewsQuestionAnswerWidget(
+              question: question,
+              answerEmitted: (newAnswer) => throw UnimplementedError(),
+            ),
           ],
         ],
       ),
@@ -271,10 +275,24 @@ class _NewsQuestionAnswerWidgetState extends State<NewsQuestionAnswerWidget> {
 }
 
 class ChoiceNewsQuestionAnswerWidget extends StatelessWidget {
-  const ChoiceNewsQuestionAnswerWidget({super.key});
+  const ChoiceNewsQuestionAnswerWidget({super.key, required this.question});
+
+  final NewsQuestion question;
+
+  ChoiceNewsQuestionAnswer get answer =>
+      question.answer as ChoiceNewsQuestionAnswer;
 
   @override
   Widget build(BuildContext context) {
-    return const Placeholder();
+    return RadioGroup<int>(
+      onChanged: (value) {},
+      groupValue: answer.answers.singleOrNull,
+      child: Column(
+        children: [
+          for (final choice in question.picks)
+            RadioListTile(value: choice.rank, title: Text(choice.label)),
+        ],
+      ),
+    );
   }
 }

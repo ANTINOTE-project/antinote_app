@@ -5,7 +5,6 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:intl/intl.dart' as intl;
 
-import 'app_localizations_en.dart';
 import 'app_localizations_fr.dart';
 
 // ignore_for_file: type=lint
@@ -93,10 +92,7 @@ abstract class AppLocalizations {
       ];
 
   /// A list of this localizations delegate's supported locales.
-  static const List<Locale> supportedLocales = <Locale>[
-    Locale('fr'),
-    Locale('en'),
-  ];
+  static const List<Locale> supportedLocales = <Locale>[Locale('fr')];
 
   /// No description provided for @appTitle.
   ///
@@ -175,6 +171,18 @@ abstract class AppLocalizations {
   /// In fr, this message translates to:
   /// **'Entre le nom de ta ville et choisis ton établissement'**
   String get loginCitySubtitle;
+
+  /// No description provided for @loginUrl.
+  ///
+  /// In fr, this message translates to:
+  /// **'Rentre l\'adresse du PRONOTE de ton établissement'**
+  String get loginUrl;
+
+  /// No description provided for @loginUrlSubtitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Renseigne l\'URL de ton espace PRONOTE pour t\'y connecter directement'**
+  String get loginUrlSubtitle;
 
   /// No description provided for @loginSchool.
   ///
@@ -325,6 +333,48 @@ abstract class AppLocalizations {
   /// In fr, this message translates to:
   /// **'J\'ai pris connaissance de cette information'**
   String get raMessage;
+
+  /// No description provided for @couldNotLoad.
+  ///
+  /// In fr, this message translates to:
+  /// **'L\'instance m\'a pas pu être chargée...'**
+  String get couldNotLoad;
+
+  /// No description provided for @instanceName.
+  ///
+  /// In fr, this message translates to:
+  /// **'Nom d\'instance'**
+  String get instanceName;
+
+  /// No description provided for @instanceNameValue.
+  ///
+  /// In fr, this message translates to:
+  /// **'{mainName} ({loginName} quand déconnecté)'**
+  String instanceNameValue(Object mainName, Object loginName);
+
+  /// No description provided for @remoteVersion.
+  ///
+  /// In fr, this message translates to:
+  /// **'Version de l\'instance'**
+  String get remoteVersion;
+
+  /// No description provided for @remoteYear.
+  ///
+  /// In fr, this message translates to:
+  /// **'Année'**
+  String get remoteYear;
+
+  /// No description provided for @remoteYearSubtitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'{start} ➔ {end}'**
+  String remoteYearSubtitle(Object end, Object start);
+
+  /// No description provided for @remotePeriods.
+  ///
+  /// In fr, this message translates to:
+  /// **'Périodes'**
+  String get remotePeriods;
 }
 
 class _AppLocalizationsDelegate
@@ -338,7 +388,7 @@ class _AppLocalizationsDelegate
 
   @override
   bool isSupported(Locale locale) =>
-      <String>['fr', 'en'].contains(locale.languageCode);
+      <String>['fr'].contains(locale.languageCode);
 
   @override
   bool shouldReload(_AppLocalizationsDelegate old) => false;
@@ -349,8 +399,6 @@ AppLocalizations lookupAppLocalizations(Locale locale) {
   switch (locale.languageCode) {
     case 'fr':
       return AppLocalizationsFr();
-    case 'en':
-      return AppLocalizationsEn();
   }
 
   throw FlutterError(
