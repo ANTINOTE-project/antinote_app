@@ -6,7 +6,7 @@ class Utils {
   Utils._();
 
   static String formatNumber(double value) {
-    return value % 1 == 0 ? value.toInt().toString() : value.toString();
+    return value % 1 == 0 ? value.toInt().toString() : value.toStringAsFixed(2);
   }
 
   static (Color, Color) adaptColorPair(int colorValue, ColorScheme scheme) {
