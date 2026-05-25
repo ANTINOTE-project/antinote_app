@@ -9,6 +9,34 @@ import "package:antinote_app/frontend/widgets/customs/loading.dart";
 import "package:antinote_app/frontend/widgets/pressable.dart";
 import "package:antinote_app/utils.dart";
 import "package:flutter/material.dart";
+import "package:intl/intl.dart";
+
+List<(DateTime, double, double?)> _buildEvolution(List<Exam> exams) {
+  final sorted = [...exams]..sort((a, b) => a.date.compareTo(b.date));
+  final points = <(DateTime, double, double?)>[];
+
+  double selfSum = 0;
+  double classSum = 0;
+  int classCount = 0;
+
+  for (int i = 0; i < sorted.length; i++) {
+    final exam = sorted[i];
+    selfSum += exam.selfGrade.value / exam.theoreticalMaxGrade.value * 20;
+
+    final avg = (selfSum / (i + 1));
+    double? classAvg;
+
+    if (exam.classAverage != null) {
+      classSum += exam.classAverage!.value / exam.theoreticalMaxGrade.value * 20;
+      classCount++;
+      classAvg = classSum / classCount;
+    }
+
+    points.add((exam.date, avg, classAvg));
+  }
+
+  return points;
+}
 
 class GradesList extends StatefulWidget {
   final VisualId periodId;
@@ -103,51 +131,235 @@ class _GradesListState extends State<GradesList>
   bool get wantKeepAlive => true;
 }
 
-class _AverageWidget extends StatelessWidget {
+class _AverageWidget extends StatefulWidget {
   final LatestGradesPage data;
 
   const _AverageWidget({required this.data});
 
   @override
+  State<_AverageWidget> createState() => _AverageWidgetState();
+}
+
+class _AverageWidgetState extends State<_AverageWidget> {
+  late List<(DateTime, double, double?)> _points;
+  int _selectedIndex = 0;
+
+  @override
+  void initState() {
+    super.initState();
+    _points = _buildEvolution(widget.data.exams);
+  }
+
+  @override
+  void didUpdateWidget(_AverageWidget oldWidget) {
+    super.didUpdateWidget(oldWidget);
+
+    if (oldWidget.data != widget.data) {
+      _points = _buildEvolution(widget.data.exams);
+      _selectedIndex = 0;
+    }
+  }
+
+  void _onPanUpdate(DragUpdateDetails details, double width) {
+    if (_points.length < 2) return;
+
+    final x = details.localPosition.dx.clamp(0.0, width);
+    final index = (x / width * (_points.length - 1)).round();
+
+    setState(() => _selectedIndex = index.clamp(0, _points.length - 1));
+  }
+
+  @override
   Widget build(BuildContext context) {
+    const style = TextStyle(fontSize: 16, fontWeight: FontWeight.bold);
+
+    final (date, selfAvg, classAvg) = _points[_selectedIndex];
+
     return SliverToBoxAdapter(
       child: Padding(
         padding: const EdgeInsets.only(top: 20, left: 12, right: 12),
 
-        child: Pressable(
-          child: Container(
-            decoration: BoxDecoration(
-              color: context.c.surfaceContainerHigh,
-              borderRadius: BorderRadius.circular(20),
-            ),
+        child: Container(
+          decoration: BoxDecoration(
+            color: context.c.surfaceContainerHigh,
+            borderRadius: BorderRadius.circular(20),
+          ),
 
-            padding: const EdgeInsets.all(12),
-            height: 300,
+          padding: const EdgeInsets.all(12),
+          height: 225,
 
-            child: Column(
-              children: [
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceAround,
-                  spacing: 8,
+          child: Column(
+            spacing: 8,
 
-                  children: [
-                    Text(
-                      context.l10n.averageSelf,
-                      style: const TextStyle(fontWeight: FontWeight.bold),
-                    ),
+            children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceAround,
+                spacing: 12,
 
-                    Text(
-                      context.l10n.averageClass,
-                      style: const TextStyle(fontWeight: FontWeight.bold),
-                    ),
-                  ],
+                children: [
+                  Column(
+                    children: [
+                      Text(context.l10n.averageSelf, style: style),
+
+                      Text(
+                        Utils.formatNumber(selfAvg),
+                        style: TextStyle(
+                          fontSize: 25,
+                          fontWeight: FontWeight.w900,
+                          color: context.c.primary,
+                        ),
+                      ),
+                    ],
+                  ),
+
+                  Column(
+                    children: [
+                      Text(context.l10n.averageClass, style: style),
+
+                      Text(
+                        classAvg != null ? Utils.formatNumber(classAvg) : "—",
+                        style: TextStyle(
+                          fontSize: 25,
+                          fontWeight: FontWeight.w900,
+                          color: context.c.secondary,
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+
+              Expanded(
+                child: LayoutBuilder(
+                  builder: (context, constraints) {
+                    return GestureDetector(
+                      onPanUpdate: (d) => _onPanUpdate(d, constraints.maxWidth),
+                      onPanEnd: (_) => setState(() => _selectedIndex = 0),
+
+                      onTapUp: (d) {
+                        if (_points.length < 2) return;
+
+                        final x = d.localPosition.dx.clamp(0.0, constraints.maxWidth);
+                        final index = (x / constraints.maxWidth * (_points.length - 1)).round();
+
+                        setState(() => _selectedIndex = index.clamp(0, _points.length - 1));
+                      },
+
+                      child: CustomPaint(
+                        painter: _EvolutionPainter(
+                          points: _points,
+                          selectedIndex: _selectedIndex,
+                          selfColor: context.c.primary,
+                          classColor: context.c.secondary,
+                          dotBorderColor: context.c.onPrimary,
+                        ),
+
+                        size: Size.infinite,
+                      ),
+                    );
+                  },
                 ),
-              ],
-            ),
+              ),
+
+              Text(
+                DateFormat("dd/MM/yyyy").format(date),
+                style: const TextStyle(fontWeight: FontWeight.w600),
+              ),
+            ],
           ),
         ),
       ),
     );
+  }
+}
+
+class _EvolutionPainter extends CustomPainter {
+  final List<(DateTime, double, double?)> points;
+  final int selectedIndex;
+  final Color selfColor;
+  final Color classColor;
+  final Color dotBorderColor;
+
+  const _EvolutionPainter({
+    required this.points,
+    required this.selectedIndex,
+    required this.selfColor,
+    required this.classColor,
+    required this.dotBorderColor,
+  });
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    if (points.isEmpty) return;
+
+    final allValues = [
+      for (final (_, self, classAvg) in points) ...[self, ?classAvg],
+    ];
+
+    final minVal = (allValues.reduce((a, b) => a < b ? a : b) - 1).clamp(0.0, 20.0);
+    final maxVal = (allValues.reduce((a, b) => a > b ? a : b) + 1).clamp(0.0, 20.0);
+
+    double toY(double value) => (1 - (value - minVal) / (maxVal - minVal)) * size.height;
+
+    final selfPaint = Paint()
+      ..color = selfColor
+      ..strokeWidth = 5
+      ..style = PaintingStyle.stroke
+      ..strokeCap = StrokeCap.round
+      ..strokeJoin = StrokeJoin.round;
+
+    final classPaint = Paint()
+      ..color = classColor
+      ..strokeWidth = 4
+      ..style = PaintingStyle.stroke
+      ..strokeCap = StrokeCap.round
+      ..strokeJoin = StrokeJoin.round;
+
+    final selfPath = Path();
+    final classPath = Path();
+    bool classStarted = false;
+
+    for (int i = 0; i < points.length; i++) {
+      final (_, self, classAvg) = points[i];
+      final x = i / (points.length - 1) * size.width;
+
+      if (i == 0) {
+        selfPath.moveTo(x, toY(self));
+      } else {
+        selfPath.lineTo(x, toY(self));
+      }
+
+      if (classAvg != null) {
+        if (!classStarted) {
+          classPath.moveTo(x, toY(classAvg));
+          classStarted = true;
+        } else {
+          classPath.lineTo(x, toY(classAvg));
+        }
+      }
+    }
+
+    canvas.drawPath(selfPath, selfPaint);
+    if (classStarted) canvas.drawPath(classPath, classPaint);
+
+    final (_, self, classAvg) = points[selectedIndex];
+    final x = selectedIndex / (points.length - 1) * size.width;
+
+    canvas.drawCircle(Offset(x, toY(self)), 9.5, Paint()..color = dotBorderColor);
+    canvas.drawCircle(Offset(x, toY(self)), 7.5, Paint()..color = selfColor);
+
+    if (classAvg != null) {
+      canvas.drawCircle(Offset(x, toY(classAvg)), 9.5, Paint()..color = dotBorderColor);
+      canvas.drawCircle(Offset(x, toY(classAvg)), 7.5, Paint()..color = classColor);
+    }
+  }
+
+  @override
+  bool shouldRepaint(_EvolutionPainter old) {
+    return old.points != points ||
+        old.selectedIndex != selectedIndex ||
+        old.selfColor != selfColor ||
+        old.classColor != classColor;
   }
 }
 
