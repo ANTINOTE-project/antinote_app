@@ -266,6 +266,12 @@ abstract class AppLocalizations {
   /// **'Moy. classe'**
   String get averageClass;
 
+  /// No description provided for @noCourseToday.
+  ///
+  /// In fr, this message translates to:
+  /// **'Tu n\'as pas de cours,\nprofite bien !'**
+  String get noCourseToday;
+
   /// No description provided for @cancelled.
   ///
   /// In fr, this message translates to:

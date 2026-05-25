@@ -121,6 +121,10 @@ class _TimetableScreenState extends State<TimetableScreen> with ScreenMixin<Time
                 ),
 
                 TimetableBody(days: days, classes: _classes),
+
+                SliverPadding(
+                  padding: EdgeInsets.only(bottom: MediaQuery.of(context).padding.bottom + 10),
+                ),
               ],
             ),
           );

@@ -49,6 +49,28 @@ class TimetableBody extends StatelessWidget {
                 return const SliverFillRemaining(child: Center(child: CircularProgressIndicator()));
               }
 
+              if (dayClasses.isEmpty) {
+                return SliverFillRemaining(
+                  child: Center(
+                    child: Column(
+                      mainAxisAlignment: .center,
+                      spacing: 6,
+
+                      children: [
+                        Icon(HugeIconsSolid.course, size: 44, color: context.c.outline),
+
+                        Text(
+                          context.l10n.noCourseToday,
+
+                          style: TextStyle(fontWeight: .bold, color: context.c.outline),
+                          textAlign: .center,
+                        ),
+                      ],
+                    ),
+                  ),
+                );
+              }
+
               final grouped = _groupByTime(dayClasses);
               final entries = grouped.entries.toList();
 
@@ -83,6 +105,8 @@ class _TimeRow extends StatefulWidget {
 }
 
 class _TimeRowState extends State<_TimeRow> {
+  bool get _hasMultipleCourses => widget.classes.length > 1;
+
   Class get _currentClass => widget.classes[_classIndex];
   int _classIndex = 0;
 
@@ -98,47 +122,49 @@ class _TimeRowState extends State<_TimeRow> {
       child: IntrinsicHeight(
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.stretch,
-          spacing: 8,
+          spacing: 10,
 
           children: [
             SizedBox(
-              width: 48,
+              width: 56,
 
               child: Column(
                 mainAxisAlignment: .center,
 
                 children: [
-                  Text(_fmt(widget.start), style: const TextStyle(fontWeight: .w900)),
+                  Text(_fmt(widget.start), style: const TextStyle(fontSize: 17, fontWeight: .w900)),
 
                   Text(
                     _fmt(widget.end),
-                    style: TextStyle(fontWeight: .w600, color: context.c.outline),
+                    style: TextStyle(fontSize: 15, fontWeight: .w600, color: context.c.outline),
                   ),
                 ],
               ),
             ),
 
             Expanded(
-              child: AnimatedSwitcher(
-                duration: const Duration(milliseconds: 300),
+              child: _hasMultipleCourses
+                  ? AnimatedSwitcher(
+                      duration: const Duration(milliseconds: 300),
 
-                switchInCurve: Curves.easeInOutCubic,
-                switchOutCurve: Curves.easeInOutCubic,
+                      switchInCurve: Curves.easeInOutCubic,
+                      switchOutCurve: Curves.easeInOutCubic,
 
-                transitionBuilder: (child, animation) {
-                  final offsetAnimation = Tween<Offset>(
-                    begin: const Offset(0.2, 0),
-                    end: Offset.zero,
-                  ).animate(CurvedAnimation(parent: animation, curve: Curves.fastOutSlowIn));
+                      transitionBuilder: (child, animation) {
+                        final offsetAnimation = Tween<Offset>(
+                          begin: const Offset(0.2, 0),
+                          end: Offset.zero,
+                        ).animate(CurvedAnimation(parent: animation, curve: Curves.fastOutSlowIn));
 
-                  return SlideTransition(
-                    position: offsetAnimation,
-                    child: FadeTransition(opacity: animation, child: child),
-                  );
-                },
+                        return SlideTransition(
+                          position: offsetAnimation,
+                          child: FadeTransition(opacity: animation, child: child),
+                        );
+                      },
 
-                child: _ClassWidget(key: ValueKey(_currentClass), clazz: _currentClass),
-              ),
+                      child: _ClassWidget(key: ValueKey(_currentClass), clazz: _currentClass),
+                    )
+                  : _ClassWidget(clazz: _currentClass),
             ),
 
             if (widget.classes.length > 1)
@@ -272,15 +298,36 @@ class _ClassWidget extends StatelessWidget {
           children: [
             Text(info.baseTitle, style: const TextStyle(fontSize: 18, fontWeight: .w800)),
 
-            Row(
+            Column(
               spacing: 6,
 
               children: [
                 Row(
-                  spacing: 4,
+                  spacing: 6,
 
                   children: [
-                    Icon(HugeIconsSolid.pinLocation01, color: context.c.onSurfaceVariant),
+                    Icon(HugeIconsSolid.teacher, size: 20, color: context.c.onSurfaceVariant),
+
+                    Text(
+                      info.attendants,
+
+                      maxLines: 1,
+                      overflow: .ellipsis,
+
+                      style: TextStyle(
+                        fontSize: 14,
+                        fontWeight: .w600,
+                        color: context.c.onSurfaceVariant,
+                      ),
+                    ),
+                  ],
+                ),
+
+                Row(
+                  spacing: 6,
+
+                  children: [
+                    Icon(HugeIconsSolid.location01, size: 20, color: context.c.onSurfaceVariant),
 
                     Text(
                       location,
@@ -289,27 +336,12 @@ class _ClassWidget extends StatelessWidget {
                       overflow: .ellipsis,
 
                       style: TextStyle(
-                        fontSize: 15,
+                        fontSize: 14,
                         fontWeight: .w600,
                         color: context.c.onSurfaceVariant,
                       ),
                     ),
                   ],
-                ),
-
-                VerticalDivider(width: 1, thickness: 1, color: context.c.outlineVariant),
-
-                Text(
-                  info.attendants,
-
-                  maxLines: 1,
-                  overflow: .ellipsis,
-
-                  style: TextStyle(
-                    fontSize: 15,
-                    fontWeight: .w600,
-                    color: context.c.onSurfaceVariant,
-                  ),
                 ),
               ],
             ),

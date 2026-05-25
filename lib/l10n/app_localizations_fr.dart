@@ -97,6 +97,9 @@ class AppLocalizationsFr extends AppLocalizations {
   String get averageClass => 'Moy. classe';
 
   @override
+  String get noCourseToday => 'Tu n\'as pas de cours,\nprofite bien !';
+
+  @override
   String get cancelled => 'ANNULÉ';
 
   @override
