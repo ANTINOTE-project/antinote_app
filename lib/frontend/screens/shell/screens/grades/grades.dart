@@ -10,6 +10,7 @@ import "package:antinote_app/frontend/widgets/pressable.dart";
 import "package:antinote_app/utils.dart";
 import "package:flutter/material.dart";
 import "package:hugeicons_pro/hugeicons.dart";
+import "package:intl/intl.dart";
 
 typedef ServiceGradeList = Map<Service, List<Exam>>;
 
@@ -40,9 +41,11 @@ class _GradesListState extends State<GradesList> with ScreenMixin<GradesList> {
 
     for (final exam in _data.exams) {
       final service = organizedData.keys.firstWhere((element) => element.id == exam.service.id);
-
       organizedData[service]!.add(exam);
     }
+
+    final List<Exam> orderedExams = List.from(_data.exams);
+    orderedExams.sort((a, b) => a.date.compareTo(b.date));
 
     return buildRefreshIndicator(
       child: CustomScrollView(
@@ -50,7 +53,7 @@ class _GradesListState extends State<GradesList> with ScreenMixin<GradesList> {
           _AverageWidget(data: _data),
 
           _SectionWidget(label: context.l10n.latestGrades, icon: HugeIconsSolid.note),
-          _LatestWidget(exams: _data.exams),
+          _LatestWidget(exams: orderedExams),
 
           _SectionWidget(label: context.l10n.services, icon: HugeIconsSolid.gitbook),
           _SubjectsWidget(data: organizedData),
@@ -194,7 +197,7 @@ class _LatestWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return SliverToBoxAdapter(
       child: SizedBox(
-        height: 125,
+        height: 160,
 
         child: ListView.builder(
           padding: const EdgeInsets.all(12),
@@ -206,22 +209,77 @@ class _LatestWidget extends StatelessWidget {
             final exam = exams[index];
 
             final (color, bgColor) = Utils.adaptColorPair(exam.service.color, context.c);
+
+            final date = DateFormat("dd/MM/yyyy").format(exam.date);
             final title = Utils.getExamComment(context, exam);
+            final subject = exam.service.name;
 
             return Pressable(
               child: Container(
                 decoration: BoxDecoration(borderRadius: BorderRadius.circular(16), color: bgColor),
+
+                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
                 margin: const EdgeInsets.only(left: 6),
 
+                width: 250,
+
                 child: Column(
+                  crossAxisAlignment: .start,
+                  spacing: 8,
+
                   children: [
                     Text(
-                      title,
+                      subject,
 
                       overflow: .ellipsis,
-                      maxLines: 2,
+                      maxLines: 1,
 
-                      style: const TextStyle(fontWeight: .bold),
+                      style: TextStyle(fontSize: 20, fontWeight: .bold, color: color),
+                    ),
+
+                    Expanded(
+                      child: Text(
+                        title,
+
+                        overflow: .ellipsis,
+                        maxLines: 2,
+
+                        style: const TextStyle(fontSize: 16, fontWeight: .w500),
+                      ),
+                    ),
+
+                    Row(
+                      mainAxisAlignment: .spaceBetween,
+
+                      children: [
+                        Text(date, style: const TextStyle(fontWeight: .w500)),
+
+                        Text.rich(
+                          TextSpan(
+                            children: [
+                              TextSpan(
+                                text: Utils.formatNumber(exam.selfGrade.value),
+                                style: TextStyle(
+                                  color: color,
+                                  fontSize: 22,
+                                  fontWeight: FontWeight.w900,
+                                ),
+                              ),
+
+                              const WidgetSpan(child: SizedBox(width: 2)),
+
+                              TextSpan(
+                                text: "/${Utils.formatNumber(exam.theoreticalMaxGrade.value)}",
+                                style: TextStyle(
+                                  color: context.c.onSurfaceVariant,
+                                  fontSize: 15,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
                     ),
                   ],
                 ),
