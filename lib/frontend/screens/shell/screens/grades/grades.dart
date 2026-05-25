@@ -164,7 +164,7 @@ class _ServiceWidget extends SliverPersistentHeaderDelegate {
 
   @override
   Widget build(BuildContext context, double shrinkOffset, bool overlapsContent) {
-    final color = Utils.adaptColor(service.color!, context.c);
+    final (color, bgColor) = Utils.adaptColorPair(service.color!, context.c);
     final hasSelfAverage = service.selfAverage != null;
 
     return Padding(
@@ -265,15 +265,12 @@ class _ExamWidget extends StatelessWidget {
         ? exam.comment!.trim()
         : context.l10n.gradeOf(exam.service.name);
 
-    final color = Utils.adaptColor(exam.service.color!, context.c);
+    final (color, bgColor) = Utils.adaptColorPair(exam.service.color!, context.c);
 
     return Pressable(
       // Si tu vois ça stp laisse le container
       child: Container(
-        decoration: BoxDecoration(
-          color: context.c.surfaceContainerHigh,
-          borderRadius: borderRadius,
-        ),
+        decoration: BoxDecoration(color: bgColor, borderRadius: borderRadius),
 
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
