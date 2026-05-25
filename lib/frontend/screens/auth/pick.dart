@@ -61,7 +61,10 @@ class LoginPickScreen extends StatelessWidget with WidgetsBindingObserver {
             subtitle: context.l10n.loginCitySubtitle,
 
             onPressed: () async {
-              await sendResultIfLoggedIn(context, context.push<LoginResult>(Routes.auth.search.city));
+              await sendResultIfLoggedIn(
+                context,
+                context.push<LoginResult>(Routes.auth.search.city),
+              );
             },
           ),
 
@@ -97,6 +100,7 @@ class LoginPickScreen extends StatelessWidget with WidgetsBindingObserver {
           color: context.c.surfaceContainerHigh,
           borderRadius: const BorderRadius.all(Radius.circular(20)),
         ),
+
         padding: const EdgeInsets.all(16),
 
         child: Row(

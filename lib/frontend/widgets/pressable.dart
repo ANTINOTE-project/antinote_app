@@ -1,4 +1,3 @@
-import "package:antinote_app/frontend/extensions/colors.dart";
 import "package:flutter/material.dart";
 import "package:vibration/vibration.dart";
 
@@ -13,7 +12,6 @@ class Pressable extends StatefulWidget {
   final bool hasVibration;
 
   final HitTestBehavior behavior;
-  final BorderRadius borderRadius;
 
   const Pressable({
     super.key,
@@ -28,7 +26,6 @@ class Pressable extends StatefulWidget {
     this.hasVibration = true,
 
     this.behavior = HitTestBehavior.deferToChild,
-    this.borderRadius = BorderRadius.zero,
   });
 
   @override
@@ -50,8 +47,8 @@ class _PressableState extends State<Pressable> with SingleTickerProviderStateMix
     )..value = 1;
 
     _brightness = Tween<double>(
-      begin: 0.15,
-      end: 0.0,
+      begin: 0.65,
+      end: 1.0,
     ).animate(CurvedAnimation(parent: _controller, curve: Curves.easeInOut));
   }
 
@@ -92,29 +89,15 @@ class _PressableState extends State<Pressable> with SingleTickerProviderStateMix
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: widget.onPressed == null ? null : _onTap,
+
       onTapDown: (_) => _onTapDown(),
       onTapUp: (_) => _onTapUp(),
       onTapCancel: _onTapUp,
-      onLongPress: widget.onLongPress,
 
+      onLongPress: widget.onLongPress,
       behavior: widget.behavior,
 
-      child: ClipRRect(
-        borderRadius: widget.borderRadius,
-
-        child: Stack(
-          children: [
-            widget.child,
-
-            Positioned.fill(
-              child: FadeTransition(
-                opacity: _brightness,
-                child: ColoredBox(color: context.c.onPrimary),
-              ),
-            ),
-          ],
-        ),
-      ),
+      child: FadeTransition(opacity: _brightness, child: widget.child),
     );
   }
 }

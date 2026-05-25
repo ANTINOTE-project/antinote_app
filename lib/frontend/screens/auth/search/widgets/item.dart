@@ -38,12 +38,8 @@ class ListItemCard extends StatelessWidget {
           leading: leading,
           trailing: trailing,
 
-          title: title != null
-              ? Text(title!, maxLines: 1, overflow: .ellipsis)
-              : null,
-          subtitle: subtitle != null
-              ? Text(subtitle!, maxLines: 1, overflow: .ellipsis)
-              : null,
+          title: title != null ? Text(title!, maxLines: 1, overflow: .ellipsis) : null,
+          subtitle: subtitle != null ? Text(subtitle!, maxLines: 1, overflow: .ellipsis) : null,
         ),
       ),
     );
