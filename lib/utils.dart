@@ -18,7 +18,7 @@ class Utils {
         .withSaturation(hsl.saturation.clamp(0.4, 1.0))
         .toColor();
 
-    return (base, base.withValues(alpha: 0.1));
+    return (base, base.withValues(alpha: .15));
   }
 }
 
@@ -114,22 +114,29 @@ final class WeekMappedViewConfiguration {
     weekConfig,
   ];
 
-  List<DateRange> daysToRangeList(List<DateTime> days, SpecificInstanceParameters parameters) {
+  List<DateRange> daysToRangeList(
+    List<DateTime> days,
+    SpecificInstanceParameters parameters,
+  ) {
     // We need to align the groups by week in this case.
     if (snapToWeeks) {
       final Map<int, DateRange> ranges = {};
       for (final day in days) {
         final weekNumber = parameters.getWeekNumberForDate(day);
         if (ranges.containsKey(weekNumber)) {
-          ranges[weekNumber] = DateRange(start: ranges[weekNumber]!.start, end: day);
+          ranges[weekNumber] = DateRange(
+            start: ranges[weekNumber]!.start,
+            end: day,
+          );
         } else {
           ranges[weekNumber] = DateRange(start: day, end: day);
         }
       }
 
-      return (ranges.entries.toList(
-        growable: false,
-      )..sort((a, b) => a.key.compareTo(b.key))).map((e) => e.value).toList(growable: false);
+      return (ranges.entries.toList(growable: false)
+            ..sort((a, b) => a.key.compareTo(b.key)))
+          .map((e) => e.value)
+          .toList(growable: false);
     }
 
     final List<DateRange> ranges = [];
@@ -149,7 +156,11 @@ extension PickViewConfiguration on Iterable<WeekMappedViewConfiguration> {
     return firstWhere(
       (element) => element.minWidth <= width && element.maxWidth > width,
       orElse: () =>
-          singleOrNull ?? firstWhere((element) => element.minWidth <= width, orElse: () => first),
+          singleOrNull ??
+          firstWhere(
+            (element) => element.minWidth <= width,
+            orElse: () => first,
+          ),
     );
   }
 }
