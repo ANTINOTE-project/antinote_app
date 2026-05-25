@@ -47,7 +47,7 @@ class _PressableState extends State<Pressable> with SingleTickerProviderStateMix
     )..value = 1;
 
     _brightness = Tween<double>(
-      begin: 0.65,
+      begin: 0.75,
       end: 1.0,
     ).animate(CurvedAnimation(parent: _controller, curve: Curves.easeInOut));
   }
