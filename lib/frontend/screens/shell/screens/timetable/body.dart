@@ -290,10 +290,12 @@ class _ClassWidget extends StatelessWidget {
                         ),
                       ],
 
-                      _InfoWidget(
-                        cancelled: info.cancelled,
-                        icon: HugeIconsSolid.teacher,
-                        label: info.attendants,
+                      Expanded(
+                        child: _InfoWidget(
+                          cancelled: info.cancelled,
+                          icon: HugeIconsSolid.teacher,
+                          label: info.attendants,
+                        ),
                       ),
                     ],
                   ),
@@ -327,21 +329,24 @@ class _InfoWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Row(
+      mainAxisSize: MainAxisSize.min,
       spacing: 6,
 
       children: [
         Icon(icon, size: 20, color: cancelled ? context.c.outline : context.c.onSurfaceVariant),
 
-        Text(
-          label,
+        Flexible(
+          child: Text(
+            label,
 
-          maxLines: 1,
-          overflow: .ellipsis,
+            maxLines: 1,
+            overflow: .ellipsis,
 
-          style: TextStyle(
-            fontSize: 14,
-            fontWeight: .w600,
-            color: cancelled ? context.c.outline : context.c.onSurfaceVariant,
+            style: TextStyle(
+              fontSize: 14,
+              fontWeight: .w600,
+              color: cancelled ? context.c.outline : context.c.onSurfaceVariant,
+            ),
           ),
         ),
       ],
