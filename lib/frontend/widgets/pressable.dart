@@ -1,3 +1,4 @@
+import "package:antinote_app/frontend/extensions/colors.dart";
 import "package:flutter/material.dart";
 import "package:vibration/vibration.dart";
 
@@ -12,6 +13,7 @@ class Pressable extends StatefulWidget {
   final bool hasVibration;
 
   final HitTestBehavior behavior;
+  final BorderRadius borderRadius;
 
   const Pressable({
     super.key,
@@ -26,16 +28,16 @@ class Pressable extends StatefulWidget {
     this.hasVibration = true,
 
     this.behavior = HitTestBehavior.deferToChild,
+    this.borderRadius = BorderRadius.zero,
   });
 
   @override
   State<Pressable> createState() => _PressableState();
 }
 
-class _PressableState extends State<Pressable>
-    with SingleTickerProviderStateMixin {
+class _PressableState extends State<Pressable> with SingleTickerProviderStateMixin {
   late AnimationController _controller;
-  late Animation<double> _scale;
+  late Animation<double> _brightness;
 
   @override
   void initState() {
@@ -45,11 +47,11 @@ class _PressableState extends State<Pressable>
       vsync: this,
       duration: const Duration(milliseconds: 100),
       reverseDuration: const Duration(milliseconds: 150),
-    )..value = 1.0;
+    )..value = 1;
 
-    _scale = Tween<double>(
-      begin: 0.97,
-      end: 1.0,
+    _brightness = Tween<double>(
+      begin: 0.15,
+      end: 0.0,
     ).animate(CurvedAnimation(parent: _controller, curve: Curves.easeInOut));
   }
 
@@ -61,6 +63,9 @@ class _PressableState extends State<Pressable>
 
   void _onTap() async {
     await Future.delayed(const Duration(milliseconds: 50));
+
+    if (!mounted) return;
+
     widget.onPressed?.call();
   }
 
@@ -71,19 +76,15 @@ class _PressableState extends State<Pressable>
       _controller.reverse();
     }
 
-    if (widget.hasVibration) {
+    if (widget.hasVibration && mounted) {
       await Vibration.vibrate(duration: 7);
     }
   }
 
   void _onTapUp() async {
-    if (!widget.hasFeedback || !widget.hasAnimation) return;
-
-    if (_controller.value > 0.3) {
-      await _controller.reverse();
+    if (widget.hasFeedback && widget.hasAnimation) {
+      _controller.forward();
     }
-
-    _controller.forward();
   }
 
   @override
@@ -97,7 +98,22 @@ class _PressableState extends State<Pressable>
 
       behavior: widget.behavior,
 
-      child: ScaleTransition(scale: _scale, child: widget.child),
+      child: ClipRRect(
+        borderRadius: widget.borderRadius,
+
+        child: Stack(
+          children: [
+            widget.child,
+
+            Positioned.fill(
+              child: FadeTransition(
+                opacity: _brightness,
+                child: ColoredBox(color: context.c.onPrimary),
+              ),
+            ),
+          ],
+        ),
+      ),
     );
   }
 }
