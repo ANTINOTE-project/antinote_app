@@ -184,10 +184,18 @@ class _TimeRowState extends State<_TimeRow> {
 
                   width: 30,
 
-                  child: Icon(
-                    _classIndex == widget.classes.length - 1
-                        ? HugeIconsSolid.arrowLeft01
-                        : HugeIconsSolid.arrowRight01,
+                  child: AnimatedSwitcher(
+                    duration: const Duration(milliseconds: 200),
+
+                    switchInCurve: Curves.easeInOutCubic,
+                    switchOutCurve: Curves.easeInOutCubic,
+
+                    child: Icon(
+                      key: ValueKey(_classIndex),
+                      _classIndex == widget.classes.length - 1
+                          ? HugeIconsSolid.arrowLeft01
+                          : HugeIconsSolid.arrowRight01,
+                    ),
                   ),
                 ),
               ),
