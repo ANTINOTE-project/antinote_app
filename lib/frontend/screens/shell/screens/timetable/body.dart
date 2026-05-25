@@ -3,6 +3,7 @@ import "package:antinote_app/frontend/extensions/colors.dart";
 import "package:antinote_app/frontend/extensions/l10n.dart";
 import "package:antinote_app/frontend/screens/shell/screens/timetable/index.dart";
 import "package:antinote_app/frontend/widgets/pressable.dart";
+import "package:antinote_app/utils.dart";
 import "package:flutter/material.dart";
 import "package:hugeicons_pro/hugeicons.dart";
 
@@ -162,7 +163,7 @@ class _TimeRowState extends State<_TimeRow> {
                         );
                       },
 
-                      child: _ClassWidget(key: ValueKey(_currentClass), clazz: _currentClass),
+                      child: _ClassWidget(key: ValueKey(_currentClass.id), clazz: _currentClass),
                     )
                   : _ClassWidget(clazz: _currentClass),
             ),
@@ -202,163 +203,148 @@ class _ClassWidget extends StatelessWidget {
 
   const _ClassWidget({super.key, required this.clazz});
 
-  static String _formatAttendants(List teachers, List personal) => [
-    teachers.map((e) => e.name).join(", "),
-    if (personal.isNotEmpty) '(+ ${personal.map((e) => e.name).join(', ')})',
-  ].join(" ");
-
-  static int? _resolveAccentColor(int? subjectBg, int? classBg) => subjectBg ?? (classBg);
-
-  ClassInfo _info(BuildContext context) => switch (clazz) {
-    Lesson(
-      subject: final subject,
-      status: final status,
-      canceled: final canceled,
-      exemptedLabel: final exempted,
-      teachers: final teachers,
-      personals: final personal,
-      groups: final groups,
-      classrooms: final classrooms,
-      notebookEntryPreview: final preview,
-      backgroundColor: final bg,
-    ) =>
-      (
-        baseTitle: subject?.name ?? context.l10n.noSubject,
-        status: status?.toUpperCase() ?? (canceled ? context.l10n.cancelled : exempted),
-        attendants: _formatAttendants(teachers, personal),
-        groups: groups.isEmpty ? null : groups.map((e) => e.label).join(", "),
-        location: classrooms.map((e) => e.label).join(", "),
-        start: clazz.startDate,
-        end: clazz.endDate,
-        accentColor: _resolveAccentColor(subject?.backgroundColor, bg),
-        cancelled: canceled || exempted != null,
-        isExam: preview?.isTest ?? false,
-      ),
-
-    Activity(
-      title: final title,
-      attendants: final attendants,
-      startDate: final startDate,
-      endDate: final endDate,
-    ) =>
-      (
-        baseTitle: title,
-        status: null,
-        attendants: attendants.join(", "),
-        groups: null,
-        location: null,
-        start: startDate,
-        end: endDate,
-        accentColor: _resolveAccentColor(null, clazz.backgroundColor),
-        cancelled: false,
-        isExam: false,
-      ),
-
-    Detention(
-      title: final title,
-      teachers: final teachers,
-      personals: final personal,
-      classrooms: final classrooms,
-      startDate: final startDate,
-      endDate: final endDate,
-    ) =>
-      (
-        baseTitle: title ?? context.l10n.detention,
-        status: null,
-        attendants: _formatAttendants(teachers, personal),
-        groups: null,
-        location: classrooms.map((e) => e.label).join(", "),
-        start: startDate,
-        end: endDate,
-        accentColor: _resolveAccentColor(null, clazz.backgroundColor),
-        cancelled: false,
-        isExam: false,
-      ),
-  };
-
   @override
   Widget build(BuildContext context) {
-    final info = _info(context);
+    late final info = Utils.getInfoForClass(context, clazz);
 
     final isLightTheme = context.c.brightness == .light;
     final colorValue = info.accentColor?.classAccentToBackgroundColor(isLightTheme: isLightTheme);
 
     final color = colorValue != null ? Color(colorValue) : null;
-    final location = info.location ?? context.l10n.noRoom;
+
+    final difference = info.end.difference(info.start);
+    final duration =
+        "${difference.inHours > 0 ? "${difference.inHours}h " : ""}${difference.inMinutes % 60} min";
+
+    final double bannerHeight = info.cancelled ? 30 : 0;
+    final double cardHeight = 100 - bannerHeight;
 
     return Pressable(
-      child: Container(
-        decoration: BoxDecoration(
-          color: info.cancelled ? context.c.errorContainer : color,
-          borderRadius: const .all(.circular(20)),
-        ),
+      child: Stack(
+        alignment: .bottomCenter,
 
-        padding: const .symmetric(horizontal: 12, vertical: 8),
+        children: [
+          if (info.cancelled)
+            Container(
+              decoration: BoxDecoration(
+                color: context.c.errorContainer,
+                borderRadius: const .all(.circular(20)),
+              ),
 
-        child: Column(
-          crossAxisAlignment: .start,
-          spacing: 16,
+              padding: const .symmetric(horizontal: 12, vertical: 4),
 
-          children: [
-            Text(
-              info.baseTitle,
-              style: TextStyle(
-                color: info.cancelled ? context.c.error : context.c.onPrimary,
-                fontSize: 18,
-                fontWeight: .w800,
+              width: .infinity,
+              height: cardHeight + bannerHeight,
+
+              child: Text(
+                info.status ?? "",
+                style: TextStyle(fontSize: 15, fontWeight: .w900, color: context.c.error),
               ),
             ),
 
-            Column(
-              spacing: 6,
+          Container(
+            decoration: BoxDecoration(
+              color: info.cancelled ? context.c.outlineVariant : color,
+              borderRadius: const .all(.circular(20)),
+            ),
+
+            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+            height: cardHeight,
+
+            child: Column(
+              crossAxisAlignment: .start,
+              spacing: 4,
 
               children: [
-                Row(
-                  spacing: 6,
+                Text(
+                  info.baseTitle,
 
-                  children: [
-                    Icon(HugeIconsSolid.teacher, size: 20, color: context.c.onSurfaceVariant),
-
-                    Text(
-                      info.attendants,
-
-                      maxLines: 1,
-                      overflow: .ellipsis,
-
-                      style: TextStyle(
-                        fontSize: 14,
-                        fontWeight: .w600,
-                        color: context.c.onSurfaceVariant,
-                      ),
-                    ),
-                  ],
+                  style: TextStyle(
+                    color: info.cancelled ? context.c.outline : context.c.onPrimary,
+                    fontSize: 18,
+                    fontWeight: .w800,
+                  ),
                 ),
 
-                Row(
-                  spacing: 6,
+                Expanded(
+                  child: Row(
+                    spacing: 6,
 
-                  children: [
-                    Icon(HugeIconsSolid.location01, size: 20, color: context.c.onSurfaceVariant),
+                    children: [
+                      if (info.location != null) ...[
+                        _InfoWidget(
+                          cancelled: info.cancelled,
+                          icon: HugeIconsSolid.location01,
+                          label: info.location ?? "",
+                        ),
 
-                    Text(
-                      location,
+                        SizedBox(
+                          height: 20,
 
-                      maxLines: 1,
-                      overflow: .ellipsis,
+                          child: VerticalDivider(
+                            color: info.cancelled ? context.c.outline : context.c.onSurfaceVariant,
+                            radius: .circular(999),
+                            thickness: 2,
+                            width: 4,
+                          ),
+                        ),
+                      ],
 
-                      style: TextStyle(
-                        fontSize: 14,
-                        fontWeight: .w600,
-                        color: context.c.onSurfaceVariant,
+                      _InfoWidget(
+                        cancelled: info.cancelled,
+                        icon: HugeIconsSolid.teacher,
+                        label: info.attendants,
                       ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
+
+                if (!info.cancelled)
+                  Text(
+                    duration,
+                    style: TextStyle(
+                      color: context.c.onSurfaceVariant,
+                      fontSize: 14,
+                      fontWeight: .w900,
+                    ),
+                  ),
               ],
             ),
-          ],
-        ),
+          ),
+        ],
       ),
+    );
+  }
+}
+
+class _InfoWidget extends StatelessWidget {
+  final bool cancelled;
+  final IconData icon;
+  final String label;
+
+  const _InfoWidget({required this.cancelled, required this.icon, required this.label});
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      spacing: 6,
+
+      children: [
+        Icon(icon, size: 20, color: cancelled ? context.c.outline : context.c.onSurfaceVariant),
+
+        Text(
+          label,
+
+          maxLines: 1,
+          overflow: .ellipsis,
+
+          style: TextStyle(
+            fontSize: 14,
+            fontWeight: .w600,
+            color: cancelled ? context.c.outline : context.c.onSurfaceVariant,
+          ),
+        ),
+      ],
     );
   }
 }

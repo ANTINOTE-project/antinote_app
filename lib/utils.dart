@@ -3,6 +3,7 @@ import "package:antinote_app/backend/backend.dart";
 import "package:flutter/material.dart";
 
 import "frontend/extensions/l10n.dart";
+import "frontend/screens/shell/screens/timetable/body.dart";
 
 class Utils {
   Utils._();
@@ -29,6 +30,80 @@ class Utils {
     final isNotEmpty = exam.comment?.trim().isNotEmpty ?? false;
     return isNotEmpty ? exam.comment!.trim() : context.l10n.gradeOf(exam.service.name);
   }
+
+  static String _formatAttendants(List teachers, List personal) => [
+    teachers.map((e) => e.name).join(", "),
+    if (personal.isNotEmpty) '(+ ${personal.map((e) => e.name).join(', ')})',
+  ].join(" ");
+
+  static int? _resolveAccentColor(int? subjectBg, int? classBg) => subjectBg ?? (classBg);
+
+  static ClassInfo getInfoForClass(BuildContext context, Class clazz) => switch (clazz) {
+    Lesson(
+      subject: final subject,
+      status: final status,
+      canceled: final canceled,
+      exemptedLabel: final exempted,
+      teachers: final teachers,
+      personals: final personal,
+      groups: final groups,
+      classrooms: final classrooms,
+      notebookEntryPreview: final preview,
+      backgroundColor: final bg,
+    ) =>
+      (
+        baseTitle: subject?.name ?? context.l10n.noSubject,
+        status: status?.toUpperCase() ?? (canceled ? context.l10n.cancelled : exempted),
+        attendants: _formatAttendants(teachers, personal),
+        groups: groups.isEmpty ? null : groups.map((e) => e.label).join(", "),
+        location: classrooms.map((e) => e.label).join(", "),
+        start: clazz.startDate,
+        end: clazz.endDate,
+        accentColor: _resolveAccentColor(subject?.backgroundColor, bg),
+        cancelled: canceled || exempted != null,
+        isExam: preview?.isTest ?? false,
+      ),
+
+    Activity(
+      title: final title,
+      attendants: final attendants,
+      startDate: final startDate,
+      endDate: final endDate,
+    ) =>
+      (
+        baseTitle: title,
+        status: null,
+        attendants: attendants.join(", "),
+        groups: null,
+        location: null,
+        start: startDate,
+        end: endDate,
+        accentColor: _resolveAccentColor(null, clazz.backgroundColor),
+        cancelled: false,
+        isExam: false,
+      ),
+
+    Detention(
+      title: final title,
+      teachers: final teachers,
+      personals: final personal,
+      classrooms: final classrooms,
+      startDate: final startDate,
+      endDate: final endDate,
+    ) =>
+      (
+        baseTitle: title ?? context.l10n.detention,
+        status: null,
+        attendants: _formatAttendants(teachers, personal),
+        groups: null,
+        location: classrooms.map((e) => e.label).join(", "),
+        start: startDate,
+        end: endDate,
+        accentColor: _resolveAccentColor(null, clazz.backgroundColor),
+        cancelled: false,
+        isExam: false,
+      ),
+  };
 }
 
 class ReversedCurve extends Curve {
