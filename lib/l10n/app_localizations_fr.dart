@@ -80,7 +80,7 @@ class AppLocalizationsFr extends AppLocalizations {
   String get communication => 'Infos';
 
   @override
-  String gradeOf(Object service) {
+  String gradeOf(String service) {
     return 'Note de $service';
   }
 
@@ -89,4 +89,21 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get averageClass => 'Moy. classe';
+
+  @override
+  String recipient(String recipient) {
+    return 'À $recipient';
+  }
+
+  @override
+  String get self => 'moi';
+
+  @override
+  String get nominativePoll => 'Sondage nominatif';
+
+  @override
+  String get anonymousPoll => 'Sondage anonyme';
+
+  @override
+  String get raMessage => 'J\'ai pris connaissance de cette information';
 }

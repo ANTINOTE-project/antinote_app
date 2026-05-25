@@ -2,7 +2,7 @@ import "package:antinote/antinote.dart";
 import "package:antinote_app/backend/src/session/manager.dart";
 import "package:antinote_app/frontend/extensions/colors.dart";
 import "package:antinote_app/frontend/extensions/l10n.dart";
-import "package:antinote_app/frontend/screens/shell/screens/communication.dart";
+import "package:antinote_app/frontend/screens/shell/screens/communication/communication.dart";
 import "package:antinote_app/frontend/screens/shell/screens/grades/index.dart";
 import "package:antinote_app/frontend/screens/shell/screens/home.dart";
 import "package:antinote_app/frontend/screens/shell/screens/timetable.dart";
@@ -58,15 +58,18 @@ class _AppShellState extends State<AppShell> {
   ];
 
   Stream<NotificationPreviewState>? notificationStream;
+  NotificationPreviewState? defaultNotifications;
 
   void loadNotificationStream() {
     SessionManager.execute(
       context: context,
+      channels: const [],
       callback: (session) {
         if (!mounted) return;
 
         setState(() {
           notificationStream = session.notifications;
+          defaultNotifications = session.currentNotificationState;
         });
       },
     );
@@ -82,6 +85,7 @@ class _AppShellState extends State<AppShell> {
       manager = SessionManager.of(context);
 
       manager!.subscribeSession(callback: loadNotificationStream);
+      loadNotificationStream();
     } else {
       manager = SessionManager.of(context);
     }
@@ -102,7 +106,7 @@ class _AppShellState extends State<AppShell> {
 
     return StreamBuilder(
       stream: notificationStream,
-
+      initialData: defaultNotifications,
       builder: (context, snapshot) {
         final notifications = snapshot.data?.notifications ?? [];
 
@@ -171,9 +175,7 @@ class _AppShellState extends State<AppShell> {
               ? null
               : SafeArea(
                   child: Padding(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 12,
-                    ),
+                    padding: const EdgeInsets.symmetric(horizontal: 12),
                     child: ClipRRect(
                       borderRadius: BorderRadius.circular(24),
                       child: NavigationBar(

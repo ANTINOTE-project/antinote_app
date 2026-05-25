@@ -33,6 +33,28 @@
   "communication": "Infos",
 
   "gradeOf": "Note de {service}",
+  "@gradeOf": {
+    "placeholders": {
+      "service": {
+        "type": "String"
+      }
+    }
+  },
   "averageSelf": "Moy. générale",
-  "averageClass": "Moy. classe"
+  "averageClass": "Moy. classe",
+
+  "recipient": "À {recipient}",
+  "@recipient": {
+    "placeholders": {
+      "recipient": {
+        "type": "String"
+      }
+    }
+  },
+  "self": "moi",
+
+  "nominativePoll": "Sondage nominatif",
+  "anonymousPoll": "Sondage anonyme",
+
+  "raMessage": "J'ai pris connaissance de cette information"
 }

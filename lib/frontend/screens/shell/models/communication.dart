@@ -1,6 +1,7 @@
 enum CommunicationType {
   discussion(pageId: 131),
-  news(pageId: 8);
+  news(pageId: 8),
+  poll(pageId: 8);
 
   final int pageId;
 

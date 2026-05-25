@@ -12,10 +12,18 @@ import "package:go_router/go_router.dart";
 GoRouter makeRouter({String initialLocation = Routes.appShell}) => GoRouter(
   initialLocation: initialLocation,
   routes: [
-    GoRoute(path: Routes.appShell, builder: (_, _) => const AppShell()),
-
-    GoRoute(path: Routes.auth.login, builder: (_, _) => const LoginScreen()),
-    GoRoute(path: Routes.auth.pick, builder: (_, _) => const LoginPickScreen()),
+    GoRoute(
+      path: Routes.appShell,
+      builder: (context, state) => const AppShell(),
+    ),
+    GoRoute(
+      path: Routes.auth.login,
+      builder: (context, state) => const LoginScreen(),
+    ),
+    GoRoute(
+      path: Routes.auth.pick,
+      builder: (context, state) => const LoginPickScreen(),
+    ),
 
     GoRoute(
       path: Routes.auth.search.city,
@@ -23,7 +31,6 @@ GoRouter makeRouter({String initialLocation = Routes.appShell}) => GoRouter(
     ),
     GoRoute(
       path: Routes.auth.search.school,
-
       builder: (context, state) {
         final extra = state.extra as Map<String, dynamic>;
         return LoginSearchSchoolScreen(

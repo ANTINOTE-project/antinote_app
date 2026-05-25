@@ -32,11 +32,18 @@ class _GradesListState extends State<GradesList> with ScreenMixin<GradesList> {
   }
 
   @override
-  Widget buildLoaded(BuildContext context, RefreshIndicatorBuilder buildRefreshIndicator) {
-    final organizedData = <Service, List<Exam>>{for (final service in _data.services!) service: []};
+  Widget buildLoaded(
+    BuildContext context,
+    RefreshIndicatorBuilder buildRefreshIndicator,
+  ) {
+    final organizedData = <Service, List<Exam>>{
+      for (final service in _data.services!) service: [],
+    };
 
     for (final exam in _data.exams) {
-      final service = organizedData.keys.firstWhere((element) => element.id == exam.service.id);
+      final service = organizedData.keys.firstWhere(
+        (element) => element.id == exam.service.id,
+      );
 
       organizedData[service]!.add(exam);
     }
@@ -46,7 +53,8 @@ class _GradesListState extends State<GradesList> with ScreenMixin<GradesList> {
         slivers: [
           _AverageWidget(data: _data),
 
-          for (final MapEntry(key: service, value: exams) in organizedData.entries)
+          for (final MapEntry(key: service, value: exams)
+              in organizedData.entries)
             SliverPadding(
               padding: const EdgeInsets.symmetric(horizontal: 12),
 
@@ -81,15 +89,22 @@ class _GradesListState extends State<GradesList> with ScreenMixin<GradesList> {
   }
 
   @override
-  Widget buildLoading(BuildContext context, RefreshIndicatorBuilder buildRefreshIndicator) {
-    return buildRefreshIndicator(child: const Center(child: LoadingWidget(size: 30)));
+  Widget buildLoading(
+    BuildContext context,
+    RefreshIndicatorBuilder buildRefreshIndicator,
+  ) {
+    return buildRefreshIndicator(
+      child: const Center(child: LoadingWidget(size: 30)),
+    );
   }
 
   @override
   FutureOr<void> loadActiveDataFromSession(PronoteSession session) async {
     await session.ensurePage(198);
 
-    final period = session.instance.periods.firstWhere((e) => e.visualId == widget.periodId);
+    final period = session.instance.periods.firstWhere(
+      (e) => e.visualId == widget.periodId,
+    );
     _data = await session.access(LatestGradesPageAccessor(period: period));
   }
 }
@@ -201,7 +216,11 @@ class ServiceWidget extends StatelessWidget {
                     service.name,
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
-                    style: TextStyle(fontSize: 21, fontWeight: FontWeight.bold, color: color),
+                    style: TextStyle(
+                      fontSize: 21,
+                      fontWeight: FontWeight.bold,
+                      color: color,
+                    ),
                   ),
                 ),
 
@@ -211,13 +230,18 @@ class ServiceWidget extends StatelessWidget {
                       children: [
                         TextSpan(
                           text: Utils.formatNumber(service.selfAverage!.value),
-                          style: TextStyle(color: color, fontSize: 22, fontWeight: FontWeight.w900),
+                          style: TextStyle(
+                            color: color,
+                            fontSize: 22,
+                            fontWeight: FontWeight.w900,
+                          ),
                         ),
 
                         const WidgetSpan(child: SizedBox(width: 2)),
 
                         TextSpan(
-                          text: "/${Utils.formatNumber(service.theoreticalMaxGrade!.value)}",
+                          text:
+                              "/${Utils.formatNumber(service.theoreticalMaxGrade!.value)}",
                           style: TextStyle(
                             color: context.c.onSurfaceVariant,
                             fontSize: 15,
@@ -242,7 +266,11 @@ class _ExamWidget extends StatelessWidget {
   final bool isFirst;
   final bool isLast;
 
-  const _ExamWidget({required this.exam, required this.isFirst, required this.isLast});
+  const _ExamWidget({
+    required this.exam,
+    required this.isFirst,
+    required this.isLast,
+  });
 
   static const radius = Radius.circular(16);
   static const defaultRadius = Radius.circular(6);
@@ -273,70 +301,77 @@ class _ExamWidget extends StatelessWidget {
         ? exam.comment!.trim()
         : context.l10n.gradeOf(exam.service.name);
 
-    final (color, bgColor) = Utils.adaptColorPair(exam.service.color!, context.c);
+    final (color, bgColor) = Utils.adaptColorPair(
+      exam.service.color!,
+      context.c,
+    );
 
     return Pressable(
-      // Si tu vois ça stp laisse le container
       child: Container(
         decoration: BoxDecoration(color: bgColor, borderRadius: borderRadius),
+        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
 
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+        child: Row(
+          spacing: 16,
 
-          child: Row(
-            spacing: 16,
+          children: [
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
 
-            children: [
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    title,
 
-                  children: [
-                    Text(
-                      title,
+                    maxLines: 1,
+                    overflow: .ellipsis,
 
-                      maxLines: 1,
-                      overflow: .ellipsis,
-
-                      style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w800),
+                    style: const TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.w800,
                     ),
+                  ),
 
-                    Text(
-                      exam.date.asRelativeDate(context),
+                  Text(
+                    exam.date.asRelativeDate(context),
 
-                      style: TextStyle(
-                        fontSize: 12,
-                        fontWeight: FontWeight.w600,
-                        color: context.c.onSurfaceVariant,
-                      ),
+                    style: TextStyle(
+                      fontSize: 12,
+                      fontWeight: FontWeight.w600,
+                      color: context.c.onSurfaceVariant,
                     ),
-                  ],
-                ),
+                  ),
+                ],
               ),
+            ),
 
-              Text.rich(
-                TextSpan(
-                  children: [
-                    TextSpan(
-                      text: Utils.formatNumber(exam.selfGrade.value),
-                      style: TextStyle(color: color, fontSize: 19, fontWeight: FontWeight.w900),
+            Text.rich(
+              TextSpan(
+                children: [
+                  TextSpan(
+                    text: Utils.formatNumber(exam.selfGrade.value),
+                    style: TextStyle(
+                      color: color,
+                      fontSize: 19,
+                      fontWeight: FontWeight.w900,
                     ),
+                  ),
 
-                    const WidgetSpan(child: SizedBox(width: 2)),
+                  const WidgetSpan(child: SizedBox(width: 2)),
 
-                    TextSpan(
-                      text: "/${Utils.formatNumber(exam.theoreticalMaxGrade.value)}",
-                      style: TextStyle(
-                        color: context.c.onSurfaceVariant,
-                        fontSize: 15,
-                        fontWeight: FontWeight.bold,
-                      ),
+                  TextSpan(
+                    text:
+                        "/${Utils.formatNumber(exam.theoreticalMaxGrade.value)}",
+                    style: TextStyle(
+                      color: context.c.onSurfaceVariant,
+                      fontSize: 15,
+                      fontWeight: FontWeight.bold,
                     ),
-                  ],
-                ),
+                  ),
+                ],
               ),
-            ],
-          ),
+            ),
+          ],
         ),
       ),
     );

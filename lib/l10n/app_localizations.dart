@@ -5,6 +5,7 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:intl/intl.dart' as intl;
 
+import 'app_localizations_en.dart';
 import 'app_localizations_fr.dart';
 
 // ignore_for_file: type=lint
@@ -92,7 +93,10 @@ abstract class AppLocalizations {
       ];
 
   /// A list of this localizations delegate's supported locales.
-  static const List<Locale> supportedLocales = <Locale>[Locale('fr')];
+  static const List<Locale> supportedLocales = <Locale>[
+    Locale('fr'),
+    Locale('en'),
+  ];
 
   /// No description provided for @appTitle.
   ///
@@ -236,7 +240,7 @@ abstract class AppLocalizations {
   ///
   /// In fr, this message translates to:
   /// **'Note de {service}'**
-  String gradeOf(Object service);
+  String gradeOf(String service);
 
   /// No description provided for @averageSelf.
   ///
@@ -249,6 +253,36 @@ abstract class AppLocalizations {
   /// In fr, this message translates to:
   /// **'Moy. classe'**
   String get averageClass;
+
+  /// No description provided for @recipient.
+  ///
+  /// In fr, this message translates to:
+  /// **'À {recipient}'**
+  String recipient(String recipient);
+
+  /// No description provided for @self.
+  ///
+  /// In fr, this message translates to:
+  /// **'moi'**
+  String get self;
+
+  /// No description provided for @nominativePoll.
+  ///
+  /// In fr, this message translates to:
+  /// **'Sondage nominatif'**
+  String get nominativePoll;
+
+  /// No description provided for @anonymousPoll.
+  ///
+  /// In fr, this message translates to:
+  /// **'Sondage anonyme'**
+  String get anonymousPoll;
+
+  /// No description provided for @raMessage.
+  ///
+  /// In fr, this message translates to:
+  /// **'J\'ai pris connaissance de cette information'**
+  String get raMessage;
 }
 
 class _AppLocalizationsDelegate
@@ -262,7 +296,7 @@ class _AppLocalizationsDelegate
 
   @override
   bool isSupported(Locale locale) =>
-      <String>['fr'].contains(locale.languageCode);
+      <String>['fr', 'en'].contains(locale.languageCode);
 
   @override
   bool shouldReload(_AppLocalizationsDelegate old) => false;
@@ -273,6 +307,8 @@ AppLocalizations lookupAppLocalizations(Locale locale) {
   switch (locale.languageCode) {
     case 'fr':
       return AppLocalizationsFr();
+    case 'en':
+      return AppLocalizationsEn();
   }
 
   throw FlutterError(

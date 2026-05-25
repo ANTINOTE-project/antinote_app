@@ -1,9 +1,11 @@
 import "dart:async";
 
 import "package:antinote/antinote.dart";
+import "package:antinote_app/backend/backend.dart";
 import "package:antinote_app/frontend/screens/auth/search/widgets/item.dart";
 import "package:antinote_app/frontend/screens/screen.dart";
 import "package:antinote_app/frontend/screens/shell/models/communication.dart";
+import "package:antinote_app/frontend/screens/shell/screens/communication/news.dart";
 import "package:flutter/material.dart";
 import "package:hugeicons_pro/hugeicons.dart";
 import "package:intl/intl.dart";
@@ -33,13 +35,48 @@ class _CommunicationScreenState extends State<CommunicationScreen>
           final thread = threads[index];
 
           return ListItemCard(
-            onPressed: () {},
+            onPressed: () async {
+              await SessionManager.execute(
+                context: context,
+                channels: const [],
+                callback: (session) {
+                  switch (thread.commType) {
+                    case .poll:
+                    case .news:
+                      {
+                        if (!context.mounted) return;
+
+                        final notifier = ValueNotifier(
+                          session.getCachedValue<News>(.NEWS, thread.visualId),
+                        );
+
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => NewsScreen(
+                              news: notifier,
+                              deleteNews: () {
+                                throw UnimplementedError();
+                              },
+                            ),
+                          ),
+                        );
+                      }
+                    case .discussion:
+                      {
+                        throw UnimplementedError();
+                      }
+                  }
+                },
+              );
+            },
             title: thread.title,
             emphaseTitle: !thread.read,
             subtitle: thread.authorName,
             leading: Icon(switch (thread.commType) {
-              CommunicationType.discussion => HugeIconsSolid.informationCircle,
-              CommunicationType.news => HugeIconsSolid.news,
+              .discussion => HugeIconsSolid.conversation,
+              .news => HugeIconsSolid.news01,
+              .poll => HugeIconsSolid.pieChart,
             }),
             trailing: Text(_minimalDateFormat.format(thread.publishDate)),
           );
@@ -66,6 +103,7 @@ class _CommunicationScreenState extends State<CommunicationScreen>
     await session.ensurePage(type.pageId);
 
     switch (type) {
+      case .poll:
       case .news:
         {
           final news = await session.access(
@@ -80,7 +118,7 @@ class _CommunicationScreenState extends State<CommunicationScreen>
                 (e) => CommunicationThreadPreview(
                   title: e.label,
                   publishDate: e.creationTime,
-                  commType: .news,
+                  commType: e.isPoll ? .poll : .news,
                   authorName: e.author,
                   visualId: e.visualId,
                   read: e.read,
