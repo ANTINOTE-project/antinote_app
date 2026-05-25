@@ -80,6 +80,12 @@ class AppLocalizationsFr extends AppLocalizations {
   String get communication => 'Infos';
 
   @override
+  String get latestGrades => 'Dernières notes';
+
+  @override
+  String get services => 'Matières';
+
+  @override
   String gradeOf(String service) {
     return 'Note de $service';
   }

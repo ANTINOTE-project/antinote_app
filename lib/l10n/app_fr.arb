@@ -32,6 +32,8 @@
   "report": "Bulletin",
   "communication": "Infos",
 
+  "latestGrades": "Dernières notes",
+  "services": "Matières",
   "gradeOf": "Note de {service}",
   "@gradeOf": {
     "placeholders": {

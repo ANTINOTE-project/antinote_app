@@ -2,6 +2,8 @@ import "package:antinote/antinote.dart";
 import "package:antinote_app/backend/backend.dart";
 import "package:flutter/material.dart";
 
+import "frontend/extensions/l10n.dart";
+
 class Utils {
   Utils._();
 
@@ -9,7 +11,9 @@ class Utils {
     return value % 1 == 0 ? value.toInt().toString() : value.toStringAsFixed(2);
   }
 
-  static (Color, Color) adaptColorPair(int colorValue, ColorScheme scheme) {
+  static (Color, Color) adaptColorPair(int? colorValue, ColorScheme scheme) {
+    if (colorValue == null) return (scheme.surfaceContainerHigh, scheme.surfaceContainerHigh);
+
     final hsl = HSLColor.fromColor(Color(colorValue));
     final isLight = scheme.brightness == Brightness.light;
 
@@ -19,6 +23,11 @@ class Utils {
         .toColor();
 
     return (base, base.withValues(alpha: .15));
+  }
+
+  static String getExamComment(BuildContext context, Exam exam) {
+    final isNotEmpty = exam.comment?.trim().isNotEmpty ?? false;
+    return isNotEmpty ? exam.comment!.trim() : context.l10n.gradeOf(exam.service.name);
   }
 }
 
@@ -114,29 +123,22 @@ final class WeekMappedViewConfiguration {
     weekConfig,
   ];
 
-  List<DateRange> daysToRangeList(
-    List<DateTime> days,
-    SpecificInstanceParameters parameters,
-  ) {
+  List<DateRange> daysToRangeList(List<DateTime> days, SpecificInstanceParameters parameters) {
     // We need to align the groups by week in this case.
     if (snapToWeeks) {
       final Map<int, DateRange> ranges = {};
       for (final day in days) {
         final weekNumber = parameters.getWeekNumberForDate(day);
         if (ranges.containsKey(weekNumber)) {
-          ranges[weekNumber] = DateRange(
-            start: ranges[weekNumber]!.start,
-            end: day,
-          );
+          ranges[weekNumber] = DateRange(start: ranges[weekNumber]!.start, end: day);
         } else {
           ranges[weekNumber] = DateRange(start: day, end: day);
         }
       }
 
-      return (ranges.entries.toList(growable: false)
-            ..sort((a, b) => a.key.compareTo(b.key)))
-          .map((e) => e.value)
-          .toList(growable: false);
+      return (ranges.entries.toList(
+        growable: false,
+      )..sort((a, b) => a.key.compareTo(b.key))).map((e) => e.value).toList(growable: false);
     }
 
     final List<DateRange> ranges = [];
@@ -156,11 +158,7 @@ extension PickViewConfiguration on Iterable<WeekMappedViewConfiguration> {
     return firstWhere(
       (element) => element.minWidth <= width && element.maxWidth > width,
       orElse: () =>
-          singleOrNull ??
-          firstWhere(
-            (element) => element.minWidth <= width,
-            orElse: () => first,
-          ),
+          singleOrNull ?? firstWhere((element) => element.minWidth <= width, orElse: () => first),
     );
   }
 }

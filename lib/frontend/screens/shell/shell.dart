@@ -112,6 +112,7 @@ class _AppShellState extends State<AppShell> {
 
         return Scaffold(
           extendBody: true,
+
           body: Row(
             children: [
               if (screenSize.width > screenSize.height)
@@ -126,15 +127,8 @@ class _AppShellState extends State<AppShell> {
                         backgroundColor: context.c.surfaceContainerHigh,
                         destinations: _screens.mapL((e) {
                           final notificationCount = notifications
-                              .where(
-                                (element) =>
-                                    e.associatedTabIds.contains(element.tab),
-                              )
-                              .fold(
-                                0,
-                                (previousValue, element) =>
-                                    previousValue + element.count,
-                              );
+                              .where((element) => e.associatedTabIds.contains(element.tab))
+                              .fold(0, (previousValue, element) => previousValue + element.count);
 
                           return NavigationRailDestination(
                             icon: Badge.count(

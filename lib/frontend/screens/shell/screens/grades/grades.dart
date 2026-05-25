@@ -9,6 +9,9 @@ import "package:antinote_app/frontend/widgets/customs/loading.dart";
 import "package:antinote_app/frontend/widgets/pressable.dart";
 import "package:antinote_app/utils.dart";
 import "package:flutter/material.dart";
+import "package:hugeicons_pro/hugeicons.dart";
+
+typedef ServiceGradeList = Map<Service, List<Exam>>;
 
 class GradesList extends StatefulWidget {
   final VisualId periodId;
@@ -32,18 +35,11 @@ class _GradesListState extends State<GradesList> with ScreenMixin<GradesList> {
   }
 
   @override
-  Widget buildLoaded(
-    BuildContext context,
-    RefreshIndicatorBuilder buildRefreshIndicator,
-  ) {
-    final organizedData = <Service, List<Exam>>{
-      for (final service in _data.services!) service: [],
-    };
+  Widget buildLoaded(BuildContext context, RefreshIndicatorBuilder buildRefreshIndicator) {
+    final ServiceGradeList organizedData = {for (final service in _data.services!) service: []};
 
     for (final exam in _data.exams) {
-      final service = organizedData.keys.firstWhere(
-        (element) => element.id == exam.service.id,
-      );
+      final service = organizedData.keys.firstWhere((element) => element.id == exam.service.id);
 
       organizedData[service]!.add(exam);
     }
@@ -53,59 +49,65 @@ class _GradesListState extends State<GradesList> with ScreenMixin<GradesList> {
         slivers: [
           _AverageWidget(data: _data),
 
-          for (final MapEntry(key: service, value: exams)
-              in organizedData.entries)
-            SliverPadding(
-              padding: const EdgeInsets.symmetric(horizontal: 12),
+          _SectionWidget(label: context.l10n.latestGrades, icon: HugeIconsSolid.note),
+          _LatestWidget(exams: _data.exams),
 
-              sliver: SliverMainAxisGroup(
-                slivers: [
-                  PinnedHeaderSliver(child: ServiceWidget(service: service)),
+          _SectionWidget(label: context.l10n.services, icon: HugeIconsSolid.gitbook),
+          _SubjectsWidget(data: organizedData),
 
-                  SliverList.builder(
-                    itemCount: exams.length,
-
-                    itemBuilder: (context, index) {
-                      return Padding(
-                        padding: const EdgeInsets.symmetric(vertical: 2),
-
-                        child: _ExamWidget(
-                          exam: exams[index],
-
-                          isFirst: index == 0,
-                          isLast: index == exams.length - 1,
-                        ),
-                      );
-                    },
-                  ),
-                ],
-              ),
-            ),
-
-          const SliverPadding(padding: EdgeInsets.only(bottom: 90)),
+          SliverPadding(
+            padding: EdgeInsets.only(bottom: MediaQuery.of(context).padding.bottom + 10),
+          ),
         ],
       ),
     );
   }
 
   @override
-  Widget buildLoading(
-    BuildContext context,
-    RefreshIndicatorBuilder buildRefreshIndicator,
-  ) {
-    return buildRefreshIndicator(
-      child: const Center(child: LoadingWidget(size: 30)),
-    );
+  Widget buildLoading(BuildContext context, RefreshIndicatorBuilder buildRefreshIndicator) {
+    return buildRefreshIndicator(child: const Center(child: LoadingWidget(size: 30)));
   }
 
   @override
   FutureOr<void> loadActiveDataFromSession(PronoteSession session) async {
     await session.ensurePage(198);
 
-    final period = session.instance.periods.firstWhere(
-      (e) => e.visualId == widget.periodId,
-    );
+    final period = session.instance.periods.firstWhere((e) => e.visualId == widget.periodId);
     _data = await session.access(LatestGradesPageAccessor(period: period));
+  }
+}
+
+class _SectionWidget extends StatelessWidget {
+  final String label;
+  final IconData icon;
+
+  const _SectionWidget({required this.label, required this.icon});
+
+  @override
+  Widget build(BuildContext context) {
+    return SliverToBoxAdapter(
+      child: Padding(
+        padding: const EdgeInsets.only(left: 20, top: 20),
+
+        child: Row(
+          spacing: 6,
+
+          children: [
+            Icon(icon, size: 22, color: context.c.onSurfaceVariant),
+
+            Text(
+              label,
+
+              style: TextStyle(
+                fontSize: 15,
+                fontWeight: FontWeight.bold,
+                color: context.c.onSurfaceVariant,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
   }
 }
 
@@ -183,22 +185,114 @@ class _AverageWidget extends StatelessWidget {
   }
 }
 
-class ServiceWidget extends StatelessWidget {
-  final Service service;
+class _LatestWidget extends StatelessWidget {
+  final List<Exam> exams;
 
-  const ServiceWidget({super.key, required this.service});
+  const _LatestWidget({required this.exams});
 
   @override
   Widget build(BuildContext context) {
-    final (color, bgColor) = Utils.adaptColorPair(service.color!, context.c);
+    return SliverToBoxAdapter(
+      child: SizedBox(
+        height: 125,
+
+        child: ListView.builder(
+          padding: const EdgeInsets.all(12),
+
+          scrollDirection: .horizontal,
+          itemCount: exams.length,
+
+          itemBuilder: (context, index) {
+            final exam = exams[index];
+
+            final (color, bgColor) = Utils.adaptColorPair(exam.service.color, context.c);
+            final title = Utils.getExamComment(context, exam);
+
+            return Pressable(
+              child: Container(
+                decoration: BoxDecoration(borderRadius: BorderRadius.circular(16), color: bgColor),
+                margin: const EdgeInsets.only(left: 6),
+
+                child: Column(
+                  children: [
+                    Text(
+                      title,
+
+                      overflow: .ellipsis,
+                      maxLines: 2,
+
+                      style: const TextStyle(fontWeight: .bold),
+                    ),
+                  ],
+                ),
+              ),
+            );
+          },
+        ),
+      ),
+    );
+  }
+}
+
+class _SubjectsWidget extends StatelessWidget {
+  final ServiceGradeList data;
+
+  const _SubjectsWidget({required this.data});
+
+  @override
+  Widget build(BuildContext context) {
+    return SliverMainAxisGroup(
+      slivers: [
+        for (final entry in data.entries)
+          SliverPadding(
+            padding: const EdgeInsets.only(left: 12, right: 12, top: 10),
+
+            sliver: SliverMainAxisGroup(
+              slivers: [
+                PinnedHeaderSliver(child: _ServiceWidget(service: entry.key)),
+
+                SliverList.builder(
+                  itemCount: entry.value.length,
+
+                  itemBuilder: (context, index) {
+                    final exams = entry.value;
+
+                    return Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 2),
+
+                      child: _ExamWidget(
+                        exam: exams[index],
+
+                        isFirst: index == 0,
+                        isLast: index == entry.value.length - 1,
+                      ),
+                    );
+                  },
+                ),
+              ],
+            ),
+          ),
+      ],
+    );
+  }
+}
+
+class _ServiceWidget extends StatelessWidget {
+  final Service service;
+
+  const _ServiceWidget({required this.service});
+
+  @override
+  Widget build(BuildContext context) {
+    final (color, bgColor) = Utils.adaptColorPair(service.color, context.c);
     final hasSelfAverage = service.selfAverage != null;
 
     return Padding(
-      padding: const EdgeInsets.only(top: 8),
+      padding: const EdgeInsets.only(top: 8, bottom: 2),
 
       child: Container(
         decoration: BoxDecoration(
-          border: Border.all(color: context.c.outlineVariant),
+          border: Border.all(color: bgColor),
           borderRadius: BorderRadius.circular(16),
           color: context.c.surfaceContainerLow,
         ),
@@ -216,11 +310,7 @@ class ServiceWidget extends StatelessWidget {
                     service.name,
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
-                    style: TextStyle(
-                      fontSize: 21,
-                      fontWeight: FontWeight.bold,
-                      color: color,
-                    ),
+                    style: TextStyle(fontSize: 21, fontWeight: FontWeight.bold, color: color),
                   ),
                 ),
 
@@ -230,18 +320,13 @@ class ServiceWidget extends StatelessWidget {
                       children: [
                         TextSpan(
                           text: Utils.formatNumber(service.selfAverage!.value),
-                          style: TextStyle(
-                            color: color,
-                            fontSize: 22,
-                            fontWeight: FontWeight.w900,
-                          ),
+                          style: TextStyle(color: color, fontSize: 22, fontWeight: FontWeight.w900),
                         ),
 
                         const WidgetSpan(child: SizedBox(width: 2)),
 
                         TextSpan(
-                          text:
-                              "/${Utils.formatNumber(service.theoreticalMaxGrade!.value)}",
+                          text: "/${Utils.formatNumber(service.theoreticalMaxGrade!.value)}",
                           style: TextStyle(
                             color: context.c.onSurfaceVariant,
                             fontSize: 15,
@@ -266,11 +351,7 @@ class _ExamWidget extends StatelessWidget {
   final bool isFirst;
   final bool isLast;
 
-  const _ExamWidget({
-    required this.exam,
-    required this.isFirst,
-    required this.isLast,
-  });
+  const _ExamWidget({required this.exam, required this.isFirst, required this.isLast});
 
   static const radius = Radius.circular(16);
   static const defaultRadius = Radius.circular(6);
@@ -297,81 +378,70 @@ class _ExamWidget extends StatelessWidget {
       _ => const BorderRadius.all(defaultRadius),
     };
 
-    final title = exam.comment?.trim().isNotEmpty ?? false
-        ? exam.comment!.trim()
-        : context.l10n.gradeOf(exam.service.name);
-
-    final (color, bgColor) = Utils.adaptColorPair(
-      exam.service.color!,
-      context.c,
-    );
+    final (color, bgColor) = Utils.adaptColorPair(exam.service.color, context.c);
+    final title = Utils.getExamComment(context, exam);
 
     return Pressable(
       child: Container(
         decoration: BoxDecoration(color: bgColor, borderRadius: borderRadius),
-        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
 
-        child: Row(
-          spacing: 16,
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
 
-          children: [
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
+          child: Row(
+            spacing: 16,
 
-                children: [
-                  Text(
-                    title,
+            children: [
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
 
-                    maxLines: 1,
-                    overflow: .ellipsis,
+                  children: [
+                    Text(
+                      title,
 
-                    style: const TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.w800,
+                      maxLines: 1,
+                      overflow: .ellipsis,
+
+                      style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w800),
                     ),
-                  ),
 
-                  Text(
-                    exam.date.asRelativeDate(context),
+                    Text(
+                      exam.date.asRelativeDate(context),
 
-                    style: TextStyle(
-                      fontSize: 12,
-                      fontWeight: FontWeight.w600,
-                      color: context.c.onSurfaceVariant,
+                      style: TextStyle(
+                        fontSize: 12,
+                        fontWeight: FontWeight.w600,
+                        color: context.c.onSurfaceVariant,
+                      ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
-            ),
 
-            Text.rich(
-              TextSpan(
-                children: [
-                  TextSpan(
-                    text: Utils.formatNumber(exam.selfGrade.value),
-                    style: TextStyle(
-                      color: color,
-                      fontSize: 19,
-                      fontWeight: FontWeight.w900,
+              Text.rich(
+                TextSpan(
+                  children: [
+                    TextSpan(
+                      text: Utils.formatNumber(exam.selfGrade.value),
+                      style: TextStyle(color: color, fontSize: 19, fontWeight: FontWeight.w900),
                     ),
-                  ),
 
-                  const WidgetSpan(child: SizedBox(width: 2)),
+                    const WidgetSpan(child: SizedBox(width: 2)),
 
-                  TextSpan(
-                    text:
-                        "/${Utils.formatNumber(exam.theoreticalMaxGrade.value)}",
-                    style: TextStyle(
-                      color: context.c.onSurfaceVariant,
-                      fontSize: 15,
-                      fontWeight: FontWeight.bold,
+                    TextSpan(
+                      text: "/${Utils.formatNumber(exam.theoreticalMaxGrade.value)}",
+                      style: TextStyle(
+                        color: context.c.onSurfaceVariant,
+                        fontSize: 15,
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );

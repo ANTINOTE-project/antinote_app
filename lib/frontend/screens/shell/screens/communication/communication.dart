@@ -22,7 +22,7 @@ class _CommunicationScreenState extends State<CommunicationScreen>
   CommunicationFilter filter = CommunicationFilter.defaultFilter;
   late List<CommunicationThreadPreview> threads;
 
-  static final _minimalDateFormat = DateFormat('MMM d');
+  static final _minimalDateFormat = DateFormat("MMM d");
 
   @override
   Widget buildLoaded(
