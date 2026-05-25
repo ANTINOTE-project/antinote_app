@@ -5,7 +5,7 @@ import "package:antinote_app/frontend/extensions/l10n.dart";
 import "package:antinote_app/frontend/screens/shell/screens/communication/communication.dart";
 import "package:antinote_app/frontend/screens/shell/screens/grades/index.dart";
 import "package:antinote_app/frontend/screens/shell/screens/home.dart";
-import "package:antinote_app/frontend/screens/shell/screens/timetable/timetable.dart";
+import "package:antinote_app/frontend/screens/shell/screens/timetable/index.dart";
 import "package:antinote_app/utils.dart";
 import "package:flutter/material.dart";
 import "package:hugeicons_pro/hugeicons.dart";

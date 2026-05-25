@@ -1,5 +1,5 @@
 import "package:antinote_app/frontend/screens/auth/search/widgets/item.dart";
-import "package:antinote_app/frontend/screens/shell/screens/timetable/timetable.dart";
+import "package:antinote_app/frontend/screens/shell/screens/timetable/index.dart";
 import "package:flutter/material.dart";
 
 class TimetableBody extends StatelessWidget {
