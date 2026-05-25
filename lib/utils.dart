@@ -8,6 +8,17 @@ class Utils {
   static String formatNumber(double value) {
     return value % 1 == 0 ? value.toInt().toString() : value.toString();
   }
+
+  static Color adaptColor(int colorValue, ColorScheme scheme) {
+    final color = Color(colorValue);
+    final hsl = HSLColor.fromColor(color);
+    final isLight = scheme.brightness == Brightness.light;
+
+    return hsl
+        .withLightness(isLight ? 0.35 : 0.75)
+        .withSaturation(hsl.saturation.clamp(0.4, 1.0))
+        .toColor();
+  }
 }
 
 class ReversedCurve extends Curve {
