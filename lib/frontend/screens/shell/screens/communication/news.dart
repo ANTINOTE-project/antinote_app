@@ -263,10 +263,18 @@ class _NewsQuestionAnswerWidgetState extends State<NewsQuestionAnswerWidget> {
       ),
       WithoutRANewsQuestionAnswer() => const SizedBox.shrink(),
       NoResponseNewsQuestionAnswer() => const SizedBox.shrink(),
-      // TODO: Handle this case.
       SingleChoiceNewsQuestionAnswer() => throw UnimplementedError(),
-      // TODO: Handle this case.
       MultipleChoiceNewsQuestionAnswer() => throw UnimplementedError(),
+      TextualResponseNewsQuestionAnswer() => throw UnimplementedError(),
     };
+  }
+}
+
+class ChoiceNewsQuestionAnswerWidget extends StatelessWidget {
+  const ChoiceNewsQuestionAnswerWidget({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return const Placeholder();
   }
 }

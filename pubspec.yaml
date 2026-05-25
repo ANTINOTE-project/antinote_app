@@ -58,5 +58,3 @@ flutter:
           weight: 700
         - asset: assets/fonts/SNPro-Black.ttf
           weight: 800
-flutter_intl:
-  enabled: true

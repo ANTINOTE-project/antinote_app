@@ -1,10 +1,9 @@
 import "package:antinote_app/frontend/widgets/pressable.dart";
 import "package:flutter/material.dart";
 
-import "../../extensions/colors.dart";
-
 class ListWidget<T> extends StatelessWidget {
-  final Widget Function(BuildContext context, T item, BorderRadius borderRadius) itemBuilder;
+  final Widget Function(BuildContext context, T item, BorderRadius borderRadius)
+  itemBuilder;
   final List<T> items;
 
   const ListWidget({super.key, required this.items, required this.itemBuilder});
@@ -57,8 +56,8 @@ class ListWidget<T> extends StatelessWidget {
 }
 
 class ItemWidget extends StatelessWidget {
-  final String title;
-  final String subtitle;
+  final Widget title;
+  final Widget? subtitle;
   final Widget? trailing;
 
   final VoidCallback? onPressed;
@@ -69,8 +68,8 @@ class ItemWidget extends StatelessWidget {
   const ItemWidget({
     super.key,
 
-    this.title = "",
-    this.subtitle = "",
+    required this.title,
+    this.subtitle,
     this.trailing,
 
     this.onPressed,
@@ -85,7 +84,10 @@ class ItemWidget extends StatelessWidget {
       onPressed: onPressed,
 
       child: Container(
-        decoration: BoxDecoration(color: backgroundColor, borderRadius: borderRadius),
+        decoration: BoxDecoration(
+          color: backgroundColor,
+          borderRadius: borderRadius,
+        ),
         padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
 
         child: Row(
@@ -97,24 +99,18 @@ class ItemWidget extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
 
                 children: [
-                  Text(
-                    title,
-
+                  DefaultTextStyle(
+                    style: const TextStyle(fontSize: 16, fontWeight: .w800),
                     maxLines: 1,
                     overflow: .ellipsis,
-
-                    style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w800),
+                    child: title,
                   ),
 
-                  Text(
-                    subtitle,
-
-                    style: TextStyle(
-                      fontSize: 12,
-                      fontWeight: FontWeight.w600,
-                      color: context.c.onSurfaceVariant,
+                  if (subtitle != null)
+                    DefaultTextStyle(
+                      style: const TextStyle(fontSize: 12, fontWeight: .w600),
+                      child: subtitle!,
                     ),
-                  ),
                 ],
               ),
             ),
