@@ -113,10 +113,10 @@ class AppLocalizationsFr extends AppLocalizations {
   String get detention => 'Retenue';
 
   @override
-  String get noSubject => 'Pas de matière';
+  String get noSubject => 'Matière inconnue';
 
   @override
-  String get noRoom => 'Pas de salle';
+  String get noRoom => 'Salle non définie';
 
   @override
   String recipient(Object recipient) {
@@ -142,7 +142,7 @@ class AppLocalizationsFr extends AppLocalizations {
   String get instanceName => 'Nom d\'instance';
 
   @override
-  String instanceNameValue(Object mainName, Object loginName) {
+  String instanceNameValue(Object loginName, Object mainName) {
     return '$mainName ($loginName quand déconnecté)';
   }
 

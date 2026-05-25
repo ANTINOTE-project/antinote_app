@@ -295,13 +295,13 @@ abstract class AppLocalizations {
   /// No description provided for @noSubject.
   ///
   /// In fr, this message translates to:
-  /// **'Pas de matière'**
+  /// **'Matière inconnue'**
   String get noSubject;
 
   /// No description provided for @noRoom.
   ///
   /// In fr, this message translates to:
-  /// **'Pas de salle'**
+  /// **'Salle non définie'**
   String get noRoom;
 
   /// No description provided for @recipient.
@@ -350,7 +350,7 @@ abstract class AppLocalizations {
   ///
   /// In fr, this message translates to:
   /// **'{mainName} ({loginName} quand déconnecté)'**
-  String instanceNameValue(Object mainName, Object loginName);
+  String instanceNameValue(Object loginName, Object mainName);
 
   /// No description provided for @remoteVersion.
   ///

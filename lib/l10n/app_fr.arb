@@ -44,8 +44,8 @@
   "noCourseToday": "Tu n'as pas de cours,\nprofite bien !",
   "cancelled": "ANNULÉ",
   "detention": "Retenue",
-  "noSubject": "Pas de matière",
-  "noRoom": "Pas de salle",
+  "noSubject": "Matière inconnue",
+  "noRoom": "Salle non définie",
 
   "recipient": "À {recipient}",
   "self": "moi",
@@ -59,27 +59,11 @@
 
   "instanceName": "Nom d'instance",
   "instanceNameValue": "{mainName} ({loginName} quand déconnecté)",
-  "@instanceNameValue": {
-    "placeholders": {
-      "mainName": {},
-      "loginName": {}
-    }
-  },
 
   "remoteVersion": "Version de l'instance",
 
   "remoteYear": "Année",
   "remoteYearSubtitle": "{start} ➔ {end}",
-  "@remoteYearSubtitle": {
-    "start": {
-      "isCustomDateFormat": "true",
-      "format": "dd/MM/yy"
-    },
-    "end": {
-      "isCustomDateFormat": "true",
-      "format": "dd/MM/yy"
-    }
-  },
 
   "remotePeriods": "Périodes"
 }
