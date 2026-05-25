@@ -237,6 +237,18 @@ abstract class AppLocalizations {
   /// In fr, this message translates to:
   /// **'Note de {service}'**
   String gradeOf(Object service);
+
+  /// No description provided for @averageSelf.
+  ///
+  /// In fr, this message translates to:
+  /// **'Moy. générale'**
+  String get averageSelf;
+
+  /// No description provided for @averageClass.
+  ///
+  /// In fr, this message translates to:
+  /// **'Moy. classe'**
+  String get averageClass;
 }
 
 class _AppLocalizationsDelegate

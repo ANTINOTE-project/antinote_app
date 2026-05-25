@@ -42,40 +42,47 @@ class _GradesListState extends State<GradesList>
       organizedData[service]!.add(exam);
     }
 
-    return CustomScrollView(
-      slivers: [
-        _AverageWidget(data: _data),
+    return buildRefreshIndicator(
+      child: CustomScrollView(
+        slivers: [
+          _AverageWidget(data: _data),
 
-        for (final MapEntry(key: service, value: exams) in organizedData.entries)
-          SliverPadding(
-            padding: const EdgeInsets.symmetric(horizontal: 12),
+          for (final MapEntry(key: service, value: exams) in organizedData.entries)
+            SliverPadding(
+              padding: const EdgeInsets.symmetric(horizontal: 12),
 
-            sliver: SliverMainAxisGroup(
-              slivers: [
-                SliverToBoxAdapter(child: _ServiceWidget(service: service)),
+              sliver: SliverMainAxisGroup(
+                slivers: [
+                  SliverPersistentHeader(
+                    floating: true,
+                    pinned: true,
 
-                SliverList.builder(
-                  itemCount: exams.length,
+                    delegate: _ServiceWidget(service: service),
+                  ),
 
-                  itemBuilder: (context, index) {
-                    return Padding(
-                      padding: const EdgeInsets.symmetric(vertical: 2),
+                  SliverList.builder(
+                    itemCount: exams.length,
 
-                      child: _ExamWidget(
-                        exam: exams[index],
+                    itemBuilder: (context, index) {
+                      return Padding(
+                        padding: const EdgeInsets.symmetric(vertical: 2),
 
-                        isFirst: index == 0,
-                        isLast: index == exams.length - 1,
-                      ),
-                    );
-                  },
-                ),
-              ],
+                        child: _ExamWidget(
+                          exam: exams[index],
+
+                          isFirst: index == 0,
+                          isLast: index == exams.length - 1,
+                        ),
+                      );
+                    },
+                  ),
+                ],
+              ),
             ),
-          ),
 
-        const SliverPadding(padding: EdgeInsets.only(bottom: 90)),
-      ],
+          const SliverPadding(padding: EdgeInsets.only(bottom: 90)),
+        ],
+      ),
     );
   }
 
@@ -114,7 +121,29 @@ class _AverageWidget extends StatelessWidget {
               borderRadius: BorderRadius.circular(20),
             ),
 
+            padding: const EdgeInsets.all(12),
             height: 300,
+
+            child: Column(
+              children: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                  spacing: 8,
+
+                  children: [
+                    Text(
+                      context.l10n.averageSelf,
+                      style: const TextStyle(fontWeight: FontWeight.bold),
+                    ),
+
+                    Text(
+                      context.l10n.averageClass,
+                      style: const TextStyle(fontWeight: FontWeight.bold),
+                    ),
+                  ],
+                ),
+              ],
+            ),
           ),
         ),
       ),
@@ -122,63 +151,81 @@ class _AverageWidget extends StatelessWidget {
   }
 }
 
-class _ServiceWidget extends StatelessWidget {
+class _ServiceWidget extends SliverPersistentHeaderDelegate {
   final Service service;
 
   const _ServiceWidget({required this.service});
 
   @override
-  Widget build(BuildContext context) {
+  double get minExtent => 68;
+
+  @override
+  double get maxExtent => 68;
+
+  @override
+  Widget build(BuildContext context, double shrinkOffset, bool overlapsContent) {
     final hasSelfAverage = service.selfAverage != null;
     final color = Color(service.color!);
 
-    return Pressable(
-      child: Padding(
-        padding: const EdgeInsets.only(top: 16, bottom: 6, left: 2, right: 2),
+    return Padding(
+      padding: const EdgeInsets.only(top: 8),
 
-        child: Row(
-          spacing: 8,
+      child: Container(
+        decoration: BoxDecoration(
+          border: Border.all(color: context.c.outlineVariant),
+          borderRadius: BorderRadius.circular(16),
+          color: context.c.surfaceContainerLow,
+        ),
 
-          children: [
-            Expanded(
-              child: Text(
-                service.name,
+        child: Pressable(
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
 
-                maxLines: 1,
-                overflow: .ellipsis,
+            child: Row(
+              spacing: 8,
 
-                style: TextStyle(fontSize: 21, fontWeight: FontWeight.bold, color: color),
-              ),
-            ),
-
-            if (hasSelfAverage)
-              Text.rich(
-                TextSpan(
-                  children: [
-                    TextSpan(
-                      text: Utils.formatNumber(service.selfAverage!.value),
-                      style: TextStyle(color: color, fontSize: 22, fontWeight: FontWeight.w900),
-                    ),
-
-                    const WidgetSpan(child: SizedBox(width: 2)),
-
-                    TextSpan(
-                      text: "/${Utils.formatNumber(service.theoreticalMaxGrade!.value)}",
-
-                      style: TextStyle(
-                        color: context.c.onSurfaceVariant,
-                        fontSize: 15,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  ],
+              children: [
+                Expanded(
+                  child: Text(
+                    service.name,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: TextStyle(fontSize: 21, fontWeight: FontWeight.bold, color: color),
+                  ),
                 ),
-              ),
-          ],
+
+                if (hasSelfAverage)
+                  Text.rich(
+                    TextSpan(
+                      children: [
+                        TextSpan(
+                          text: Utils.formatNumber(service.selfAverage!.value),
+                          style: TextStyle(color: color, fontSize: 22, fontWeight: FontWeight.w900),
+                        ),
+
+                        const WidgetSpan(child: SizedBox(width: 2)),
+
+                        TextSpan(
+                          text: "/${Utils.formatNumber(service.theoreticalMaxGrade!.value)}",
+                          style: TextStyle(
+                            color: context.c.onSurfaceVariant,
+                            fontSize: 15,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+              ],
+            ),
+          ),
         ),
       ),
     );
   }
+
+  @override
+  bool shouldRebuild(_ServiceWidget old) => old.service != service;
 }
 
 class _ExamWidget extends StatelessWidget {

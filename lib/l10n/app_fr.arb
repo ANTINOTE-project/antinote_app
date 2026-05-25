@@ -33,5 +33,6 @@
   "communication": "Infos",
 
   "gradeOf": "Note de {service}",
-  "@gradeOf": {}
+  "averageSelf": "Moy. générale",
+  "averageClass": "Moy. classe"
 }

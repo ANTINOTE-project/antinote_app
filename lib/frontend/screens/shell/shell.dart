@@ -173,7 +173,6 @@ class _AppShellState extends State<AppShell> {
                   child: Padding(
                     padding: const EdgeInsets.symmetric(
                       horizontal: 12,
-                      vertical: 0,
                     ),
                     child: ClipRRect(
                       borderRadius: BorderRadius.circular(24),

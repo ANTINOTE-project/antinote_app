@@ -83,4 +83,10 @@ class AppLocalizationsFr extends AppLocalizations {
   String gradeOf(Object service) {
     return 'Note de $service';
   }
+
+  @override
+  String get averageSelf => 'Moy. générale';
+
+  @override
+  String get averageClass => 'Moy. classe';
 }
