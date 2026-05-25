@@ -82,9 +82,10 @@ class _PressableState extends State<Pressable> with SingleTickerProviderStateMix
   }
 
   void _onTapUp() async {
-    if (widget.hasFeedback && widget.hasAnimation) {
-      _controller.forward();
-    }
+    if (!widget.hasFeedback || !widget.hasAnimation) return;
+
+    await _controller.reverse().orCancel.catchError((_) {});
+    _controller.forward();
   }
 
   @override
