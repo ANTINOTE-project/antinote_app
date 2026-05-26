@@ -7,6 +7,15 @@ import "package:antinote_app/utils.dart";
 import "package:flutter/material.dart";
 import "package:hugeicons_pro/hugeicons.dart";
 
+class Slot {
+  final List<Class> classes;
+  final DateTime start;
+  final DateTime end;
+  final int index;
+
+  const Slot({required this.classes, required this.start, required this.end, required this.index});
+}
+
 typedef ClassInfo = ({
   String baseTitle,
   String? status,
@@ -20,66 +29,89 @@ typedef ClassInfo = ({
   bool isExam,
 });
 
-class TimetableBody extends StatefulWidget {
-  final List<int> businessDays;
-  final List<Holiday> holidays;
+class TimetableBody extends StatelessWidget {
+  final SpecificInstanceParameters data;
+
   final List<DateTime> days;
   final Classes classes;
 
-  final int lunchStartSlot;
-  final int lunchEndSlot;
+  const TimetableBody({super.key, required this.data, required this.days, required this.classes});
 
-  const TimetableBody({
-    super.key,
+  bool _isWeekend(DateTime day) {
+    return !data.businessDays.contains(day.weekday);
+  }
 
-    required this.businessDays,
-    required this.holidays,
-    required this.days,
-    required this.classes,
-
-    required this.lunchStartSlot,
-    required this.lunchEndSlot,
-  });
-
-  @override
-  State<TimetableBody> createState() => _TimetableBodyState();
-}
-
-class _TimetableBodyState extends State<TimetableBody> {
-  static Holiday? _getHoliday(List<Holiday> holidays, DateTime day) {
-    for (final holiday in holidays) {
-      if (holiday.contains(day)) {
-        return holiday;
-      }
+  Holiday? _getHolidayForDay(DateTime day) {
+    for (final holiday in data.holidays) {
+      if (holiday.contains(day)) return holiday;
     }
 
     return null;
   }
 
-  static Map<(DateTime, DateTime), List<Class>> _groupByTime(List<Class> classes) {
-    final Map<(DateTime, DateTime), List<Class>> grouped = {};
+  List<Slot> _buildSlots(List<Class> classes, DateTime day) {
+    final covered = <(DateTime, DateTime)>[];
 
-    for (final c in classes) {
-      final key = (c.startDate, c.endDate);
-      grouped.putIfAbsent(key, () => []).add(c);
+    for (final clazz in classes) {
+      covered.add((clazz.startDate, clazz.endDate));
     }
 
-    return grouped;
+    final cleaned = <Slot>[];
+    final slots = <Slot>[];
+
+    for (final (index, timeSlot) in data.starts.indexed) {
+      final slotClasses = classes.where((c) {
+        return c.startDate.hour == timeSlot.timing.hour &&
+            c.startDate.minute == timeSlot.timing.minute;
+      }).toList();
+
+      final start = day.copyWith(hour: timeSlot.timing.hour, minute: timeSlot.timing.minute);
+
+      final isAlreadyCovered = covered.any((r) => start.isAfter(r.$1) && start.isBefore(r.$2));
+      if (isAlreadyCovered) continue;
+
+      if (index >= data.endings.length) continue;
+
+      final end = day.copyWith(
+        hour: slotClasses.firstOrNull?.endDate.hour ?? data.endings[index].timing.hour,
+        minute: slotClasses.firstOrNull?.endDate.minute ?? data.endings[index].timing.minute,
+      );
+
+      slots.add(Slot(index: index, start: start, end: end, classes: slotClasses));
+    }
+
+    for (final slot in slots) {
+      if (slot.classes.isEmpty && cleaned.isNotEmpty && cleaned.last.classes.isEmpty) continue;
+
+      cleaned.add(slot);
+    }
+
+    slots
+      ..clear()
+      ..addAll(cleaned);
+
+    while (slots.isNotEmpty && slots.last.classes.isEmpty) {
+      slots.removeLast();
+    }
+
+    return slots;
   }
 
   @override
   Widget build(BuildContext context) {
     return SliverCrossAxisGroup(
       slivers: [
-        for (final day in widget.days)
+        for (final day in days)
           ValueListenableBuilder(
-            valueListenable: widget.classes[day]!,
+            valueListenable: classes[day]!,
 
             builder: (context, dayClasses, child) {
-              final isBusinessDay = widget.businessDays.contains(day.weekday);
-              final holiday = _getHoliday(widget.holidays, day);
+              final holiday = _getHolidayForDay(day);
+              final isWeekend = _isWeekend(day);
+              final hasNotClasses = dayClasses == null;
+              final isClassesEmpty = dayClasses?.isEmpty ?? true;
 
-              if (!isBusinessDay) {
+              if (isWeekend) {
                 return _InfoTextIcon(icon: HugeIconsSolid.calendar04, label: context.l10n.weekend);
               }
 
@@ -87,39 +119,47 @@ class _TimetableBodyState extends State<TimetableBody> {
                 return _InfoTextIcon(icon: HugeIconsSolid.beach, label: holiday.name);
               }
 
-              if (dayClasses == null) {
-                return const SliverFillRemaining(child: Center(child: CircularProgressIndicator()));
+              if (hasNotClasses) {
+                return const _Loading();
               }
 
-              if (dayClasses.isEmpty) {
+              if (isClassesEmpty) {
                 return _InfoTextIcon(
                   icon: HugeIconsSolid.course,
                   label: context.l10n.noCourseToday,
                 );
               }
 
-              final grouped = _groupByTime(dayClasses);
-
-              for (final entry in grouped.values) {
-                entry.sort((a, b) {
-                  final aCancelled = a is Lesson && (a.canceled || a.exemptedLabel != null);
-                  final bCancelled = b is Lesson && (b.canceled || b.exemptedLabel != null);
-
-                  return aCancelled ? 1 : (bCancelled ? -1 : 0);
-                });
-              }
-
-              final entries = grouped.entries.toList();
+              final slots = _buildSlots(dayClasses, day);
 
               return SliverPadding(
-                padding: const EdgeInsets.symmetric(horizontal: 12),
+                padding: EdgeInsets.only(
+                  bottom: MediaQuery.of(context).padding.bottom + 10,
+
+                  right: 12,
+                  left: 12,
+                ),
 
                 sliver: SliverList.builder(
-                  itemCount: entries.length,
+                  itemCount: slots.length,
 
                   itemBuilder: (context, index) {
-                    final entry = entries[index];
-                    return _TimeRow(start: entry.key.$1, end: entry.key.$2, classes: entry.value);
+                    final slot = slots[index];
+
+                    if (slot.classes.isEmpty) {
+                      final nextSlot = index + 1 < slots.length ? slots[index + 1] : null;
+
+                      if (nextSlot == null || nextSlot.classes.isEmpty) {
+                        return const SizedBox.shrink();
+                      }
+
+                      final isLunch =
+                          slot.index >= data.lunchStartSlot && slot.index <= data.lunchEndSlot;
+
+                      return _Gap(isLunch: isLunch);
+                    }
+
+                    return _TimeRow(start: slot.start, end: slot.end, classes: slot.classes);
                   },
                 ),
               );
@@ -127,6 +167,15 @@ class _TimetableBodyState extends State<TimetableBody> {
           ),
       ],
     );
+  }
+}
+
+class _Loading extends StatelessWidget {
+  const _Loading();
+
+  @override
+  Widget build(BuildContext context) {
+    return const SliverFillRemaining(child: Center(child: CircularProgressIndicator()));
   }
 }
 
@@ -156,6 +205,20 @@ class _InfoTextIcon extends StatelessWidget {
           ],
         ),
       ),
+    );
+  }
+}
+
+class _Gap extends StatelessWidget {
+  final bool isLunch;
+
+  const _Gap({required this.isLunch});
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsetsGeometry.all(12),
+      child: Text(isLunch ? "Midi" : "Trou"),
     );
   }
 }
@@ -281,7 +344,10 @@ class _ClassWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     late final info = Utils.getInfoForClass(context, clazz);
 
-    final (color, backgroundColor, borderColor) = Utils.adaptColorPair(info.accentColor, context.c);
+    final (color, backgroundColor, borderColor, titleColor) = Utils.adaptColorPair(
+      info.accentColor,
+      context.c,
+    );
 
     final difference = info.end.difference(info.start);
     final duration =
@@ -370,7 +436,7 @@ class _ClassWidget extends StatelessWidget {
                     maxLines: 1,
 
                     style: TextStyle(
-                      color: info.cancelled ? context.c.outline : context.c.onPrimary,
+                      color: info.cancelled ? context.c.outline : titleColor,
                       fontSize: 18,
                       fontWeight: .w800,
                     ),
@@ -386,15 +452,14 @@ class _ClassWidget extends StatelessWidget {
                             cancelled: info.cancelled,
                             icon: HugeIconsSolid.location01,
                             label: info.location ?? "",
+                            color: color,
                           ),
 
                           SizedBox(
-                            height: 20,
+                            height: 16,
 
                             child: VerticalDivider(
-                              color: info.cancelled
-                                  ? context.c.outline
-                                  : context.c.onSurfaceVariant,
+                              color: info.cancelled ? context.c.outline : color,
                               radius: .circular(999),
                               thickness: 2,
                               width: 4,
@@ -407,6 +472,7 @@ class _ClassWidget extends StatelessWidget {
                             cancelled: info.cancelled,
                             icon: HugeIconsSolid.teacher,
                             label: info.attendants,
+                            color: color,
                           ),
                         ),
                       ],
@@ -416,11 +482,7 @@ class _ClassWidget extends StatelessWidget {
                   if (!info.cancelled)
                     Text(
                       duration,
-                      style: TextStyle(
-                        color: context.c.onSurfaceVariant,
-                        fontSize: 14,
-                        fontWeight: .w900,
-                      ),
+                      style: TextStyle(color: color, fontSize: 14, fontWeight: .w900),
                     ),
                 ],
               ),
@@ -436,8 +498,14 @@ class _InfoWidget extends StatelessWidget {
   final bool cancelled;
   final IconData icon;
   final String label;
+  final Color color;
 
-  const _InfoWidget({required this.cancelled, required this.icon, required this.label});
+  const _InfoWidget({
+    required this.cancelled,
+    required this.icon,
+    required this.label,
+    required this.color,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -446,7 +514,7 @@ class _InfoWidget extends StatelessWidget {
       spacing: 6,
 
       children: [
-        Icon(icon, size: 20, color: cancelled ? context.c.outline : context.c.onSurfaceVariant),
+        Icon(icon, size: 20, color: cancelled ? context.c.outline : color),
 
         Flexible(
           child: Text(
@@ -458,7 +526,7 @@ class _InfoWidget extends StatelessWidget {
             style: TextStyle(
               fontSize: 14,
               fontWeight: .w600,
-              color: cancelled ? context.c.outline : context.c.onSurfaceVariant,
+              color: cancelled ? context.c.outline : color,
             ),
           ),
         ),

@@ -20,49 +20,44 @@ class TimetableScreen extends StatefulWidget {
 }
 
 class _TimetableScreenState extends State<TimetableScreen> with ScreenMixin<TimetableScreen> {
-  late SpecificInstanceParameters scheduleDisplayData;
-  late List<DateRange> currentGroups;
-
-  List<int> _businessDays = [];
-  List<Holiday> _holidays = [];
+  late SpecificInstanceParameters _scheduleDisplayData;
+  late List<DateRange> _currentGroups;
   final Classes _classes = {};
-  int _lunchStartSlot = 0;
-  int _lunchEndSlot = 0;
 
-  PageController? pageController;
+  PageController? _pageController;
 
-  bool animating = false;
-  int? lastPage;
+  bool _animating = false;
+  int? _lastPage;
 
   Future<void> animateToDay(DateTime day) async {
-    final index = currentGroups.indexWhere((element) => element.contains(day));
+    final index = _currentGroups.indexWhere((element) => element.contains(day));
 
-    animating = true;
+    _animating = true;
 
-    await pageController?.animateToPage(
+    await _pageController?.animateToPage(
       index,
       duration: const Duration(milliseconds: 300),
       curve: Curves.fastOutSlowIn,
     );
 
-    animating = false;
+    _animating = false;
   }
 
   void onPageDrag() {
-    final curPage = pageController?.page?.round();
+    final curPage = _pageController?.page?.round();
     if (curPage == null) return;
 
-    lastPage ??= curPage;
+    _lastPage ??= curPage;
 
-    if (lastPage != curPage) {
-      lastPage = curPage;
+    if (_lastPage != curPage) {
+      _lastPage = curPage;
 
       reload();
     }
   }
 
   Future<void> updateClasses(DateRange days, {PronoteSession? session}) async {
-    if (animating) return;
+    if (_animating) return;
 
     talker.info("Fetching days ${days.pprint(context)}");
     Future<void> update(PronoteSession session) async {
@@ -90,27 +85,27 @@ class _TimetableScreenState extends State<TimetableScreen> with ScreenMixin<Time
 
   @override
   void dispose() {
-    pageController?.removeListener(onPageDrag);
+    _pageController?.removeListener(onPageDrag);
     super.dispose();
   }
 
   @override
   Widget buildLoaded(BuildContext context, RefreshIndicatorBuilder buildRefreshIndicator) {
     final days = DateRange(
-      start: scheduleDisplayData.firstDate,
-      end: scheduleDisplayData.lastDate,
+      start: _scheduleDisplayData.firstDate,
+      end: _scheduleDisplayData.lastDate,
     ).listDays();
 
     final daysConfiguration = WeekMappedViewConfiguration.defaultConfigs.pickConfig(context);
-    currentGroups = daysConfiguration.daysToRangeList(days, scheduleDisplayData);
+    _currentGroups = daysConfiguration.daysToRangeList(days, _scheduleDisplayData);
 
     return buildRefreshIndicator(
       child: PageView.builder(
-        itemCount: currentGroups.length,
-        controller: pageController,
+        itemCount: _currentGroups.length,
+        controller: _pageController,
 
         itemBuilder: (context, index) {
-          final dayGroup = currentGroups[index];
+          final dayGroup = _currentGroups[index];
           final days = dayGroup.listDays();
 
           return RefreshIndicator(
@@ -121,22 +116,11 @@ class _TimetableScreenState extends State<TimetableScreen> with ScreenMixin<Time
                 TimetableAppBar(
                   animateToDay: animateToDay,
                   label: dayGroup.pprint(context),
-                  firstDate: scheduleDisplayData.firstDate,
-                  lastDate: scheduleDisplayData.lastDate,
+                  firstDate: _scheduleDisplayData.firstDate,
+                  lastDate: _scheduleDisplayData.lastDate,
                 ),
 
-                TimetableBody(
-                  businessDays: _businessDays,
-                  holidays: _holidays,
-                  days: days,
-                  classes: _classes,
-                  lunchStartSlot: _lunchStartSlot,
-                  lunchEndSlot: _lunchEndSlot,
-                ),
-
-                SliverPadding(
-                  padding: EdgeInsets.only(bottom: MediaQuery.of(context).padding.bottom + 10),
-                ),
+                TimetableBody(data: _scheduleDisplayData, classes: _classes, days: days),
               ],
             ),
           );
@@ -151,44 +135,39 @@ class _TimetableScreenState extends State<TimetableScreen> with ScreenMixin<Time
   }
 
   @override
-  List<String> get loadChannels => animating ? [] : ["communication"];
+  List<String> get loadChannels => _animating ? [] : ["communication"];
 
   @override
   FutureOr<void> loadActiveDataFromSession(PronoteSession session) async {
-    scheduleDisplayData = session.instance;
-
-    _businessDays = scheduleDisplayData.businessDays;
-    _holidays = scheduleDisplayData.holidays;
-    _lunchStartSlot = scheduleDisplayData.lunchStartSlot;
-    _lunchEndSlot = scheduleDisplayData.lunchEndSlot;
+    _scheduleDisplayData = session.instance;
 
     final days = DateRange(
-      start: scheduleDisplayData.firstDate,
-      end: scheduleDisplayData.lastDate,
+      start: _scheduleDisplayData.firstDate,
+      end: _scheduleDisplayData.lastDate,
     ).listDays();
 
     final daysConfiguration = WeekMappedViewConfiguration.defaultConfigs.pickConfig(context);
-    currentGroups = daysConfiguration.daysToRangeList(days, scheduleDisplayData);
+    _currentGroups = daysConfiguration.daysToRangeList(days, _scheduleDisplayData);
 
     final int currentGroupIndex;
 
-    if (pageController == null || !pageController!.hasClients || pageController?.page == null) {
-      currentGroupIndex = currentGroups.indexWhere((element) {
-        return element.contains(scheduleDisplayData.nextBusinessDay);
+    if (_pageController == null || !_pageController!.hasClients || _pageController?.page == null) {
+      currentGroupIndex = _currentGroups.indexWhere((element) {
+        return element.contains(_scheduleDisplayData.nextBusinessDay);
       });
     } else {
-      currentGroupIndex = pageController!.page!.round();
+      currentGroupIndex = _pageController!.page!.round();
     }
 
-    if (pageController == null) {
+    if (_pageController == null) {
       for (final day in days) {
         _classes[day] = ValueNotifier(null);
       }
 
-      pageController = PageController(initialPage: currentGroupIndex);
-      pageController?.addListener(onPageDrag);
+      _pageController = PageController(initialPage: currentGroupIndex);
+      _pageController?.addListener(onPageDrag);
     }
 
-    await updateClasses(currentGroups[currentGroupIndex], session: session);
+    await updateClasses(_currentGroups[currentGroupIndex], session: session);
   }
 }

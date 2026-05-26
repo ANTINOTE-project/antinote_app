@@ -209,7 +209,7 @@ class _LatestWidget extends StatelessWidget {
           itemBuilder: (context, index) {
             final exam = exams[index];
 
-            final (color, backgroundColor, borderColor) = Utils.adaptColorPair(
+            final (color, backgroundColor, borderColor, titleColor) = Utils.adaptColorPair(
               exam.service.color,
               context.c,
             );
@@ -337,7 +337,10 @@ class _ServiceWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final (color, backgroundColor, borderColor) = Utils.adaptColorPair(service.color, context.c);
+    final (color, backgroundColor, borderColor, titleColor) = Utils.adaptColorPair(
+      service.color,
+      context.c,
+    );
     final hasSelfAverage = service.selfAverage != null;
 
     return Padding(
@@ -406,7 +409,7 @@ class _ExamWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final (color, backgroundColor, borderColor) = Utils.adaptColorPair(
+    final (color, backgroundColor, borderColor, titleColor) = Utils.adaptColorPair(
       exam.service.color,
       context.c,
     );

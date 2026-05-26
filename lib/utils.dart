@@ -12,33 +12,45 @@ class Utils {
     return value % 1 == 0 ? value.toInt().toString() : value.toStringAsFixed(2);
   }
 
-  static (Color color, Color backgroundColor, Color borderColor) adaptColorPair(
+  static (Color color, Color backgroundColor, Color borderColor, Color titleColor) adaptColorPair(
     int? colorValue,
     ColorScheme scheme,
   ) {
     if (colorValue == null) {
-      return (scheme.onSurface, scheme.surfaceContainerHigh, scheme.outlineVariant);
+      return (
+        scheme.onSurface,
+        scheme.surfaceContainerHigh,
+        scheme.outlineVariant,
+        scheme.onSurface,
+      );
     }
 
     final hsl = HSLColor.fromColor(Color(colorValue));
     final isLight = scheme.brightness == Brightness.light;
 
     final base = hsl
-        .withLightness(isLight ? 0.35 : 0.75)
+        .withLightness(isLight ? 0.40 : 0.70)
         .withSaturation(hsl.saturation.clamp(0.4, 1.0))
         .toColor();
 
-    final bg = hsl
-        .withLightness(isLight ? 0.65 : 0.20)
-        .withSaturation(hsl.saturation.clamp(0.2, 0.5))
+    final background = hsl
+        .withLightness(isLight ? 0.92 : 0.15)
+        .withSaturation(hsl.saturation.clamp(0.15, 0.4))
         .toColor();
 
     final border = hsl
-        .withLightness(isLight ? 0.50 : 0.30)
+        .withLightness(isLight ? 0.55 : 0.35)
         .withSaturation(hsl.saturation.clamp(0.2, 0.5))
         .toColor();
 
-    return (base, bg, border);
+    final bgHsl = HSLColor.fromColor(background);
+
+    final title = hsl
+        .withLightness(isLight ? 0.15 : 0.90)
+        .withSaturation(hsl.saturation.clamp(0.6, 1.0))
+        .toColor();
+
+    return (base, background, border, title);
   }
 
   static String getExamComment(BuildContext context, Exam exam) {
