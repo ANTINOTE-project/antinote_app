@@ -209,7 +209,10 @@ class _LatestWidget extends StatelessWidget {
           itemBuilder: (context, index) {
             final exam = exams[index];
 
-            final (color, bgColor) = Utils.adaptColorPair(exam.service.color, context.c);
+            final (color, backgroundColor, borderColor) = Utils.adaptColorPair(
+              exam.service.color,
+              context.c,
+            );
 
             final date = DateFormat("dd/MM/yyyy").format(exam.date);
             final title = Utils.getExamComment(context, exam);
@@ -217,7 +220,10 @@ class _LatestWidget extends StatelessWidget {
 
             return Pressable(
               child: Container(
-                decoration: BoxDecoration(borderRadius: BorderRadius.circular(16), color: bgColor),
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(16),
+                  color: backgroundColor,
+                ),
 
                 padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
                 margin: const EdgeInsets.only(left: 6),
@@ -331,7 +337,7 @@ class _ServiceWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final (color, bgColor) = Utils.adaptColorPair(service.color, context.c);
+    final (color, backgroundColor, borderColor) = Utils.adaptColorPair(service.color, context.c);
     final hasSelfAverage = service.selfAverage != null;
 
     return Padding(
@@ -339,7 +345,7 @@ class _ServiceWidget extends StatelessWidget {
 
       child: Container(
         decoration: BoxDecoration(
-          border: Border.all(color: bgColor),
+          border: Border.all(color: backgroundColor),
           borderRadius: BorderRadius.circular(16),
           color: context.c.surfaceContainerLow,
         ),
@@ -400,7 +406,10 @@ class _ExamWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final (color, backgroundColor) = Utils.adaptColorPair(exam.service.color, context.c);
+    final (color, backgroundColor, borderColor) = Utils.adaptColorPair(
+      exam.service.color,
+      context.c,
+    );
 
     final title = Utils.getExamComment(context, exam);
     final subtitle = exam.date.asRelativeDate(context);

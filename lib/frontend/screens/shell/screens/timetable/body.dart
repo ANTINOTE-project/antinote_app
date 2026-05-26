@@ -215,28 +215,27 @@ class _ClassWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     late final info = Utils.getInfoForClass(context, clazz);
 
-    final isLightTheme = context.c.brightness == .light;
-    final colorValue = info.accentColor;
-
-    final (color, backgroundColor) = Utils.adaptColorPair(colorValue, context.c);
+    final (color, backgroundColor, borderColor) = Utils.adaptColorPair(info.accentColor, context.c);
 
     final difference = info.end.difference(info.start);
     final duration =
         "${difference.inHours > 0 ? "${difference.inHours}h " : ""}${difference.inMinutes % 60} min";
 
     final double bannerHeight = info.cancelled ? 30 : 0;
-    final double cardHeight = 100 - bannerHeight;
+    final double cardHeight = 95 - bannerHeight;
 
     return Pressable(
       child: Stack(
         alignment: .bottomCenter,
+        clipBehavior: .none,
 
         children: [
           if (info.cancelled)
             Container(
               decoration: BoxDecoration(
-                color: context.c.errorContainer,
+                border: .all(color: context.c.error.withAlpha(125), strokeAlign: 1),
                 borderRadius: const .all(.circular(20)),
+                color: context.c.errorContainer,
               ),
 
               padding: const .symmetric(horizontal: 12, vertical: 4),
@@ -246,6 +245,10 @@ class _ClassWidget extends StatelessWidget {
 
               child: Text(
                 info.status ?? "",
+
+                overflow: .ellipsis,
+                maxLines: 1,
+
                 style: TextStyle(fontSize: 15, fontWeight: .w900, color: context.c.error),
               ),
             ),
@@ -253,6 +256,7 @@ class _ClassWidget extends StatelessWidget {
           Container(
             decoration: BoxDecoration(
               color: info.cancelled ? context.c.outlineVariant : backgroundColor,
+              border: info.cancelled ? null : .all(color: borderColor),
               borderRadius: const .all(.circular(20)),
             ),
 
@@ -266,6 +270,9 @@ class _ClassWidget extends StatelessWidget {
               children: [
                 Text(
                   info.baseTitle,
+
+                  overflow: .ellipsis,
+                  maxLines: 1,
 
                   style: TextStyle(
                     color: info.cancelled ? context.c.outline : context.c.onPrimary,

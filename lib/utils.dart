@@ -12,8 +12,13 @@ class Utils {
     return value % 1 == 0 ? value.toInt().toString() : value.toStringAsFixed(2);
   }
 
-  static (Color color, Color backgroundColor) adaptColorPair(int? colorValue, ColorScheme scheme) {
-    if (colorValue == null) return (scheme.onSurface, scheme.surfaceContainerHigh);
+  static (Color color, Color backgroundColor, Color borderColor) adaptColorPair(
+    int? colorValue,
+    ColorScheme scheme,
+  ) {
+    if (colorValue == null) {
+      return (scheme.onSurface, scheme.surfaceContainerHigh, scheme.outlineVariant);
+    }
 
     final hsl = HSLColor.fromColor(Color(colorValue));
     final isLight = scheme.brightness == Brightness.light;
@@ -28,7 +33,12 @@ class Utils {
         .withSaturation(hsl.saturation.clamp(0.2, 0.5))
         .toColor();
 
-    return (base, bg);
+    final border = hsl
+        .withLightness(isLight ? 0.50 : 0.30)
+        .withSaturation(hsl.saturation.clamp(0.2, 0.5))
+        .toColor();
+
+    return (base, bg, border);
   }
 
   static String getExamComment(BuildContext context, Exam exam) {
