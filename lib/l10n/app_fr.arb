@@ -32,9 +32,10 @@
   "home": "Accueil",
   "timetable": "Cours",
   "grades": "Notes",
-  "report": "Bulletin",
+  "homeworks": "Devoirs",
   "communication": "Infos",
 
+  "report": "Bulletin",
   "latestGrades": "Dernières notes",
   "services": "Matières",
   "gradeOf": "Note de {service}",

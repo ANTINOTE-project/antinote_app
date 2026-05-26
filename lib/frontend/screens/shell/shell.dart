@@ -49,6 +49,13 @@ class _AppShellState extends State<AppShell> {
       associatedTabIds: [13, 41, 198],
     ),
     (
+      icon: HugeIconsSolid.task01,
+      label: context.l10n.homeworks,
+      screen: const Placeholder(),
+      category: "homeworks",
+      associatedTabIds: [],
+    ),
+    (
       icon: HugeIconsSolid.inbox,
       label: context.l10n.communication,
       screen: const CommunicationScreen(),
@@ -105,8 +112,9 @@ class _AppShellState extends State<AppShell> {
     final screenSize = MediaQuery.sizeOf(context);
 
     return StreamBuilder(
-      stream: notificationStream,
       initialData: defaultNotifications,
+      stream: notificationStream,
+
       builder: (context, snapshot) {
         final notifications = snapshot.data?.notifications ?? [];
 

@@ -232,17 +232,23 @@ abstract class AppLocalizations {
   /// **'Notes'**
   String get grades;
 
-  /// No description provided for @report.
+  /// No description provided for @homeworks.
   ///
   /// In fr, this message translates to:
-  /// **'Bulletin'**
-  String get report;
+  /// **'Devoirs'**
+  String get homeworks;
 
   /// No description provided for @communication.
   ///
   /// In fr, this message translates to:
   /// **'Infos'**
   String get communication;
+
+  /// No description provided for @report.
+  ///
+  /// In fr, this message translates to:
+  /// **'Bulletin'**
+  String get report;
 
   /// No description provided for @latestGrades.
   ///

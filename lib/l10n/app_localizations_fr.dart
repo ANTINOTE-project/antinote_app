@@ -81,10 +81,13 @@ class AppLocalizationsFr extends AppLocalizations {
   String get grades => 'Notes';
 
   @override
-  String get report => 'Bulletin';
+  String get homeworks => 'Devoirs';
 
   @override
   String get communication => 'Infos';
+
+  @override
+  String get report => 'Bulletin';
 
   @override
   String get latestGrades => 'Dernières notes';
