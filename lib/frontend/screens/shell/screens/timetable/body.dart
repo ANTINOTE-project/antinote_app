@@ -90,6 +90,10 @@ class TimetableBody extends StatelessWidget {
       ..clear()
       ..addAll(cleaned);
 
+    while (slots.isNotEmpty && slots.first.classes.isEmpty) {
+      slots.removeAt(0);
+    }
+
     while (slots.isNotEmpty && slots.last.classes.isEmpty) {
       slots.removeLast();
     }
