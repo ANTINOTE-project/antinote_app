@@ -286,6 +286,18 @@ abstract class AppLocalizations {
   /// **'Tu n\'as pas de cours,\nprofite bien !'**
   String get noCourseToday;
 
+  /// No description provided for @holidayDay.
+  ///
+  /// In fr, this message translates to:
+  /// **'C\'est les vacances,\n amuse toi bien !'**
+  String get holidayDay;
+
+  /// No description provided for @weekend.
+  ///
+  /// In fr, this message translates to:
+  /// **'C\'est le weekend !'**
+  String get weekend;
+
   /// No description provided for @cancelled.
   ///
   /// In fr, this message translates to:

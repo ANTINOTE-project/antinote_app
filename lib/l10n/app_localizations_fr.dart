@@ -110,6 +110,12 @@ class AppLocalizationsFr extends AppLocalizations {
   String get noCourseToday => 'Tu n\'as pas de cours,\nprofite bien !';
 
   @override
+  String get holidayDay => 'C\'est les vacances,\n amuse toi bien !';
+
+  @override
+  String get weekend => 'C\'est le weekend !';
+
+  @override
   String get cancelled => 'ANNULÉ';
 
   @override

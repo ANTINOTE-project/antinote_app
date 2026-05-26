@@ -20,13 +20,43 @@ typedef ClassInfo = ({
   bool isExam,
 });
 
-class TimetableBody extends StatelessWidget {
+class TimetableBody extends StatefulWidget {
+  final List<int> businessDays;
+  final List<Holiday> holidays;
   final List<DateTime> days;
   final Classes classes;
 
-  const TimetableBody({super.key, required this.days, required this.classes});
+  final int lunchStartSlot;
+  final int lunchEndSlot;
 
-  Map<(DateTime, DateTime), List<Class>> _groupByTime(List<Class> classes) {
+  const TimetableBody({
+    super.key,
+
+    required this.businessDays,
+    required this.holidays,
+    required this.days,
+    required this.classes,
+
+    required this.lunchStartSlot,
+    required this.lunchEndSlot,
+  });
+
+  @override
+  State<TimetableBody> createState() => _TimetableBodyState();
+}
+
+class _TimetableBodyState extends State<TimetableBody> {
+  static Holiday? _getHoliday(List<Holiday> holidays, DateTime day) {
+    for (final holiday in holidays) {
+      if (holiday.contains(day)) {
+        return holiday;
+      }
+    }
+
+    return null;
+  }
+
+  static Map<(DateTime, DateTime), List<Class>> _groupByTime(List<Class> classes) {
     final Map<(DateTime, DateTime), List<Class>> grouped = {};
 
     for (final c in classes) {
@@ -41,34 +71,30 @@ class TimetableBody extends StatelessWidget {
   Widget build(BuildContext context) {
     return SliverCrossAxisGroup(
       slivers: [
-        for (final day in days)
+        for (final day in widget.days)
           ValueListenableBuilder(
-            valueListenable: classes[day]!,
+            valueListenable: widget.classes[day]!,
 
             builder: (context, dayClasses, child) {
+              final isBusinessDay = widget.businessDays.contains(day.weekday);
+              final holiday = _getHoliday(widget.holidays, day);
+
+              if (!isBusinessDay) {
+                return _InfoTextIcon(icon: HugeIconsSolid.calendar04, label: context.l10n.weekend);
+              }
+
+              if (holiday != null) {
+                return _InfoTextIcon(icon: HugeIconsSolid.beach, label: holiday.name);
+              }
+
               if (dayClasses == null) {
                 return const SliverFillRemaining(child: Center(child: CircularProgressIndicator()));
               }
 
               if (dayClasses.isEmpty) {
-                return SliverFillRemaining(
-                  child: Center(
-                    child: Column(
-                      mainAxisAlignment: .center,
-                      spacing: 6,
-
-                      children: [
-                        Icon(HugeIconsSolid.course, size: 44, color: context.c.outline),
-
-                        Text(
-                          context.l10n.noCourseToday,
-
-                          style: TextStyle(fontWeight: .bold, color: context.c.outline),
-                          textAlign: .center,
-                        ),
-                      ],
-                    ),
-                  ),
+                return _InfoTextIcon(
+                  icon: HugeIconsSolid.course,
+                  label: context.l10n.noCourseToday,
                 );
               }
 
@@ -100,6 +126,36 @@ class TimetableBody extends StatelessWidget {
             },
           ),
       ],
+    );
+  }
+}
+
+class _InfoTextIcon extends StatelessWidget {
+  final IconData icon;
+  final String label;
+
+  const _InfoTextIcon({required this.icon, required this.label});
+
+  @override
+  Widget build(BuildContext context) {
+    return SliverFillRemaining(
+      child: Center(
+        child: Column(
+          mainAxisAlignment: .center,
+          spacing: 6,
+
+          children: [
+            Icon(icon, size: 44, color: context.c.outline),
+
+            Text(
+              label,
+
+              style: TextStyle(fontWeight: .bold, color: context.c.outline),
+              textAlign: .center,
+            ),
+          ],
+        ),
+      ),
     );
   }
 }
@@ -260,13 +316,32 @@ class _ClassWidget extends StatelessWidget {
               height: cardHeight + bannerHeight,
               width: .infinity,
 
-              child: Text(
-                info.status ?? "",
+              child: Column(
+                mainAxisSize: .min,
 
-                overflow: .ellipsis,
-                maxLines: 1,
+                children: [
+                  Row(
+                    mainAxisSize: .min,
+                    spacing: 8,
 
-                style: TextStyle(fontSize: 15, fontWeight: .w900, color: context.c.error),
+                    children: [
+                      Icon(HugeIconsSolid.informationCircle, size: 18, color: context.c.error),
+
+                      Expanded(
+                        child: Text(
+                          info.status ?? "",
+
+                          overflow: .ellipsis,
+                          maxLines: 1,
+
+                          style: TextStyle(fontSize: 15, fontWeight: .w900, color: context.c.error),
+                        ),
+                      ),
+                    ],
+                  ),
+
+                  SizedBox(height: cardHeight - cancelledBorder.width),
+                ],
               ),
             ),
 

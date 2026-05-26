@@ -22,7 +22,12 @@ class TimetableScreen extends StatefulWidget {
 class _TimetableScreenState extends State<TimetableScreen> with ScreenMixin<TimetableScreen> {
   late SpecificInstanceParameters scheduleDisplayData;
   late List<DateRange> currentGroups;
+
+  List<int> _businessDays = [];
+  List<Holiday> _holidays = [];
   final Classes _classes = {};
+  int _lunchStartSlot = 0;
+  int _lunchEndSlot = 0;
 
   PageController? pageController;
 
@@ -120,7 +125,14 @@ class _TimetableScreenState extends State<TimetableScreen> with ScreenMixin<Time
                   lastDate: scheduleDisplayData.lastDate,
                 ),
 
-                TimetableBody(days: days, classes: _classes),
+                TimetableBody(
+                  businessDays: _businessDays,
+                  holidays: _holidays,
+                  days: days,
+                  classes: _classes,
+                  lunchStartSlot: _lunchStartSlot,
+                  lunchEndSlot: _lunchEndSlot,
+                ),
 
                 SliverPadding(
                   padding: EdgeInsets.only(bottom: MediaQuery.of(context).padding.bottom + 10),
@@ -145,6 +157,11 @@ class _TimetableScreenState extends State<TimetableScreen> with ScreenMixin<Time
   FutureOr<void> loadActiveDataFromSession(PronoteSession session) async {
     scheduleDisplayData = session.instance;
 
+    _businessDays = scheduleDisplayData.businessDays;
+    _holidays = scheduleDisplayData.holidays;
+    _lunchStartSlot = scheduleDisplayData.lunchStartSlot;
+    _lunchEndSlot = scheduleDisplayData.lunchEndSlot;
+
     final days = DateRange(
       start: scheduleDisplayData.firstDate,
       end: scheduleDisplayData.lastDate,
@@ -156,9 +173,9 @@ class _TimetableScreenState extends State<TimetableScreen> with ScreenMixin<Time
     final int currentGroupIndex;
 
     if (pageController == null || !pageController!.hasClients || pageController?.page == null) {
-      currentGroupIndex = currentGroups.indexWhere(
-        (element) => element.contains(scheduleDisplayData.nextBusinessDay),
-      );
+      currentGroupIndex = currentGroups.indexWhere((element) {
+        return element.contains(scheduleDisplayData.nextBusinessDay);
+      });
     } else {
       currentGroupIndex = pageController!.page!.round();
     }

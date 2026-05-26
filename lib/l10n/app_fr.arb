@@ -43,6 +43,8 @@
   "averageClass": "Moy. classe",
 
   "noCourseToday": "Tu n'as pas de cours,\nprofite bien !",
+  "holidayDay": "C'est les vacances,\n amuse toi bien !",
+  "weekend": "C'est le weekend !",
   "cancelled": "ANNULÉ",
   "detention": "Retenue",
   "noSubject": "Matière inconnue",
