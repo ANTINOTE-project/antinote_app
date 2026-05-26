@@ -221,6 +221,13 @@ class _ClassWidget extends StatelessWidget {
     final duration =
         "${difference.inHours > 0 ? "${difference.inHours}h " : ""}${difference.inMinutes % 60} min";
 
+    final cancelledBorder = BorderSide(color: context.c.error.withAlpha(125));
+    final cancelledPadding = EdgeInsets.only(
+      left: cancelledBorder.width,
+      right: cancelledBorder.width,
+      bottom: cancelledBorder.width,
+    );
+
     final double bannerHeight = info.cancelled ? 30 : 0;
     final double cardHeight = 95 - bannerHeight;
 
@@ -233,15 +240,15 @@ class _ClassWidget extends StatelessWidget {
           if (info.cancelled)
             Container(
               decoration: BoxDecoration(
-                border: .all(color: context.c.error.withAlpha(125), strokeAlign: 1),
                 borderRadius: const .all(.circular(20)),
+                border: .fromBorderSide(cancelledBorder),
                 color: context.c.errorContainer,
               ),
 
               padding: const .symmetric(horizontal: 12, vertical: 4),
 
-              width: .infinity,
               height: cardHeight + bannerHeight,
+              width: .infinity,
 
               child: Text(
                 info.status ?? "",
@@ -253,79 +260,85 @@ class _ClassWidget extends StatelessWidget {
               ),
             ),
 
-          Container(
-            decoration: BoxDecoration(
-              color: info.cancelled ? context.c.outlineVariant : backgroundColor,
-              border: info.cancelled ? null : .all(color: borderColor),
-              borderRadius: const .all(.circular(20)),
-            ),
+          Padding(
+            padding: info.cancelled ? cancelledPadding : .zero,
 
-            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-            height: cardHeight,
+            child: Container(
+              decoration: BoxDecoration(
+                color: info.cancelled ? context.c.outlineVariant : backgroundColor,
+                border: info.cancelled ? null : .all(color: borderColor),
+                borderRadius: const .all(.circular(20)),
+              ),
 
-            child: Column(
-              crossAxisAlignment: .start,
-              spacing: 4,
+              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+              height: cardHeight,
 
-              children: [
-                Text(
-                  info.baseTitle,
+              child: Column(
+                crossAxisAlignment: .start,
+                spacing: 4,
 
-                  overflow: .ellipsis,
-                  maxLines: 1,
+                children: [
+                  Text(
+                    info.baseTitle,
 
-                  style: TextStyle(
-                    color: info.cancelled ? context.c.outline : context.c.onPrimary,
-                    fontSize: 18,
-                    fontWeight: .w800,
+                    overflow: .ellipsis,
+                    maxLines: 1,
+
+                    style: TextStyle(
+                      color: info.cancelled ? context.c.outline : context.c.onPrimary,
+                      fontSize: 18,
+                      fontWeight: .w800,
+                    ),
                   ),
-                ),
 
-                Expanded(
-                  child: Row(
-                    spacing: 6,
+                  Expanded(
+                    child: Row(
+                      spacing: 6,
 
-                    children: [
-                      if (info.location != null) ...[
-                        _InfoWidget(
-                          cancelled: info.cancelled,
-                          icon: HugeIconsSolid.location01,
-                          label: info.location ?? "",
-                        ),
+                      children: [
+                        if (info.location != null) ...[
+                          _InfoWidget(
+                            cancelled: info.cancelled,
+                            icon: HugeIconsSolid.location01,
+                            label: info.location ?? "",
+                          ),
 
-                        SizedBox(
-                          height: 20,
+                          SizedBox(
+                            height: 20,
 
-                          child: VerticalDivider(
-                            color: info.cancelled ? context.c.outline : context.c.onSurfaceVariant,
-                            radius: .circular(999),
-                            thickness: 2,
-                            width: 4,
+                            child: VerticalDivider(
+                              color: info.cancelled
+                                  ? context.c.outline
+                                  : context.c.onSurfaceVariant,
+                              radius: .circular(999),
+                              thickness: 2,
+                              width: 4,
+                            ),
+                          ),
+                        ],
+
+                        Expanded(
+                          child: _InfoWidget(
+                            cancelled: info.cancelled,
+                            icon: HugeIconsSolid.teacher,
+                            label: info.attendants,
                           ),
                         ),
                       ],
-
-                      Expanded(
-                        child: _InfoWidget(
-                          cancelled: info.cancelled,
-                          icon: HugeIconsSolid.teacher,
-                          label: info.attendants,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-
-                if (!info.cancelled)
-                  Text(
-                    duration,
-                    style: TextStyle(
-                      color: context.c.onSurfaceVariant,
-                      fontSize: 14,
-                      fontWeight: .w900,
                     ),
                   ),
-              ],
+
+                  if (!info.cancelled)
+                    Text(
+                      duration,
+                      style: TextStyle(
+                        color: context.c.onSurfaceVariant,
+                        fontSize: 14,
+                        fontWeight: .w900,
+                      ),
+                    ),
+                ],
+              ),
             ),
           ),
         ],
