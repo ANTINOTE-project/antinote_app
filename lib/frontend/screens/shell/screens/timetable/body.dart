@@ -73,6 +73,16 @@ class TimetableBody extends StatelessWidget {
               }
 
               final grouped = _groupByTime(dayClasses);
+
+              for (final entry in grouped.values) {
+                entry.sort((a, b) {
+                  final aCancelled = a is Lesson && (a.canceled || a.exemptedLabel != null);
+                  final bCancelled = b is Lesson && (b.canceled || b.exemptedLabel != null);
+
+                  return aCancelled ? 1 : (bCancelled ? -1 : 0);
+                });
+              }
+
               final entries = grouped.entries.toList();
 
               return SliverPadding(
@@ -168,7 +178,7 @@ class _TimeRowState extends State<_TimeRow> {
                   : _ClassWidget(clazz: _currentClass),
             ),
 
-            if (widget.classes.length > 1)
+            if (_hasMultipleCourses)
               Pressable(
                 onPressed: () {
                   setState(() {
