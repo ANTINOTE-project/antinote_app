@@ -3,8 +3,7 @@ import "package:antinote_app/frontend/widgets/pressable.dart";
 import "package:flutter/material.dart";
 
 class ListWidget<T> extends StatelessWidget {
-  final Widget Function(BuildContext context, T item, BorderRadius borderRadius)
-  itemBuilder;
+  final Widget Function(BuildContext context, T item, BorderRadius borderRadius) itemBuilder;
   final List<T> items;
 
   const ListWidget({super.key, required this.items, required this.itemBuilder});
@@ -98,15 +97,14 @@ class ItemWidget extends StatelessWidget {
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
+                spacing: 2,
 
                 children: [
                   DefaultTextStyle(
                     style: TextStyle(
                       fontSize: 16,
-                      fontWeight: .w800,
-                      color: backgroundColor == null
-                          ? context.c.onPrimaryContainer
-                          : null,
+                      fontWeight: .w900,
+                      color: backgroundColor == null ? context.c.onPrimaryContainer : null,
                     ),
                     maxLines: 1,
                     overflow: .ellipsis,
@@ -117,10 +115,8 @@ class ItemWidget extends StatelessWidget {
                     DefaultTextStyle(
                       style: TextStyle(
                         fontSize: 12,
-                        fontWeight: .w600,
-                        color: backgroundColor == null
-                            ? context.c.onPrimaryContainer
-                            : null,
+                        fontWeight: .w800,
+                        color: backgroundColor == null ? context.c.onPrimaryContainer : null,
                       ),
                       child: subtitle!,
                     ),

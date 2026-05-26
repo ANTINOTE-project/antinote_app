@@ -410,7 +410,7 @@ class _ExamWidget extends StatelessWidget {
       backgroundColor: backgroundColor,
 
       title: Text(title),
-      subtitle: Text(subtitle),
+      subtitle: Text(subtitle, style: TextStyle(color: context.c.onSurfaceVariant)),
 
       trailing: Text.rich(
         TextSpan(
