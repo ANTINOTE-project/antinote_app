@@ -37,45 +37,30 @@ class _GradesListState extends State<GradesList> with ScreenMixin<GradesList> {
   }
 
   @override
-  Widget buildLoaded(
-    BuildContext context,
-    RefreshIndicatorBuilder buildRefreshIndicator,
-  ) {
-    final ServiceGradeList organizedData = {
-      for (final service in _data.services!) service: [],
-    };
+  Widget buildLoaded(BuildContext context, RefreshIndicatorBuilder buildRefreshIndicator) {
+    final ServiceGradeList organizedData = {for (final service in _data.services!) service: []};
 
     for (final exam in _data.exams) {
-      final service = organizedData.keys.firstWhere(
-        (element) => element.id == exam.service.id,
-      );
+      final service = organizedData.keys.firstWhere((element) => element.id == exam.service.id);
       organizedData[service]!.add(exam);
     }
 
     final List<Exam> orderedExams = List.from(_data.exams);
-    orderedExams.sort((a, b) => a.date.compareTo(b.date));
+    orderedExams.sort((a, b) => b.date.compareTo(a.date));
 
     return buildRefreshIndicator(
       child: CustomScrollView(
         slivers: [
           _AverageWidget(data: _data),
 
-          _SectionWidget(
-            label: context.l10n.latestGrades,
-            icon: HugeIconsSolid.note,
-          ),
+          _SectionWidget(label: context.l10n.latestGrades, icon: HugeIconsSolid.note),
           _LatestWidget(exams: orderedExams),
 
-          _SectionWidget(
-            label: context.l10n.services,
-            icon: HugeIconsSolid.gitbook,
-          ),
+          _SectionWidget(label: context.l10n.services, icon: HugeIconsSolid.gitbook),
           _SubjectsWidget(data: organizedData),
 
           SliverPadding(
-            padding: EdgeInsets.only(
-              bottom: MediaQuery.of(context).padding.bottom + 10,
-            ),
+            padding: EdgeInsets.only(bottom: MediaQuery.of(context).padding.bottom + 10),
           ),
         ],
       ),
@@ -83,22 +68,15 @@ class _GradesListState extends State<GradesList> with ScreenMixin<GradesList> {
   }
 
   @override
-  Widget buildLoading(
-    BuildContext context,
-    RefreshIndicatorBuilder buildRefreshIndicator,
-  ) {
-    return buildRefreshIndicator(
-      child: const Center(child: LoadingWidget(size: 30)),
-    );
+  Widget buildLoading(BuildContext context, RefreshIndicatorBuilder buildRefreshIndicator) {
+    return buildRefreshIndicator(child: const Center(child: LoadingWidget(size: 30)));
   }
 
   @override
   FutureOr<void> loadActiveDataFromSession(PronoteSession session) async {
     await session.ensurePage(198);
 
-    final period = session.instance.periods.firstWhere(
-      (e) => e.visualId == widget.periodId,
-    );
+    final period = session.instance.periods.firstWhere((e) => e.visualId == widget.periodId);
     _data = await session.access(LatestGradesPageAccessor(period: period));
   }
 }
@@ -231,10 +209,7 @@ class _LatestWidget extends StatelessWidget {
           itemBuilder: (context, index) {
             final exam = exams[index];
 
-            final (color, bgColor) = Utils.adaptColorPair(
-              exam.service.color,
-              context.c,
-            );
+            final (color, bgColor) = Utils.adaptColorPair(exam.service.color, context.c);
 
             final date = DateFormat("dd/MM/yyyy").format(exam.date);
             final title = Utils.getExamComment(context, exam);
@@ -242,15 +217,9 @@ class _LatestWidget extends StatelessWidget {
 
             return Pressable(
               child: Container(
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(16),
-                  color: bgColor,
-                ),
+                decoration: BoxDecoration(borderRadius: BorderRadius.circular(16), color: bgColor),
 
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 10,
-                  vertical: 6,
-                ),
+                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
                 margin: const EdgeInsets.only(left: 6),
 
                 width: 250,
@@ -266,11 +235,7 @@ class _LatestWidget extends StatelessWidget {
                       overflow: .ellipsis,
                       maxLines: 1,
 
-                      style: TextStyle(
-                        fontSize: 20,
-                        fontWeight: .bold,
-                        color: color,
-                      ),
+                      style: TextStyle(fontSize: 20, fontWeight: .bold, color: color),
                     ),
 
                     Expanded(
@@ -305,8 +270,7 @@ class _LatestWidget extends StatelessWidget {
                               const WidgetSpan(child: SizedBox(width: 2)),
 
                               TextSpan(
-                                text:
-                                    "/${Utils.formatNumber(exam.theoreticalMaxGrade.value)}",
+                                text: "/${Utils.formatNumber(exam.theoreticalMaxGrade.value)}",
                                 style: TextStyle(
                                   color: context.c.onSurfaceVariant,
                                   fontSize: 15,
@@ -393,11 +357,7 @@ class _ServiceWidget extends StatelessWidget {
                     service.name,
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
-                    style: TextStyle(
-                      fontSize: 21,
-                      fontWeight: FontWeight.bold,
-                      color: color,
-                    ),
+                    style: TextStyle(fontSize: 21, fontWeight: FontWeight.bold, color: color),
                   ),
                 ),
 
@@ -407,18 +367,13 @@ class _ServiceWidget extends StatelessWidget {
                       children: [
                         TextSpan(
                           text: Utils.formatNumber(service.selfAverage!.value),
-                          style: TextStyle(
-                            color: color,
-                            fontSize: 22,
-                            fontWeight: FontWeight.w900,
-                          ),
+                          style: TextStyle(color: color, fontSize: 22, fontWeight: FontWeight.w900),
                         ),
 
                         const WidgetSpan(child: SizedBox(width: 2)),
 
                         TextSpan(
-                          text:
-                              "/${Utils.formatNumber(service.theoreticalMaxGrade!.value)}",
+                          text: "/${Utils.formatNumber(service.theoreticalMaxGrade!.value)}",
                           style: TextStyle(
                             color: context.c.onSurfaceVariant,
                             fontSize: 15,
@@ -445,10 +400,7 @@ class _ExamWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final (color, bgColor) = Utils.adaptColorPair(
-      exam.service.color,
-      context.c,
-    );
+    final (color, bgColor) = Utils.adaptColorPair(exam.service.color, context.c);
 
     final title = Utils.getExamComment(context, exam);
     final subtitle = exam.date.asRelativeDate(context);
@@ -465,11 +417,7 @@ class _ExamWidget extends StatelessWidget {
           children: [
             TextSpan(
               text: Utils.formatNumber(exam.selfGrade.value),
-              style: TextStyle(
-                color: color,
-                fontSize: 19,
-                fontWeight: FontWeight.w900,
-              ),
+              style: TextStyle(color: color, fontSize: 19, fontWeight: FontWeight.w900),
             ),
 
             const WidgetSpan(child: SizedBox(width: 2)),
