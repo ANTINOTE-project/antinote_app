@@ -216,9 +216,9 @@ class _ClassWidget extends StatelessWidget {
     late final info = Utils.getInfoForClass(context, clazz);
 
     final isLightTheme = context.c.brightness == .light;
-    final colorValue = info.accentColor?.classAccentToBackgroundColor(isLightTheme: isLightTheme);
+    final colorValue = info.accentColor;
 
-    final color = colorValue != null ? Color(colorValue) : null;
+    final (color, bgColor) = Utils.adaptColorPair(colorValue, context.c);
 
     final difference = info.end.difference(info.start);
     final duration =
@@ -252,7 +252,7 @@ class _ClassWidget extends StatelessWidget {
 
           Container(
             decoration: BoxDecoration(
-              color: info.cancelled ? context.c.outlineVariant : color,
+              color: info.cancelled ? context.c.outlineVariant : bgColor,
               borderRadius: const .all(.circular(20)),
             ),
 

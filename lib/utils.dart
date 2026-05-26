@@ -23,7 +23,12 @@ class Utils {
         .withSaturation(hsl.saturation.clamp(0.4, 1.0))
         .toColor();
 
-    return (base, base.withValues(alpha: .15));
+    final bg = hsl
+        .withLightness(isLight ? 0.65 : 0.20)
+        .withSaturation(hsl.saturation.clamp(0.2, 0.5))
+        .toColor();
+
+    return (base, bg);
   }
 
   static String getExamComment(BuildContext context, Exam exam) {
