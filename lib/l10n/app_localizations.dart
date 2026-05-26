@@ -298,6 +298,18 @@ abstract class AppLocalizations {
   /// **'C\'est le weekend !'**
   String get weekend;
 
+  /// No description provided for @lunch.
+  ///
+  /// In fr, this message translates to:
+  /// **'Bon appétit !'**
+  String get lunch;
+
+  /// No description provided for @gap.
+  ///
+  /// In fr, this message translates to:
+  /// **'{duration} de libre'**
+  String gap(Object duration);
+
   /// No description provided for @cancelled.
   ///
   /// In fr, this message translates to:

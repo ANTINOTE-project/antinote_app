@@ -131,6 +131,10 @@ class Utils {
         isExam: false,
       ),
   };
+
+  static String formatDuration(Duration d) {
+    return "${d.inHours > 0 ? "${d.inHours}h " : ""}${d.inMinutes % 60} min";
+  }
 }
 
 class ReversedCurve extends Curve {

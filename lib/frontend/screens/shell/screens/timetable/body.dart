@@ -153,6 +153,10 @@ class TimetableBody extends StatelessWidget {
                     if (slot.classes.isEmpty) {
                       final nextSlot = index + 1 < slots.length ? slots[index + 1] : null;
 
+                      final duration = nextSlot != null
+                          ? nextSlot.start.difference(slot.start)
+                          : slot.end.difference(slot.start);
+
                       if (nextSlot == null || nextSlot.classes.isEmpty) {
                         return const SizedBox.shrink();
                       }
@@ -160,7 +164,7 @@ class TimetableBody extends StatelessWidget {
                       final isLunch =
                           slot.index >= data.lunchStartSlot && slot.index <= data.lunchEndSlot;
 
-                      return _Gap(isLunch: isLunch);
+                      return _Gap(isLunch: isLunch, duration: duration);
                     }
 
                     return _TimeRow(start: slot.start, end: slot.end, classes: slot.classes);
@@ -214,15 +218,52 @@ class _InfoTextIcon extends StatelessWidget {
 }
 
 class _Gap extends StatelessWidget {
+  final Duration duration;
   final bool isLunch;
 
-  const _Gap({required this.isLunch});
+  const _Gap({required this.isLunch, required this.duration});
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsetsGeometry.all(12),
-      child: Text(isLunch ? "Midi" : "Trou"),
+    return Row(
+      spacing: 10,
+
+      children: [
+        const SizedBox(width: 56),
+
+        Expanded(
+          child: Padding(
+            padding: const .only(bottom: 12, top: 4),
+
+            child: Container(
+              decoration: BoxDecoration(
+                color: context.c.outlineVariant,
+                border: .all(color: context.c.outline),
+                borderRadius: const .all(.circular(20)),
+              ),
+
+              padding: const .all(12),
+
+              child: Row(
+                spacing: 8,
+
+                children: [
+                  Icon(isLunch ? HugeIconsSolid.servingFood : HugeIconsSolid.clock01),
+
+                  Expanded(
+                    child: Text(
+                      isLunch
+                          ? context.l10n.lunch
+                          : context.l10n.gap(Utils.formatDuration(duration)),
+                      style: const TextStyle(fontSize: 16, fontWeight: .w900),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ),
+      ],
     );
   }
 }
@@ -354,8 +395,7 @@ class _ClassWidget extends StatelessWidget {
     );
 
     final difference = info.end.difference(info.start);
-    final duration =
-        "${difference.inHours > 0 ? "${difference.inHours}h " : ""}${difference.inMinutes % 60} min";
+    final duration = Utils.formatDuration(difference);
 
     final cancelledBorder = BorderSide(color: context.c.error.withAlpha(125));
     final cancelledPadding = EdgeInsets.only(

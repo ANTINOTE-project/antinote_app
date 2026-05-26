@@ -45,6 +45,8 @@
   "noCourseToday": "Tu n'as pas de cours,\nprofite bien !",
   "holidayDay": "C'est les vacances,\n amuse toi bien !",
   "weekend": "C'est le weekend !",
+  "lunch": "Bon appétit !",
+  "gap": "{duration} de libre",
   "cancelled": "ANNULÉ",
   "detention": "Retenue",
   "noSubject": "Matière inconnue",

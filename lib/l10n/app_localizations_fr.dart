@@ -116,6 +116,14 @@ class AppLocalizationsFr extends AppLocalizations {
   String get weekend => 'C\'est le weekend !';
 
   @override
+  String get lunch => 'Bon appétit !';
+
+  @override
+  String gap(Object duration) {
+    return '$duration de libre';
+  }
+
+  @override
   String get cancelled => 'ANNULÉ';
 
   @override
