@@ -400,14 +400,14 @@ class _ExamWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final (color, bgColor) = Utils.adaptColorPair(exam.service.color, context.c);
+    final (color, backgroundColor) = Utils.adaptColorPair(exam.service.color, context.c);
 
     final title = Utils.getExamComment(context, exam);
     final subtitle = exam.date.asRelativeDate(context);
 
     return ItemWidget(
       borderRadius: borderRadius,
-      backgroundColor: bgColor,
+      backgroundColor: backgroundColor,
 
       title: Text(title),
       subtitle: Text(subtitle),

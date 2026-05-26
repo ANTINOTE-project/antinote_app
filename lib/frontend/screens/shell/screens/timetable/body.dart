@@ -218,7 +218,7 @@ class _ClassWidget extends StatelessWidget {
     final isLightTheme = context.c.brightness == .light;
     final colorValue = info.accentColor;
 
-    final (color, bgColor) = Utils.adaptColorPair(colorValue, context.c);
+    final (color, backgroundColor) = Utils.adaptColorPair(colorValue, context.c);
 
     final difference = info.end.difference(info.start);
     final duration =
@@ -252,7 +252,7 @@ class _ClassWidget extends StatelessWidget {
 
           Container(
             decoration: BoxDecoration(
-              color: info.cancelled ? context.c.outlineVariant : bgColor,
+              color: info.cancelled ? context.c.outlineVariant : backgroundColor,
               borderRadius: const .all(.circular(20)),
             ),
 

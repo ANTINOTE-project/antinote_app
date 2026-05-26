@@ -12,8 +12,8 @@ class Utils {
     return value % 1 == 0 ? value.toInt().toString() : value.toStringAsFixed(2);
   }
 
-  static (Color, Color) adaptColorPair(int? colorValue, ColorScheme scheme) {
-    if (colorValue == null) return (scheme.surfaceContainerHigh, scheme.surfaceContainerHigh);
+  static (Color color, Color backgroundColor) adaptColorPair(int? colorValue, ColorScheme scheme) {
+    if (colorValue == null) return (scheme.onSurface, scheme.surfaceContainerHigh);
 
     final hsl = HSLColor.fromColor(Color(colorValue));
     final isLight = scheme.brightness == Brightness.light;
