@@ -16,11 +16,6 @@ import "package:intl/intl.dart";
 typedef ServiceGradeList = Map<Service, List<Exam>>;
 
 Future<void> showExamDetails(BuildContext context, Exam exam) async {
-  final (color, backgroundColor, borderColor, titleColor, subtitleColor) = Utils.adaptColorPair(
-    exam.service.color,
-    context.c,
-  );
-
   final title = Utils.getExamComment(context, exam);
   final subtitle = exam.date.asRelativeDate(context);
 
@@ -43,8 +38,16 @@ Future<void> showExamDetails(BuildContext context, Exam exam) async {
     if (exam.maxGrade != null)
       (
         label: context.l10n.bestGrade,
-        icon: HugeIconsSolid.medalFirstPlace,
+        icon: HugeIconsSolid.chartMaximum,
         grade: exam.maxGrade!.value,
+        theoreticalMaxGrade: exam.theoreticalMaxGrade.value,
+      ),
+
+    if (exam.minGrade != null)
+      (
+        label: context.l10n.worstGrade,
+        icon: HugeIconsSolid.chartMinimum,
+        grade: exam.minGrade!.value,
         theoreticalMaxGrade: exam.theoreticalMaxGrade.value,
       ),
   ];
@@ -53,6 +56,11 @@ Future<void> showExamDetails(BuildContext context, Exam exam) async {
     context: context,
 
     builder: (context) {
+      final (color, backgroundColor, borderColor, titleColor, subtitleColor) = Utils.adaptColorPair(
+        exam.service.color,
+        context.c,
+      );
+
       return Container(
         decoration: const BoxDecoration(
           borderRadius: BorderRadius.only(
@@ -82,7 +90,7 @@ Future<void> showExamDetails(BuildContext context, Exam exam) async {
                     overflow: TextOverflow.ellipsis,
                     maxLines: 1,
 
-                    style: TextStyle(fontWeight: FontWeight.w800, color: titleColor, fontSize: 26),
+                    style: const TextStyle(fontWeight: FontWeight.w800, fontSize: 26),
                   ),
 
                   Padding(
@@ -93,11 +101,7 @@ Future<void> showExamDetails(BuildContext context, Exam exam) async {
 
                       textAlign: TextAlign.center,
 
-                      style: TextStyle(
-                        fontWeight: FontWeight.w700,
-                        color: titleColor,
-                        fontSize: 17,
-                      ),
+                      style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 17),
                     ),
                   ),
                 ],

@@ -113,6 +113,9 @@ class AppLocalizationsFr extends AppLocalizations {
   String get bestGrade => 'Meilleure note';
 
   @override
+  String get worstGrade => 'Note la plus basse';
+
+  @override
   String get noCourseToday => 'Tu n\'as pas de cours,\nprofite bien !';
 
   @override
