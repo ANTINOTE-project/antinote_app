@@ -57,22 +57,21 @@ class TimetableBody extends StatelessWidget {
     return null;
   }
 
-  Pause? _getPauseOrNull(Slot slot) {
-    return data.pauses.firstWhereOrNull((p) => p.slot == slot.index + 1);
-  }
-
   bool _isLunch(Slot slot) {
     return slot.index >= data.lunchStartSlot && slot.index <= data.lunchEndSlot;
   }
 
-  List<Slot> _buildSlots(List<Class> classes, DateTime day) {
+  Pause? _getPauseOrNull(Slot slot) {
+    return data.pauses.firstWhereOrNull((p) => p.slot == slot.index + 1);
+  }
+
+  List<Slot> _buildRawSlots(List<Class> classes, DateTime day) {
     final covered = <(DateTime, DateTime)>[];
 
     for (final clazz in classes) {
       covered.add((clazz.startDate, clazz.endDate));
     }
 
-    final cleaned = <Slot>[];
     final slots = <Slot>[];
 
     for (final (index, timeSlot) in data.starts.indexed) {
@@ -93,11 +92,13 @@ class TimetableBody extends StatelessWidget {
         minute: slotClasses.firstOrNull?.endDate.minute ?? data.endings[index].timing.minute,
       );
 
-      final slot = Slot(index: index, start: start, end: end, classes: slotClasses);
-
-      slots.add(slot);
+      slots.add(Slot(index: index, start: start, end: end, classes: slotClasses));
     }
 
+    return slots;
+  }
+
+  void _injectPauseSlots(List<Slot> slots, DateTime day) {
     for (final pause in data.pauses) {
       if (pause.slot >= data.starts.length) continue;
 
@@ -111,12 +112,12 @@ class TimetableBody extends StatelessWidget {
         minute: data.starts[pause.slot].timing.minute,
       );
 
-      final slot = Slot(index: pause.slot - 1, start: start, end: end, classes: [], isPause: true);
-
-      slots.add(slot);
+      slots.add(Slot(index: pause.slot - 1, start: start, end: end, classes: [], isPause: true));
     }
+  }
 
-    slots.sort((a, b) => a.index.compareTo(b.index));
+  List<Slot> _cleanSlots(List<Slot> slots) {
+    final cleaned = <Slot>[];
 
     for (final slot in slots) {
       final isNaturalEmptyWithPauseAtSameIndex =
@@ -136,21 +137,57 @@ class TimetableBody extends StatelessWidget {
       cleaned.add(slot);
     }
 
-    slots
-      ..clear()
-      ..addAll(cleaned);
+    return cleaned;
+  }
 
-    // remove all courses in first if they have no classes
+  void _trimEdgeEmptySlots(List<Slot> slots) {
     while (slots.isNotEmpty && slots.first.classes.isEmpty) {
       slots.removeAt(0);
     }
 
-    // remove all courses in last if they have no classes
     while (slots.isNotEmpty && slots.last.classes.isEmpty) {
       slots.removeLast();
     }
+  }
+
+  List<Slot> _buildSlots(List<Class> classes, DateTime day) {
+    final slots = _buildRawSlots(classes, day);
+
+    _injectPauseSlots(slots, day);
+
+    slots.sort((a, b) => a.index.compareTo(b.index));
+
+    final cleaned = _cleanSlots(slots);
+
+    slots
+      ..clear()
+      ..addAll(cleaned);
+
+    _trimEdgeEmptySlots(slots);
 
     return slots;
+  }
+
+  (_GapType, String) _resolveGapType(Slot slot, Duration duration, BuildContext context) {
+    final pause = _getPauseOrNull(slot);
+    final isLunch = _isLunch(slot);
+
+    return switch ((pause, isLunch)) {
+      (Pause p, _) => (_GapType.pause, p.label),
+      (_, true) => (_GapType.lunch, context.l10n.lunch),
+      _ => (_GapType.free, context.l10n.gap(Utils.formatDuration(duration))),
+    };
+  }
+
+  Duration _computeGapDuration(Slot slot, List<Slot> slots, int index, Slot nextCourseSlot) {
+    if (slot.isPause) return slot.end.difference(slot.start);
+
+    final pausesBetween = slots
+        .sublist(index + 1)
+        .where((s) => s.isPause && s.start.isBefore(nextCourseSlot.start))
+        .fold(Duration.zero, (acc, s) => acc + s.end.difference(s.start));
+
+    return nextCourseSlot.start.difference(slot.start) - pausesBetween;
   }
 
   @override
@@ -164,7 +201,7 @@ class TimetableBody extends StatelessWidget {
             builder: (context, dayClasses, child) {
               final holiday = _getHolidayForDay(day);
               final isWeekend = _isWeekend(day);
-              final hasNotClasses = dayClasses == null;
+              final isClassesNull = dayClasses == null;
               final isClassesEmpty = dayClasses?.isEmpty ?? true;
 
               if (isWeekend) {
@@ -175,7 +212,7 @@ class TimetableBody extends StatelessWidget {
                 return _InfoTextIcon(icon: HugeIconsSolid.beach, label: holiday.name);
               }
 
-              if (hasNotClasses) {
+              if (isClassesNull) {
                 return const _Loading();
               }
 
@@ -191,7 +228,6 @@ class TimetableBody extends StatelessWidget {
               return SliverPadding(
                 padding: EdgeInsets.only(
                   bottom: MediaQuery.of(context).padding.bottom + 10,
-
                   right: 12,
                   left: 12,
                 ),
@@ -207,25 +243,12 @@ class TimetableBody extends StatelessWidget {
                           .sublist(index + 1)
                           .firstWhereOrNull((s) => s.classes.isNotEmpty);
 
-                      if (nextCourseSlot == null) return const SizedBox.shrink();
+                      if (nextCourseSlot == null) {
+                        return const SizedBox.shrink();
+                      }
 
-                      final pausesBetween = slots
-                          .sublist(index + 1)
-                          .where((s) => s.isPause && s.start.isBefore(nextCourseSlot.start))
-                          .fold(Duration.zero, (acc, s) => acc + s.end.difference(s.start));
-
-                      final duration = slot.isPause
-                          ? slot.end.difference(slot.start)
-                          : nextCourseSlot.start.difference(slot.start) - pausesBetween;
-
-                      final pause = _getPauseOrNull(slot);
-                      final isLunch = _isLunch(slot);
-
-                      final (type, label) = switch ((pause, isLunch)) {
-                        (Pause p, _) => (_GapType.pause, p.label),
-                        (_, true) => (_GapType.lunch, context.l10n.lunch),
-                        _ => (_GapType.free, context.l10n.gap(Utils.formatDuration(duration))),
-                      };
+                      final duration = _computeGapDuration(slot, slots, index, nextCourseSlot);
+                      final (type, label) = _resolveGapType(slot, duration, context);
 
                       return _Gap(type: type, label: label, duration: duration);
                     }
@@ -269,7 +292,6 @@ class _InfoTextIcon extends StatelessWidget {
 
             Text(
               label,
-
               style: TextStyle(fontWeight: .bold, color: context.c.outline),
               textAlign: .center,
             ),
@@ -325,7 +347,6 @@ class _Gap extends StatelessWidget {
                   Expanded(
                     child: Text(
                       label,
-
                       style: TextStyle(
                         color: context.c.onSurfaceVariant,
                         fontWeight: .w900,
