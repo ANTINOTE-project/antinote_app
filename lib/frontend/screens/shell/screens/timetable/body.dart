@@ -108,8 +108,8 @@ class TimetableBody extends StatelessWidget {
       );
 
       final end = day.copyWith(
-        hour: data.starts[pause.slot].timing.hour,
-        minute: data.starts[pause.slot].timing.minute,
+        hour: data.endings[pause.slot - 1].timing.hour,
+        minute: data.endings[pause.slot - 1].timing.minute,
       );
 
       slots.add(Slot(index: pause.slot - 1, start: start, end: end, classes: [], isPause: true));
