@@ -237,8 +237,8 @@ class _Gap extends StatelessWidget {
 
             child: Container(
               decoration: BoxDecoration(
-                color: context.c.outlineVariant,
-                border: .all(color: context.c.outline),
+                color: context.c.surfaceContainerHigh,
+                border: .all(color: context.c.outlineVariant),
                 borderRadius: const .all(.circular(20)),
               ),
 
@@ -248,14 +248,22 @@ class _Gap extends StatelessWidget {
                 spacing: 8,
 
                 children: [
-                  Icon(isLunch ? HugeIconsSolid.servingFood : HugeIconsSolid.clock01),
+                  Icon(
+                    isLunch ? HugeIconsSolid.servingFood : HugeIconsSolid.clock01,
+                    color: context.c.onSurfaceVariant,
+                  ),
 
                   Expanded(
                     child: Text(
                       isLunch
                           ? context.l10n.lunch
                           : context.l10n.gap(Utils.formatDuration(duration)),
-                      style: const TextStyle(fontSize: 16, fontWeight: .w900),
+
+                      style: TextStyle(
+                        color: context.c.onSurfaceVariant,
+                        fontWeight: .w900,
+                        fontSize: 16,
+                      ),
                     ),
                   ),
                 ],
