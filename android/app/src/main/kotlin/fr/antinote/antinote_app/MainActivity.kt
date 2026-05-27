@@ -42,7 +42,7 @@ class MainActivity : FlutterActivity() {
                 }
             }
         }
-        
+
         super.configureFlutterEngine(flutterEngine)
     }
 

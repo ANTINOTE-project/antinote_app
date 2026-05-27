@@ -212,11 +212,13 @@ class SessionManager(val context: Context, binaryMessenger: BinaryMessenger) :
 
     fun doUnbindService() {
         if (isBound) {
-            if (mService != null) {
+            if (mService != null && clientId != null) {
                 try {
                     val msg = Message.obtain(null, MSG_UNREGISTER_CLIENT)
                     msg.data.putLong("client_id", clientId!!)
                     msg.replyTo = this@SessionManager.messenger
+
+                    mService?.send(msg)
                 } catch (_: RemoteException) {
                 }
             }

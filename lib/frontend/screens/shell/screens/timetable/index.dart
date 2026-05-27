@@ -19,7 +19,8 @@ class TimetableScreen extends StatefulWidget {
   State<TimetableScreen> createState() => _TimetableScreenState();
 }
 
-class _TimetableScreenState extends State<TimetableScreen> with ScreenMixin<TimetableScreen> {
+class _TimetableScreenState extends State<TimetableScreen>
+    with ScreenMixin<TimetableScreen> {
   late SpecificInstanceParameters _scheduleDisplayData;
   late List<DateRange> _currentGroups;
   final Classes _classes = {};
@@ -66,7 +67,11 @@ class _TimetableScreenState extends State<TimetableScreen> with ScreenMixin<Time
       await session.ensurePage(16);
 
       for (final clazz in (await session.access(
-        TimetableAccessor.forRange(resource: session.userResource, from: days.start, to: days.end),
+        TimetableAccessor.forRange(
+          resource: session.userResource,
+          from: days.start,
+          to: days.end,
+        ),
       )).classes) {
         loadedDays[clazz.startDate.toDay()]!.add(clazz);
       }
@@ -90,14 +95,21 @@ class _TimetableScreenState extends State<TimetableScreen> with ScreenMixin<Time
   }
 
   @override
-  Widget buildLoaded(BuildContext context, RefreshIndicatorBuilder buildRefreshIndicator) {
+  Widget buildLoaded(
+    BuildContext context,
+    RefreshIndicatorBuilder buildRefreshIndicator,
+  ) {
+    final daysConfiguration = WeekMappedViewConfiguration.defaultConfigs
+        .pickConfig(context);
+
     final days = DateRange(
       start: _scheduleDisplayData.firstDate,
       end: _scheduleDisplayData.lastDate,
     ).listDays();
-
-    final daysConfiguration = WeekMappedViewConfiguration.defaultConfigs.pickConfig(context);
-    _currentGroups = daysConfiguration.daysToRangeList(days, _scheduleDisplayData);
+    _currentGroups = daysConfiguration.daysToRangeList(
+      days,
+      _scheduleDisplayData,
+    );
 
     return buildRefreshIndicator(
       child: PageView.builder(
@@ -120,7 +132,11 @@ class _TimetableScreenState extends State<TimetableScreen> with ScreenMixin<Time
                   lastDate: _scheduleDisplayData.lastDate,
                 ),
 
-                TimetableBody(data: _scheduleDisplayData, classes: _classes, days: days),
+                TimetableBody(
+                  data: _scheduleDisplayData,
+                  classes: _classes,
+                  days: days,
+                ),
               ],
             ),
           );
@@ -130,8 +146,13 @@ class _TimetableScreenState extends State<TimetableScreen> with ScreenMixin<Time
   }
 
   @override
-  Widget buildLoading(BuildContext context, RefreshIndicatorBuilder buildRefreshIndicator) {
-    return buildRefreshIndicator(child: const Center(child: LoadingWidget(size: 30)));
+  Widget buildLoading(
+    BuildContext context,
+    RefreshIndicatorBuilder buildRefreshIndicator,
+  ) {
+    return buildRefreshIndicator(
+      child: const Center(child: LoadingWidget(size: 30)),
+    );
   }
 
   @override
@@ -146,12 +167,18 @@ class _TimetableScreenState extends State<TimetableScreen> with ScreenMixin<Time
       end: _scheduleDisplayData.lastDate,
     ).listDays();
 
-    final daysConfiguration = WeekMappedViewConfiguration.defaultConfigs.pickConfig(context);
-    _currentGroups = daysConfiguration.daysToRangeList(days, _scheduleDisplayData);
+    final daysConfiguration = WeekMappedViewConfiguration.defaultConfigs
+        .pickConfig(context);
+    _currentGroups = daysConfiguration.daysToRangeList(
+      days,
+      _scheduleDisplayData,
+    );
 
     final int currentGroupIndex;
 
-    if (_pageController == null || !_pageController!.hasClients || _pageController?.page == null) {
+    if (_pageController == null ||
+        !_pageController!.hasClients ||
+        _pageController?.page == null) {
       currentGroupIndex = _currentGroups.indexWhere((element) {
         return element.contains(_scheduleDisplayData.nextBusinessDay);
       });
