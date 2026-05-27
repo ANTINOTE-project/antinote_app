@@ -53,7 +53,7 @@ class _AppShellState extends State<AppShell> {
       label: context.l10n.homeworks,
       screen: const Placeholder(),
       category: "homeworks",
-      associatedTabIds: [],
+      associatedTabIds: [88],
     ),
     (
       icon: HugeIconsSolid.inbox,
