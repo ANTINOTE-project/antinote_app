@@ -15,20 +15,20 @@ import "package:intl/intl.dart";
 
 typedef ServiceGradeList = Map<Service, List<Exam>>;
 
-class GradesList extends StatefulWidget {
+class GradesTab extends StatefulWidget {
   final VisualId periodId;
 
-  const GradesList({super.key, required this.periodId});
+  const GradesTab({super.key, required this.periodId});
 
   @override
-  State<GradesList> createState() => _GradesListState();
+  State<GradesTab> createState() => _GradesTabState();
 }
 
-class _GradesListState extends State<GradesList> with ScreenMixin<GradesList> {
+class _GradesTabState extends State<GradesTab> with ScreenMixin<GradesTab> {
   late LatestGradesPage _data;
 
   @override
-  void didUpdateWidget(GradesList oldWidget) {
+  void didUpdateWidget(GradesTab oldWidget) {
     super.didUpdateWidget(oldWidget);
 
     if (oldWidget.periodId != widget.periodId) {
