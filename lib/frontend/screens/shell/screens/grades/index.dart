@@ -4,7 +4,6 @@ import "package:antinote/antinote.dart" hide Tab;
 import "package:antinote_app/frontend/extensions/l10n.dart";
 import "package:antinote_app/frontend/screens/screen.dart";
 import "package:antinote_app/frontend/screens/shell/screens/grades/app_bar.dart";
-import "package:antinote_app/frontend/screens/shell/screens/grades/body.dart";
 import "package:antinote_app/frontend/screens/shell/screens/grades/tabs/grades.dart";
 import "package:antinote_app/frontend/widgets/customs/loading.dart";
 import "package:flutter/material.dart";
@@ -62,7 +61,9 @@ class _GradesScreenState extends State<GradesScreen>
               },
             ),
 
-            GradesBody(controller: _controller, tabs: tabs),
+            SliverFillRemaining(
+              child: TabBarView(controller: _controller, children: tabs.mapL((e) => e.widget)),
+            ),
           ],
         );
       },
