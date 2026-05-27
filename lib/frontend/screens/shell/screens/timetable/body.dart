@@ -43,10 +43,15 @@ class TimetableBody extends StatelessWidget {
   final List<DateTime> days;
   final Classes classes;
 
-  const TimetableBody({super.key, required this.data, required this.days, required this.classes});
+  const TimetableBody({
+    super.key,
+    required this.data,
+    required this.days,
+    required this.classes,
+  });
 
   bool _isWeekend(DateTime day) {
-    return !data.businessDays.contains(day.weekday);
+    return !data.isBusinessDay(day);
   }
 
   Holiday? _getHolidayForDay(DateTime day) {
@@ -80,19 +85,30 @@ class TimetableBody extends StatelessWidget {
             c.startDate.minute == timeSlot.timing.minute;
       }).toList();
 
-      final start = day.copyWith(hour: timeSlot.timing.hour, minute: timeSlot.timing.minute);
+      final start = day.copyWith(
+        hour: timeSlot.timing.hour,
+        minute: timeSlot.timing.minute,
+      );
 
-      final isAlreadyCovered = covered.any((r) => start.isAfter(r.$1) && start.isBefore(r.$2));
+      final isAlreadyCovered = covered.any(
+        (r) => start.isAfter(r.$1) && start.isBefore(r.$2),
+      );
       if (isAlreadyCovered) continue;
 
       if (index >= data.endings.length) continue;
 
       final end = day.copyWith(
-        hour: slotClasses.firstOrNull?.endDate.hour ?? data.endings[index].timing.hour,
-        minute: slotClasses.firstOrNull?.endDate.minute ?? data.endings[index].timing.minute,
+        hour:
+            slotClasses.firstOrNull?.endDate.hour ??
+            data.endings[index].timing.hour,
+        minute:
+            slotClasses.firstOrNull?.endDate.minute ??
+            data.endings[index].timing.minute,
       );
 
-      slots.add(Slot(index: index, start: start, end: end, classes: slotClasses));
+      slots.add(
+        Slot(index: index, start: start, end: end, classes: slotClasses),
+      );
     }
 
     return slots;
@@ -112,7 +128,15 @@ class TimetableBody extends StatelessWidget {
         minute: data.starts[pause.slot].timing.minute,
       );
 
-      slots.add(Slot(index: pause.slot - 1, start: start, end: end, classes: [], isPause: true));
+      slots.add(
+        Slot(
+          index: pause.slot - 1,
+          start: start,
+          end: end,
+          classes: [],
+          isPause: true,
+        ),
+      );
     }
   }
 
@@ -168,7 +192,11 @@ class TimetableBody extends StatelessWidget {
     return slots;
   }
 
-  (_GapType, String) _resolveGapType(Slot slot, Duration duration, BuildContext context) {
+  (_GapType, String) _resolveGapType(
+    Slot slot,
+    Duration duration,
+    BuildContext context,
+  ) {
     final pause = _getPauseOrNull(slot);
     final isLunch = _isLunch(slot);
 
@@ -179,7 +207,12 @@ class TimetableBody extends StatelessWidget {
     };
   }
 
-  Duration _computeGapDuration(Slot slot, List<Slot> slots, int index, Slot nextCourseSlot) {
+  Duration _computeGapDuration(
+    Slot slot,
+    List<Slot> slots,
+    int index,
+    Slot nextCourseSlot,
+  ) {
     if (slot.isPause) {
       return slot.end.difference(slot.start);
     }
@@ -207,11 +240,17 @@ class TimetableBody extends StatelessWidget {
               final isClassesEmpty = dayClasses?.isEmpty ?? true;
 
               if (isWeekend) {
-                return _InfoTextIcon(icon: HugeIconsSolid.calendar04, label: context.l10n.weekend);
+                return _InfoTextIcon(
+                  icon: HugeIconsSolid.calendar04,
+                  label: context.l10n.weekend,
+                );
               }
 
               if (holiday != null) {
-                return _InfoTextIcon(icon: HugeIconsSolid.beach, label: holiday.name);
+                return _InfoTextIcon(
+                  icon: HugeIconsSolid.beach,
+                  label: holiday.name,
+                );
               }
 
               if (isClassesNull) {
@@ -249,13 +288,26 @@ class TimetableBody extends StatelessWidget {
                         return const SizedBox.shrink();
                       }
 
-                      final duration = _computeGapDuration(slot, slots, index, nextCourseSlot);
-                      final (type, label) = _resolveGapType(slot, duration, context);
+                      final duration = _computeGapDuration(
+                        slot,
+                        slots,
+                        index,
+                        nextCourseSlot,
+                      );
+                      final (type, label) = _resolveGapType(
+                        slot,
+                        duration,
+                        context,
+                      );
 
                       return _Gap(type: type, label: label, duration: duration);
                     }
 
-                    return _TimeRow(start: slot.start, end: slot.end, classes: slot.classes);
+                    return _TimeRow(
+                      start: slot.start,
+                      end: slot.end,
+                      classes: slot.classes,
+                    );
                   },
                 ),
               );
@@ -271,7 +323,9 @@ class _Loading extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const SliverFillRemaining(child: Center(child: CircularProgressIndicator()));
+    return const SliverFillRemaining(
+      child: Center(child: CircularProgressIndicator()),
+    );
   }
 }
 
@@ -336,7 +390,11 @@ class _Gap extends StatelessWidget {
 
             textAlign: .center,
 
-            style: TextStyle(color: context.c.onSurfaceVariant, fontWeight: .w800, fontSize: 16),
+            style: TextStyle(
+              color: context.c.onSurfaceVariant,
+              fontWeight: .w800,
+              fontSize: 16,
+            ),
           ),
         ),
 
@@ -388,7 +446,11 @@ class _TimeRow extends StatefulWidget {
   final DateTime end;
   final List<Class> classes;
 
-  const _TimeRow({required this.start, required this.end, required this.classes});
+  const _TimeRow({
+    required this.start,
+    required this.end,
+    required this.classes,
+  });
 
   @override
   State<_TimeRow> createState() => _TimeRowState();
@@ -429,7 +491,11 @@ class _TimeRowState extends State<_TimeRow> {
 
                   Text(
                     _fmt(widget.end),
-                    style: TextStyle(fontSize: 15, fontWeight: .bold, color: context.c.outline),
+                    style: TextStyle(
+                      fontSize: 15,
+                      fontWeight: .bold,
+                      color: context.c.outline,
+                    ),
                   ),
                 ],
               ),
@@ -444,18 +510,30 @@ class _TimeRowState extends State<_TimeRow> {
                       switchOutCurve: Curves.easeInOutCubic,
 
                       transitionBuilder: (child, animation) {
-                        final offsetAnimation = Tween<Offset>(
-                          begin: const Offset(0.2, 0),
-                          end: Offset.zero,
-                        ).animate(CurvedAnimation(parent: animation, curve: Curves.fastOutSlowIn));
+                        final offsetAnimation =
+                            Tween<Offset>(
+                              begin: const Offset(0.2, 0),
+                              end: Offset.zero,
+                            ).animate(
+                              CurvedAnimation(
+                                parent: animation,
+                                curve: Curves.fastOutSlowIn,
+                              ),
+                            );
 
                         return SlideTransition(
                           position: offsetAnimation,
-                          child: FadeTransition(opacity: animation, child: child),
+                          child: FadeTransition(
+                            opacity: animation,
+                            child: child,
+                          ),
                         );
                       },
 
-                      child: _ClassWidget(key: ValueKey(_currentClass.id), clazz: _currentClass),
+                      child: _ClassWidget(
+                        key: ValueKey(_currentClass.id),
+                        clazz: _currentClass,
+                      ),
                     )
                   : _ClassWidget(clazz: _currentClass),
             ),
@@ -507,10 +585,8 @@ class _ClassWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     late final info = Utils.getInfoForClass(context, clazz);
 
-    final (color, backgroundColor, borderColor, titleColor, subtitleColor) = Utils.adaptColorPair(
-      info.accentColor,
-      context.c,
-    );
+    final (color, backgroundColor, borderColor, titleColor, subtitleColor) =
+        Utils.adaptColorPair(info.accentColor, context.c);
 
     final difference = info.end.difference(info.start);
     final duration = Utils.formatDuration(difference);
@@ -554,7 +630,11 @@ class _ClassWidget extends StatelessWidget {
                     spacing: 6,
 
                     children: [
-                      Icon(HugeIconsSolid.informationCircle, size: 20, color: context.c.error),
+                      Icon(
+                        HugeIconsSolid.informationCircle,
+                        size: 20,
+                        color: context.c.error,
+                      ),
 
                       Expanded(
                         child: Text(
@@ -563,7 +643,11 @@ class _ClassWidget extends StatelessWidget {
                           overflow: .ellipsis,
                           maxLines: 1,
 
-                          style: TextStyle(fontSize: 15, fontWeight: .w800, color: context.c.error),
+                          style: TextStyle(
+                            fontSize: 15,
+                            fontWeight: .w800,
+                            color: context.c.error,
+                          ),
                         ),
                       ),
                     ],
@@ -579,7 +663,9 @@ class _ClassWidget extends StatelessWidget {
 
             child: Container(
               decoration: BoxDecoration(
-                color: info.cancelled ? context.c.outlineVariant : backgroundColor,
+                color: info.cancelled
+                    ? context.c.outlineVariant
+                    : backgroundColor,
                 border: info.cancelled ? null : .all(color: borderColor),
                 borderRadius: const .all(.circular(20)),
               ),
@@ -645,7 +731,11 @@ class _ClassWidget extends StatelessWidget {
                   if (!info.cancelled)
                     Text(
                       duration,
-                      style: TextStyle(color: color, fontSize: 14, fontWeight: .w800),
+                      style: TextStyle(
+                        color: color,
+                        fontSize: 14,
+                        fontWeight: .w800,
+                      ),
                     ),
                 ],
               ),

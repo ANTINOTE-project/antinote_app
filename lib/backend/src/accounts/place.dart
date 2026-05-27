@@ -61,6 +61,7 @@ class City {
           .mapL((e) => (e).asCity());
     } catch (e, st) {
       debugPrintStack(stackTrace: st, label: e.toString());
+      print(response.body);
       return [];
     }
   }
