@@ -2,9 +2,10 @@ import "package:antinote/antinote.dart";
 import "package:antinote_app/backend/src/session/manager.dart";
 import "package:antinote_app/frontend/extensions/colors.dart";
 import "package:antinote_app/frontend/extensions/l10n.dart";
-import "package:antinote_app/frontend/screens/shell/screens/communication/communication.dart";
+import "package:antinote_app/frontend/screens/shell/screens/communication/index.dart";
 import "package:antinote_app/frontend/screens/shell/screens/grades/index.dart";
 import "package:antinote_app/frontend/screens/shell/screens/home.dart";
+import "package:antinote_app/frontend/screens/shell/screens/homeworks/index.dart";
 import "package:antinote_app/frontend/screens/shell/screens/timetable/index.dart";
 import "package:antinote_app/utils.dart";
 import "package:flutter/material.dart";
@@ -51,7 +52,7 @@ class _AppShellState extends State<AppShell> {
     (
       icon: HugeIconsSolid.task01,
       label: context.l10n.homeworks,
-      screen: const Placeholder(),
+      screen: const HomeworksScreen(),
       category: "homeworks",
       associatedTabIds: [88],
     ),
