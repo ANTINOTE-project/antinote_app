@@ -8,10 +8,10 @@ import "frontend/screens/shell/screens/timetable/body.dart";
 class Utils {
   Utils._();
 
-  static String formatNumber(double? value) {
+  static String formatNumber(double? value, {int digits = 2}) {
     if (value == null || value.isNaN) return "—";
 
-    return value % 1 == 0 ? value.toInt().toString() : value.toStringAsFixed(2);
+    return value.toStringAsFixed(digits);
   }
 
   static (

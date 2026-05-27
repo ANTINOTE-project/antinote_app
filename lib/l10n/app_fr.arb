@@ -41,6 +41,8 @@
   "gradeOf": "Note de {service}",
   "averageSelf": "Moy. générale",
   "averageClass": "Moy. classe",
+  "youGot": "Tu as eu",
+  "bestGrade": "Meilleure note",
 
   "noCourseToday": "Tu n'as pas de cours,\nprofite bien !",
   "holidayDay": "C'est les vacances,\n amuse toi bien !",

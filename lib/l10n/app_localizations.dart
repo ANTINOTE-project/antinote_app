@@ -280,6 +280,18 @@ abstract class AppLocalizations {
   /// **'Moy. classe'**
   String get averageClass;
 
+  /// No description provided for @youGot.
+  ///
+  /// In fr, this message translates to:
+  /// **'Tu as eu'**
+  String get youGot;
+
+  /// No description provided for @bestGrade.
+  ///
+  /// In fr, this message translates to:
+  /// **'Meilleure note'**
+  String get bestGrade;
+
   /// No description provided for @noCourseToday.
   ///
   /// In fr, this message translates to:

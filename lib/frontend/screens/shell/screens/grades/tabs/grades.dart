@@ -16,8 +16,10 @@ import "package:intl/intl.dart";
 typedef ServiceGradeList = Map<Service, List<Exam>>;
 
 Future<void> showExamDetails(BuildContext context, Exam exam) async {
-  final (color, backgroundColor, borderColor, titleColor, subtitleColor) =
-      Utils.adaptColorPair(exam.service.color, context.c);
+  final (color, backgroundColor, borderColor, titleColor, subtitleColor) = Utils.adaptColorPair(
+    exam.service.color,
+    context.c,
+  );
 
   final title = Utils.getExamComment(context, exam);
   final subtitle = exam.date.asRelativeDate(context);
@@ -43,46 +45,94 @@ Future<void> showExamDetails(BuildContext context, Exam exam) async {
         child: SafeArea(
           child: Column(
             mainAxisSize: MainAxisSize.min,
-            spacing: 8,
+            mainAxisAlignment: .center,
+
+            spacing: 16,
 
             children: [
-              Text(
-                exam.service.name,
+              Column(
+                mainAxisAlignment: .center,
 
-                overflow: TextOverflow.ellipsis,
-                maxLines: 1,
+                children: [
+                  Text(
+                    exam.service.name,
 
-                style: TextStyle(
-                  fontWeight: FontWeight.w800,
-                  color: titleColor,
-                  fontSize: 24,
-                ),
-              ),
+                    overflow: TextOverflow.ellipsis,
+                    maxLines: 1,
 
-              Text(
-                title,
+                    style: TextStyle(fontWeight: FontWeight.w800, color: titleColor, fontSize: 26),
+                  ),
 
-                textAlign: TextAlign.center,
+                  Text(
+                    title,
 
-                style: TextStyle(
-                  fontWeight: FontWeight.w700,
-                  color: titleColor,
-                  fontSize: 17,
-                ),
+                    textAlign: TextAlign.center,
+
+                    style: TextStyle(fontWeight: FontWeight.w700, color: titleColor, fontSize: 17),
+                  ),
+                ],
               ),
 
               Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                mainAxisAlignment: .spaceBetween,
 
                 children: [
-                  Text(subtitle, style: TextStyle(color: subtitleColor)),
+                  Column(
+                    mainAxisAlignment: .center,
 
-                  _GradeText(
-                    selfGrade: exam.selfGrade.value,
-                    maxGrade: exam.theoreticalMaxGrade.value,
-                    color: color,
+                    children: [
+                      Text(
+                        context.l10n.youGot,
+                        style: TextStyle(color: subtitleColor, fontSize: 18, fontWeight: .bold),
+                      ),
+
+                      _GradeText(
+                        selfGrade: exam.selfGrade.value,
+                        maxGrade: exam.theoreticalMaxGrade.value,
+                        color: color,
+                      ),
+                    ],
+                  ),
+
+                  Column(
+                    mainAxisAlignment: .center,
+
+                    children: [
+                      Text(
+                        context.l10n.averageClass,
+                        style: TextStyle(color: subtitleColor, fontSize: 18, fontWeight: .bold),
+                      ),
+
+                      _GradeText(
+                        selfGrade: exam.classAverage!.value,
+                        maxGrade: exam.theoreticalMaxGrade.value,
+                        color: color,
+                      ),
+                    ],
+                  ),
+
+                  Column(
+                    mainAxisAlignment: .center,
+
+                    children: [
+                      Text(
+                        context.l10n.bestGrade,
+                        style: TextStyle(color: subtitleColor, fontSize: 18, fontWeight: .bold),
+                      ),
+
+                      _GradeText(
+                        selfGrade: exam.maxGrade!.value,
+                        maxGrade: exam.theoreticalMaxGrade.value,
+                        color: color,
+                      ),
+                    ],
                   ),
                 ],
+              ),
+
+              Text(
+                subtitle,
+                style: TextStyle(color: subtitleColor, fontWeight: .bold),
               ),
             ],
           ),
@@ -114,18 +164,11 @@ class _GradesTabState extends State<GradesTab> with ScreenMixin<GradesTab> {
   }
 
   @override
-  Widget buildLoaded(
-    BuildContext context,
-    RefreshIndicatorBuilder buildRefreshIndicator,
-  ) {
-    final ServiceGradeList organizedData = {
-      for (final service in _data.services!) service: [],
-    };
+  Widget buildLoaded(BuildContext context, RefreshIndicatorBuilder buildRefreshIndicator) {
+    final ServiceGradeList organizedData = {for (final service in _data.services!) service: []};
 
     for (final exam in _data.exams) {
-      final service = organizedData.keys.firstWhere(
-        (element) => element.id == exam.service.id,
-      );
+      final service = organizedData.keys.firstWhere((element) => element.id == exam.service.id);
       organizedData[service]!.add(exam);
     }
 
@@ -138,25 +181,17 @@ class _GradesTabState extends State<GradesTab> with ScreenMixin<GradesTab> {
           _AverageWidget(data: _data),
 
           if (orderedExams.isNotEmpty) ...[
-            _SectionWidget(
-              label: context.l10n.latestGrades,
-              icon: HugeIconsSolid.note,
-            ),
+            _SectionWidget(label: context.l10n.latestGrades, icon: HugeIconsSolid.note),
             _LatestWidget(exams: orderedExams),
           ],
 
           if (organizedData.isNotEmpty) ...[
-            _SectionWidget(
-              label: context.l10n.services,
-              icon: HugeIconsSolid.gitbook,
-            ),
+            _SectionWidget(label: context.l10n.services, icon: HugeIconsSolid.gitbook),
             _SubjectsWidget(data: organizedData),
           ],
 
           SliverPadding(
-            padding: EdgeInsets.only(
-              bottom: MediaQuery.of(context).padding.bottom + 10,
-            ),
+            padding: EdgeInsets.only(bottom: MediaQuery.of(context).padding.bottom + 10),
           ),
         ],
       ),
@@ -164,22 +199,15 @@ class _GradesTabState extends State<GradesTab> with ScreenMixin<GradesTab> {
   }
 
   @override
-  Widget buildLoading(
-    BuildContext context,
-    RefreshIndicatorBuilder buildRefreshIndicator,
-  ) {
-    return buildRefreshIndicator(
-      child: const Center(child: LoadingWidget(size: 30)),
-    );
+  Widget buildLoading(BuildContext context, RefreshIndicatorBuilder buildRefreshIndicator) {
+    return buildRefreshIndicator(child: const Center(child: LoadingWidget(size: 30)));
   }
 
   @override
   FutureOr<void> loadActiveDataFromSession(PronoteSession session) async {
     await session.ensurePage(198);
 
-    final period = session.instance.periods.firstWhere(
-      (e) => e.visualId == widget.periodId,
-    );
+    final period = session.instance.periods.firstWhere((e) => e.visualId == widget.periodId);
     _data = await session.access(LatestGradesPageAccessor(period: period));
   }
 }
@@ -257,11 +285,7 @@ class _AverageWidget extends StatelessWidget {
 
                       Text(
                         Utils.formatNumber(selfAvg),
-                        style: TextStyle(
-                          fontSize: 27,
-                          fontWeight: .w800,
-                          color: context.c.primary,
-                        ),
+                        style: TextStyle(fontSize: 27, fontWeight: .w800, color: context.c.primary),
                       ),
                     ],
                   ),
@@ -311,16 +335,8 @@ class _LatestWidget extends StatelessWidget {
           itemBuilder: (context, index) {
             final exam = exams[index];
 
-            final (
-              color,
-              backgroundColor,
-              borderColor,
-              titleColor,
-              subtitleColor,
-            ) = Utils.adaptColorPair(
-              exam.service.color,
-              context.c,
-            );
+            final (color, backgroundColor, borderColor, titleColor, subtitleColor) =
+                Utils.adaptColorPair(exam.service.color, context.c);
 
             final date = DateFormat("dd/MM/yyyy").format(exam.date);
             final title = Utils.getExamComment(context, exam);
@@ -334,10 +350,7 @@ class _LatestWidget extends StatelessWidget {
 
                 child: IntrinsicWidth(
                   child: ConstrainedBox(
-                    constraints: const BoxConstraints(
-                      minWidth: 200,
-                      maxWidth: 260,
-                    ),
+                    constraints: const BoxConstraints(minWidth: 200, maxWidth: 260),
 
                     child: Container(
                       decoration: BoxDecoration(
@@ -346,10 +359,7 @@ class _LatestWidget extends StatelessWidget {
                         color: backgroundColor,
                       ),
 
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 10,
-                        vertical: 6,
-                      ),
+                      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
 
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
@@ -376,10 +386,7 @@ class _LatestWidget extends StatelessWidget {
                               overflow: TextOverflow.ellipsis,
                               maxLines: 2,
 
-                              style: const TextStyle(
-                                fontSize: 16,
-                                fontWeight: FontWeight.w600,
-                              ),
+                              style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
                             ),
                           ),
 
@@ -387,10 +394,7 @@ class _LatestWidget extends StatelessWidget {
                             children: [
                               Text(
                                 date,
-                                style: TextStyle(
-                                  fontWeight: FontWeight.bold,
-                                  color: subtitleColor,
-                                ),
+                                style: TextStyle(fontWeight: FontWeight.bold, color: subtitleColor),
                               ),
 
                               const Spacer(),
@@ -454,8 +458,10 @@ class _ServiceWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final (color, backgroundColor, borderColor, titleColor, subtitleColor) =
-        Utils.adaptColorPair(service.color, context.c);
+    final (color, backgroundColor, borderColor, titleColor, subtitleColor) = Utils.adaptColorPair(
+      service.color,
+      context.c,
+    );
 
     return Padding(
       padding: const EdgeInsets.only(top: 8, bottom: 2),
@@ -482,16 +488,11 @@ class _ServiceWidget extends StatelessWidget {
                     overflow: TextOverflow.ellipsis,
                     maxLines: 1,
 
-                    style: TextStyle(
-                      fontSize: 21,
-                      fontWeight: FontWeight.w800,
-                      color: titleColor,
-                    ),
+                    style: TextStyle(fontSize: 21, fontWeight: FontWeight.w800, color: titleColor),
                   ),
                 ),
 
-                if (service.selfAverage != null &&
-                    service.theoreticalMaxGrade != null)
+                if (service.selfAverage != null && service.theoreticalMaxGrade != null)
                   _GradeText(
                     selfGrade: service.selfAverage!.value,
                     maxGrade: service.theoreticalMaxGrade!.value,
@@ -514,8 +515,10 @@ class _ExamWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final (color, backgroundColor, borderColor, titleColor, subtitleColor) =
-        Utils.adaptColorPair(exam.service.color, context.c);
+    final (color, backgroundColor, borderColor, titleColor, subtitleColor) = Utils.adaptColorPair(
+      exam.service.color,
+      context.c,
+    );
 
     final title = Utils.getExamComment(context, exam);
     final subtitle = exam.date.asRelativeDate(context);
@@ -560,17 +563,13 @@ class _GradeText extends StatelessWidget {
           TextSpan(
             text: Utils.formatNumber(selfGrade),
 
-            style: TextStyle(
-              color: color,
-              fontSize: size,
-              fontWeight: FontWeight.w900,
-            ),
+            style: TextStyle(color: color, fontSize: size, fontWeight: FontWeight.w900),
           ),
 
           const WidgetSpan(child: SizedBox(width: 2)),
 
           TextSpan(
-            text: "/${Utils.formatNumber(maxGrade)}",
+            text: "/${Utils.formatNumber(maxGrade, digits: 0)}",
 
             style: TextStyle(
               color: context.c.onSurfaceVariant,

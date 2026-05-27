@@ -107,6 +107,12 @@ class AppLocalizationsFr extends AppLocalizations {
   String get averageClass => 'Moy. classe';
 
   @override
+  String get youGot => 'Tu as eu';
+
+  @override
+  String get bestGrade => 'Meilleure note';
+
+  @override
   String get noCourseToday => 'Tu n\'as pas de cours,\nprofite bien !';
 
   @override
