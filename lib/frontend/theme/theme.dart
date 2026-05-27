@@ -330,15 +330,10 @@ class MaterialTheme {
   ThemeData theme(ColorScheme colorScheme) => ThemeData(
     colorScheme: colorScheme,
     useMaterial3: true,
+    fontFamily: "SNPro",
 
     scaffoldBackgroundColor: colorScheme.surface,
     canvasColor: colorScheme.surface,
-
-    textTheme: const TextTheme().apply(
-      fontFamily: "SNPro",
-      bodyColor: colorScheme.onSurface,
-      displayColor: colorScheme.onSurface,
-    ),
   );
 
   List<ExtendedColor> get extendedColors => [];
