@@ -323,7 +323,20 @@ class _Gap extends StatelessWidget {
       spacing: 10,
 
       children: [
-        const SizedBox(width: 56),
+        SizedBox(
+          width: 56,
+
+          child: Text(
+            Utils.formatDurationCompact(duration),
+
+            overflow: .ellipsis,
+            maxLines: 2,
+
+            textAlign: .center,
+
+            style: TextStyle(color: context.c.onSurfaceVariant, fontWeight: .w800, fontSize: 16),
+          ),
+        ),
 
         Expanded(
           child: Padding(
