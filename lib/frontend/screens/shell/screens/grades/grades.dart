@@ -209,10 +209,8 @@ class _LatestWidget extends StatelessWidget {
           itemBuilder: (context, index) {
             final exam = exams[index];
 
-            final (color, backgroundColor, borderColor, titleColor) = Utils.adaptColorPair(
-              exam.service.color,
-              context.c,
-            );
+            final (color, backgroundColor, borderColor, titleColor, subtitleColor) =
+                Utils.adaptColorPair(exam.service.color, context.c);
 
             final date = DateFormat("dd/MM/yyyy").format(exam.date);
             final title = Utils.getExamComment(context, exam);
@@ -337,7 +335,7 @@ class _ServiceWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final (color, backgroundColor, borderColor, titleColor) = Utils.adaptColorPair(
+    final (color, backgroundColor, borderColor, titleColor, subtitleColor) = Utils.adaptColorPair(
       service.color,
       context.c,
     );
@@ -348,9 +346,9 @@ class _ServiceWidget extends StatelessWidget {
 
       child: Container(
         decoration: BoxDecoration(
-          border: Border.all(color: backgroundColor),
+          border: Border.all(color: borderColor),
           borderRadius: BorderRadius.circular(16),
-          color: context.c.surfaceContainerLow,
+          color: backgroundColor,
         ),
 
         child: Pressable(
@@ -366,7 +364,7 @@ class _ServiceWidget extends StatelessWidget {
                     service.name,
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
-                    style: TextStyle(fontSize: 21, fontWeight: FontWeight.bold, color: color),
+                    style: TextStyle(fontSize: 21, fontWeight: FontWeight.bold, color: titleColor),
                   ),
                 ),
 
@@ -409,7 +407,7 @@ class _ExamWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final (color, backgroundColor, borderColor, titleColor) = Utils.adaptColorPair(
+    final (color, backgroundColor, borderColor, titleColor, subtitleColor) = Utils.adaptColorPair(
       exam.service.color,
       context.c,
     );
@@ -418,11 +416,11 @@ class _ExamWidget extends StatelessWidget {
     final subtitle = exam.date.asRelativeDate(context);
 
     return ItemWidget(
-      borderRadius: borderRadius,
       backgroundColor: backgroundColor,
+      borderRadius: borderRadius,
 
-      title: Text(title),
-      subtitle: Text(subtitle, style: TextStyle(color: context.c.onSurfaceVariant)),
+      title: Text(title, style: TextStyle(color: titleColor)),
+      subtitle: Text(subtitle, style: TextStyle(color: subtitleColor)),
 
       trailing: Text.rich(
         TextSpan(
