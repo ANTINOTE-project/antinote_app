@@ -100,8 +100,6 @@ class TimetableBody extends StatelessWidget {
 
   void _injectPauseSlots(List<Slot> slots, DateTime day) {
     for (final pause in data.pauses) {
-      // if (pause.slot >= data.starts.length) continue;
-
       final start = day.copyWith(
         hour: data.endings[pause.slot - 1].timing.hour,
         minute: data.endings[pause.slot - 1].timing.minute,
