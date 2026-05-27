@@ -235,13 +235,13 @@ class _GradesTabState extends State<GradesTab> with ScreenMixin<GradesTab> {
   Widget buildLoaded(BuildContext context, RefreshIndicatorBuilder buildRefreshIndicator) {
     final ServiceGradeList organizedData = {for (final service in _data.services!) service: []};
 
-    for (final exam in _data.exams) {
+    final List<Exam> orderedExams = List.from(_data.exams);
+    orderedExams.sort((a, b) => b.date.compareTo(a.date));
+
+    for (final exam in orderedExams) {
       final service = organizedData.keys.firstWhere((element) => element.id == exam.service.id);
       organizedData[service]!.add(exam);
     }
-
-    final List<Exam> orderedExams = List.from(_data.exams);
-    orderedExams.sort((a, b) => b.date.compareTo(a.date));
 
     return buildRefreshIndicator(
       child: CustomScrollView(
