@@ -22,7 +22,9 @@ typedef FetchResult = ({
 });
 
 Future<SyncResult> syncTask(String accountUid) async {
-  final account = await _accountStorage.borrowAccountWithCredentials(accountUid);
+  final account = await _accountStorage.borrowAccountWithCredentials(
+    accountUid,
+  );
 
   final state = SessionDataHolder.create(account);
 
@@ -39,9 +41,16 @@ Future<SyncResult> syncTask(String accountUid) async {
           final map = <UserResource, List<RecurringClass<Class>>>{};
 
           for (final resource in session.user.resources) {
-            map[resource] = (await session.access(
-              TimetableAccessor.forYear(resource: session.userResource, session: session),
-            )).asRecurringTimetable(session).recurringClasses;
+            final recurringTimetable = (await session.access(
+              TimetableAccessor.forYear(
+                resource: session.userResource,
+                session: session,
+              ),
+            )).asRecurringTimetable(session);
+
+            if (recurringTimetable.recurringClasses == null) continue;
+
+            map[resource] = recurringTimetable.recurringClasses!;
           }
 
           return (
@@ -81,7 +90,12 @@ Future<SyncResult> syncTask(String accountUid) async {
     return syncResult;
   }
 
-  final (timetables: timetables, user: user, instanceDomain: instanceDomain, address: address) = fetchResult;
+  final (
+    timetables: timetables,
+    user: user,
+    instanceDomain: instanceDomain,
+    address: address,
+  ) = fetchResult;
 
   int added = 0;
   int updated = 0;
@@ -102,7 +116,8 @@ Future<SyncResult> syncTask(String accountUid) async {
 
       calendar = await _calendarManager.insertNewCalendar(
         NewCalendarEntry(
-          displayName: 'Cours${user.name == resource.name ? '' : ' (${resource.name})'}',
+          displayName:
+              'Cours${user.name == resource.name ? '' : ' (${resource.name})'}',
           accountUid: accountUid,
           resourceVisualId: resourceVisualId,
           color: Colors.accents[colorId].toARGB32(),
@@ -111,7 +126,10 @@ Future<SyncResult> syncTask(String accountUid) async {
     }
 
     final localEntriesMap = <String, List<ExistingCalendarEventEntry>>{};
-    final rawCalendarEntries = await _calendarManager.listExisting(accountUid, calendar.id);
+    final rawCalendarEntries = await _calendarManager.listExisting(
+      accountUid,
+      calendar.id,
+    );
 
     for (final entry in rawCalendarEntries) {
       final groupId = entry.originalVisualId ?? entry.visualId;
@@ -122,7 +140,12 @@ Future<SyncResult> syncTask(String accountUid) async {
     final toInsert = <NewRecurringCalendarEventEntry>[];
 
     final timetableEntries = timetable.mapL(
-      (e) => e.toNewRecurringCalendarEventEntry(accountUid, calendar!.id, instanceDomain, address),
+      (e) => e.toNewRecurringCalendarEventEntry(
+        accountUid,
+        calendar!.id,
+        instanceDomain,
+        address,
+      ),
       true,
     );
 
@@ -136,7 +159,10 @@ Future<SyncResult> syncTask(String accountUid) async {
         continue;
       }
 
-      final remoteIds = {remoteEntry.visualId, ...remoteEntry.exceptions.map((e) => e.visualId)};
+      final remoteIds = {
+        remoteEntry.visualId,
+        ...remoteEntry.exceptions.map((e) => e.visualId),
+      };
       final localIds = localGroup.map((e) => e.visualId).toSet();
 
       if (!setEquals(remoteIds, localIds)) {

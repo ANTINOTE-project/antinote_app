@@ -55,11 +55,11 @@ class AntinoteAuthenticator(val context: Context) : AbstractAccountAuthenticator
         options: Bundle
     ): Bundle? {
         return Bundle().apply {
-            putString(AccountManager.KEY_ACCOUNT_NAME, account!!.name)
+            putString(AccountManager.KEY_ACCOUNT_NAME, account.name)
             putString(AccountManager.KEY_ACCOUNT_TYPE, account.type)
             putString(
                 AccountManager.KEY_AUTHTOKEN,
-                AccountManager.get(context).peekAuthToken(account, authTokenType!!)
+                AccountManager.get(context).peekAuthToken(account, authTokenType)
             )
         }
     }
