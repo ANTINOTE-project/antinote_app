@@ -24,22 +24,44 @@ Future<void> showExamDetails(BuildContext context, Exam exam) async {
   final title = Utils.getExamComment(context, exam);
   final subtitle = exam.date.asRelativeDate(context);
 
+  final items = <({IconData icon, String label, double grade, double theoreticalMaxGrade})>[
+    (
+      label: context.l10n.youGot,
+      icon: HugeIconsSolid.male02,
+      grade: exam.selfGrade.value,
+      theoreticalMaxGrade: exam.theoreticalMaxGrade.value,
+    ),
+
+    if (exam.classAverage != null)
+      (
+        label: context.l10n.averageClass,
+        icon: HugeIconsSolid.chartAverage,
+        grade: exam.classAverage!.value,
+        theoreticalMaxGrade: exam.theoreticalMaxGrade.value,
+      ),
+
+    if (exam.maxGrade != null)
+      (
+        label: context.l10n.bestGrade,
+        icon: HugeIconsSolid.medalFirstPlace,
+        grade: exam.maxGrade!.value,
+        theoreticalMaxGrade: exam.theoreticalMaxGrade.value,
+      ),
+  ];
+
   await showModalBottomSheet(
     context: context,
 
     builder: (context) {
       return Container(
-        decoration: BoxDecoration(
-          borderRadius: const BorderRadius.only(
+        decoration: const BoxDecoration(
+          borderRadius: BorderRadius.only(
             topLeft: Radius.circular(20),
             topRight: Radius.circular(20),
           ),
-
-          border: Border.all(color: borderColor, strokeAlign: 1),
-          color: backgroundColor,
         ),
 
-        padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 8),
+        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
         width: double.infinity,
 
         child: SafeArea(
@@ -63,71 +85,49 @@ Future<void> showExamDetails(BuildContext context, Exam exam) async {
                     style: TextStyle(fontWeight: FontWeight.w800, color: titleColor, fontSize: 26),
                   ),
 
-                  Text(
-                    title,
+                  Padding(
+                    padding: const .symmetric(horizontal: 25),
 
-                    textAlign: TextAlign.center,
+                    child: Text(
+                      title,
 
-                    style: TextStyle(fontWeight: FontWeight.w700, color: titleColor, fontSize: 17),
+                      textAlign: TextAlign.center,
+
+                      style: TextStyle(
+                        fontWeight: FontWeight.w700,
+                        color: titleColor,
+                        fontSize: 17,
+                      ),
+                    ),
                   ),
                 ],
               ),
 
-              Row(
-                mainAxisAlignment: .spaceBetween,
+              Flexible(
+                child: ListWidget(
+                  isSliver: false,
+                  items: items,
 
-                children: [
-                  Column(
-                    mainAxisAlignment: .center,
+                  itemBuilder: (context, item, borderRadius) {
+                    return ItemWidget(
+                      borderRadius: borderRadius,
+                      backgroundColor: backgroundColor,
 
-                    children: [
-                      Text(
-                        context.l10n.youGot,
+                      leading: Icon(item.icon),
+
+                      title: Text(
+                        item.label,
                         style: TextStyle(color: subtitleColor, fontSize: 18, fontWeight: .bold),
                       ),
 
-                      _GradeText(
-                        selfGrade: exam.selfGrade.value,
-                        maxGrade: exam.theoreticalMaxGrade.value,
+                      trailing: _GradeText(
+                        selfGrade: item.grade,
+                        maxGrade: item.theoreticalMaxGrade,
                         color: color,
                       ),
-                    ],
-                  ),
-
-                  Column(
-                    mainAxisAlignment: .center,
-
-                    children: [
-                      Text(
-                        context.l10n.averageClass,
-                        style: TextStyle(color: subtitleColor, fontSize: 18, fontWeight: .bold),
-                      ),
-
-                      _GradeText(
-                        selfGrade: exam.classAverage!.value,
-                        maxGrade: exam.theoreticalMaxGrade.value,
-                        color: color,
-                      ),
-                    ],
-                  ),
-
-                  Column(
-                    mainAxisAlignment: .center,
-
-                    children: [
-                      Text(
-                        context.l10n.bestGrade,
-                        style: TextStyle(color: subtitleColor, fontSize: 18, fontWeight: .bold),
-                      ),
-
-                      _GradeText(
-                        selfGrade: exam.maxGrade!.value,
-                        maxGrade: exam.theoreticalMaxGrade.value,
-                        color: color,
-                      ),
-                    ],
-                  ),
-                ],
+                    );
+                  },
+                ),
               ),
 
               Text(

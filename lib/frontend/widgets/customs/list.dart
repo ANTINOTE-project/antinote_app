@@ -117,7 +117,7 @@ class ItemWidget extends StatelessWidget {
         padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
 
         child: Row(
-          spacing: 16,
+          spacing: 12,
 
           children: [
             ?leading,
