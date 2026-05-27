@@ -5,11 +5,11 @@ import "package:antinote_app/frontend/extensions/l10n.dart";
 import "package:antinote_app/frontend/screens/screen.dart";
 import "package:antinote_app/frontend/screens/shell/screens/grades/app_bar.dart";
 import "package:antinote_app/frontend/screens/shell/screens/grades/body.dart";
-import "package:antinote_app/frontend/screens/shell/screens/grades/grades.dart";
+import "package:antinote_app/frontend/screens/shell/screens/grades/tabs/grades.dart";
 import "package:antinote_app/frontend/widgets/customs/loading.dart";
 import "package:flutter/material.dart";
 
-typedef GradesTab = ({Widget widget, String category});
+typedef GradesScreenTab = ({Widget widget, String category});
 
 class GradesScreen extends StatefulWidget {
   const GradesScreen({super.key});
@@ -37,8 +37,8 @@ class _GradesScreenState extends State<GradesScreen>
 
   @override
   Widget buildLoaded(BuildContext context, RefreshIndicatorBuilder buildRefreshIndicator) {
-    final List<GradesTab> tabs = [
-      (widget: GradesList(periodId: _selectedPeriod.visualId), category: "grades"),
+    final List<GradesScreenTab> tabs = [
+      (widget: GradesTab(periodId: _selectedPeriod.visualId), category: "grades"),
       (widget: const SizedBox.shrink(), category: "report"),
     ];
 

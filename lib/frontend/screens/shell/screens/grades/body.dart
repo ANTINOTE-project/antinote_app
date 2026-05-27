@@ -4,17 +4,14 @@ import "package:flutter/material.dart";
 
 class GradesBody extends StatelessWidget {
   final TabController controller;
-  final List<GradesTab> tabs;
+  final List<GradesScreenTab> tabs;
 
   const GradesBody({super.key, required this.controller, required this.tabs});
 
   @override
   Widget build(BuildContext context) {
     return SliverFillRemaining(
-      child: TabBarView(
-        controller: controller,
-        children: tabs.mapL((e) => e.widget),
-      ),
+      child: TabBarView(controller: controller, children: tabs.mapL((e) => e.widget)),
     );
   }
 }
