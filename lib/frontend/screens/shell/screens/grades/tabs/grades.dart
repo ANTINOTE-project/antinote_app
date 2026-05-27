@@ -15,11 +15,117 @@ import "package:intl/intl.dart";
 
 typedef ServiceGradeList = Map<Service, List<Exam>>;
 
-Future<void> showExamDetails(BuildContext context, Exam exam) async {
-  final title = Utils.getExamComment(context, exam);
-  final subtitle = exam.date.asRelativeDate(context);
+typedef _DetailsItem = ({IconData icon, String label, double? grade, double? theoreticalMaxGrade});
 
-  final items = <({IconData icon, String label, double grade, double theoreticalMaxGrade})>[
+Future<void> _showDetails({
+  required BuildContext context,
+  required String name,
+  required int? serviceColor,
+  required List<_DetailsItem> items,
+  String? title,
+  String? subtitle,
+}) async {
+  await showModalBottomSheet(
+    context: context,
+
+    builder: (context) {
+      final (color, backgroundColor, _, _, subtitleColor) = Utils.adaptColorPair(
+        serviceColor,
+        context.c,
+      );
+
+      return Container(
+        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
+        width: double.infinity,
+
+        child: SafeArea(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            spacing: 16,
+
+            children: [
+              Column(
+                mainAxisAlignment: .center,
+
+                children: [
+                  Text(
+                    name,
+
+                    textAlign: TextAlign.center,
+
+                    overflow: TextOverflow.ellipsis,
+                    maxLines: 1,
+
+                    style: const TextStyle(fontWeight: FontWeight.w800, fontSize: 26),
+                  ),
+
+                  if (title != null)
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 25),
+
+                      child: Text(
+                        title,
+
+                        textAlign: TextAlign.center,
+
+                        style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 17),
+                      ),
+                    ),
+                ],
+              ),
+              Flexible(
+                child: ListWidget(
+                  shrinkWrap: true,
+                  isSliver: false,
+
+                  items: items,
+
+                  itemBuilder: (context, item, borderRadius) {
+                    return ItemWidget(
+                      borderRadius: borderRadius,
+                      backgroundColor: backgroundColor,
+
+                      leading: Icon(item.icon),
+
+                      title: Text(
+                        item.label,
+                        style: TextStyle(color: subtitleColor, fontSize: 18, fontWeight: .bold),
+                      ),
+
+                      trailing: item.grade != null && item.theoreticalMaxGrade != null
+                          ? _GradeText(
+                              selfGrade: item.grade!,
+                              maxGrade: item.theoreticalMaxGrade!,
+                              color: color,
+                            )
+                          : Text(
+                              Utils.formatNumber(item.grade),
+                              style: TextStyle(
+                                color: color,
+                                fontSize: 22,
+                                fontWeight: FontWeight.w900,
+                              ),
+                            ),
+                    );
+                  },
+                ),
+              ),
+
+              if (subtitle != null)
+                Text(
+                  subtitle,
+                  style: TextStyle(color: subtitleColor, fontWeight: .bold),
+                ),
+            ],
+          ),
+        ),
+      );
+    },
+  );
+}
+
+Future<void> showExamDetails(BuildContext context, Exam exam) async {
+  final items = <_DetailsItem>[
     (
       label: context.l10n.youGot,
       icon: HugeIconsSolid.male02,
@@ -52,99 +158,55 @@ Future<void> showExamDetails(BuildContext context, Exam exam) async {
       ),
   ];
 
-  await showModalBottomSheet(
+  await _showDetails(
     context: context,
+    name: exam.service.name,
+    serviceColor: exam.service.color,
+    items: items,
+    title: Utils.getExamComment(context, exam),
+    subtitle: exam.date.asRelativeDate(context),
+  );
+}
 
-    builder: (context) {
-      final (color, backgroundColor, borderColor, titleColor, subtitleColor) = Utils.adaptColorPair(
-        exam.service.color,
-        context.c,
-      );
+Future<void> showServiceDetails(BuildContext context, Service service, List<Exam> exams) async {
+  final items = <_DetailsItem>[
+    (
+      label: context.l10n.averageSelf,
+      icon: HugeIconsSolid.male02,
+      grade: service.selfAverage?.value,
+      theoreticalMaxGrade: service.theoreticalMaxGrade?.value,
+    ),
 
-      return Container(
-        decoration: const BoxDecoration(
-          borderRadius: BorderRadius.only(
-            topLeft: Radius.circular(20),
-            topRight: Radius.circular(20),
-          ),
-        ),
+    if (service.classAverage != null)
+      (
+        label: context.l10n.averageClass,
+        icon: HugeIconsSolid.chartAverage,
+        grade: service.classAverage!.value,
+        theoreticalMaxGrade: service.theoreticalMaxGrade?.value,
+      ),
 
-        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-        width: double.infinity,
+    if (service.maxGrade != null)
+      (
+        label: context.l10n.bestGrade,
+        icon: HugeIconsSolid.chartMaximum,
+        grade: service.maxGrade!.value,
+        theoreticalMaxGrade: service.theoreticalMaxGrade?.value,
+      ),
 
-        child: SafeArea(
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            mainAxisAlignment: .center,
+    if (service.minGrade != null)
+      (
+        label: context.l10n.worstGrade,
+        icon: HugeIconsSolid.chartMinimum,
+        grade: service.minGrade!.value,
+        theoreticalMaxGrade: service.theoreticalMaxGrade?.value,
+      ),
+  ];
 
-            spacing: 16,
-
-            children: [
-              Column(
-                mainAxisAlignment: .center,
-
-                children: [
-                  Text(
-                    exam.service.name,
-
-                    overflow: TextOverflow.ellipsis,
-                    maxLines: 1,
-
-                    style: const TextStyle(fontWeight: FontWeight.w800, fontSize: 26),
-                  ),
-
-                  Padding(
-                    padding: const .symmetric(horizontal: 25),
-
-                    child: Text(
-                      title,
-
-                      textAlign: TextAlign.center,
-
-                      style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 17),
-                    ),
-                  ),
-                ],
-              ),
-
-              Flexible(
-                child: ListWidget(
-                  shrinkWrap: true,
-                  isSliver: false,
-
-                  items: items,
-
-                  itemBuilder: (context, item, borderRadius) {
-                    return ItemWidget(
-                      borderRadius: borderRadius,
-                      backgroundColor: backgroundColor,
-
-                      leading: Icon(item.icon),
-
-                      title: Text(
-                        item.label,
-                        style: TextStyle(color: subtitleColor, fontSize: 18, fontWeight: .bold),
-                      ),
-
-                      trailing: _GradeText(
-                        selfGrade: item.grade,
-                        maxGrade: item.theoreticalMaxGrade,
-                        color: color,
-                      ),
-                    );
-                  },
-                ),
-              ),
-
-              Text(
-                subtitle,
-                style: TextStyle(color: subtitleColor, fontWeight: .bold),
-              ),
-            ],
-          ),
-        ),
-      );
-    },
+  await _showDetails(
+    context: context,
+    name: service.name,
+    serviceColor: service.color,
+    items: items,
   );
 }
 
@@ -444,7 +506,9 @@ class _SubjectsWidget extends StatelessWidget {
 
             sliver: SliverMainAxisGroup(
               slivers: [
-                PinnedHeaderSliver(child: _ServiceWidget(service: entry.key)),
+                PinnedHeaderSliver(
+                  child: _ServiceWidget(service: entry.key, exams: entry.value),
+                ),
 
                 ListWidget<Exam>(
                   items: entry.value,
@@ -462,8 +526,9 @@ class _SubjectsWidget extends StatelessWidget {
 
 class _ServiceWidget extends StatelessWidget {
   final Service service;
+  final List<Exam> exams;
 
-  const _ServiceWidget({required this.service});
+  const _ServiceWidget({required this.service, required this.exams});
 
   @override
   Widget build(BuildContext context) {
@@ -483,6 +548,7 @@ class _ServiceWidget extends StatelessWidget {
         ),
 
         child: Pressable(
+          onPressed: () => showServiceDetails(context, service, exams),
           child: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
 
