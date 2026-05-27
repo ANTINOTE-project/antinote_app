@@ -53,11 +53,15 @@ class _GradesListState extends State<GradesList> with ScreenMixin<GradesList> {
         slivers: [
           _AverageWidget(data: _data),
 
-          _SectionWidget(label: context.l10n.latestGrades, icon: HugeIconsSolid.note),
-          _LatestWidget(exams: orderedExams),
+          if (orderedExams.isNotEmpty) ...[
+            _SectionWidget(label: context.l10n.latestGrades, icon: HugeIconsSolid.note),
+            _LatestWidget(exams: orderedExams),
+          ],
 
-          _SectionWidget(label: context.l10n.services, icon: HugeIconsSolid.gitbook),
-          _SubjectsWidget(data: organizedData),
+          if (organizedData.isNotEmpty) ...[
+            _SectionWidget(label: context.l10n.services, icon: HugeIconsSolid.gitbook),
+            _SubjectsWidget(data: organizedData),
+          ],
 
           SliverPadding(
             padding: EdgeInsets.only(bottom: MediaQuery.of(context).padding.bottom + 10),
@@ -144,7 +148,7 @@ class _AverageWidget extends StatelessWidget {
 
             children: [
               Row(
-                mainAxisAlignment: MainAxisAlignment.spaceAround,
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 spacing: 12,
 
                 children: [
@@ -153,8 +157,7 @@ class _AverageWidget extends StatelessWidget {
                       Text(context.l10n.averageSelf, style: style),
 
                       Text(
-                        selfAvg != null ? Utils.formatNumber(selfAvg) : "—",
-
+                        Utils.formatNumber(selfAvg),
                         style: TextStyle(fontSize: 27, fontWeight: .w800, color: context.c.primary),
                       ),
                     ],
@@ -165,7 +168,7 @@ class _AverageWidget extends StatelessWidget {
                       Text(context.l10n.averageClass, style: style),
 
                       Text(
-                        classAvg != null ? Utils.formatNumber(classAvg) : "—",
+                        Utils.formatNumber(classAvg),
 
                         style: TextStyle(
                           fontSize: 27,
@@ -353,8 +356,10 @@ class _ServiceWidget extends StatelessWidget {
                   child: Text(
                     service.name,
                     maxLines: 1,
+
                     overflow: TextOverflow.ellipsis,
-                    style: TextStyle(fontSize: 21, fontWeight: FontWeight.bold, color: titleColor),
+
+                    style: TextStyle(fontSize: 21, fontWeight: FontWeight.w800, color: titleColor),
                   ),
                 ),
 
