@@ -30,5 +30,9 @@ class _HomeworksScreenState extends State<HomeworksScreen> with ScreenMixin<Home
   }
 
   @override
-  FutureOr<void> loadActiveDataFromSession(PronoteSession session) {}
+  FutureOr<void> loadActiveDataFromSession(PronoteSession session) async {
+    await session.ensurePage(88);
+
+    // await session.access(NotebookPageAccessor(weeks: weeks));
+  }
 }
