@@ -43,10 +43,7 @@ class GradesAppBar extends StatelessWidget {
 
             tabs: tabsName.mapL(
               (name) => Tab(
-                child: Text(
-                  name,
-                  style: const TextStyle(fontWeight: FontWeight.w700),
-                ),
+                child: Text(name, style: const TextStyle(fontWeight: FontWeight.w700)),
               ),
             ),
           ),
@@ -67,7 +64,7 @@ class GradesAppBar extends StatelessWidget {
 
               child: ChoiceChip(
                 selected: period == getSelectedPeriod(),
-                label: Text(period.name),
+                label: Text(period.name, style: const TextStyle(fontWeight: .w700)),
 
                 onSelected: (value) async {
                   if (value) {

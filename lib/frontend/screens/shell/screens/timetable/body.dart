@@ -100,16 +100,16 @@ class TimetableBody extends StatelessWidget {
 
   void _injectPauseSlots(List<Slot> slots, DateTime day) {
     for (final pause in data.pauses) {
-      if (pause.slot >= data.starts.length) continue;
+      // if (pause.slot >= data.starts.length) continue;
 
       final start = day.copyWith(
-        hour: data.starts[pause.slot - 1].timing.hour,
-        minute: data.starts[pause.slot - 1].timing.minute,
+        hour: data.endings[pause.slot - 1].timing.hour,
+        minute: data.endings[pause.slot - 1].timing.minute,
       );
 
       final end = day.copyWith(
-        hour: data.endings[pause.slot - 1].timing.hour,
-        minute: data.endings[pause.slot - 1].timing.minute,
+        hour: data.starts[pause.slot].timing.hour,
+        minute: data.starts[pause.slot].timing.minute,
       );
 
       slots.add(Slot(index: pause.slot - 1, start: start, end: end, classes: [], isPause: true));
@@ -180,7 +180,9 @@ class TimetableBody extends StatelessWidget {
   }
 
   Duration _computeGapDuration(Slot slot, List<Slot> slots, int index, Slot nextCourseSlot) {
-    if (slot.isPause) return slot.end.difference(slot.start);
+    if (slot.isPause) {
+      return slot.end.difference(slot.start);
+    }
 
     final pausesBetween = slots
         .sublist(index + 1)
