@@ -403,11 +403,14 @@ class _TimeRowState extends State<_TimeRow> {
                 mainAxisAlignment: .center,
 
                 children: [
-                  Text(_fmt(widget.start), style: const TextStyle(fontSize: 17, fontWeight: .w900)),
+                  Text(
+                    _fmt(widget.start),
+                    style: const TextStyle(fontSize: 17, fontWeight: .new(750)),
+                  ),
 
                   Text(
                     _fmt(widget.end),
-                    style: TextStyle(fontSize: 15, fontWeight: .w600, color: context.c.outline),
+                    style: TextStyle(fontSize: 15, fontWeight: .bold, color: context.c.outline),
                   ),
                 ],
               ),
@@ -523,15 +526,16 @@ class _ClassWidget extends StatelessWidget {
               width: .infinity,
 
               child: Column(
+                mainAxisAlignment: .center,
                 mainAxisSize: .min,
 
                 children: [
                   Row(
                     mainAxisSize: .min,
-                    spacing: 8,
+                    spacing: 6,
 
                     children: [
-                      Icon(HugeIconsSolid.informationCircle, size: 18, color: context.c.error),
+                      Icon(HugeIconsSolid.informationCircle, size: 20, color: context.c.error),
 
                       Expanded(
                         child: Text(
@@ -540,7 +544,7 @@ class _ClassWidget extends StatelessWidget {
                           overflow: .ellipsis,
                           maxLines: 1,
 
-                          style: TextStyle(fontSize: 15, fontWeight: .w900, color: context.c.error),
+                          style: TextStyle(fontSize: 15, fontWeight: .w800, color: context.c.error),
                         ),
                       ),
                     ],
@@ -577,8 +581,8 @@ class _ClassWidget extends StatelessWidget {
 
                     style: TextStyle(
                       color: info.cancelled ? context.c.outline : titleColor,
+                      fontWeight: const .new(750),
                       fontSize: 18,
-                      fontWeight: .w800,
                     ),
                   ),
 
@@ -622,7 +626,7 @@ class _ClassWidget extends StatelessWidget {
                   if (!info.cancelled)
                     Text(
                       duration,
-                      style: TextStyle(color: color, fontSize: 14, fontWeight: .w900),
+                      style: TextStyle(color: color, fontSize: 14, fontWeight: .w800),
                     ),
                 ],
               ),
@@ -665,7 +669,7 @@ class _InfoWidget extends StatelessWidget {
 
             style: TextStyle(
               fontSize: 14,
-              fontWeight: .w600,
+              fontWeight: .bold,
               color: cancelled ? context.c.outline : color,
             ),
           ),
