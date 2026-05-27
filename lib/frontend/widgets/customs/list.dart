@@ -6,7 +6,14 @@ class ListWidget<T> extends StatelessWidget {
   final Widget Function(BuildContext context, T item, BorderRadius borderRadius) itemBuilder;
   final List<T> items;
 
-  const ListWidget({super.key, required this.items, required this.itemBuilder});
+  final bool isSliver;
+
+  const ListWidget({
+    super.key,
+    required this.items,
+    required this.itemBuilder,
+    this.isSliver = true,
+  });
 
   static const radius = Radius.circular(16);
   static const defaultRadius = Radius.circular(6);
@@ -38,12 +45,27 @@ class ListWidget<T> extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return SliverList.builder(
+    if (isSliver) {
+      return SliverList.builder(
+        itemCount: items.length,
+
+        itemBuilder: (context, index) {
+          final item = items[index];
+          final borderRadius = _getBorderRadius(index, items.length);
+
+          return Padding(
+            padding: const EdgeInsets.symmetric(vertical: 2),
+            child: itemBuilder(context, item, borderRadius),
+          );
+        },
+      );
+    }
+
+    return ListView.builder(
       itemCount: items.length,
 
       itemBuilder: (context, index) {
         final item = items[index];
-
         final borderRadius = _getBorderRadius(index, items.length);
 
         return Padding(
@@ -58,6 +80,8 @@ class ListWidget<T> extends StatelessWidget {
 class ItemWidget extends StatelessWidget {
   final Widget title;
   final Widget? subtitle;
+
+  final Widget? leading;
   final Widget? trailing;
 
   final VoidCallback? onPressed;
@@ -70,6 +94,8 @@ class ItemWidget extends StatelessWidget {
 
     required this.title,
     this.subtitle,
+
+    this.leading,
     this.trailing,
 
     this.onPressed,
@@ -94,6 +120,8 @@ class ItemWidget extends StatelessWidget {
           spacing: 16,
 
           children: [
+            ?leading,
+
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
