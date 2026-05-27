@@ -328,6 +328,9 @@ class _LatestWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // rebuild when theme mode changes
+    final _ = Theme.of(context);
+
     return SliverToBoxAdapter(
       child: SizedBox(
         height: 160,
