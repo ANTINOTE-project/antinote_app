@@ -166,20 +166,46 @@ class TimetableBody extends StatelessWidget {
     return slots;
   }
 
-  (_GapType, String) _resolveGapType(Slot slot, Duration duration, BuildContext context) {
+  _GapType _getTypeForSlot(Slot slot) {
     final pause = _getPauseOrNull(slot);
     final isLunch = _isLunch(slot);
 
     return switch ((pause, isLunch)) {
-      (Pause p, _) => (_GapType.pause, p.label),
-      (_, true) => (_GapType.lunch, context.l10n.lunch),
-      _ => (_GapType.free, context.l10n.gap(Utils.formatDuration(duration))),
+      (Pause _, _) => _GapType.pause,
+      (_, true) => _GapType.lunch,
+      _ => _GapType.free,
     };
   }
 
-  Duration _computeGapDuration(Slot slot, List<Slot> slots, int index, Slot nextCourseSlot) {
+  String _getLabelForType(BuildContext context, _GapType type, Slot slot, Duration duration) {
+    final pause = _getPauseOrNull(slot);
+
+    return switch (type) {
+      .pause => pause!.label,
+      .lunch => context.l10n.lunch,
+      _ => context.l10n.gap(Utils.formatDuration(duration)),
+    };
+  }
+
+  Duration _computeGapDuration(
+    Slot slot,
+    List<Slot> slots,
+    int index,
+    Slot nextCourseSlot,
+    bool isLunch,
+  ) {
     if (slot.isPause) {
       return slot.end.difference(slot.start);
+    }
+
+    if (isLunch) {
+      final lastCourseBeforeLunch = slots
+          .sublist(0, index)
+          .lastWhereOrNull((s) => s.classes.isNotEmpty);
+
+      final lunchStart = lastCourseBeforeLunch?.end ?? slot.start;
+
+      return nextCourseSlot.start.difference(lunchStart);
     }
 
     final pausesBetween = slots
@@ -247,8 +273,17 @@ class TimetableBody extends StatelessWidget {
                         return const SizedBox.shrink();
                       }
 
-                      final duration = _computeGapDuration(slot, slots, index, nextCourseSlot);
-                      final (type, label) = _resolveGapType(slot, duration, context);
+                      final type = _getTypeForSlot(slot);
+
+                      final duration = _computeGapDuration(
+                        slot,
+                        slots,
+                        index,
+                        nextCourseSlot,
+                        type == .lunch,
+                      );
+
+                      final label = _getLabelForType(context, type, slot, duration);
 
                       return _Gap(type: type, label: label, duration: duration);
                     }
