@@ -53,11 +53,15 @@ class _GradesListState extends State<GradesList> with ScreenMixin<GradesList> {
         slivers: [
           _AverageWidget(data: _data),
 
-          _SectionWidget(label: context.l10n.latestGrades, icon: HugeIconsSolid.note),
-          _LatestWidget(exams: orderedExams),
+          if (orderedExams.isNotEmpty) ...[
+            _SectionWidget(label: context.l10n.latestGrades, icon: HugeIconsSolid.note),
+            _LatestWidget(exams: orderedExams),
+          ],
 
-          _SectionWidget(label: context.l10n.services, icon: HugeIconsSolid.gitbook),
-          _SubjectsWidget(data: organizedData),
+          if (organizedData.isNotEmpty) ...[
+            _SectionWidget(label: context.l10n.services, icon: HugeIconsSolid.gitbook),
+            _SubjectsWidget(data: organizedData),
+          ],
 
           SliverPadding(
             padding: EdgeInsets.only(bottom: MediaQuery.of(context).padding.bottom + 10),
@@ -122,7 +126,7 @@ class _AverageWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    const style = TextStyle(fontSize: 17, fontWeight: FontWeight.bold);
+    const style = TextStyle(fontSize: 17, fontWeight: FontWeight.w700);
 
     final selfAvg = data.selfGeneralAverage?.value;
     final classAvg = data.classGeneralAverage?.value;
@@ -144,7 +148,7 @@ class _AverageWidget extends StatelessWidget {
 
             children: [
               Row(
-                mainAxisAlignment: MainAxisAlignment.spaceAround,
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 spacing: 12,
 
                 children: [
@@ -153,13 +157,8 @@ class _AverageWidget extends StatelessWidget {
                       Text(context.l10n.averageSelf, style: style),
 
                       Text(
-                        selfAvg != null ? Utils.formatNumber(selfAvg) : "—",
-
-                        style: TextStyle(
-                          fontSize: 27,
-                          fontWeight: FontWeight.w900,
-                          color: context.c.primary,
-                        ),
+                        Utils.formatNumber(selfAvg),
+                        style: TextStyle(fontSize: 27, fontWeight: .w800, color: context.c.primary),
                       ),
                     ],
                   ),
@@ -169,7 +168,7 @@ class _AverageWidget extends StatelessWidget {
                       Text(context.l10n.averageClass, style: style),
 
                       Text(
-                        classAvg != null ? Utils.formatNumber(classAvg) : "—",
+                        Utils.formatNumber(classAvg),
 
                         style: TextStyle(
                           fontSize: 27,
@@ -209,86 +208,79 @@ class _LatestWidget extends StatelessWidget {
           itemBuilder: (context, index) {
             final exam = exams[index];
 
-            final (color, backgroundColor, borderColor, titleColor) = Utils.adaptColorPair(
-              exam.service.color,
-              context.c,
-            );
+            final (color, backgroundColor, borderColor, titleColor, subtitleColor) =
+                Utils.adaptColorPair(exam.service.color, context.c);
 
             final date = DateFormat("dd/MM/yyyy").format(exam.date);
             final title = Utils.getExamComment(context, exam);
             final subject = exam.service.name;
 
-            return Pressable(
-              child: Container(
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(16),
-                  color: backgroundColor,
-                ),
+            return Padding(
+              padding: const EdgeInsets.only(right: 8),
 
-                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
-                margin: const EdgeInsets.only(left: 6),
+              child: Pressable(
+                child: IntrinsicWidth(
+                  child: ConstrainedBox(
+                    constraints: const BoxConstraints(minWidth: 200, maxWidth: 260),
 
-                width: 250,
-
-                child: Column(
-                  crossAxisAlignment: .start,
-                  spacing: 8,
-
-                  children: [
-                    Text(
-                      subject,
-
-                      overflow: .ellipsis,
-                      maxLines: 1,
-
-                      style: TextStyle(fontSize: 20, fontWeight: .bold, color: color),
-                    ),
-
-                    Expanded(
-                      child: Text(
-                        title,
-
-                        overflow: .ellipsis,
-                        maxLines: 2,
-
-                        style: const TextStyle(fontSize: 16, fontWeight: .w500),
+                    child: Container(
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(16),
+                        border: Border.all(color: borderColor),
+                        color: backgroundColor,
                       ),
-                    ),
 
-                    Row(
-                      mainAxisAlignment: .spaceBetween,
+                      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
 
-                      children: [
-                        Text(date, style: const TextStyle(fontWeight: .w500)),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        spacing: 8,
 
-                        Text.rich(
-                          TextSpan(
+                        children: [
+                          Text(
+                            subject,
+
+                            overflow: TextOverflow.ellipsis,
+                            maxLines: 1,
+
+                            style: TextStyle(
+                              fontSize: 20,
+                              fontWeight: const .new(750),
+                              color: color,
+                            ),
+                          ),
+
+                          Expanded(
+                            child: Text(
+                              title,
+
+                              overflow: TextOverflow.ellipsis,
+                              maxLines: 2,
+
+                              style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+                            ),
+                          ),
+
+                          Row(
                             children: [
-                              TextSpan(
-                                text: Utils.formatNumber(exam.selfGrade.value),
-                                style: TextStyle(
-                                  color: color,
-                                  fontSize: 22,
-                                  fontWeight: FontWeight.w900,
-                                ),
+                              Text(
+                                date,
+                                style: TextStyle(fontWeight: FontWeight.bold, color: subtitleColor),
                               ),
 
-                              const WidgetSpan(child: SizedBox(width: 2)),
+                              const Spacer(),
 
-                              TextSpan(
-                                text: "/${Utils.formatNumber(exam.theoreticalMaxGrade.value)}",
-                                style: TextStyle(
-                                  color: context.c.onSurfaceVariant,
-                                  fontSize: 15,
-                                  fontWeight: FontWeight.bold,
-                                ),
+                              _GradeText(
+                                selfGrade: exam.selfGrade.value,
+                                maxGrade: exam.theoreticalMaxGrade.value,
+                                color: color,
                               ),
                             ],
                           ),
-                        ),
-                      ],
+                        ],
+                      ),
                     ),
-                  ],
+                  ),
                 ),
               ),
             );
@@ -337,20 +329,19 @@ class _ServiceWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final (color, backgroundColor, borderColor, titleColor) = Utils.adaptColorPair(
+    final (color, backgroundColor, borderColor, titleColor, subtitleColor) = Utils.adaptColorPair(
       service.color,
       context.c,
     );
-    final hasSelfAverage = service.selfAverage != null;
 
     return Padding(
       padding: const EdgeInsets.only(top: 8, bottom: 2),
 
       child: Container(
         decoration: BoxDecoration(
-          border: Border.all(color: backgroundColor),
+          border: Border.all(color: borderColor),
           borderRadius: BorderRadius.circular(16),
-          color: context.c.surfaceContainerLow,
+          color: backgroundColor,
         ),
 
         child: Pressable(
@@ -365,32 +356,18 @@ class _ServiceWidget extends StatelessWidget {
                   child: Text(
                     service.name,
                     maxLines: 1,
+
                     overflow: TextOverflow.ellipsis,
-                    style: TextStyle(fontSize: 21, fontWeight: FontWeight.bold, color: color),
+
+                    style: TextStyle(fontSize: 21, fontWeight: FontWeight.w800, color: titleColor),
                   ),
                 ),
 
-                if (hasSelfAverage)
-                  Text.rich(
-                    TextSpan(
-                      children: [
-                        TextSpan(
-                          text: Utils.formatNumber(service.selfAverage!.value),
-                          style: TextStyle(color: color, fontSize: 22, fontWeight: FontWeight.w900),
-                        ),
-
-                        const WidgetSpan(child: SizedBox(width: 2)),
-
-                        TextSpan(
-                          text: "/${Utils.formatNumber(service.theoreticalMaxGrade!.value)}",
-                          style: TextStyle(
-                            color: context.c.onSurfaceVariant,
-                            fontSize: 15,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                      ],
-                    ),
+                if (service.selfAverage != null && service.theoreticalMaxGrade != null)
+                  _GradeText(
+                    selfGrade: service.selfAverage!.value,
+                    maxGrade: service.theoreticalMaxGrade!.value,
+                    color: color,
                   ),
               ],
             ),
@@ -409,7 +386,7 @@ class _ExamWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final (color, backgroundColor, borderColor, titleColor) = Utils.adaptColorPair(
+    final (color, backgroundColor, borderColor, titleColor, subtitleColor) = Utils.adaptColorPair(
       exam.service.color,
       context.c,
     );
@@ -418,32 +395,58 @@ class _ExamWidget extends StatelessWidget {
     final subtitle = exam.date.asRelativeDate(context);
 
     return ItemWidget(
-      borderRadius: borderRadius,
       backgroundColor: backgroundColor,
+      borderRadius: borderRadius,
 
-      title: Text(title),
-      subtitle: Text(subtitle, style: TextStyle(color: context.c.onSurfaceVariant)),
+      title: Text(title, style: TextStyle(color: titleColor)),
+      subtitle: Text(subtitle, style: TextStyle(color: subtitleColor)),
 
-      trailing: Text.rich(
-        TextSpan(
-          children: [
-            TextSpan(
-              text: Utils.formatNumber(exam.selfGrade.value),
-              style: TextStyle(color: color, fontSize: 19, fontWeight: FontWeight.w900),
+      trailing: _GradeText(
+        selfGrade: exam.selfGrade.value,
+        maxGrade: exam.theoreticalMaxGrade.value,
+        size: 19,
+        color: color,
+      ),
+    );
+  }
+}
+
+class _GradeText extends StatelessWidget {
+  final double selfGrade;
+  final double maxGrade;
+  final Color color;
+  final double size;
+
+  const _GradeText({
+    required this.selfGrade,
+    required this.maxGrade,
+    required this.color,
+    this.size = 22,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Text.rich(
+      TextSpan(
+        children: [
+          TextSpan(
+            text: Utils.formatNumber(selfGrade),
+
+            style: TextStyle(color: color, fontSize: size, fontWeight: FontWeight.w900),
+          ),
+
+          const WidgetSpan(child: SizedBox(width: 2)),
+
+          TextSpan(
+            text: "/${Utils.formatNumber(maxGrade)}",
+
+            style: TextStyle(
+              color: context.c.onSurfaceVariant,
+              fontSize: size * 0.75,
+              fontWeight: FontWeight.bold,
             ),
-
-            const WidgetSpan(child: SizedBox(width: 2)),
-
-            TextSpan(
-              text: "/${Utils.formatNumber(exam.theoreticalMaxGrade.value)}",
-              style: TextStyle(
-                color: context.c.onSurfaceVariant,
-                fontSize: 15,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }

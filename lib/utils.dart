@@ -8,20 +8,27 @@ import "frontend/screens/shell/screens/timetable/body.dart";
 class Utils {
   Utils._();
 
-  static String formatNumber(double value) {
+  static String formatNumber(double? value) {
+    if (value == null || value.isNaN) return "—";
+
     return value % 1 == 0 ? value.toInt().toString() : value.toStringAsFixed(2);
   }
 
-  static (Color color, Color backgroundColor, Color borderColor, Color titleColor) adaptColorPair(
-    int? colorValue,
-    ColorScheme scheme,
-  ) {
+  static (
+    Color color,
+    Color backgroundColor,
+    Color borderColor,
+    Color titleColor,
+    Color subtitleColor,
+  )
+  adaptColorPair(int? colorValue, ColorScheme scheme) {
     if (colorValue == null) {
       return (
         scheme.onSurface,
         scheme.surfaceContainerHigh,
         scheme.outlineVariant,
         scheme.onSurface,
+        scheme.onSurfaceVariant,
       );
     }
 
@@ -48,7 +55,12 @@ class Utils {
         .withSaturation(hsl.saturation.clamp(0.6, 1.0))
         .toColor();
 
-    return (base, background, border, title);
+    final subtitle = hsl
+        .withLightness(isLight ? 0.60 : 0.58)
+        .withSaturation(hsl.saturation.clamp(0.15, 0.35))
+        .toColor();
+
+    return (base, background, border, title, subtitle);
   }
 
   static String getExamComment(BuildContext context, Exam exam) {

@@ -505,7 +505,7 @@ class _ClassWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     late final info = Utils.getInfoForClass(context, clazz);
 
-    final (color, backgroundColor, borderColor, titleColor) = Utils.adaptColorPair(
+    final (color, backgroundColor, borderColor, titleColor, subtitleColor) = Utils.adaptColorPair(
       info.accentColor,
       context.c,
     );
