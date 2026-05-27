@@ -105,7 +105,9 @@ Future<void> showExamDetails(BuildContext context, Exam exam) async {
 
               Flexible(
                 child: ListWidget(
+                  shrinkWrap: true,
                   isSliver: false,
+
                   items: items,
 
                   itemBuilder: (context, item, borderRadius) {
