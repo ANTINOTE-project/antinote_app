@@ -43,10 +43,8 @@ class Utils {
         .withSaturation(hsl.saturation.clamp(0.2, 0.5))
         .toColor();
 
-    final bgHsl = HSLColor.fromColor(background);
-
     final title = hsl
-        .withLightness(isLight ? 0.15 : 0.90)
+        .withLightness(isLight ? 0.45 : 0.9)
         .withSaturation(hsl.saturation.clamp(0.6, 1.0))
         .toColor();
 
