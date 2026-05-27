@@ -4,6 +4,7 @@ import "package:antinote_app/frontend/extensions/l10n.dart";
 import "package:antinote_app/frontend/screens/shell/screens/timetable/index.dart";
 import "package:antinote_app/frontend/widgets/pressable.dart";
 import "package:antinote_app/utils.dart";
+import "package:collection/collection.dart";
 import "package:flutter/material.dart";
 import "package:hugeicons_pro/hugeicons.dart";
 
@@ -12,8 +13,15 @@ class Slot {
   final DateTime start;
   final DateTime end;
   final int index;
+  final bool isPause;
 
-  const Slot({required this.classes, required this.start, required this.end, required this.index});
+  const Slot({
+    required this.classes,
+    required this.start,
+    required this.end,
+    required this.index,
+    this.isPause = false,
+  });
 }
 
 typedef ClassInfo = ({
@@ -49,6 +57,14 @@ class TimetableBody extends StatelessWidget {
     return null;
   }
 
+  Pause? _getPauseOrNull(Slot slot) {
+    return data.pauses.firstWhereOrNull((p) => p.slot == slot.index + 1);
+  }
+
+  bool _isLunch(Slot slot) {
+    return slot.index >= data.lunchStartSlot && slot.index <= data.lunchEndSlot;
+  }
+
   List<Slot> _buildSlots(List<Class> classes, DateTime day) {
     final covered = <(DateTime, DateTime)>[];
 
@@ -77,11 +93,45 @@ class TimetableBody extends StatelessWidget {
         minute: slotClasses.firstOrNull?.endDate.minute ?? data.endings[index].timing.minute,
       );
 
-      slots.add(Slot(index: index, start: start, end: end, classes: slotClasses));
+      final slot = Slot(index: index, start: start, end: end, classes: slotClasses);
+
+      slots.add(slot);
     }
 
+    for (final pause in data.pauses) {
+      if (pause.slot >= data.starts.length) continue;
+
+      final start = day.copyWith(
+        hour: data.starts[pause.slot - 1].timing.hour,
+        minute: data.starts[pause.slot - 1].timing.minute,
+      );
+
+      final end = day.copyWith(
+        hour: data.starts[pause.slot].timing.hour,
+        minute: data.starts[pause.slot].timing.minute,
+      );
+
+      final slot = Slot(index: pause.slot - 1, start: start, end: end, classes: [], isPause: true);
+
+      slots.add(slot);
+    }
+
+    slots.sort((a, b) => a.index.compareTo(b.index));
+
     for (final slot in slots) {
-      if (slot.classes.isEmpty && cleaned.isNotEmpty && cleaned.last.classes.isEmpty) continue;
+      final isNaturalEmptyWithPauseAtSameIndex =
+          !slot.isPause &&
+          slot.classes.isEmpty &&
+          slots.any((s) => s.isPause && s.index == slot.index);
+
+      if (isNaturalEmptyWithPauseAtSameIndex) continue;
+
+      if (slot.classes.isEmpty &&
+          !slot.isPause &&
+          cleaned.isNotEmpty &&
+          cleaned.last.classes.isEmpty) {
+        continue;
+      }
 
       cleaned.add(slot);
     }
@@ -90,10 +140,12 @@ class TimetableBody extends StatelessWidget {
       ..clear()
       ..addAll(cleaned);
 
+    // remove all courses in first if they have no classes
     while (slots.isNotEmpty && slots.first.classes.isEmpty) {
       slots.removeAt(0);
     }
 
+    // remove all courses in last if they have no classes
     while (slots.isNotEmpty && slots.last.classes.isEmpty) {
       slots.removeLast();
     }
@@ -151,20 +203,31 @@ class TimetableBody extends StatelessWidget {
                     final slot = slots[index];
 
                     if (slot.classes.isEmpty) {
-                      final nextSlot = index + 1 < slots.length ? slots[index + 1] : null;
+                      final nextCourseSlot = slots
+                          .sublist(index + 1)
+                          .firstWhereOrNull((s) => s.classes.isNotEmpty);
 
-                      final duration = nextSlot != null
-                          ? nextSlot.start.difference(slot.start)
-                          : slot.end.difference(slot.start);
+                      if (nextCourseSlot == null) return const SizedBox.shrink();
 
-                      if (nextSlot == null || nextSlot.classes.isEmpty) {
-                        return const SizedBox.shrink();
-                      }
+                      final pausesBetween = slots
+                          .sublist(index + 1)
+                          .where((s) => s.isPause && s.start.isBefore(nextCourseSlot.start))
+                          .fold(Duration.zero, (acc, s) => acc + s.end.difference(s.start));
 
-                      final isLunch =
-                          slot.index >= data.lunchStartSlot && slot.index <= data.lunchEndSlot;
+                      final duration = slot.isPause
+                          ? slot.end.difference(slot.start)
+                          : nextCourseSlot.start.difference(slot.start) - pausesBetween;
 
-                      return _Gap(isLunch: isLunch, duration: duration);
+                      final pause = _getPauseOrNull(slot);
+                      final isLunch = _isLunch(slot);
+
+                      final (type, label) = switch ((pause, isLunch)) {
+                        (Pause p, _) => (_GapType.pause, p.label),
+                        (_, true) => (_GapType.lunch, context.l10n.lunch),
+                        _ => (_GapType.free, context.l10n.gap(Utils.formatDuration(duration))),
+                      };
+
+                      return _Gap(type: type, label: label, duration: duration);
                     }
 
                     return _TimeRow(start: slot.start, end: slot.end, classes: slot.classes);
@@ -217,14 +280,23 @@ class _InfoTextIcon extends StatelessWidget {
   }
 }
 
+enum _GapType { lunch, pause, free }
+
 class _Gap extends StatelessWidget {
   final Duration duration;
-  final bool isLunch;
+  final _GapType type;
+  final String label;
 
-  const _Gap({required this.isLunch, required this.duration});
+  const _Gap({required this.type, required this.duration, required this.label});
 
   @override
   Widget build(BuildContext context) {
+    final icon = switch (type) {
+      _GapType.lunch => HugeIconsSolid.servingFood,
+      _GapType.pause => HugeIconsSolid.pause,
+      _GapType.free => HugeIconsSolid.clock01,
+    };
+
     return Row(
       spacing: 10,
 
@@ -248,16 +320,11 @@ class _Gap extends StatelessWidget {
                 spacing: 8,
 
                 children: [
-                  Icon(
-                    isLunch ? HugeIconsSolid.servingFood : HugeIconsSolid.clock01,
-                    color: context.c.onSurfaceVariant,
-                  ),
+                  Icon(icon, color: context.c.onSurfaceVariant),
 
                   Expanded(
                     child: Text(
-                      isLunch
-                          ? context.l10n.lunch
-                          : context.l10n.gap(Utils.formatDuration(duration)),
+                      label,
 
                       style: TextStyle(
                         color: context.c.onSurfaceVariant,
