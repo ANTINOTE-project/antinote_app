@@ -9,6 +9,7 @@ import android.content.SyncResult
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
+import android.util.Log
 import fr.antinote.antinote_app.auth.LoginManager
 import fr.antinote.antinote_app.calendar.CalendarManager
 import fr.antinote.antinote_app.pigeon_posts.NativeLoginManager
@@ -28,6 +29,12 @@ class SyncAdapter @JvmOverloads constructor(
     autoInitialize: Boolean,
     allowParallelSyncs: Boolean = true
 ) : AbstractThreadedSyncAdapter(context, autoInitialize, allowParallelSyncs) {
+    companion object {
+        const val TAG = "SyncAdapter"
+    }
+
+
+
     override fun onPerformSync(
         account: Account,
         extras: Bundle,
@@ -35,6 +42,7 @@ class SyncAdapter @JvmOverloads constructor(
         provider: ContentProviderClient,
         syncResult: SyncResult
     ) {
+        Log.i(TAG, "Starting sync...")
         val accountManager = AccountManager.get(context)
         val uid = accountManager.getUserData(account, LoginManager.KEY_UID)
 

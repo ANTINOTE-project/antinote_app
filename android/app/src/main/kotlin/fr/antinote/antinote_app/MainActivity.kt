@@ -20,8 +20,6 @@ class MainActivity : FlutterActivity() {
     private var isFirstLaunch = true
 
     override fun configureFlutterEngine(flutterEngine: FlutterEngine) {
-        super.configureFlutterEngine(flutterEngine)
-
         sessionManager = SessionManager(this, flutterEngine.dartExecutor.binaryMessenger)
         NativeLoginManager.setUp(flutterEngine.dartExecutor.binaryMessenger, LoginManager(this))
         NativeSessionManager.setUp(flutterEngine.dartExecutor.binaryMessenger, sessionManager)
@@ -44,6 +42,8 @@ class MainActivity : FlutterActivity() {
                 }
             }
         }
+        
+        super.configureFlutterEngine(flutterEngine)
     }
 
     override fun onDestroy() {

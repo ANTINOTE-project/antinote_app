@@ -1,6 +1,7 @@
 import "dart:async";
 
 import "package:antinote/antinote.dart";
+import "package:antinote_app/backend/backend.dart";
 import "package:antinote_app/backend/src/helpers/antinote_account.dart";
 import "package:antinote_app/frontend/extensions/account_storage.dart";
 import "package:antinote_app/frontend/extensions/colors.dart";
@@ -27,11 +28,13 @@ class LoginPickScreen extends StatelessWidget with WidgetsBindingObserver {
     await context.as.addAccount(account);
 
     if (context.mounted) {
-      final state = context.sm.state;
+      if (context.getInheritedWidgetOfExactType<SessionManager>() != null) {
+        final state = context.sm.state;
 
-      state.lastSeenAccountUid = account.uid;
-      state.lastSeenSession = result.session;
-      state.lastSeenSessionVersion = 0;
+        state.lastSeenAccountUid = account.uid;
+        state.lastSeenSession = result.session;
+        state.lastSeenSessionVersion = 0;
+      }
 
       context.pop(result);
     }
