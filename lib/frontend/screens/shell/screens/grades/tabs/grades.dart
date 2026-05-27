@@ -15,6 +15,77 @@ import "package:intl/intl.dart";
 
 typedef ServiceGradeList = Map<Service, List<Exam>>;
 
+Future<void> showExamDetails(BuildContext context, Exam exam) async {
+  final (color, backgroundColor, borderColor, titleColor, subtitleColor) = Utils.adaptColorPair(
+    exam.service.color,
+    context.c,
+  );
+
+  final title = Utils.getExamComment(context, exam);
+  final subtitle = exam.date.asRelativeDate(context);
+
+  await showModalBottomSheet(
+    context: context,
+
+    builder: (context) {
+      return SafeArea(
+        child: Container(
+          decoration: BoxDecoration(
+            borderRadius: const BorderRadius.only(
+              topLeft: Radius.circular(20),
+              topRight: Radius.circular(20),
+            ),
+
+            border: Border.all(color: borderColor, strokeAlign: 1),
+            color: backgroundColor,
+          ),
+
+          padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 8),
+          width: double.infinity,
+
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            spacing: 8,
+
+            children: [
+              Text(
+                exam.service.name,
+
+                overflow: TextOverflow.ellipsis,
+                maxLines: 1,
+
+                style: TextStyle(fontWeight: FontWeight.w800, color: titleColor, fontSize: 24),
+              ),
+
+              Text(
+                title,
+
+                textAlign: TextAlign.center,
+
+                style: TextStyle(fontWeight: FontWeight.w700, color: titleColor, fontSize: 17),
+              ),
+
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+
+                children: [
+                  Text(subtitle, style: TextStyle(color: subtitleColor)),
+
+                  _GradeText(
+                    selfGrade: exam.selfGrade.value,
+                    maxGrade: exam.theoreticalMaxGrade.value,
+                    color: color,
+                  ),
+                ],
+              ),
+            ],
+          ),
+        ),
+      );
+    },
+  );
+}
+
 class GradesTab extends StatefulWidget {
   final VisualId periodId;
 
@@ -219,6 +290,8 @@ class _LatestWidget extends StatelessWidget {
               padding: const EdgeInsets.only(right: 8),
 
               child: Pressable(
+                onPressed: () => showExamDetails(context, exam),
+
                 child: IntrinsicWidth(
                   child: ConstrainedBox(
                     constraints: const BoxConstraints(minWidth: 200, maxWidth: 260),
@@ -355,9 +428,9 @@ class _ServiceWidget extends StatelessWidget {
                 Expanded(
                   child: Text(
                     service.name,
-                    maxLines: 1,
 
                     overflow: TextOverflow.ellipsis,
+                    maxLines: 1,
 
                     style: TextStyle(fontSize: 21, fontWeight: FontWeight.w800, color: titleColor),
                   ),
@@ -407,6 +480,8 @@ class _ExamWidget extends StatelessWidget {
         size: 19,
         color: color,
       ),
+
+      onPressed: () => showExamDetails(context, exam),
     );
   }
 }
