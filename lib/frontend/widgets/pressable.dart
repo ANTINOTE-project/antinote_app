@@ -74,7 +74,7 @@ class _PressableState extends State<Pressable> with SingleTickerProviderStateMix
     }
 
     if (widget.hasVibration && mounted) {
-      await Vibration.vibrate(duration: 7);
+      await Vibration.vibrate(duration: 6);
     }
   }
 
