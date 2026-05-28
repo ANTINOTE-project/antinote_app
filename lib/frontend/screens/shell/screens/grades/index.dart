@@ -80,7 +80,9 @@ class _GradesScreenState extends State<GradesScreen>
     await session.ensurePage(198);
 
     _selectedPeriod = session.instance.defaultPeriod(DateTime.now());
-    _periods = session.instance.periods;
+
+    // Only "Trimestre *"
+    _periods = session.instance.periods.where((p) => p.type == 1).toList();
   }
 
   @override
