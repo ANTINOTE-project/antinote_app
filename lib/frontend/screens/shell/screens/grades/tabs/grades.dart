@@ -420,7 +420,7 @@ class _AverageWidget extends StatelessWidget {
 
                               style: TextStyle(
                                 fontSize: 27,
-                                fontWeight: FontWeight.w900,
+                                fontWeight: FontWeight.w800,
                                 color: context.c.secondary,
                               ),
                             );
