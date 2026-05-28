@@ -633,8 +633,7 @@ class _GradeText extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final showMaxGrade = maxGrade.value != 20.0;
-
+    final showMaxGrade = (maxGrade.value - 20.0).abs() > 0.001;
     String selfValue = Utils.formatNumber(selfGrade.value);
 
     if (selfGrade.type == .absent) {
