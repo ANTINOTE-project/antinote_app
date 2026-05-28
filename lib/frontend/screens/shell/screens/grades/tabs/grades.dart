@@ -8,7 +8,6 @@ import "package:antinote_app/frontend/screens/screen.dart";
 import "package:antinote_app/frontend/widgets/customs/list.dart";
 import "package:antinote_app/frontend/widgets/customs/loading.dart";
 import "package:antinote_app/frontend/widgets/pressable.dart";
-import "package:antinote_app/main.dart";
 import "package:antinote_app/utils.dart";
 import "package:flutter/material.dart";
 import "package:hugeicons_pro/hugeicons.dart";
@@ -636,15 +635,11 @@ class _GradeText extends StatelessWidget {
     final showMaxGrade = (maxGrade.value - 20.0).abs() > 0.001;
     String selfValue = Utils.formatNumber(selfGrade.value);
 
-    if (selfGrade.type == .absent) {
-      selfValue = context.l10n.gradeAbsent;
-    } else if (selfGrade.type == .notHandedZero) {
-      selfValue = context.l10n.gradeNotHandedZero;
-    }
-
-    if (selfGrade.type != .note) {
-      talker.log("Type: ${selfGrade.type} | Raw: ${selfGrade.rawContent}");
-    }
+    selfValue = switch (selfGrade.type) {
+      .absent => context.l10n.gradeAbsent,
+      .notHandedZero => context.l10n.gradeNotHandedZero,
+      _ => selfValue,
+    };
 
     return Text.rich(
       textAlign: .end,
