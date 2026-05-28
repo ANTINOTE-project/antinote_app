@@ -47,15 +47,43 @@ flutter:
   fonts:
     - family: SNPro
       fonts:
+        - asset: assets/fonts/SNPro-ExtraLight.ttf
+          weight: 200
+        - asset: assets/fonts/SNPro-ExtraLightItalic.ttf
+          weight: 200
+          style: italic
         - asset: assets/fonts/SNPro-Light.ttf
           weight: 300
+        - asset: assets/fonts/SNPro-LightItalic.ttf
+          weight: 300
+          style: italic
         - asset: assets/fonts/SNPro-Regular.ttf
           weight: 400
+        - asset: assets/fonts/SNPro-RegularItalic.ttf
+          weight: 400
+          style: italic
         - asset: assets/fonts/SNPro-Medium.ttf
           weight: 500
+        - asset: assets/fonts/SNPro-MediumItalic.ttf
+          weight: 500
+          style: italic
         - asset: assets/fonts/SNPro-Semibold.ttf
           weight: 600
+        - asset: assets/fonts/SNPro-SemiboldItalic.ttf
+          weight: 600
+          style: italic
         - asset: assets/fonts/SNPro-Bold.ttf
           weight: 700
-        - asset: assets/fonts/SNPro-Black.ttf
+        - asset: assets/fonts/SNPro-BoldItalic.ttf
+          weight: 700
+          style: italic
+        - asset: assets/fonts/SNPro-ExtraBold.ttf
           weight: 800
+        - asset: assets/fonts/SNPro-ExtraBoldItalic.ttf
+          weight: 800
+          style: italic
+        - asset: assets/fonts/SNPro-Black.ttf
+          weight: 900
+        - asset: assets/fonts/SNPro-BlackItalic.ttf
+          weight: 900
+          style: italic
