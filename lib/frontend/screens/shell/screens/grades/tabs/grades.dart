@@ -1,4 +1,6 @@
 import "dart:async";
+import "dart:math" as math;
+import "dart:ui";
 
 import "package:antinote/antinote.dart";
 import "package:antinote_app/backend/backend.dart";
@@ -356,15 +358,15 @@ class _AverageWidget extends StatelessWidget {
 
     return SliverToBoxAdapter(
       child: Padding(
-        padding: const EdgeInsets.only(top: 20, left: 12, right: 12),
+        padding: const .only(top: 16, left: 12, right: 12),
 
         child: Container(
           decoration: BoxDecoration(
             color: context.c.surfaceContainerHigh,
-            borderRadius: BorderRadius.circular(20),
+            borderRadius: .circular(20),
           ),
 
-          padding: const EdgeInsets.all(12),
+          padding: const .symmetric(vertical: 12),
 
           child: Column(
             spacing: 8,
@@ -408,6 +410,7 @@ class _AverageWidget extends StatelessWidget {
                       if (classAvg != null)
                         TweenAnimationBuilder<double>(
                           tween: Tween(begin: 0, end: classAvg),
+
                           duration: const Duration(milliseconds: 600),
                           curve: Curves.easeOutExpo,
 
@@ -427,12 +430,80 @@ class _AverageWidget extends StatelessWidget {
                   ),
                 ],
               ),
+
+              TweenAnimationBuilder<double>(
+                key: ValueKey(data.exams.length),
+                tween: Tween(begin: 0.5, end: 1.0),
+
+                duration: const Duration(milliseconds: 1500),
+                curve: Curves.easeOutExpo,
+
+                builder: (context, value, _) {
+                  return CustomPaint(
+                    size: const Size(double.infinity, 40),
+
+                    painter: _GradesCurvePainter(
+                      color: context.c.primary,
+                      progress: value,
+
+                      values: data.exams
+                          .where((e) => e.selfGrade.type == GradeType.note)
+                          .map((e) => e.selfGrade.value)
+                          .toList(),
+                    ),
+                  );
+                },
+              ),
             ],
           ),
         ),
       ),
     );
   }
+}
+
+class _GradesCurvePainter extends CustomPainter {
+  final List<double> values;
+  final double progress;
+  final Color color;
+
+  const _GradesCurvePainter({required this.values, required this.progress, required this.color});
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    if (values.length < 2) return;
+
+    final min = values.reduce(math.min);
+    final max = values.reduce(math.max);
+
+    final range = (max - min).clamp(1.0, double.infinity);
+
+    final paint = Paint()
+      ..color = color
+      ..strokeWidth = 2
+      ..style = PaintingStyle.stroke
+      ..strokeCap = StrokeCap.round;
+
+    final path = Path();
+
+    for (var i = 0; i < values.length; i++) {
+      final x = i / (values.length - 1) * size.width;
+
+      final yFinal = size.height - ((values[i] - min) / range * size.height);
+      final y = lerpDouble(size.height, yFinal, progress)!;
+
+      if (i == 0) {
+        path.moveTo(x, y);
+      } else {
+        path.lineTo(x, y);
+      }
+    }
+
+    canvas.drawPath(path, paint);
+  }
+
+  @override
+  bool shouldRepaint(_GradesCurvePainter old) => old.values != values || old.progress != progress;
 }
 
 class _LatestWidget extends StatelessWidget {
