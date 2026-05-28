@@ -119,7 +119,25 @@ class AppLocalizationsFr extends AppLocalizations {
   String get gradeAbsent => 'Abs';
 
   @override
-  String get gradeNotHandedZero => 'Non rendu';
+  String get gradeAbsentZero => 'Abs (0)';
+
+  @override
+  String get gradeNotHanded => 'NR';
+
+  @override
+  String get gradeNotHandedZero => 'NR (0)';
+
+  @override
+  String get gradeExemption => 'Disp';
+
+  @override
+  String get gradeNotGraded => 'Non noté';
+
+  @override
+  String get gradeInapt => 'Inapte';
+
+  @override
+  String get gradeFelicitations => 'Félicitations';
 
   @override
   String get noCourseToday => 'Tu n\'as pas de cours,\nprofite bien !';

@@ -638,6 +638,12 @@ class _GradeText extends StatelessWidget {
     selfValue = switch (selfGrade.type) {
       .absent => context.l10n.gradeAbsent,
       .notHandedZero => context.l10n.gradeNotHandedZero,
+      .exemption => context.l10n.gradeExemption,
+      .notGraded => context.l10n.gradeNotGraded,
+      .inapt => context.l10n.gradeInapt,
+      .notHanded => context.l10n.gradeNotHanded,
+      .absentZero => context.l10n.gradeAbsentZero,
+      .felicitations => context.l10n.gradeFelicitations,
       _ => selfValue,
     };
 

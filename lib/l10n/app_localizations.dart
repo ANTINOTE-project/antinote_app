@@ -304,11 +304,47 @@ abstract class AppLocalizations {
   /// **'Abs'**
   String get gradeAbsent;
 
+  /// No description provided for @gradeAbsentZero.
+  ///
+  /// In fr, this message translates to:
+  /// **'Abs (0)'**
+  String get gradeAbsentZero;
+
+  /// No description provided for @gradeNotHanded.
+  ///
+  /// In fr, this message translates to:
+  /// **'NR'**
+  String get gradeNotHanded;
+
   /// No description provided for @gradeNotHandedZero.
   ///
   /// In fr, this message translates to:
-  /// **'Non rendu'**
+  /// **'NR (0)'**
   String get gradeNotHandedZero;
+
+  /// No description provided for @gradeExemption.
+  ///
+  /// In fr, this message translates to:
+  /// **'Disp'**
+  String get gradeExemption;
+
+  /// No description provided for @gradeNotGraded.
+  ///
+  /// In fr, this message translates to:
+  /// **'Non noté'**
+  String get gradeNotGraded;
+
+  /// No description provided for @gradeInapt.
+  ///
+  /// In fr, this message translates to:
+  /// **'Inapte'**
+  String get gradeInapt;
+
+  /// No description provided for @gradeFelicitations.
+  ///
+  /// In fr, this message translates to:
+  /// **'Félicitations'**
+  String get gradeFelicitations;
 
   /// No description provided for @noCourseToday.
   ///
