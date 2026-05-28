@@ -59,7 +59,7 @@ flutter:
           style: italic
         - asset: assets/fonts/SNPro-Regular.ttf
           weight: 400
-        - asset: assets/fonts/SNPro-RegularItalic.ttf
+        - asset: assets/fonts/SNPro-Italic.ttf
           weight: 400
           style: italic
         - asset: assets/fonts/SNPro-Medium.ttf
