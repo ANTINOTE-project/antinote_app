@@ -8,13 +8,17 @@ class ListWidget<T> extends StatelessWidget {
 
   final bool isSliver;
   final bool shrinkWrap;
+  final ScrollPhysics? physics;
 
   const ListWidget({
     super.key,
+
     required this.items,
     required this.itemBuilder,
+
     this.isSliver = true,
     this.shrinkWrap = false,
+    this.physics,
   });
 
   static const radius = Radius.circular(16);
@@ -66,6 +70,7 @@ class ListWidget<T> extends StatelessWidget {
     return ListView.builder(
       itemCount: items.length,
       shrinkWrap: shrinkWrap,
+      physics: physics,
 
       itemBuilder: (context, index) {
         final item = items[index];

@@ -81,6 +81,7 @@ Future<void> _showDetails({
 
               Flexible(
                 child: ListWidget(
+                  physics: const NeverScrollableScrollPhysics(),
                   shrinkWrap: true,
                   isSliver: false,
 
