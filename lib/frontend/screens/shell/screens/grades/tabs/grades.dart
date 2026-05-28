@@ -379,10 +379,25 @@ class _AverageWidget extends StatelessWidget {
                     children: [
                       Text(context.l10n.averageSelf, style: style),
 
-                      Text(
-                        Utils.formatNumber(selfAvg),
-                        style: TextStyle(fontSize: 27, fontWeight: .w800, color: context.c.primary),
-                      ),
+                      if (selfAvg != null)
+                        TweenAnimationBuilder<double>(
+                          tween: Tween(begin: 0, end: selfAvg),
+
+                          duration: const Duration(milliseconds: 600),
+                          curve: Curves.easeOutExpo,
+
+                          builder: (context, value, _) {
+                            return Text(
+                              Utils.formatNumber(value),
+
+                              style: TextStyle(
+                                fontSize: 27,
+                                fontWeight: .w800,
+                                color: context.c.primary,
+                              ),
+                            );
+                          },
+                        ),
                     ],
                   ),
 
@@ -390,15 +405,24 @@ class _AverageWidget extends StatelessWidget {
                     children: [
                       Text(context.l10n.averageClass, style: style),
 
-                      Text(
-                        Utils.formatNumber(classAvg),
+                      if (classAvg != null)
+                        TweenAnimationBuilder<double>(
+                          tween: Tween(begin: 0, end: classAvg),
+                          duration: const Duration(milliseconds: 600),
+                          curve: Curves.easeOutExpo,
 
-                        style: TextStyle(
-                          fontSize: 27,
-                          fontWeight: FontWeight.w900,
-                          color: context.c.secondary,
+                          builder: (context, value, _) {
+                            return Text(
+                              Utils.formatNumber(value),
+
+                              style: TextStyle(
+                                fontSize: 27,
+                                fontWeight: FontWeight.w900,
+                                color: context.c.secondary,
+                              ),
+                            );
+                          },
                         ),
-                      ),
                     ],
                   ),
                 ],
