@@ -15,7 +15,7 @@ import "package:intl/intl.dart";
 
 typedef ServiceGradeList = Map<Service, List<Exam>>;
 
-typedef _DetailsItem = ({IconData icon, String label, double? grade, double? theoreticalMaxGrade});
+typedef _DetailsItem = ({IconData icon, String label, Grade? grade, Grade? theoreticalMaxGrade});
 
 Future<void> _showDetails({
   required BuildContext context,
@@ -92,20 +92,11 @@ Future<void> _showDetails({
                         style: TextStyle(color: subtitleColor, fontSize: 18, fontWeight: .bold),
                       ),
 
-                      trailing: item.grade != null && item.theoreticalMaxGrade != null
-                          ? _GradeText(
-                              selfGrade: item.grade!,
-                              maxGrade: item.theoreticalMaxGrade!,
-                              color: color,
-                            )
-                          : Text(
-                              Utils.formatNumber(item.grade),
-                              style: TextStyle(
-                                color: color,
-                                fontSize: 22,
-                                fontWeight: FontWeight.w900,
-                              ),
-                            ),
+                      trailing: _GradeText(
+                        selfGrade: item.grade!,
+                        maxGrade: item.theoreticalMaxGrade!,
+                        color: color,
+                      ),
                     );
                   },
                 ),
@@ -129,32 +120,32 @@ Future<void> showExamDetails(BuildContext context, Exam exam) async {
     (
       label: context.l10n.youGot,
       icon: HugeIconsSolid.male02,
-      grade: exam.selfGrade.value,
-      theoreticalMaxGrade: exam.theoreticalMaxGrade.value,
+      grade: exam.selfGrade,
+      theoreticalMaxGrade: exam.theoreticalMaxGrade,
     ),
 
     if (exam.classAverage != null)
       (
         label: context.l10n.averageClass,
         icon: HugeIconsSolid.chartAverage,
-        grade: exam.classAverage!.value,
-        theoreticalMaxGrade: exam.theoreticalMaxGrade.value,
+        grade: exam.classAverage,
+        theoreticalMaxGrade: exam.theoreticalMaxGrade,
       ),
 
     if (exam.maxGrade != null)
       (
         label: context.l10n.bestGrade,
         icon: HugeIconsSolid.chartMaximum,
-        grade: exam.maxGrade!.value,
-        theoreticalMaxGrade: exam.theoreticalMaxGrade.value,
+        grade: exam.maxGrade,
+        theoreticalMaxGrade: exam.theoreticalMaxGrade,
       ),
 
     if (exam.minGrade != null)
       (
         label: context.l10n.worstGrade,
         icon: HugeIconsSolid.chartMinimum,
-        grade: exam.minGrade!.value,
-        theoreticalMaxGrade: exam.theoreticalMaxGrade.value,
+        grade: exam.minGrade,
+        theoreticalMaxGrade: exam.theoreticalMaxGrade,
       ),
   ];
 
@@ -173,32 +164,32 @@ Future<void> showServiceDetails(BuildContext context, Service service, List<Exam
     (
       label: context.l10n.averageSelf,
       icon: HugeIconsSolid.male02,
-      grade: service.selfAverage?.value,
-      theoreticalMaxGrade: service.theoreticalMaxGrade?.value,
+      grade: service.selfAverage,
+      theoreticalMaxGrade: service.theoreticalMaxGrade,
     ),
 
     if (service.classAverage != null)
       (
         label: context.l10n.averageClass,
         icon: HugeIconsSolid.chartAverage,
-        grade: service.classAverage!.value,
-        theoreticalMaxGrade: service.theoreticalMaxGrade?.value,
+        grade: service.classAverage,
+        theoreticalMaxGrade: service.theoreticalMaxGrade,
       ),
 
     if (service.maxGrade != null)
       (
         label: context.l10n.bestGrade,
         icon: HugeIconsSolid.chartMaximum,
-        grade: service.maxGrade!.value,
-        theoreticalMaxGrade: service.theoreticalMaxGrade?.value,
+        grade: service.maxGrade,
+        theoreticalMaxGrade: service.theoreticalMaxGrade,
       ),
 
     if (service.minGrade != null)
       (
         label: context.l10n.worstGrade,
         icon: HugeIconsSolid.chartMinimum,
-        grade: service.minGrade!.value,
-        theoreticalMaxGrade: service.theoreticalMaxGrade?.value,
+        grade: service.minGrade,
+        theoreticalMaxGrade: service.theoreticalMaxGrade,
       ),
   ];
 
@@ -471,8 +462,8 @@ class _LatestWidget extends StatelessWidget {
                               const Spacer(),
 
                               _GradeText(
-                                selfGrade: exam.selfGrade.value,
-                                maxGrade: exam.theoreticalMaxGrade.value,
+                                selfGrade: exam.selfGrade,
+                                maxGrade: exam.theoreticalMaxGrade,
                                 color: color,
                               ),
                             ],
@@ -569,8 +560,8 @@ class _ServiceWidget extends StatelessWidget {
 
                 if (service.selfAverage != null && service.theoreticalMaxGrade != null)
                   _GradeText(
-                    selfGrade: service.selfAverage!.value,
-                    maxGrade: service.theoreticalMaxGrade!.value,
+                    selfGrade: service.selfAverage!,
+                    maxGrade: service.theoreticalMaxGrade!,
                     color: color,
                   ),
               ],
@@ -606,8 +597,8 @@ class _ExamWidget extends StatelessWidget {
       subtitle: Text(subtitle, style: TextStyle(color: subtitleColor)),
 
       trailing: _GradeText(
-        selfGrade: exam.selfGrade.value,
-        maxGrade: exam.theoreticalMaxGrade.value,
+        selfGrade: exam.selfGrade,
+        maxGrade: exam.theoreticalMaxGrade,
         size: 19,
         color: color,
       ),
@@ -618,8 +609,8 @@ class _ExamWidget extends StatelessWidget {
 }
 
 class _GradeText extends StatelessWidget {
-  final double selfGrade;
-  final double maxGrade;
+  final Grade selfGrade;
+  final Grade maxGrade;
   final Color color;
   final double size;
 
@@ -636,7 +627,7 @@ class _GradeText extends StatelessWidget {
       TextSpan(
         children: [
           TextSpan(
-            text: Utils.formatNumber(selfGrade),
+            text: Utils.formatNumber(selfGrade.value),
 
             style: TextStyle(color: color, fontSize: size, fontWeight: FontWeight.w900),
           ),
@@ -644,7 +635,7 @@ class _GradeText extends StatelessWidget {
           const WidgetSpan(child: SizedBox(width: 2)),
 
           TextSpan(
-            text: "/${Utils.formatNumber(maxGrade, digits: 0)}",
+            text: "/${Utils.formatNumber(maxGrade.value, digits: 0)}",
 
             style: TextStyle(
               color: context.c.onSurfaceVariant,
