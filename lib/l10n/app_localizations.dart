@@ -280,6 +280,12 @@ abstract class AppLocalizations {
   /// **'Moy. classe'**
   String get averageClass;
 
+  /// No description provided for @coefficient.
+  ///
+  /// In fr, this message translates to:
+  /// **'Coefficient'**
+  String get coefficient;
+
   /// No description provided for @youGot.
   ///
   /// In fr, this message translates to:

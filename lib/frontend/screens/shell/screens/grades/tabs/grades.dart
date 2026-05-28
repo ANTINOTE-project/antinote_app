@@ -15,7 +15,13 @@ import "package:intl/intl.dart";
 
 typedef ServiceGradeList = Map<Service, List<Exam>>;
 
-typedef _DetailsItem = ({IconData icon, String label, Grade? grade, Grade? theoreticalMaxGrade});
+typedef _DetailsItem = ({
+  IconData icon,
+  String label,
+  Grade? grade,
+  Grade? theoreticalMaxGrade,
+  double? coefficient,
+});
 
 Future<void> _showDetails({
   required BuildContext context,
@@ -67,12 +73,12 @@ Future<void> _showDetails({
                         title,
 
                         textAlign: TextAlign.center,
-
                         style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 17),
                       ),
                     ),
                 ],
               ),
+
               Flexible(
                 child: ListWidget(
                   shrinkWrap: true,
@@ -92,11 +98,24 @@ Future<void> _showDetails({
                         style: TextStyle(color: subtitleColor, fontSize: 18, fontWeight: .bold),
                       ),
 
-                      trailing: _GradeText(
-                        selfGrade: item.grade!,
-                        maxGrade: item.theoreticalMaxGrade!,
-                        color: color,
-                      ),
+                      trailing: item.coefficient != null
+                          ? Text(
+                              "x${Utils.formatNumber(item.coefficient)}",
+
+                              style: TextStyle(
+                                color: color,
+                                fontSize: 20,
+                                fontWeight: FontWeight.w800,
+                              ),
+                            )
+                          : item.grade != null && item.theoreticalMaxGrade != null
+                          ? _GradeText(
+                              selfGrade: item.grade!,
+                              maxGrade: item.theoreticalMaxGrade!,
+                              color: color,
+                              size: 20,
+                            )
+                          : null,
                     );
                   },
                 ),
@@ -122,7 +141,17 @@ Future<void> showExamDetails(BuildContext context, Exam exam) async {
       icon: HugeIconsSolid.male02,
       grade: exam.selfGrade,
       theoreticalMaxGrade: exam.theoreticalMaxGrade,
+      coefficient: null,
     ),
+
+    if (exam.coefficient != null)
+      (
+        label: context.l10n.coefficient,
+        icon: HugeIconsSolid.calculate,
+        coefficient: exam.coefficient,
+        theoreticalMaxGrade: null,
+        grade: null,
+      ),
 
     if (exam.classAverage != null)
       (
@@ -130,6 +159,7 @@ Future<void> showExamDetails(BuildContext context, Exam exam) async {
         icon: HugeIconsSolid.chartAverage,
         grade: exam.classAverage,
         theoreticalMaxGrade: exam.theoreticalMaxGrade,
+        coefficient: null,
       ),
 
     if (exam.maxGrade != null)
@@ -138,6 +168,7 @@ Future<void> showExamDetails(BuildContext context, Exam exam) async {
         icon: HugeIconsSolid.chartMaximum,
         grade: exam.maxGrade,
         theoreticalMaxGrade: exam.theoreticalMaxGrade,
+        coefficient: null,
       ),
 
     if (exam.minGrade != null)
@@ -146,6 +177,7 @@ Future<void> showExamDetails(BuildContext context, Exam exam) async {
         icon: HugeIconsSolid.chartMinimum,
         grade: exam.minGrade,
         theoreticalMaxGrade: exam.theoreticalMaxGrade,
+        coefficient: null,
       ),
   ];
 
@@ -166,6 +198,7 @@ Future<void> showServiceDetails(BuildContext context, Service service, List<Exam
       icon: HugeIconsSolid.male02,
       grade: service.selfAverage,
       theoreticalMaxGrade: service.theoreticalMaxGrade,
+      coefficient: null,
     ),
 
     if (service.classAverage != null)
@@ -174,6 +207,7 @@ Future<void> showServiceDetails(BuildContext context, Service service, List<Exam
         icon: HugeIconsSolid.chartAverage,
         grade: service.classAverage,
         theoreticalMaxGrade: service.theoreticalMaxGrade,
+        coefficient: null,
       ),
 
     if (service.maxGrade != null)
@@ -182,6 +216,7 @@ Future<void> showServiceDetails(BuildContext context, Service service, List<Exam
         icon: HugeIconsSolid.chartMaximum,
         grade: service.maxGrade,
         theoreticalMaxGrade: service.theoreticalMaxGrade,
+        coefficient: null,
       ),
 
     if (service.minGrade != null)
@@ -190,6 +225,7 @@ Future<void> showServiceDetails(BuildContext context, Service service, List<Exam
         icon: HugeIconsSolid.chartMinimum,
         grade: service.minGrade,
         theoreticalMaxGrade: service.theoreticalMaxGrade,
+        coefficient: null,
       ),
   ];
 
