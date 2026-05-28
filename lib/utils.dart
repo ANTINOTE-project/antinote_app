@@ -17,6 +17,7 @@ class Utils {
   static (
     Color color,
     Color backgroundColor,
+    Color headerBackgroundColor,
     Color borderColor,
     Color titleColor,
     Color subtitleColor,
@@ -26,6 +27,7 @@ class Utils {
       return (
         scheme.onSurface,
         scheme.surfaceContainerHigh,
+        scheme.surfaceContainerHighest,
         scheme.outlineVariant,
         scheme.onSurface,
         scheme.onSurfaceVariant,
@@ -41,8 +43,13 @@ class Utils {
         .toColor();
 
     final background = hsl
-        .withLightness(isLight ? 0.92 : 0.15)
+        .withLightness(isLight ? 0.88 : 0.15)
         .withSaturation(hsl.saturation.clamp(0.15, 0.4))
+        .toColor();
+
+    final headerBackground = hsl
+        .withLightness(isLight ? 0.78 : 0.08)
+        .withSaturation(hsl.saturation.clamp(0.35, 0.7))
         .toColor();
 
     final border = hsl
@@ -60,7 +67,7 @@ class Utils {
         .withSaturation(hsl.saturation.clamp(0.15, 0.35))
         .toColor();
 
-    return (base, background, border, title, subtitle);
+    return (base, background, headerBackground, border, title, subtitle);
   }
 
   static String getExamComment(BuildContext context, Exam exam) {

@@ -44,6 +44,8 @@
   "youGot": "Tu as eu",
   "bestGrade": "Meilleure note",
   "worstGrade": "Note la plus basse",
+  "gradeAbsent": "Abs",
+  "gradeNotHandedZero": "Non rendu",
 
   "noCourseToday": "Tu n'as pas de cours,\nprofite bien !",
   "holidayDay": "C'est les vacances,\n amuse toi bien !",

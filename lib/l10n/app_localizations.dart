@@ -298,6 +298,18 @@ abstract class AppLocalizations {
   /// **'Note la plus basse'**
   String get worstGrade;
 
+  /// No description provided for @gradeAbsent.
+  ///
+  /// In fr, this message translates to:
+  /// **'Abs'**
+  String get gradeAbsent;
+
+  /// No description provided for @gradeNotHandedZero.
+  ///
+  /// In fr, this message translates to:
+  /// **'Non rendu'**
+  String get gradeNotHandedZero;
+
   /// No description provided for @noCourseToday.
   ///
   /// In fr, this message translates to:

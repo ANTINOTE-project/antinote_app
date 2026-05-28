@@ -8,6 +8,7 @@ import "package:antinote_app/frontend/screens/screen.dart";
 import "package:antinote_app/frontend/widgets/customs/list.dart";
 import "package:antinote_app/frontend/widgets/customs/loading.dart";
 import "package:antinote_app/frontend/widgets/pressable.dart";
+import "package:antinote_app/main.dart";
 import "package:antinote_app/utils.dart";
 import "package:flutter/material.dart";
 import "package:hugeicons_pro/hugeicons.dart";
@@ -29,7 +30,7 @@ Future<void> _showDetails({
     context: context,
 
     builder: (context) {
-      final (color, backgroundColor, _, _, subtitleColor) = Utils.adaptColorPair(
+      final (color, backgroundColor, _, _, _, subtitleColor) = Utils.adaptColorPair(
         serviceColor,
         context.c,
       );
@@ -397,7 +398,7 @@ class _LatestWidget extends StatelessWidget {
           itemBuilder: (context, index) {
             final exam = exams[index];
 
-            final (color, backgroundColor, borderColor, titleColor, subtitleColor) =
+            final (color, backgroundColor, headerColor, borderColor, _, subtitleColor) =
                 Utils.adaptColorPair(exam.service.color, context.c);
 
             final date = DateFormat("dd/MM/yyyy").format(exam.date);
@@ -523,7 +524,7 @@ class _ServiceWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final (color, backgroundColor, borderColor, titleColor, subtitleColor) = Utils.adaptColorPair(
+    final (color, _, headerColor, borderColor, titleColor, _) = Utils.adaptColorPair(
       service.color,
       context.c,
     );
@@ -535,11 +536,12 @@ class _ServiceWidget extends StatelessWidget {
         decoration: BoxDecoration(
           border: Border.all(color: borderColor),
           borderRadius: BorderRadius.circular(16),
-          color: backgroundColor,
+          color: headerColor,
         ),
 
         child: Pressable(
           onPressed: () => showServiceDetails(context, service, exams),
+
           child: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
 
@@ -554,7 +556,7 @@ class _ServiceWidget extends StatelessWidget {
                     overflow: TextOverflow.ellipsis,
                     maxLines: 1,
 
-                    style: TextStyle(fontSize: 21, fontWeight: FontWeight.w800, color: titleColor),
+                    style: TextStyle(fontSize: 21, fontWeight: .w800, color: titleColor),
                   ),
                 ),
 
@@ -562,7 +564,9 @@ class _ServiceWidget extends StatelessWidget {
                   _GradeText(
                     selfGrade: service.selfAverage!,
                     maxGrade: service.theoreticalMaxGrade!,
+                    isMain: true,
                     color: color,
+                    size: 23,
                   ),
               ],
             ),
@@ -581,7 +585,7 @@ class _ExamWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final (color, backgroundColor, borderColor, titleColor, subtitleColor) = Utils.adaptColorPair(
+    final (color, backgroundColor, _, _, titleColor, subtitleColor) = Utils.adaptColorPair(
       exam.service.color,
       context.c,
     );
@@ -599,8 +603,8 @@ class _ExamWidget extends StatelessWidget {
       trailing: _GradeText(
         selfGrade: exam.selfGrade,
         maxGrade: exam.theoreticalMaxGrade,
-        size: 19,
         color: color,
+        size: 19,
       ),
 
       onPressed: () => showExamDetails(context, exam),
@@ -611,38 +615,62 @@ class _ExamWidget extends StatelessWidget {
 class _GradeText extends StatelessWidget {
   final Grade selfGrade;
   final Grade maxGrade;
+
   final Color color;
+
+  final bool isMain;
   final double size;
 
   const _GradeText({
     required this.selfGrade,
     required this.maxGrade,
+
     required this.color,
+
+    this.isMain = false,
     this.size = 22,
   });
 
   @override
   Widget build(BuildContext context) {
+    final showMaxGrade = maxGrade.value != 20.0;
+
+    String selfValue = Utils.formatNumber(selfGrade.value);
+
+    if (selfGrade.type == .absent) {
+      selfValue = context.l10n.gradeAbsent;
+    } else if (selfGrade.type == .notHandedZero) {
+      selfValue = context.l10n.gradeNotHandedZero;
+    }
+
+    if (selfGrade.type != .note) {
+      talker.log("Type: ${selfGrade.type} | Raw: ${selfGrade.rawContent}");
+    }
+
     return Text.rich(
+      textAlign: .end,
+
       TextSpan(
         children: [
           TextSpan(
-            text: Utils.formatNumber(selfGrade.value),
+            text: selfValue,
 
-            style: TextStyle(color: color, fontSize: size, fontWeight: FontWeight.w900),
+            style: TextStyle(color: color, fontSize: size, fontWeight: isMain ? .w900 : .w800),
           ),
 
-          const WidgetSpan(child: SizedBox(width: 2)),
+          if (showMaxGrade) ...[
+            const WidgetSpan(child: SizedBox(width: 2)),
 
-          TextSpan(
-            text: "/${Utils.formatNumber(maxGrade.value, digits: 0)}",
+            TextSpan(
+              text: "/${Utils.formatNumber(maxGrade.value, digits: 0)}",
 
-            style: TextStyle(
-              color: context.c.onSurfaceVariant,
-              fontSize: size * 0.75,
-              fontWeight: FontWeight.bold,
+              style: TextStyle(
+                color: context.c.onSurfaceVariant,
+                fontSize: size * 0.75,
+                fontWeight: FontWeight.bold,
+              ),
             ),
-          ),
+          ],
         ],
       ),
     );
