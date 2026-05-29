@@ -10,14 +10,14 @@ import "package:antinote_app/main.dart";
 import "package:flutter/foundation.dart";
 import "package:flutter/material.dart";
 
-class LoginSearchUrlScreen extends StatefulWidget {
-  const LoginSearchUrlScreen({super.key});
+class LoginUrlScreen extends StatefulWidget {
+  const LoginUrlScreen({super.key});
 
   @override
-  State<LoginSearchUrlScreen> createState() => _LoginSearchUrlScreenState();
+  State<LoginUrlScreen> createState() => _LoginUrlScreenState();
 }
 
-class _LoginSearchUrlScreenState extends State<LoginSearchUrlScreen> {
+class _LoginUrlScreenState extends State<LoginUrlScreen> {
   final _controller = TextEditingController();
   Timer? _debounce;
 

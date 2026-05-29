@@ -69,7 +69,7 @@ class LoginPickScreen extends StatelessWidget with WidgetsBindingObserver {
             onPressed: () async {
               await sendResultIfLoggedIn(
                 context,
-                context.push<LoginResult>(Routes.auth.search.city),
+                context.push<LoginResult>(Routes.auth.city),
               );
             },
           ),
@@ -82,7 +82,7 @@ class LoginPickScreen extends StatelessWidget with WidgetsBindingObserver {
             onPressed: () async {
               await sendResultIfLoggedIn(
                 context,
-                context.push<LoginResult>(Routes.auth.search.url),
+                context.push<LoginResult>(Routes.auth.url),
               );
             },
           ),

@@ -9,22 +9,22 @@ import "package:flutter/material.dart";
 import "package:go_router/go_router.dart";
 import "package:hugeicons_pro/hugeicons.dart";
 
-class LoginSearchSchoolScreen extends StatefulWidget {
+class LoginSelectSchoolScreen extends StatefulWidget {
   final double lat;
   final double long;
 
-  const LoginSearchSchoolScreen({
+  const LoginSelectSchoolScreen({
     super.key,
     required this.lat,
     required this.long,
   });
 
   @override
-  State<LoginSearchSchoolScreen> createState() =>
-      _LoginSearchSchoolScreenState();
+  State<LoginSelectSchoolScreen> createState() =>
+      _LoginSelectSchoolScreenState();
 }
 
-class _LoginSearchSchoolScreenState extends State<LoginSearchSchoolScreen> {
+class _LoginSelectSchoolScreenState extends State<LoginSelectSchoolScreen> {
   List<GeolocatedInstance> _instances = [];
 
   Future<void> geolocateInstances() async {
@@ -70,7 +70,7 @@ class _LoginSearchSchoolScreenState extends State<LoginSearchSchoolScreen> {
                     if (!context.mounted) return;
 
                     final result = await context.push<LoginResult>(
-                      Routes.auth.search.select,
+                      Routes.auth.workspace,
                       extra: {"parameters": parameters},
                     );
 

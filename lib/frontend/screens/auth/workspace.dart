@@ -9,16 +9,16 @@ import "package:flutter/material.dart";
 import "package:go_router/go_router.dart";
 import "package:hugeicons_pro/hugeicons.dart";
 
-class LoginSearchSelect extends StatefulWidget {
+class LoginSelectWorkspace extends StatefulWidget {
   final MobileInstanceParameters parameters;
 
-  const LoginSearchSelect({super.key, required this.parameters});
+  const LoginSelectWorkspace({super.key, required this.parameters});
 
   @override
-  State<LoginSearchSelect> createState() => _LoginSearchSelectState();
+  State<LoginSelectWorkspace> createState() => _LoginSelectWorkspaceState();
 }
 
-class _LoginSearchSelectState extends State<LoginSearchSelect> {
+class _LoginSelectWorkspaceState extends State<LoginSelectWorkspace> {
   static const _iconMap = <WorkspaceType, IconData>{
     .mobileAdministrateur: HugeIconsSolid.manager,
     .mobileProfesseur: HugeIconsSolid.teacher,
@@ -41,7 +41,7 @@ class _LoginSearchSelectState extends State<LoginSearchSelect> {
 
     if (casLoginActive) {
       result = await context.push<LoginResult>(
-        Routes.auth.search.webview,
+        Routes.auth.webview,
         extra: {"parameters": widget.parameters, "workspace": workspace},
       );
     } else {

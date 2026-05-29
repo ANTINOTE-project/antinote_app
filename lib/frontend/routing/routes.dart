@@ -10,18 +10,16 @@ class _AuthRoute {
   const _AuthRoute();
 
   String get login => "/auth/login";
+
   String get pick => "/auth/pick";
-  String get qrCode => "/auth/qr_code";
 
-  final search = const _SearchRoute();
-}
+  String get city => "/auth/city";
 
-class _SearchRoute {
-  const _SearchRoute();
+  String get url => "/auth/url";
 
-  String get city => "/auth/search/city";
-  String get url => "/auth/search/url";
-  String get school => "/auth/search/school";
-  String get select => "/auth/search/select";
-  String get webview => "/auth/search/webview";
+  String get school => "/auth/school";
+
+  String get workspace => "/auth/workspace";
+
+  String get webview => "/auth/webview";
 }

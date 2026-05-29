@@ -1,12 +1,12 @@
 import "package:antinote/antinote.dart";
 import "package:antinote_app/frontend/routing/routes.dart";
+import "package:antinote_app/frontend/screens/auth/city.dart";
 import "package:antinote_app/frontend/screens/auth/login.dart";
 import "package:antinote_app/frontend/screens/auth/pick.dart";
-import "package:antinote_app/frontend/screens/auth/search/city.dart";
-import "package:antinote_app/frontend/screens/auth/search/school.dart";
-import "package:antinote_app/frontend/screens/auth/search/select.dart";
-import "package:antinote_app/frontend/screens/auth/search/url.dart";
-import "package:antinote_app/frontend/screens/auth/search/webview.dart";
+import "package:antinote_app/frontend/screens/auth/school.dart";
+import "package:antinote_app/frontend/screens/auth/url.dart";
+import "package:antinote_app/frontend/screens/auth/webview.dart";
+import "package:antinote_app/frontend/screens/auth/workspace.dart";
 import "package:antinote_app/frontend/screens/shell/shell.dart";
 import "package:go_router/go_router.dart";
 
@@ -27,37 +27,37 @@ GoRouter makeRouter({String initialLocation = Routes.appShell}) => GoRouter(
     ),
 
     GoRoute(
-      path: Routes.auth.search.city,
-      builder: (context, state) => const LoginSearchCityScreen(),
+      path: Routes.auth.city,
+      builder: (context, state) => const LoginFindCityScreen(),
     ),
     GoRoute(
-      path: Routes.auth.search.url,
-      builder: (context, state) => const LoginSearchUrlScreen(),
+      path: Routes.auth.url,
+      builder: (context, state) => const LoginUrlScreen(),
     ),
     GoRoute(
-      path: Routes.auth.search.school,
+      path: Routes.auth.school,
       builder: (context, state) {
         final extra = state.extra as Map<String, dynamic>;
-        return LoginSearchSchoolScreen(
+        return LoginSelectSchoolScreen(
           lat: extra["lat"] as double,
           long: extra["long"] as double,
         );
       },
     ),
     GoRoute(
-      path: Routes.auth.search.select,
+      path: Routes.auth.workspace,
       builder: (context, state) {
         final extra = state.extra as Map<String, dynamic>;
-        return LoginSearchSelect(
+        return LoginSelectWorkspace(
           parameters: extra["parameters"] as MobileInstanceParameters,
         );
       },
     ),
     GoRoute(
-      path: Routes.auth.search.webview,
+      path: Routes.auth.webview,
       builder: (context, state) {
         final extra = state.extra as Map<String, dynamic>;
-        return LoginSearchWebview(
+        return LoginWebview(
           parameters: extra["parameters"] as MobileInstanceParameters,
           workspace: extra["workspace"] as Workspace,
         );

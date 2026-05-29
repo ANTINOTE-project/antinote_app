@@ -13,14 +13,14 @@ import "package:go_router/go_router.dart";
 import "package:hugeicons_pro/hugeicons.dart";
 import "package:skeletonizer/skeletonizer.dart";
 
-class LoginSearchCityScreen extends StatefulWidget {
-  const LoginSearchCityScreen({super.key});
+class LoginFindCityScreen extends StatefulWidget {
+  const LoginFindCityScreen({super.key});
 
   @override
-  State<LoginSearchCityScreen> createState() => _LoginSearchCityScreenState();
+  State<LoginFindCityScreen> createState() => _LoginFindCityScreenState();
 }
 
-class _LoginSearchCityScreenState extends State<LoginSearchCityScreen> {
+class _LoginFindCityScreenState extends State<LoginFindCityScreen> {
   final _mockCities = List.generate(15, (i) {
     final r = Random(i);
 
@@ -157,7 +157,7 @@ class _LoginSearchCityScreenState extends State<LoginSearchCityScreen> {
                           return ListItemCard(
                             onPressed: () async {
                               final result = await context.push<LoginResult>(
-                                Routes.auth.search.school,
+                                Routes.auth.school,
                                 extra: {
                                   "lat": city.latitude,
                                   "long": city.longitude,

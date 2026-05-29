@@ -6,17 +6,21 @@ import "package:flutter/material.dart";
 import "package:go_router/go_router.dart";
 import "package:webview_flutter/webview_flutter.dart";
 
-class LoginSearchWebview extends StatefulWidget {
+class LoginWebview extends StatefulWidget {
   final MobileInstanceParameters parameters;
   final Workspace workspace;
 
-  const LoginSearchWebview({super.key, required this.parameters, required this.workspace});
+  const LoginWebview({
+    super.key,
+    required this.parameters,
+    required this.workspace,
+  });
 
   @override
-  State<LoginSearchWebview> createState() => _LoginSearchWebviewState();
+  State<LoginWebview> createState() => _LoginWebviewState();
 }
 
-class _LoginSearchWebviewState extends State<LoginSearchWebview> {
+class _LoginWebviewState extends State<LoginWebview> {
   late final WebViewController _controller;
 
   @override
@@ -32,7 +36,8 @@ class _LoginSearchWebviewState extends State<LoginSearchWebview> {
 
             if (widget.parameters.baseUrl.authority == url?.authority &&
                 ((url?.queryParameters.containsKey("ticket") ?? false) ||
-                    (url?.queryParameters.containsKey("identifiant") ?? false))) {
+                    (url?.queryParameters.containsKey("identifiant") ??
+                        false))) {
               try {
                 final result = await CasCredentials.loginFromTicketOrId(
                   url!,
@@ -45,7 +50,11 @@ class _LoginSearchWebviewState extends State<LoginSearchWebview> {
 
                 // catch
               } catch (e, st) {
-                talker.error("Failed to login although matched criterion", e, st);
+                talker.error(
+                  "Failed to login although matched criterion",
+                  e,
+                  st,
+                );
               }
 
               return .prevent;
@@ -58,7 +67,9 @@ class _LoginSearchWebviewState extends State<LoginSearchWebview> {
       ..loadRequest(
         widget.workspace
             .toSpecificAccountKind(widget.parameters.baseUrl)
-            .replace(queryParameters: {...PronoteSession.redirectBypassParameters}),
+            .replace(
+              queryParameters: {...PronoteSession.redirectBypassParameters},
+            ),
       );
   }
 
