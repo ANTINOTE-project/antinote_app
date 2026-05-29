@@ -700,11 +700,13 @@ class _GradesCurvePainter extends CustomPainter {
 
     final paint = Paint()
       ..color = color
-      ..strokeWidth = 2
+      ..strokeWidth = 4
       ..style = PaintingStyle.stroke
       ..strokeCap = StrokeCap.round;
 
     final path = Path();
+
+    final List<Offset> offsets = [];
 
     for (var i = 0; i < values.length; i++) {
       final x = i / (values.length - 1) * size.width;
@@ -712,10 +714,29 @@ class _GradesCurvePainter extends CustomPainter {
       final yFinal = size.height - ((values[i] - min) / range * size.height);
       final y = lerpDouble(size.height, yFinal, progress)!;
 
+      offsets.add(Offset(x, y));
+    }
+
+    for (var i = 0; i < offsets.length; i++) {
+      final offset = offsets[i];
+
+      // first
       if (i == 0) {
-        path.moveTo(x, y);
+        final nextOffset = offsets[i + 1];
+        final center = (offset + nextOffset) / 2;
+
+        path.moveTo(center.dx, center.dy);
+
+        // last
+      } else if (i == values.length - 1) {
+        path.lineTo(offset.dx, offset.dy);
+
+        // normal
       } else {
-        path.lineTo(x, y);
+        final nextOffset = offsets[i + 1];
+        final center = (offset + nextOffset) / 2;
+
+        path.quadraticBezierTo(offset.dx, offset.dy, center.dx, center.dy);
       }
     }
 
