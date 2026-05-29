@@ -67,9 +67,9 @@ flutter:
         - asset: assets/fonts/SNPro-MediumItalic.ttf
           weight: 500
           style: italic
-        - asset: assets/fonts/SNPro-Semibold.ttf
+        - asset: assets/fonts/SNPro-SemiBold.ttf
           weight: 600
-        - asset: assets/fonts/SNPro-SemiboldItalic.ttf
+        - asset: assets/fonts/SNPro-SemiBoldItalic.ttf
           weight: 600
           style: italic
         - asset: assets/fonts/SNPro-Bold.ttf
