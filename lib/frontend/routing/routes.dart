@@ -11,7 +11,7 @@ class _AuthRoute {
 
   String get accounts => "/auth/accounts";
 
-  String get pick => "/auth/pick";
+  String get methods => "/auth/methods";
 
   String get city => "/auth/city";
 

@@ -128,7 +128,7 @@ class _AccountsScreenState extends State<AccountsScreen>
 
               child: ButtonWidget(
                 onPressed: () async {
-                  final result = await context.push(Routes.auth.pick);
+                  final result = await context.push(Routes.auth.methods);
 
                   if (result != null && mounted) {
                     await _load();

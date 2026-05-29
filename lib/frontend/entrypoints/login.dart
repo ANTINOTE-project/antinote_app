@@ -23,7 +23,7 @@ class _LoginAppState extends State<LoginApp> {
   Widget build(BuildContext context) {
     return AccountStorageWidget(
       storage: AccountStorage.getInstance(ValueNotifier(_registry)),
-      child: App(initialLocation: Routes.auth.pick),
+      child: App(initialLocation: Routes.auth.methods),
     );
   }
 }
