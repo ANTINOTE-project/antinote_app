@@ -8,12 +8,12 @@ import "package:antinote_app/frontend/extensions/colors.dart";
 import "package:antinote_app/frontend/extensions/l10n.dart";
 import "package:antinote_app/frontend/screens/screen.dart";
 import "package:antinote_app/frontend/widgets/customs/list.dart";
-import "package:antinote_app/frontend/widgets/customs/loading.dart";
 import "package:antinote_app/frontend/widgets/pressable.dart";
 import "package:antinote_app/utils.dart";
 import "package:flutter/material.dart";
 import "package:hugeicons_pro/hugeicons.dart";
 import "package:intl/intl.dart";
+import "package:skeletonizer/skeletonizer.dart";
 
 typedef ServiceGradeList = Map<Service, List<Exam>>;
 
@@ -37,10 +37,8 @@ Future<void> _showDetails({
     context: context,
 
     builder: (context) {
-      final (color, backgroundColor, _, _, _, subtitleColor) = Utils.adaptColorPair(
-        serviceColor,
-        context.c,
-      );
+      final (color, backgroundColor, _, _, _, subtitleColor) =
+          Utils.adaptColorPair(serviceColor, context.c);
 
       return Container(
         padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
@@ -64,7 +62,10 @@ Future<void> _showDetails({
                     overflow: TextOverflow.ellipsis,
                     maxLines: 1,
 
-                    style: const TextStyle(fontWeight: FontWeight.w800, fontSize: 26),
+                    style: const TextStyle(
+                      fontWeight: FontWeight.w800,
+                      fontSize: 26,
+                    ),
                   ),
 
                   if (title != null)
@@ -75,7 +76,10 @@ Future<void> _showDetails({
                         title,
 
                         textAlign: TextAlign.center,
-                        style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 17),
+                        style: const TextStyle(
+                          fontWeight: FontWeight.w700,
+                          fontSize: 17,
+                        ),
                       ),
                     ),
                 ],
@@ -98,7 +102,11 @@ Future<void> _showDetails({
 
                       title: Text(
                         item.label,
-                        style: TextStyle(color: subtitleColor, fontSize: 18, fontWeight: .bold),
+                        style: TextStyle(
+                          color: subtitleColor,
+                          fontSize: 18,
+                          fontWeight: .bold,
+                        ),
                       ),
 
                       trailing: item.coefficient != null
@@ -111,7 +119,8 @@ Future<void> _showDetails({
                                 fontWeight: FontWeight.w800,
                               ),
                             )
-                          : item.grade != null && item.theoreticalMaxGrade != null
+                          : item.grade != null &&
+                                item.theoreticalMaxGrade != null
                           ? _GradeText(
                               selfGrade: item.grade!,
                               maxGrade: item.theoreticalMaxGrade!,
@@ -194,7 +203,11 @@ Future<void> showExamDetails(BuildContext context, Exam exam) async {
   );
 }
 
-Future<void> showServiceDetails(BuildContext context, Service service, List<Exam> exams) async {
+Future<void> showServiceDetails(
+  BuildContext context,
+  Service service,
+  List<Exam> exams,
+) async {
   final items = <_DetailsItem>[
     (
       label: context.l10n.averageSelf,
@@ -262,14 +275,21 @@ class _GradesTabState extends State<GradesTab> with ScreenMixin<GradesTab> {
   }
 
   @override
-  Widget buildLoaded(BuildContext context, RefreshIndicatorBuilder buildRefreshIndicator) {
-    final ServiceGradeList organizedData = {for (final service in _data.services!) service: []};
+  Widget buildLoaded(
+    BuildContext context,
+    RefreshIndicatorBuilder buildRefreshIndicator,
+  ) {
+    final ServiceGradeList organizedData = {
+      for (final service in _data.services!) service: [],
+    };
 
     final List<Exam> orderedExams = List.from(_data.exams);
     orderedExams.sort((a, b) => b.date.compareTo(a.date));
 
     for (final exam in orderedExams) {
-      final service = organizedData.keys.firstWhere((element) => element.id == exam.service.id);
+      final service = organizedData.keys.firstWhere(
+        (element) => element.id == exam.service.id,
+      );
       organizedData[service]!.add(exam);
     }
 
@@ -279,17 +299,27 @@ class _GradesTabState extends State<GradesTab> with ScreenMixin<GradesTab> {
           _AverageWidget(data: _data),
 
           if (orderedExams.isNotEmpty) ...[
-            _SectionWidget(label: context.l10n.latestGrades, icon: HugeIconsSolid.note),
+            _SectionWidget(
+              label: context.l10n.latestGrades,
+              icon: HugeIconsSolid.note,
+            ),
+
             _LatestWidget(exams: orderedExams),
           ],
 
           if (organizedData.isNotEmpty) ...[
-            _SectionWidget(label: context.l10n.services, icon: HugeIconsSolid.gitbook),
+            _SectionWidget(
+              label: context.l10n.services,
+              icon: HugeIconsSolid.gitbook,
+            ),
+
             _SubjectsWidget(data: organizedData),
           ],
 
           SliverPadding(
-            padding: EdgeInsets.only(bottom: MediaQuery.of(context).padding.bottom + 10),
+            padding: EdgeInsets.only(
+              bottom: MediaQuery.of(context).padding.bottom + 10,
+            ),
           ),
         ],
       ),
@@ -297,15 +327,88 @@ class _GradesTabState extends State<GradesTab> with ScreenMixin<GradesTab> {
   }
 
   @override
-  Widget buildLoading(BuildContext context, RefreshIndicatorBuilder buildRefreshIndicator) {
-    return buildRefreshIndicator(child: const Center(child: LoadingWidget(size: 30)));
+  Widget buildLoading(
+    BuildContext context,
+    RefreshIndicatorBuilder buildRefreshIndicator,
+  ) {
+    const textStyle = TextStyle(fontSize: 17, fontWeight: FontWeight.w700);
+
+    return buildRefreshIndicator(
+      child: CustomScrollView(
+        slivers: [
+          SliverToBoxAdapter(
+            child: Skeletonizer.zone(
+              child: Padding(
+                padding: const .only(top: 16, left: 12, right: 12, bottom: 8),
+
+                child: Container(
+                  decoration: BoxDecoration(
+                    color: context.c.surfaceContainerHigh,
+                    borderRadius: .circular(20),
+                  ),
+
+                  padding: const .all(12),
+
+                  child: const Column(
+                    spacing: 16,
+
+                    children: [
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        spacing: 12,
+
+                        children: [
+                          Column(
+                            spacing: 8,
+
+                            children: [
+                              Bone.text(width: 150, style: textStyle),
+                              Bone.text(width: 75, style: textStyle),
+                            ],
+                          ),
+
+                          Column(
+                            spacing: 8,
+
+                            children: [
+                              Bone.text(width: 150, style: textStyle),
+                              Bone.text(width: 75, style: textStyle),
+                            ],
+                          ),
+                        ],
+                      ),
+
+                      Column(
+                        spacing: 12,
+
+                        children: [
+                          Bone(
+                            width: .infinity,
+                            height: 40,
+                            borderRadius: .all(.circular(16)),
+                          ),
+
+                          Bone.text(width: 75, style: textStyle),
+                        ],
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
   }
 
   @override
   FutureOr<void> loadActiveDataFromSession(PronoteSession session) async {
     await session.ensurePage(198);
 
-    final period = session.instance.periods.firstWhere((e) => e.visualId == widget.periodId);
+    final period = session.instance.periods.firstWhere(
+      (e) => e.visualId == widget.periodId,
+    );
     _data = await session.access(LatestGradesPageAccessor(period: period));
   }
 }
@@ -477,7 +580,11 @@ class _GradesCurvePainter extends CustomPainter {
   final double progress;
   final Color color;
 
-  const _GradesCurvePainter({required this.values, required this.progress, required this.color});
+  const _GradesCurvePainter({
+    required this.values,
+    required this.progress,
+    required this.color,
+  });
 
   @override
   void paint(Canvas canvas, Size size) {
@@ -513,7 +620,8 @@ class _GradesCurvePainter extends CustomPainter {
   }
 
   @override
-  bool shouldRepaint(_GradesCurvePainter old) => old.values != values || old.progress != progress;
+  bool shouldRepaint(_GradesCurvePainter old) =>
+      old.values != values || old.progress != progress;
 }
 
 class _LatestWidget extends StatelessWidget {
@@ -539,8 +647,17 @@ class _LatestWidget extends StatelessWidget {
           itemBuilder: (context, index) {
             final exam = exams[index];
 
-            final (color, backgroundColor, headerColor, borderColor, _, subtitleColor) =
-                Utils.adaptColorPair(exam.service.color, context.c);
+            final (
+              color,
+              backgroundColor,
+              headerColor,
+              borderColor,
+              _,
+              subtitleColor,
+            ) = Utils.adaptColorPair(
+              exam.service.color,
+              context.c,
+            );
 
             final date = DateFormat("dd/MM/yyyy").format(exam.date);
             final title = Utils.getExamComment(context, exam);
@@ -554,7 +671,10 @@ class _LatestWidget extends StatelessWidget {
 
                 child: IntrinsicWidth(
                   child: ConstrainedBox(
-                    constraints: const BoxConstraints(minWidth: 200, maxWidth: 250),
+                    constraints: const BoxConstraints(
+                      minWidth: 200,
+                      maxWidth: 250,
+                    ),
 
                     child: Container(
                       decoration: BoxDecoration(
@@ -563,7 +683,10 @@ class _LatestWidget extends StatelessWidget {
                         color: backgroundColor,
                       ),
 
-                      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 10,
+                        vertical: 6,
+                      ),
 
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
@@ -590,7 +713,10 @@ class _LatestWidget extends StatelessWidget {
                               overflow: TextOverflow.ellipsis,
                               maxLines: 2,
 
-                              style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+                              style: const TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.w600,
+                              ),
                             ),
                           ),
 
@@ -598,7 +724,10 @@ class _LatestWidget extends StatelessWidget {
                             children: [
                               Text(
                                 date,
-                                style: TextStyle(fontWeight: FontWeight.bold, color: subtitleColor),
+                                style: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  color: subtitleColor,
+                                ),
                               ),
 
                               const Spacer(),
@@ -665,10 +794,8 @@ class _ServiceWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final (color, _, headerColor, borderColor, titleColor, _) = Utils.adaptColorPair(
-      service.color,
-      context.c,
-    );
+    final (color, _, headerColor, borderColor, titleColor, _) =
+        Utils.adaptColorPair(service.color, context.c);
 
     return Padding(
       padding: const EdgeInsets.only(top: 8, bottom: 2),
@@ -697,11 +824,16 @@ class _ServiceWidget extends StatelessWidget {
                     overflow: TextOverflow.ellipsis,
                     maxLines: 1,
 
-                    style: TextStyle(fontSize: 21, fontWeight: .w800, color: titleColor),
+                    style: TextStyle(
+                      fontSize: 21,
+                      fontWeight: .w800,
+                      color: titleColor,
+                    ),
                   ),
                 ),
 
-                if (service.selfAverage != null && service.theoreticalMaxGrade != null)
+                if (service.selfAverage != null &&
+                    service.theoreticalMaxGrade != null)
                   _GradeText(
                     selfGrade: service.selfAverage!,
                     maxGrade: service.theoreticalMaxGrade!,
@@ -726,10 +858,8 @@ class _ExamWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final (color, backgroundColor, _, _, titleColor, subtitleColor) = Utils.adaptColorPair(
-      exam.service.color,
-      context.c,
-    );
+    final (color, backgroundColor, _, _, titleColor, subtitleColor) =
+        Utils.adaptColorPair(exam.service.color, context.c);
 
     final title = Utils.getExamComment(context, exam);
     final subtitle = exam.date.asRelativeDate(context);
@@ -797,7 +927,11 @@ class _GradeText extends StatelessWidget {
           TextSpan(
             text: selfValue,
 
-            style: TextStyle(color: color, fontSize: size, fontWeight: isMain ? .w900 : .w800),
+            style: TextStyle(
+              color: color,
+              fontSize: size,
+              fontWeight: isMain ? .w900 : .w800,
+            ),
           ),
 
           if (showMaxGrade) ...[
