@@ -2,7 +2,7 @@ import "package:antinote/antinote.dart";
 import "package:antinote_app/backend/backend.dart";
 import "package:antinote_app/frontend/extensions/colors.dart";
 import "package:antinote_app/frontend/extensions/l10n.dart";
-import "package:antinote_app/frontend/screens/auth/search/widgets/item.dart";
+import "package:antinote_app/frontend/widgets/customs/list.dart";
 import "package:antinote_app/frontend/widgets/remote_html.dart";
 import "package:flutter/material.dart";
 import "package:hugeicons_pro/hugeicons.dart";
@@ -136,18 +136,20 @@ class _NewsScreenState extends State<NewsScreen> {
             ],
           ),
           PinnedHeaderSliver(
-            child: ListItemCard(
-              onPressed: null,
-              title: news.author,
-              subtitle:
-                  context.l10n.recipient(
-                    news.recipientFirstName ?? context.l10n.self,
-                  ) +
-                  (!news.isPoll
-                      ? ""
-                      : (news.anonymousResponse
-                            ? context.l10n.anonymousPoll
-                            : context.l10n.nominativePoll)),
+            child: ItemWidget(
+              borderRadius: const .all(ListWidget.radius),
+
+              title: Text(news.author),
+              subtitle: Text(
+                context.l10n.recipient(
+                      news.recipientFirstName ?? context.l10n.self,
+                    ) +
+                    (!news.isPoll
+                        ? ""
+                        : (news.anonymousResponse
+                              ? context.l10n.anonymousPoll
+                              : context.l10n.nominativePoll)),
+              ),
               trailing: Text(news.creationTime.asRelativeDate(context)),
             ),
           ),

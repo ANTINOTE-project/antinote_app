@@ -2,10 +2,10 @@ import "dart:async";
 
 import "package:antinote/antinote.dart";
 import "package:antinote_app/backend/backend.dart";
-import "package:antinote_app/frontend/screens/auth/search/widgets/item.dart";
 import "package:antinote_app/frontend/screens/screen.dart";
 import "package:antinote_app/frontend/screens/shell/models/communication.dart";
 import "package:antinote_app/frontend/screens/shell/screens/communication/news.dart";
+import "package:antinote_app/frontend/widgets/customs/list.dart";
 import "package:flutter/material.dart";
 import "package:hugeicons_pro/hugeicons.dart";
 import "package:intl/intl.dart";
@@ -30,15 +30,18 @@ class _CommunicationScreenState extends State<CommunicationScreen>
     RefreshIndicatorBuilder buildRefreshIndicator,
   ) {
     return buildRefreshIndicator(
-      child: ListView.builder(
-        itemBuilder: (context, index) {
-          final thread = threads[index];
+      child: ListWidget(
+        items: threads,
 
-          return ListItemCard(
+        itemBuilder: (context, thread, borderRadius) {
+          return ItemWidget(
+            borderRadius: borderRadius,
+
             onPressed: () async {
               await SessionManager.execute(
                 context: context,
                 channels: const [],
+
                 callback: (session) {
                   switch (thread.commType) {
                     case .poll:
@@ -70,18 +73,20 @@ class _CommunicationScreenState extends State<CommunicationScreen>
                 },
               );
             },
-            title: thread.title,
-            emphaseTitle: !thread.read,
-            subtitle: thread.authorName,
+
+            title: Text(thread.title),
+            subtitle: Text(thread.authorName),
+
+            // emphaseTitle: !thread.read,
             leading: Icon(switch (thread.commType) {
               .discussion => HugeIconsSolid.conversation,
               .news => HugeIconsSolid.news01,
               .poll => HugeIconsSolid.pieChart,
             }),
+
             trailing: Text(_minimalDateFormat.format(thread.publishDate)),
           );
         },
-        itemCount: threads.length,
       ),
     );
   }

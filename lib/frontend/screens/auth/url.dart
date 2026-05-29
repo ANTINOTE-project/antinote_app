@@ -2,7 +2,6 @@ import "dart:async";
 
 import "package:antinote/antinote.dart";
 import "package:antinote_app/frontend/extensions/l10n.dart";
-import "package:antinote_app/frontend/screens/auth/search/widgets/item.dart";
 import "package:antinote_app/frontend/widgets/customs/app_bar.dart";
 import "package:antinote_app/frontend/widgets/customs/field.dart";
 import "package:antinote_app/frontend/widgets/customs/list.dart";
@@ -119,51 +118,46 @@ class _LoginUrlScreenState extends State<LoginUrlScreen> {
               }
 
               final instance = snapshot.requireData!;
+
               return SliverPadding(
-                padding: .symmetric(horizontal: 12),
-                sliver: ListWidget<ListItemCard>(
+                padding: const .symmetric(horizontal: 12),
+
+                sliver: ListWidget(
                   items: [
-                    ListItemCard(
-                      onPressed: null,
+                    (
                       title: context.l10n.instanceName,
                       subtitle: context.l10n.instanceNameValue(
                         instance.establishmentName,
                         instance.loginEstablishmentName,
                       ),
                     ),
-                    ListItemCard(
-                      onPressed: null,
+                    (
                       title: context.l10n.remoteVersion,
                       subtitle: instance.version.toString(),
                     ),
-                    ListItemCard(
-                      onPressed: null,
+                    (
                       title: context.l10n.remoteYear,
                       subtitle: context.l10n.remoteYearSubtitle(
                         instance.firstDate,
                         instance.lastDate,
                       ),
                     ),
-                    ListItemCard(
-                      onPressed: null,
+                    (
                       title: context.l10n.remoteYear,
                       subtitle: context.l10n.remoteYearSubtitle(
                         instance.firstDate,
                         instance.lastDate,
                       ),
                     ),
-                    ListItemCard(
-                      onPressed: null,
-                      title: context.l10n.remotePeriods,
-                    ),
+                    (title: context.l10n.remotePeriods, subtitle: ""),
                   ],
+
                   itemBuilder: (context, item, borderRadius) {
                     return ItemWidget(
-                      title: Text(item.title!),
                       borderRadius: borderRadius,
-                      trailing: item.trailing,
-                      subtitle: Text(item.subtitle ?? ''),
-                      onPressed: item.onPressed,
+
+                      title: Text(item.title),
+                      subtitle: Text(item.subtitle),
                     );
                   },
                 ),
