@@ -150,6 +150,7 @@ class _AccountsScreenState extends State<AccountsScreen>
                 child: CustomScrollView(
                   slivers: [
                     ListWidget(
+                      isLoading: _accounts == null,
                       items: _accounts!,
 
                       itemBuilder: (context, account, borderRadius) {

@@ -52,6 +52,7 @@ class _LoginSelectSchoolScreenState extends State<LoginSelectSchoolScreen> {
         child: CustomScrollView(
           slivers: [
             ListWidget(
+              isLoading: _instances.isEmpty,
               items: _instances,
 
               itemBuilder: (context, instance, borderRadius) {

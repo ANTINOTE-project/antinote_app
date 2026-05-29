@@ -12,7 +12,6 @@ import "package:antinote_app/frontend/widgets/customs/list.dart";
 import "package:flutter/material.dart";
 import "package:go_router/go_router.dart";
 import "package:hugeicons_pro/hugeicons.dart";
-import "package:skeletonizer/skeletonizer.dart";
 
 class LoginFindCityScreen extends StatefulWidget {
   const LoginFindCityScreen({super.key});
@@ -138,55 +137,52 @@ class _LoginFindCityScreenState extends State<LoginFindCityScreen> {
                       ? _mockCities
                       : snapshot.requireData;
 
-                  return Skeletonizer(
-                    enabled: _isLoading(snapshot),
+                  return CustomScrollView(
+                    slivers: [
+                      ListWidget(
+                        isLoading: _isLoading(snapshot),
+                        items: cities,
 
-                    child: CustomScrollView(
-                      slivers: [
-                        ListWidget(
-                          items: cities,
+                        itemBuilder: (context, city, borderRadius) {
+                          return ItemWidget(
+                            borderRadius: borderRadius,
 
-                          itemBuilder: (context, city, borderRadius) {
-                            return ItemWidget(
-                              borderRadius: borderRadius,
+                            onPressed: () async {
+                              final result = await context.push<LoginResult>(
+                                Routes.auth.school,
 
-                              onPressed: () async {
-                                final result = await context.push<LoginResult>(
-                                  Routes.auth.school,
+                                extra: {
+                                  "lat": city.latitude,
+                                  "long": city.longitude,
+                                },
+                              );
 
-                                  extra: {
-                                    "lat": city.latitude,
-                                    "long": city.longitude,
-                                  },
-                                );
+                              if (result != null && context.mounted) {
+                                context.pop(result);
+                              }
+                            },
 
-                                if (result != null && context.mounted) {
-                                  context.pop(result);
-                                }
-                              },
+                            leading: Icon(switch (city.placeType) {
+                              .city => HugeIconsSolid.building01,
+                              .town => HugeIconsSolid.building02,
+                              .village => HugeIconsSolid.home01,
+                              .hamlet => HugeIconsSolid.house01,
+                              .suburb => HugeIconsSolid.house04,
+                              .municipality => HugeIconsSolid.city01,
+                              .other => HugeIconsSolid.location01,
+                            }),
 
-                              leading: Icon(switch (city.placeType) {
-                                .city => HugeIconsSolid.building01,
-                                .town => HugeIconsSolid.building02,
-                                .village => HugeIconsSolid.home01,
-                                .hamlet => HugeIconsSolid.house01,
-                                .suburb => HugeIconsSolid.house04,
-                                .municipality => HugeIconsSolid.city01,
-                                .other => HugeIconsSolid.location01,
-                              }),
+                            trailing: Icon(
+                              HugeIconsSolid.arrowRight01,
+                              color: context.c.outline,
+                            ),
 
-                              trailing: Icon(
-                                HugeIconsSolid.arrowRight01,
-                                color: context.c.outline,
-                              ),
-
-                              title: Text(city.name),
-                              subtitle: Text(city.address),
-                            );
-                          },
-                        ),
-                      ],
-                    ),
+                            title: Text(city.name),
+                            subtitle: Text(city.address),
+                          );
+                        },
+                      ),
+                    ],
                   );
                 },
               ),
