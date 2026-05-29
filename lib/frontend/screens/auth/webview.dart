@@ -42,6 +42,7 @@ class _LoginWebviewState extends State<LoginWebview> {
   void initState() {
     super.initState();
 
+    // TODO: Ajouter cookies dans credential car pas uuidAppliMobile == pronote pas content
     _controller = WebViewController()
       ..setJavaScriptMode(JavaScriptMode.unrestricted)
       ..setNavigationDelegate(
