@@ -115,11 +115,19 @@ class _LoginFindCityScreenState extends State<LoginFindCityScreen> {
                         spacing: 6,
 
                         children: [
-                          const Icon(HugeIconsSolid.mapsSearch, size: 48),
+                          Icon(
+                            HugeIconsSolid.mapsSearch,
+                            color: context.c.outlineVariant,
+                            size: 48,
+                          ),
 
                           Text(
                             context.l10n.loginCity,
-                            style: const TextStyle(fontWeight: FontWeight.w500),
+
+                            style: TextStyle(
+                              color: context.c.outlineVariant,
+                              fontWeight: .bold,
+                            ),
                           ),
                         ],
                       ),
