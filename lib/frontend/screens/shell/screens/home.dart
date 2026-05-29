@@ -17,7 +17,10 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> with ScreenMixin<HomeScreen> {
   @override
-  Widget buildLoaded(BuildContext context, RefreshIndicatorBuilder buildRefreshIndicator) {
+  Widget buildLoaded(
+    BuildContext context,
+    RefreshIndicatorBuilder buildRefreshIndicator,
+  ) {
     return buildRefreshIndicator(
       child: Padding(
         padding: const .symmetric(horizontal: 16),
@@ -27,7 +30,7 @@ class _HomeScreenState extends State<HomeScreen> with ScreenMixin<HomeScreen> {
 
           children: [
             ButtonWidget(
-              onPressed: () => context.push(Routes.auth.login),
+              onPressed: () => context.push(Routes.auth.accounts),
               label: "Page de connexion",
             ),
           ],
@@ -37,8 +40,13 @@ class _HomeScreenState extends State<HomeScreen> with ScreenMixin<HomeScreen> {
   }
 
   @override
-  Widget buildLoading(BuildContext context, RefreshIndicatorBuilder buildRefreshIndicator) {
-    return buildRefreshIndicator(child: const Center(child: LoadingWidget(size: 30)));
+  Widget buildLoading(
+    BuildContext context,
+    RefreshIndicatorBuilder buildRefreshIndicator,
+  ) {
+    return buildRefreshIndicator(
+      child: const Center(child: LoadingWidget(size: 30)),
+    );
   }
 
   @override

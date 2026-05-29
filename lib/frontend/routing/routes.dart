@@ -9,7 +9,7 @@ abstract final class Routes {
 class _AuthRoute {
   const _AuthRoute();
 
-  String get login => "/auth/login";
+  String get accounts => "/auth/accounts";
 
   String get pick => "/auth/pick";
 

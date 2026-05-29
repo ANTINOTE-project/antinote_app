@@ -14,14 +14,15 @@ import "package:flutter/material.dart";
 import "package:go_router/go_router.dart";
 import "package:hugeicons_pro/hugeicons.dart";
 
-class LoginScreen extends StatefulWidget {
-  const LoginScreen({super.key});
+class AccountsScreen extends StatefulWidget {
+  const AccountsScreen({super.key});
 
   @override
-  State<LoginScreen> createState() => _LoginScreenState();
+  State<AccountsScreen> createState() => _AccountsScreenState();
 }
 
-class _LoginScreenState extends State<LoginScreen> with WidgetsBindingObserver {
+class _AccountsScreenState extends State<AccountsScreen>
+    with WidgetsBindingObserver {
   List<AntinoteAccount>? _accounts;
 
   String? _defaultUid;

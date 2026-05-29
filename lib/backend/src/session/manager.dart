@@ -38,7 +38,7 @@ class SessionManager extends InheritedWidget {
       );
     }
 
-    await context.push(Routes.auth.login);
+    await context.push(Routes.auth.accounts);
 
     return state.lastSeenAccountUid!;
   }
