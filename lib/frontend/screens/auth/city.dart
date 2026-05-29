@@ -172,24 +172,8 @@ class _LoginFindCityScreenState extends State<LoginFindCityScreen> {
                                 color: context.c.outline,
                               ),
 
-                              title: Text(
-                                city.name,
-
-                                overflow: .ellipsis,
-                                maxLines: 1,
-
-                                style: TextStyle(
-                                  fontWeight: .w800,
-                                  color: context.c.onPrimary,
-                                ),
-                              ),
-
-                              subtitle: Text(
-                                city.address,
-
-                                overflow: .ellipsis,
-                                maxLines: 1,
-                              ),
+                              title: Text(city.name),
+                              subtitle: Text(city.address),
                             );
                           },
                         ),
