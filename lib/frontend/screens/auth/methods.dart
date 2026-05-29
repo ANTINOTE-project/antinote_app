@@ -14,8 +14,8 @@ import "package:flutter/material.dart";
 import "package:go_router/go_router.dart";
 import "package:hugeicons_pro/hugeicons.dart";
 
-class LoginMethodsScreen extends StatelessWidget with WidgetsBindingObserver {
-  const LoginMethodsScreen({super.key});
+class MethodsScreen extends StatelessWidget with WidgetsBindingObserver {
+  const MethodsScreen({super.key});
 
   Future<void> sendResultIfLoggedIn(
     BuildContext context,

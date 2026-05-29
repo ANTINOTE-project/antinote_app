@@ -23,7 +23,7 @@ GoRouter makeRouter({String initialLocation = Routes.appShell}) => GoRouter(
     ),
     GoRoute(
       path: Routes.auth.methods,
-      builder: (context, state) => const LoginMethodsScreen(),
+      builder: (context, state) => const MethodsScreen(),
     ),
 
     GoRoute(
@@ -48,7 +48,7 @@ GoRouter makeRouter({String initialLocation = Routes.appShell}) => GoRouter(
       path: Routes.auth.workspace,
       builder: (context, state) {
         final extra = state.extra as Map<String, dynamic>;
-        return LoginSelectWorkspace(
+        return LoginSelectWorkspaceScreen(
           parameters: extra["parameters"] as MobileInstanceParameters,
         );
       },
@@ -57,7 +57,7 @@ GoRouter makeRouter({String initialLocation = Routes.appShell}) => GoRouter(
       path: Routes.auth.webview,
       builder: (context, state) {
         final extra = state.extra as Map<String, dynamic>;
-        return LoginWebview(
+        return LoginWebviewScreen(
           parameters: extra["parameters"] as MobileInstanceParameters,
           workspace: extra["workspace"] as Workspace,
         );

@@ -9,16 +9,18 @@ import "package:flutter/material.dart";
 import "package:go_router/go_router.dart";
 import "package:hugeicons_pro/hugeicons.dart";
 
-class LoginSelectWorkspace extends StatefulWidget {
+class LoginSelectWorkspaceScreen extends StatefulWidget {
   final MobileInstanceParameters parameters;
 
-  const LoginSelectWorkspace({super.key, required this.parameters});
+  const LoginSelectWorkspaceScreen({super.key, required this.parameters});
 
   @override
-  State<LoginSelectWorkspace> createState() => _LoginSelectWorkspaceState();
+  State<LoginSelectWorkspaceScreen> createState() =>
+      _LoginSelectWorkspaceScreenState();
 }
 
-class _LoginSelectWorkspaceState extends State<LoginSelectWorkspace> {
+class _LoginSelectWorkspaceScreenState
+    extends State<LoginSelectWorkspaceScreen> {
   static const _iconMap = <WorkspaceType, IconData>{
     .mobileAdministrateur: HugeIconsSolid.manager,
     .mobileProfesseur: HugeIconsSolid.teacher,

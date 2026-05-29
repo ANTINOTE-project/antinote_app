@@ -6,21 +6,21 @@ import "package:flutter/material.dart";
 import "package:go_router/go_router.dart";
 import "package:webview_flutter/webview_flutter.dart";
 
-class LoginWebview extends StatefulWidget {
+class LoginWebviewScreen extends StatefulWidget {
   final MobileInstanceParameters parameters;
   final Workspace workspace;
 
-  const LoginWebview({
+  const LoginWebviewScreen({
     super.key,
     required this.parameters,
     required this.workspace,
   });
 
   @override
-  State<LoginWebview> createState() => _LoginWebviewState();
+  State<LoginWebviewScreen> createState() => _LoginWebviewScreenState();
 }
 
-class _LoginWebviewState extends State<LoginWebview> {
+class _LoginWebviewScreenState extends State<LoginWebviewScreen> {
   late final WebViewController _controller;
   double _loadingProgress = 0;
   bool _loginHandled = false;
