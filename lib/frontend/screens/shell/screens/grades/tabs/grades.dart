@@ -331,74 +331,8 @@ class _GradesTabState extends State<GradesTab> with ScreenMixin<GradesTab> {
     BuildContext context,
     RefreshIndicatorBuilder buildRefreshIndicator,
   ) {
-    const textStyle = TextStyle(fontSize: 17, fontWeight: FontWeight.w700);
-
     return buildRefreshIndicator(
-      child: CustomScrollView(
-        slivers: [
-          SliverToBoxAdapter(
-            child: Skeletonizer.zone(
-              child: Padding(
-                padding: const .only(top: 16, left: 12, right: 12, bottom: 8),
-
-                child: Container(
-                  decoration: BoxDecoration(
-                    color: context.c.surfaceContainerHigh,
-                    borderRadius: .circular(20),
-                  ),
-
-                  padding: const .all(12),
-
-                  child: const Column(
-                    spacing: 16,
-
-                    children: [
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                        spacing: 12,
-
-                        children: [
-                          Column(
-                            spacing: 8,
-
-                            children: [
-                              Bone.text(width: 150, style: textStyle),
-                              Bone.text(width: 75, style: textStyle),
-                            ],
-                          ),
-
-                          Column(
-                            spacing: 8,
-
-                            children: [
-                              Bone.text(width: 150, style: textStyle),
-                              Bone.text(width: 75, style: textStyle),
-                            ],
-                          ),
-                        ],
-                      ),
-
-                      Column(
-                        spacing: 12,
-
-                        children: [
-                          Bone(
-                            width: .infinity,
-                            height: 40,
-                            borderRadius: .all(.circular(16)),
-                          ),
-
-                          Bone.text(width: 75, style: textStyle),
-                        ],
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-            ),
-          ),
-        ],
-      ),
+      child: const CustomScrollView(slivers: [_AverageWidget(data: null)]),
     );
   }
 
@@ -409,6 +343,7 @@ class _GradesTabState extends State<GradesTab> with ScreenMixin<GradesTab> {
     final period = session.instance.periods.firstWhere(
       (e) => e.visualId == widget.periodId,
     );
+
     _data = await session.access(LatestGradesPageAccessor(period: period));
   }
 }
@@ -448,7 +383,7 @@ class _SectionWidget extends StatelessWidget {
 }
 
 class _AverageWidget extends StatelessWidget {
-  final LatestGradesPage data;
+  final LatestGradesPage? data;
 
   const _AverageWidget({required this.data});
 
@@ -456,121 +391,159 @@ class _AverageWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     const style = TextStyle(fontSize: 17, fontWeight: FontWeight.w700);
 
-    final selfAvg = data.selfGeneralAverage?.value;
-    final classAvg = data.classGeneralAverage?.value;
+    final selfAvg = data?.selfGeneralAverage?.value;
+    final classAvg = data?.classGeneralAverage?.value;
 
     return SliverToBoxAdapter(
-      child: Padding(
-        padding: const .only(top: 16, left: 12, right: 12, bottom: 8),
+      child: Skeletonizer.zone(
+        enabled: data == null,
 
-        child: Container(
-          decoration: BoxDecoration(
-            color: context.c.surfaceContainerHigh,
-            borderRadius: .circular(20),
-          ),
+        child: Padding(
+          padding: const .only(top: 16, left: 12, right: 12, bottom: 8),
 
-          padding: const .symmetric(vertical: 12),
+          child: Container(
+            decoration: BoxDecoration(
+              color: context.c.surfaceContainerHigh,
+              borderRadius: .circular(20),
+            ),
 
-          child: Column(
-            spacing: 16,
+            padding: const .symmetric(vertical: 12),
 
-            children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                spacing: 12,
+            child: Column(
+              spacing: 16,
 
-                children: [
-                  Column(
-                    children: [
-                      Text(context.l10n.averageSelf, style: style),
+              children: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  spacing: 12,
 
-                      if (selfAvg != null)
-                        TweenAnimationBuilder<double>(
-                          tween: Tween(begin: 0, end: selfAvg),
+                  children: [
+                    _AverageText(
+                      average: selfAvg,
+                      style: style,
+                      color: context.c.primary,
+                      isLoading: data == null,
+                      label: context.l10n.averageSelf,
+                    ),
 
-                          duration: const Duration(milliseconds: 600),
-                          curve: Curves.easeOutExpo,
+                    _AverageText(
+                      average: classAvg,
+                      style: style,
+                      color: context.c.secondary,
+                      isLoading: data == null,
+                      label: context.l10n.averageClass,
+                    ),
+                  ],
+                ),
 
-                          builder: (context, value, _) {
-                            return Text(
-                              Utils.formatNumber(value),
+                Column(
+                  spacing: 12,
 
-                              style: TextStyle(
-                                fontSize: 27,
-                                fontWeight: .w800,
-                                color: context.c.primary,
-                              ),
-                            );
-                          },
-                        ),
-                    ],
-                  ),
+                  children: data == null
+                      ? [
+                          const SizedBox(height: 40),
+                          const Bone.text(width: 200, style: style),
+                        ]
+                      : [
+                          TweenAnimationBuilder<double>(
+                            key: ValueKey(data!.exams.length),
+                            tween: Tween(begin: 0.5, end: 1.0),
 
-                  Column(
-                    children: [
-                      Text(context.l10n.averageClass, style: style),
+                            duration: const Duration(milliseconds: 1500),
+                            curve: Curves.easeOutExpo,
 
-                      if (classAvg != null)
-                        TweenAnimationBuilder<double>(
-                          tween: Tween(begin: 0, end: classAvg),
+                            builder: (context, value, _) {
+                              return SizedBox(
+                                height: 40,
 
-                          duration: const Duration(milliseconds: 600),
-                          curve: Curves.easeOutExpo,
+                                child: CustomPaint(
+                                  size: const Size(double.infinity, 40),
 
-                          builder: (context, value, _) {
-                            return Text(
-                              Utils.formatNumber(value),
+                                  painter: _GradesCurvePainter(
+                                    color: context.c.primary,
+                                    progress: value,
 
-                              style: TextStyle(
-                                fontSize: 27,
-                                fontWeight: FontWeight.w800,
-                                color: context.c.secondary,
-                              ),
-                            );
-                          },
-                        ),
-                    ],
-                  ),
-                ],
-              ),
+                                    values: data!.exams
+                                        .where(
+                                          (e) =>
+                                              e.selfGrade.type ==
+                                              GradeType.note,
+                                        )
+                                        .map((e) => e.selfGrade.value)
+                                        .toList()
+                                        .reversed
+                                        .toList(),
+                                  ),
+                                ),
+                              );
+                            },
+                          ),
 
-              Column(
-                spacing: 12,
-
-                children: [
-                  TweenAnimationBuilder<double>(
-                    key: ValueKey(data.exams.length),
-                    tween: Tween(begin: 0.5, end: 1.0),
-
-                    duration: const Duration(milliseconds: 1500),
-                    curve: Curves.easeOutExpo,
-
-                    builder: (context, value, _) {
-                      return CustomPaint(
-                        size: const Size(double.infinity, 40),
-
-                        painter: _GradesCurvePainter(
-                          color: context.c.primary,
-                          progress: value,
-
-                          values: data.exams
-                              .where((e) => e.selfGrade.type == GradeType.note)
-                              .map((e) => e.selfGrade.value)
-                              .toList()
-                              .reversed
-                              .toList(),
-                        ),
-                      );
-                    },
-                  ),
-
-                  Text(context.l10n.gradesHistory, style: style),
-                ],
-              ),
-            ],
+                          Text(context.l10n.gradesHistory, style: style),
+                        ],
+                ),
+              ],
+            ),
           ),
         ),
       ),
+    );
+  }
+}
+
+class _AverageText extends StatelessWidget {
+  final double? average;
+  final TextStyle style;
+  final Color color;
+  final bool isLoading;
+  final String label;
+
+  const _AverageText({
+    required this.average,
+    required this.style,
+    required this.color,
+    required this.isLoading,
+    required this.label,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: isLoading
+          ? [
+              Bone.text(width: 125, style: style),
+
+              const SizedBox(height: 8),
+
+              Bone.text(
+                width: 75,
+                style: TextStyle(fontSize: 27, fontWeight: .w800, color: color),
+              ),
+            ]
+          : average != null
+          ? [
+              Text(label, style: style),
+
+              TweenAnimationBuilder<double>(
+                tween: Tween(begin: 0, end: average),
+
+                duration: const Duration(milliseconds: 600),
+                curve: Curves.easeOutExpo,
+
+                builder: (context, value, _) {
+                  return Text(
+                    Utils.formatNumber(value),
+
+                    style: TextStyle(
+                      fontSize: 27,
+                      fontWeight: .w800,
+                      color: color,
+                    ),
+                  );
+                },
+              ),
+            ]
+          : [],
     );
   }
 }
