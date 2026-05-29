@@ -3,11 +3,13 @@ import "dart:math";
 
 import "package:antinote/antinote.dart";
 import "package:antinote_app/backend/src/accounts/place.dart";
+import "package:antinote_app/frontend/extensions/colors.dart";
 import "package:antinote_app/frontend/extensions/l10n.dart";
 import "package:antinote_app/frontend/routing/routes.dart";
 import "package:antinote_app/frontend/screens/auth/search/widgets/item.dart";
 import "package:antinote_app/frontend/widgets/customs/app_bar.dart";
 import "package:antinote_app/frontend/widgets/customs/field.dart";
+import "package:antinote_app/frontend/widgets/customs/list.dart";
 import "package:flutter/material.dart";
 import "package:go_router/go_router.dart";
 import "package:hugeicons_pro/hugeicons.dart";
@@ -148,13 +150,13 @@ class _LoginFindCityScreenState extends State<LoginFindCityScreen> {
 
                   return CustomScrollView(
                     slivers: [
-                      SliverList.builder(
-                        itemCount: cities.length,
+                      ListWidget(
+                        items: cities,
 
-                        itemBuilder: (context, index) {
-                          final city = cities[index];
+                        itemBuilder: (context, city, borderRadius) {
+                          return ItemWidget(
+                            borderRadius: borderRadius,
 
-                          return ListItemCard(
                             onPressed: () async {
                               final result = await context.push<LoginResult>(
                                 Routes.auth.school,
@@ -179,8 +181,24 @@ class _LoginFindCityScreenState extends State<LoginFindCityScreen> {
                               .other => HugeIconsSolid.location01,
                             }),
 
-                            title: city.name,
-                            subtitle: city.address,
+                            title: Text(
+                              city.name,
+
+                              overflow: .ellipsis,
+                              maxLines: 1,
+
+                              style: TextStyle(
+                                fontWeight: .w800,
+                                color: context.c.onPrimary,
+                              ),
+                            ),
+
+                            subtitle: Text(
+                              city.address,
+
+                              overflow: .ellipsis,
+                              maxLines: 1,
+                            ),
                           );
                         },
                       ),
