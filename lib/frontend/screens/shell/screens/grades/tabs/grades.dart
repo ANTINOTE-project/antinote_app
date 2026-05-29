@@ -332,7 +332,18 @@ class _GradesTabState extends State<GradesTab> with ScreenMixin<GradesTab> {
     RefreshIndicatorBuilder buildRefreshIndicator,
   ) {
     return buildRefreshIndicator(
-      child: const CustomScrollView(slivers: [_AverageWidget(data: null)]),
+      child: CustomScrollView(
+        slivers: [
+          const _AverageWidget(data: null),
+
+          _SectionWidget(
+            label: context.l10n.latestGrades,
+            icon: HugeIconsSolid.note,
+          ),
+
+          const _LatestWidget(exams: null),
+        ],
+      ),
     );
   }
 
@@ -598,9 +609,59 @@ class _GradesCurvePainter extends CustomPainter {
 }
 
 class _LatestWidget extends StatelessWidget {
-  final List<Exam> exams;
+  final List<Exam>? exams;
 
   const _LatestWidget({required this.exams});
+
+  static const fakeGrade = Grade.defaultUnknownGrade;
+
+  static const fakeService = Service(
+    id: "",
+    name: "",
+    type: 0,
+    order: 0,
+    selfAverage: fakeGrade,
+    theoreticalMaxGrade: fakeGrade,
+    defaultTheoreticalMaxGrade: fakeGrade,
+    classAverage: fakeGrade,
+    minGrade: fakeGrade,
+    maxGrade: fakeGrade,
+    color: 0,
+    inGroups: false,
+  );
+
+  static final fakePeriod = Period(
+    id: "",
+    name: "",
+    type: 0,
+    notationPeriodType: 0,
+    startDate: DateTime.now(),
+    endDate: DateTime.now(),
+  );
+
+  static final fakeExams = List.filled(
+    20,
+    Exam(
+      id: "",
+      type: 0,
+      selfGrade: fakeGrade,
+      theoreticalMaxGrade: fakeGrade,
+      defaultMaxGrade: fakeGrade,
+      date: DateTime.now(),
+      service: fakeService,
+      period: fakePeriod,
+      themes: [],
+      classAverage: fakeGrade,
+      isInGroups: false,
+      maxGrade: fakeGrade,
+      minGrade: fakeGrade,
+      comment: "",
+      coefficient: 1,
+      isOptional: false,
+      isBonus: false,
+      isCountedAs20TheoreticalMaxGrade: false,
+    ),
+  );
 
   @override
   Widget build(BuildContext context) {
@@ -608,118 +669,158 @@ class _LatestWidget extends StatelessWidget {
     final _ = Theme.of(context);
 
     return SliverToBoxAdapter(
-      child: SizedBox(
-        height: 170,
+      child: Skeletonizer.zone(
+        containersColor: context.c.surfaceContainerHighest,
+        enabled: exams == null,
 
-        child: ListView.builder(
-          padding: const EdgeInsets.all(12),
+        child: SizedBox(
+          height: 170,
 
-          scrollDirection: .horizontal,
-          itemCount: exams.length,
+          child: ListView.builder(
+            padding: const EdgeInsets.all(12),
 
-          itemBuilder: (context, index) {
-            final exam = exams[index];
+            scrollDirection: .horizontal,
+            itemCount: exams == null ? fakeExams.length : exams!.length,
 
-            final (
-              color,
-              backgroundColor,
-              headerColor,
-              borderColor,
-              _,
-              subtitleColor,
-            ) = Utils.adaptColorPair(
-              exam.service.color,
-              context.c,
-            );
+            itemBuilder: (context, index) {
+              final exam = exams == null ? fakeExams[index] : exams![index];
 
-            final date = DateFormat("dd/MM/yyyy").format(exam.date);
-            final title = Utils.getExamComment(context, exam);
-            final subject = exam.service.name;
+              final (
+                color,
+                backgroundColor,
+                headerColor,
+                borderColor,
+                _,
+                subtitleColor,
+              ) = Utils.adaptColorPair(
+                exam.service.color,
+                context.c,
+              );
 
-            return Padding(
-              padding: const EdgeInsets.only(right: 8),
+              final date = DateFormat("dd/MM/yyyy").format(exam.date);
+              final title = Utils.getExamComment(context, exam);
+              final subject = exam.service.name;
 
-              child: Pressable(
-                onPressed: () => showExamDetails(context, exam),
+              return Padding(
+                padding: const EdgeInsets.only(right: 8),
 
-                child: IntrinsicWidth(
-                  child: ConstrainedBox(
-                    constraints: const BoxConstraints(
-                      minWidth: 200,
-                      maxWidth: 250,
-                    ),
+                child: Pressable(
+                  onPressed: () => showExamDetails(context, exam),
 
-                    child: Container(
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(16),
-                        border: Border.all(color: borderColor),
-                        color: backgroundColor,
+                  child: IntrinsicWidth(
+                    child: ConstrainedBox(
+                      constraints: const BoxConstraints(
+                        minWidth: 200,
+                        maxWidth: 250,
                       ),
 
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 10,
-                        vertical: 6,
-                      ),
+                      child: Container(
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(16),
+                          border: Border.all(color: borderColor),
+                          color: backgroundColor,
+                        ),
 
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        spacing: 8,
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 10,
+                          vertical: 6,
+                        ),
 
-                        children: [
-                          Text(
-                            subject,
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          spacing: 12,
 
-                            overflow: TextOverflow.ellipsis,
-                            maxLines: 1,
+                          children: exams == null
+                              ? [
+                                  const Bone.text(
+                                    width: 200,
 
-                            style: TextStyle(
-                              fontSize: 20,
-                              fontWeight: const .new(750),
-                              color: color,
-                            ),
-                          ),
+                                    style: TextStyle(
+                                      fontSize: 20,
+                                      fontWeight: .w800,
+                                    ),
+                                  ),
 
-                          Expanded(
-                            child: Text(
-                              title,
+                                  const Bone.text(
+                                    width: 100,
 
-                              overflow: TextOverflow.ellipsis,
-                              maxLines: 2,
+                                    style: TextStyle(
+                                      fontSize: 16,
+                                      fontWeight: .w600,
+                                    ),
+                                  ),
 
-                              style: const TextStyle(
-                                fontSize: 16,
-                                fontWeight: FontWeight.w600,
-                              ),
-                            ),
-                          ),
+                                  const Spacer(),
 
-                          Row(
-                            children: [
-                              Text(
-                                date,
-                                style: TextStyle(
-                                  fontWeight: FontWeight.bold,
-                                  color: subtitleColor,
-                                ),
-                              ),
+                                  const Row(
+                                    children: [
+                                      Bone.text(
+                                        width: 75,
+                                        style: TextStyle(fontWeight: .bold),
+                                      ),
 
-                              const Spacer(),
+                                      Spacer(),
 
-                              _GradeText(
-                                selfGrade: exam.selfGrade,
-                                maxGrade: exam.theoreticalMaxGrade,
-                                color: color,
-                              ),
-                            ],
-                          ),
-                        ],
+                                      Bone.text(width: 75, fontSize: 22),
+                                    ],
+                                  ),
+                                ]
+                              : [
+                                  Text(
+                                    subject,
+
+                                    overflow: TextOverflow.ellipsis,
+                                    maxLines: 1,
+
+                                    style: TextStyle(
+                                      fontSize: 20,
+                                      fontWeight: .w800,
+                                      color: color,
+                                    ),
+                                  ),
+
+                                  Expanded(
+                                    child: Text(
+                                      title,
+
+                                      overflow: TextOverflow.ellipsis,
+                                      maxLines: 2,
+
+                                      style: const TextStyle(
+                                        fontSize: 16,
+                                        fontWeight: .w600,
+                                      ),
+                                    ),
+                                  ),
+
+                                  Row(
+                                    children: [
+                                      Text(
+                                        date,
+                                        style: TextStyle(
+                                          fontWeight: FontWeight.bold,
+                                          color: subtitleColor,
+                                        ),
+                                      ),
+
+                                      const Spacer(),
+
+                                      _GradeText(
+                                        selfGrade: exam.selfGrade,
+                                        maxGrade: exam.theoreticalMaxGrade,
+                                        color: color,
+                                      ),
+                                    ],
+                                  ),
+                                ],
+                        ),
                       ),
                     ),
                   ),
                 ),
-              ),
-            );
-          },
+              );
+            },
+          ),
         ),
       ),
     );
