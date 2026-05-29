@@ -471,7 +471,7 @@ class _AverageWidget extends StatelessWidget {
                                   size: const Size(double.infinity, 40),
 
                                   painter: _GradesCurvePainter(
-                                    color: context.c.primary,
+                                    color: context.c.tertiary,
                                     progress: value,
 
                                     values: data!.exams
