@@ -369,7 +369,7 @@ class _AverageWidget extends StatelessWidget {
           padding: const .symmetric(vertical: 12),
 
           child: Column(
-            spacing: 8,
+            spacing: 16,
 
             children: [
               Row(
@@ -431,28 +431,38 @@ class _AverageWidget extends StatelessWidget {
                 ],
               ),
 
-              TweenAnimationBuilder<double>(
-                key: ValueKey(data.exams.length),
-                tween: Tween(begin: 0.5, end: 1.0),
+              Column(
+                spacing: 12,
 
-                duration: const Duration(milliseconds: 1500),
-                curve: Curves.easeOutExpo,
+                children: [
+                  TweenAnimationBuilder<double>(
+                    key: ValueKey(data.exams.length),
+                    tween: Tween(begin: 0.5, end: 1.0),
 
-                builder: (context, value, _) {
-                  return CustomPaint(
-                    size: const Size(double.infinity, 40),
+                    duration: const Duration(milliseconds: 1500),
+                    curve: Curves.easeOutExpo,
 
-                    painter: _GradesCurvePainter(
-                      color: context.c.primary,
-                      progress: value,
+                    builder: (context, value, _) {
+                      return CustomPaint(
+                        size: const Size(double.infinity, 40),
 
-                      values: data.exams
-                          .where((e) => e.selfGrade.type == GradeType.note)
-                          .map((e) => e.selfGrade.value)
-                          .toList(),
-                    ),
-                  );
-                },
+                        painter: _GradesCurvePainter(
+                          color: context.c.primary,
+                          progress: value,
+
+                          values: data.exams
+                              .where((e) => e.selfGrade.type == GradeType.note)
+                              .map((e) => e.selfGrade.value)
+                              .toList()
+                              .reversed
+                              .toList(),
+                        ),
+                      );
+                    },
+                  ),
+
+                  Text(context.l10n.gradesHistory, style: style),
+                ],
               ),
             ],
           ),

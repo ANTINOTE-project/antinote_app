@@ -280,6 +280,12 @@ abstract class AppLocalizations {
   /// **'Moy. classe'**
   String get averageClass;
 
+  /// No description provided for @gradesHistory.
+  ///
+  /// In fr, this message translates to:
+  /// **'Historique de tes notes'**
+  String get gradesHistory;
+
   /// No description provided for @coefficient.
   ///
   /// In fr, this message translates to:

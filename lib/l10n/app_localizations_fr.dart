@@ -107,6 +107,9 @@ class AppLocalizationsFr extends AppLocalizations {
   String get averageClass => 'Moy. classe';
 
   @override
+  String get gradesHistory => 'Historique de tes notes';
+
+  @override
   String get coefficient => 'Coefficient';
 
   @override
