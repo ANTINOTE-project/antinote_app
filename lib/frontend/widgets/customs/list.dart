@@ -141,7 +141,8 @@ class ItemWidget extends StatelessWidget {
                   DefaultTextStyle(
                     style: TextStyle(
                       fontSize: 16,
-                      fontWeight: .w900,
+                      fontWeight: .w800,
+                      fontFamily: "SNPro",
 
                       color: context.c.onPrimary,
                     ),
@@ -156,7 +157,8 @@ class ItemWidget extends StatelessWidget {
                     DefaultTextStyle(
                       style: TextStyle(
                         fontSize: 12,
-                        fontWeight: .w800,
+                        fontWeight: .bold,
+                        fontFamily: "SNPro",
 
                         color: context.c.outline,
                       ),
