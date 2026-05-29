@@ -618,25 +618,25 @@ class _LatestGrades extends StatelessWidget {
   static const _fakeService = Service(
     id: "",
     name: "",
-    type: 0,
-    order: 0,
-    selfAverage: _fakeGrade,
-    theoreticalMaxGrade: _fakeGrade,
-    defaultTheoreticalMaxGrade: _fakeGrade,
-    classAverage: _fakeGrade,
-    minGrade: _fakeGrade,
-    maxGrade: _fakeGrade,
-    color: 0,
-    inGroups: false,
+    type: null,
+    order: null,
+    selfAverage: null,
+    theoreticalMaxGrade: null,
+    defaultTheoreticalMaxGrade: null,
+    classAverage: null,
+    minGrade: null,
+    maxGrade: null,
+    color: null,
+    inGroups: null,
   );
 
   static final _fakePeriod = Period(
-    id: "",
+    id: null,
     name: "",
-    type: 0,
-    notationPeriodType: 0,
-    startDate: DateTime.now(),
-    endDate: DateTime.now(),
+    type: null,
+    notationPeriodType: null,
+    startDate: null,
+    endDate: null,
   );
 
   static final _fakeExams = List.filled(
@@ -651,15 +651,15 @@ class _LatestGrades extends StatelessWidget {
       service: _fakeService,
       period: _fakePeriod,
       themes: [],
-      classAverage: _fakeGrade,
-      isInGroups: false,
-      maxGrade: _fakeGrade,
-      minGrade: _fakeGrade,
-      comment: "",
-      coefficient: 1,
-      isOptional: false,
-      isBonus: false,
-      isCountedAs20TheoreticalMaxGrade: false,
+      classAverage: null,
+      isInGroups: null,
+      maxGrade: null,
+      minGrade: null,
+      comment: null,
+      coefficient: null,
+      isOptional: null,
+      isBonus: null,
+      isCountedAs20TheoreticalMaxGrade: null,
     ),
   );
 
@@ -684,17 +684,8 @@ class _LatestGrades extends StatelessWidget {
             itemBuilder: (context, index) {
               final exam = exams == null ? _fakeExams[index] : exams![index];
 
-              final (
-                color,
-                backgroundColor,
-                headerColor,
-                borderColor,
-                _,
-                subtitleColor,
-              ) = Utils.adaptColorPair(
-                exam.service.color,
-                context.c,
-              );
+              final (color, backgroundColor, _, borderColor, _, subtitleColor) =
+                  Utils.adaptColorPair(exam.service.color, context.c);
 
               final date = DateFormat("dd/MM/yyyy").format(exam.date);
               final title = Utils.getExamComment(context, exam);
@@ -717,10 +708,7 @@ class _LatestGrades extends StatelessWidget {
                         decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(16),
                           border: Border.all(color: borderColor),
-
-                          color: exams == null
-                              ? context.c.surfaceContainerHighest
-                              : backgroundColor,
+                          color: backgroundColor,
                         ),
 
                         padding: const EdgeInsets.symmetric(
