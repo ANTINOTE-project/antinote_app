@@ -613,24 +613,24 @@ class _LatestWidget extends StatelessWidget {
 
   const _LatestWidget({required this.exams});
 
-  static const fakeGrade = Grade.defaultUnknownGrade;
+  static const _fakeGrade = Grade.defaultUnknownGrade;
 
-  static const fakeService = Service(
+  static const _fakeService = Service(
     id: "",
     name: "",
     type: 0,
     order: 0,
-    selfAverage: fakeGrade,
-    theoreticalMaxGrade: fakeGrade,
-    defaultTheoreticalMaxGrade: fakeGrade,
-    classAverage: fakeGrade,
-    minGrade: fakeGrade,
-    maxGrade: fakeGrade,
+    selfAverage: _fakeGrade,
+    theoreticalMaxGrade: _fakeGrade,
+    defaultTheoreticalMaxGrade: _fakeGrade,
+    classAverage: _fakeGrade,
+    minGrade: _fakeGrade,
+    maxGrade: _fakeGrade,
     color: 0,
     inGroups: false,
   );
 
-  static final fakePeriod = Period(
+  static final _fakePeriod = Period(
     id: "",
     name: "",
     type: 0,
@@ -639,22 +639,22 @@ class _LatestWidget extends StatelessWidget {
     endDate: DateTime.now(),
   );
 
-  static final fakeExams = List.filled(
+  static final _fakeExams = List.filled(
     20,
     Exam(
       id: "",
       type: 0,
-      selfGrade: fakeGrade,
-      theoreticalMaxGrade: fakeGrade,
-      defaultMaxGrade: fakeGrade,
+      selfGrade: _fakeGrade,
+      theoreticalMaxGrade: _fakeGrade,
+      defaultMaxGrade: _fakeGrade,
       date: DateTime.now(),
-      service: fakeService,
-      period: fakePeriod,
+      service: _fakeService,
+      period: _fakePeriod,
       themes: [],
-      classAverage: fakeGrade,
+      classAverage: _fakeGrade,
       isInGroups: false,
-      maxGrade: fakeGrade,
-      minGrade: fakeGrade,
+      maxGrade: _fakeGrade,
+      minGrade: _fakeGrade,
       comment: "",
       coefficient: 1,
       isOptional: false,
@@ -680,10 +680,10 @@ class _LatestWidget extends StatelessWidget {
             padding: const EdgeInsets.all(12),
 
             scrollDirection: .horizontal,
-            itemCount: exams == null ? fakeExams.length : exams!.length,
+            itemCount: exams == null ? _fakeExams.length : exams!.length,
 
             itemBuilder: (context, index) {
-              final exam = exams == null ? fakeExams[index] : exams![index];
+              final exam = exams == null ? _fakeExams[index] : exams![index];
 
               final (
                 color,
