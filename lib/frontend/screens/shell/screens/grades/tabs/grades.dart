@@ -358,7 +358,7 @@ class _AverageWidget extends StatelessWidget {
 
     return SliverToBoxAdapter(
       child: Padding(
-        padding: const .only(top: 16, left: 12, right: 12),
+        padding: const .only(top: 16, left: 12, right: 12, bottom: 8),
 
         child: Container(
           decoration: BoxDecoration(
@@ -528,7 +528,7 @@ class _LatestWidget extends StatelessWidget {
 
     return SliverToBoxAdapter(
       child: SizedBox(
-        height: 160,
+        height: 170,
 
         child: ListView.builder(
           padding: const EdgeInsets.all(12),
@@ -554,7 +554,7 @@ class _LatestWidget extends StatelessWidget {
 
                 child: IntrinsicWidth(
                   child: ConstrainedBox(
-                    constraints: const BoxConstraints(minWidth: 200, maxWidth: 260),
+                    constraints: const BoxConstraints(minWidth: 200, maxWidth: 250),
 
                     child: Container(
                       decoration: BoxDecoration(

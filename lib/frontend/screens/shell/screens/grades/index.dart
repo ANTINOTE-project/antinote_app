@@ -79,6 +79,7 @@ class _GradesScreenState extends State<GradesScreen>
   FutureOr<void> loadActiveDataFromSession(PronoteSession session) async {
     await session.ensurePage(198);
 
+    // TODO use session.userResource to periods
     _selectedPeriod = session.instance.defaultPeriod(DateTime.now());
 
     // Only "Trimestre *"
