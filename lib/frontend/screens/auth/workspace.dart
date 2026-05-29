@@ -2,9 +2,9 @@ import "package:antinote/antinote.dart";
 import "package:antinote_app/frontend/extensions/colors.dart";
 import "package:antinote_app/frontend/extensions/l10n.dart";
 import "package:antinote_app/frontend/routing/routes.dart";
-import "package:antinote_app/frontend/screens/auth/search/widgets/item.dart";
 import "package:antinote_app/frontend/widgets/customs/app_bar.dart";
-import "package:antinote_app/frontend/widgets/customs/modal.dart";
+import "package:antinote_app/frontend/widgets/customs/list.dart";
+import "package:antinote_app/main.dart";
 import "package:flutter/material.dart";
 import "package:go_router/go_router.dart";
 import "package:hugeicons_pro/hugeicons.dart";
@@ -28,28 +28,35 @@ class _LoginSelectWorkspaceState extends State<LoginSelectWorkspace> {
     .mobileEleve: HugeIconsSolid.student,
   };
 
-  late bool casLoginActive;
+  late List<Workspace> _workspaces;
+
+  late bool _casLoginActive;
+  late bool _isCasActive;
 
   @override
   void initState() {
     super.initState();
-    casLoginActive = widget.parameters.casActive;
+
+    _workspaces = widget.parameters.workspaces;
+    _workspaces.sort((a, b) => a.type == .mobileEleve ? -1 : 1);
+
+    _casLoginActive = widget.parameters.casActive;
+    _isCasActive = widget.parameters.casActive;
   }
 
   Future<void> onSelected(BuildContext context, Workspace workspace) async {
     final LoginResult? result;
 
-    if (casLoginActive) {
+    if (_casLoginActive) {
       result = await context.push<LoginResult>(
         Routes.auth.webview,
         extra: {"parameters": widget.parameters, "workspace": workspace},
       );
+
+      // TODO add credentials login
     } else {
-      result = await Modal.show(
-        context,
-        context.l10n.loginCredentials,
-        Form(child: Column(children: [TextFormField(), TextFormField()])),
-      );
+      talker.warning("Credentials login is not implemented yet");
+      result = null;
     }
 
     if (result != null && context.mounted) {
@@ -61,39 +68,78 @@ class _LoginSelectWorkspaceState extends State<LoginSelectWorkspace> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBarWidget(title: context.l10n.loginSelect),
+
       body: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 12),
+        padding: const .symmetric(horizontal: 12, vertical: 6),
 
         child: CustomScrollView(
           slivers: [
-            if (widget.parameters.casActive) ...[
+            if (_isCasActive) ...[
               SliverToBoxAdapter(
-                child: ListItemCard(
-                  onPressed: null,
-                  title: context.l10n.activateCas,
-                  color: context.c.surfaceContainerHigh,
+                child: ItemWidget(
+                  borderRadius: const .all(ListWidget.radius),
+
+                  title: Text(context.l10n.activateCas),
+
                   trailing: Switch(
-                    value: casLoginActive,
+                    value: _casLoginActive,
+
                     onChanged: (value) => setState(() {
-                      casLoginActive = value;
+                      _casLoginActive = value;
                     }),
                   ),
                 ),
               ),
 
-              const SliverPadding(padding: EdgeInsets.only(top: 12)),
+              const SliverPadding(padding: .only(bottom: 8)),
             ],
 
-            SliverList.builder(
-              itemCount: widget.parameters.workspaces.length,
-              itemBuilder: (context, index) {
-                final workspace = widget.parameters.workspaces[index];
+            ListWidget(
+              items: _workspaces,
 
-                return ListItemCard(
-                  onPressed: () async => await onSelected(context, workspace),
-                  leading: Icon(_iconMap[workspace.type]),
-                  title: workspace.label,
-                  trailing: const Icon(HugeIconsSolid.arrowRight01),
+              itemBuilder: (context, workspace, borderRadius) {
+                final isNotStudent = workspace.type != .mobileEleve;
+
+                return ItemWidget(
+                  borderRadius: borderRadius,
+
+                  onPressed: () async {
+                    if (isNotStudent) {
+                      return talker.warning(
+                        "Login with an account that is not a student one is not implemented",
+                      );
+                    }
+
+                    await onSelected(context, workspace);
+                  },
+
+                  leading: Icon(
+                    _iconMap[workspace.type],
+                    color: isNotStudent ? context.c.outlineVariant : null,
+                  ),
+
+                  title: Text(
+                    workspace.label,
+
+                    style: TextStyle(
+                      color: isNotStudent ? context.c.outlineVariant : null,
+                    ),
+                  ),
+
+                  subtitle: Text(
+                    workspace.pathSegment,
+
+                    style: TextStyle(
+                      color: isNotStudent ? context.c.outlineVariant : null,
+                    ),
+                  ),
+
+                  trailing: Icon(
+                    HugeIconsSolid.arrowRight01,
+                    color: isNotStudent
+                        ? context.c.outlineVariant
+                        : context.c.outline,
+                  ),
                 );
               },
             ),
