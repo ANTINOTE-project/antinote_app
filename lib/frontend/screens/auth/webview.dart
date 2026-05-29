@@ -22,22 +22,39 @@ class LoginWebview extends StatefulWidget {
 
 class _LoginWebviewState extends State<LoginWebview> {
   late final WebViewController _controller;
+  double _loadingProgress = 0;
+  bool _loginHandled = false;
+
+  Uri get _loginUrl {
+    return widget.workspace
+        .toSpecificAccountKind(widget.parameters.baseUrl)
+        .replace(queryParameters: {...PronoteSession.redirectBypassParameters});
+  }
+
+  bool _matchesCriteria(Uri? url) {
+    return url != null &&
+        widget.parameters.baseUrl.authority == url.authority &&
+        (url.queryParameters.containsKey("ticket") ||
+            url.queryParameters.containsKey("identifiant"));
+  }
 
   @override
   void initState() {
     super.initState();
-    // TODO: Ajouter cookies dans credential car pas uuidAppliMobile == pronote pas content
+
     _controller = WebViewController()
       ..setJavaScriptMode(JavaScriptMode.unrestricted)
       ..setNavigationDelegate(
         NavigationDelegate(
+          onProgress: (p) => setState(() => _loadingProgress = p / 100),
           onNavigationRequest: (request) async {
+            if (_loginHandled) return NavigationDecision.prevent;
+
             final url = Uri.tryParse(request.url);
 
-            if (widget.parameters.baseUrl.authority == url?.authority &&
-                ((url?.queryParameters.containsKey("ticket") ?? false) ||
-                    (url?.queryParameters.containsKey("identifiant") ??
-                        false))) {
+            if (_matchesCriteria(url)) {
+              _loginHandled = true;
+
               try {
                 final result = await CasCredentials.loginFromTicketOrId(
                   url!,
@@ -45,11 +62,13 @@ class _LoginWebviewState extends State<LoginWebview> {
                   widget.workspace,
                 );
 
-                if (!mounted) return .navigate;
-                context.pop(result);
-
-                // catch
+                if (mounted) {
+                  context.pop(result);
+                } else {
+                  return NavigationDecision.navigate;
+                }
               } catch (e, st) {
+                _loginHandled = false;
                 talker.error(
                   "Failed to login although matched criterion",
                   e,
@@ -57,27 +76,29 @@ class _LoginWebviewState extends State<LoginWebview> {
                 );
               }
 
-              return .prevent;
+              return NavigationDecision.prevent;
             }
 
-            return .navigate;
+            return NavigationDecision.navigate;
           },
         ),
       )
-      ..loadRequest(
-        widget.workspace
-            .toSpecificAccountKind(widget.parameters.baseUrl)
-            .replace(
-              queryParameters: {...PronoteSession.redirectBypassParameters},
-            ),
-      );
+      ..loadRequest(_loginUrl);
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBarWidget(title: context.l10n.loginWebview),
-      body: WebViewWidget(controller: _controller),
+
+      body: Stack(
+        children: [
+          WebViewWidget(controller: _controller),
+
+          if (_loadingProgress < 1)
+            LinearProgressIndicator(value: _loadingProgress),
+        ],
+      ),
     );
   }
 }
