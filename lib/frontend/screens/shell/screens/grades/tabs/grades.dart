@@ -534,6 +534,7 @@ class _Averages extends StatelessWidget {
           child: Container(
             decoration: BoxDecoration(
               color: context.c.surfaceContainerHigh,
+              border: .all(color: context.c.outlineVariant),
               borderRadius: .circular(20),
             ),
 
@@ -586,23 +587,25 @@ class _Averages extends StatelessWidget {
                               return SizedBox(
                                 height: 40,
 
-                                child: CustomPaint(
-                                  size: const Size(double.infinity, 40),
+                                child: ClipRect(
+                                  child: CustomPaint(
+                                    size: const Size(double.infinity, 40),
 
-                                  painter: _GradesCurvePainter(
-                                    color: context.c.tertiary,
-                                    progress: value,
+                                    painter: _GradesCurvePainter(
+                                      color: context.c.tertiary,
+                                      progress: value,
 
-                                    values: data!.exams
-                                        .where(
-                                          (e) =>
-                                              e.selfGrade.type ==
-                                              GradeType.note,
-                                        )
-                                        .map((e) => e.selfGrade.value)
-                                        .toList()
-                                        .reversed
-                                        .toList(),
+                                      values: data!.exams
+                                          .where(
+                                            (e) =>
+                                                e.selfGrade.type ==
+                                                GradeType.note,
+                                          )
+                                          .map((e) => e.selfGrade.value)
+                                          .toList()
+                                          .reversed
+                                          .toList(),
+                                    ),
                                   ),
                                 ),
                               );
@@ -722,10 +725,7 @@ class _GradesCurvePainter extends CustomPainter {
 
       // first
       if (i == 0) {
-        final nextOffset = offsets[i + 1];
-        final center = (offset + nextOffset) / 2;
-
-        path.moveTo(center.dx, center.dy);
+        path.moveTo(offset.dx, offset.dy);
 
         // last
       } else if (i == values.length - 1) {
