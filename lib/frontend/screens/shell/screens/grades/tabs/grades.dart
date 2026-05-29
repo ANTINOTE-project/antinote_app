@@ -15,7 +15,7 @@ import "package:hugeicons_pro/hugeicons.dart";
 import "package:intl/intl.dart";
 import "package:skeletonizer/skeletonizer.dart";
 
-typedef ServiceGradeList = Map<Service, List<Exam>>;
+typedef _ServiceGradeList = Map<Service, List<Exam>>;
 
 typedef _DetailsItem = ({
   IconData icon,
@@ -24,6 +24,118 @@ typedef _DetailsItem = ({
   Grade? theoreticalMaxGrade,
   double? coefficient,
 });
+
+const _fakeGrade = Grade.defaultUnknownGrade;
+
+const _fakeServices = [
+  Service(
+    id: "1",
+    name: "Mathématiques",
+    type: null,
+    order: null,
+    selfAverage: null,
+    theoreticalMaxGrade: null,
+    defaultTheoreticalMaxGrade: null,
+    classAverage: null,
+    minGrade: null,
+    maxGrade: null,
+    color: null,
+    inGroups: null,
+  ),
+  Service(
+    id: "2",
+    name: "Français",
+    type: null,
+    order: null,
+    selfAverage: null,
+    theoreticalMaxGrade: null,
+    defaultTheoreticalMaxGrade: null,
+    classAverage: null,
+    minGrade: null,
+    maxGrade: null,
+    color: null,
+    inGroups: null,
+  ),
+  Service(
+    id: "3",
+    name: "Histoire",
+    type: null,
+    order: null,
+    selfAverage: null,
+    theoreticalMaxGrade: null,
+    defaultTheoreticalMaxGrade: null,
+    classAverage: null,
+    minGrade: null,
+    maxGrade: null,
+    color: null,
+    inGroups: null,
+  ),
+  Service(
+    id: "4",
+    name: "Anglais",
+    type: null,
+    order: null,
+    selfAverage: null,
+    theoreticalMaxGrade: null,
+    defaultTheoreticalMaxGrade: null,
+    classAverage: null,
+    minGrade: null,
+    maxGrade: null,
+    color: null,
+    inGroups: null,
+  ),
+  Service(
+    id: "5",
+    name: "Physique",
+    type: null,
+    order: null,
+    selfAverage: null,
+    theoreticalMaxGrade: null,
+    defaultTheoreticalMaxGrade: null,
+    classAverage: null,
+    minGrade: null,
+    maxGrade: null,
+    color: null,
+    inGroups: null,
+  ),
+];
+
+const _fakePeriod = Period(
+  id: null,
+  name: "",
+  type: null,
+  notationPeriodType: null,
+  startDate: null,
+  endDate: null,
+);
+
+final _fakeExams = List.filled(
+  20,
+  Exam(
+    id: "",
+    type: 0,
+    selfGrade: _fakeGrade,
+    theoreticalMaxGrade: _fakeGrade,
+    defaultMaxGrade: _fakeGrade,
+    date: DateTime.now(),
+    service: _fakeServices.first,
+    period: _fakePeriod,
+    themes: [],
+    classAverage: null,
+    isInGroups: null,
+    maxGrade: null,
+    minGrade: null,
+    comment: null,
+    coefficient: null,
+    isOptional: null,
+    isBonus: null,
+    isCountedAs20TheoreticalMaxGrade: null,
+  ),
+);
+
+final _fakeServiceGradeList = {
+  for (final service in _fakeServices) service: _fakeExams.take(3).toList(),
+};
 
 Future<void> _showDetails({
   required BuildContext context,
@@ -279,7 +391,7 @@ class _GradesTabState extends State<GradesTab> with ScreenMixin<GradesTab> {
     BuildContext context,
     RefreshIndicatorBuilder buildRefreshIndicator,
   ) {
-    final ServiceGradeList organizedData = {
+    final _ServiceGradeList organizedData = {
       for (final service in _data.services!) service: [],
     };
 
@@ -342,6 +454,13 @@ class _GradesTabState extends State<GradesTab> with ScreenMixin<GradesTab> {
           ),
 
           const _LatestGrades(exams: null),
+
+          _SectionWidget(
+            label: context.l10n.services,
+            icon: HugeIconsSolid.gitbook,
+          ),
+
+          const _ServicesGrades(data: null),
         ],
       ),
     );
@@ -613,56 +732,6 @@ class _LatestGrades extends StatelessWidget {
 
   const _LatestGrades({required this.exams});
 
-  static const _fakeGrade = Grade.defaultUnknownGrade;
-
-  static const _fakeService = Service(
-    id: "",
-    name: "",
-    type: null,
-    order: null,
-    selfAverage: null,
-    theoreticalMaxGrade: null,
-    defaultTheoreticalMaxGrade: null,
-    classAverage: null,
-    minGrade: null,
-    maxGrade: null,
-    color: null,
-    inGroups: null,
-  );
-
-  static final _fakePeriod = Period(
-    id: null,
-    name: "",
-    type: null,
-    notationPeriodType: null,
-    startDate: null,
-    endDate: null,
-  );
-
-  static final _fakeExams = List.filled(
-    20,
-    Exam(
-      id: "",
-      type: 0,
-      selfGrade: _fakeGrade,
-      theoreticalMaxGrade: _fakeGrade,
-      defaultMaxGrade: _fakeGrade,
-      date: DateTime.now(),
-      service: _fakeService,
-      period: _fakePeriod,
-      themes: [],
-      classAverage: null,
-      isInGroups: null,
-      maxGrade: null,
-      minGrade: null,
-      comment: null,
-      coefficient: null,
-      isOptional: null,
-      isBonus: null,
-      isCountedAs20TheoreticalMaxGrade: null,
-    ),
-  );
-
   @override
   Widget build(BuildContext context) {
     // rebuild when theme mode changes
@@ -707,8 +776,16 @@ class _LatestGrades extends StatelessWidget {
                       child: Container(
                         decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(16),
-                          border: Border.all(color: borderColor),
-                          color: backgroundColor,
+
+                          border: Border.all(
+                            color: exams == null
+                                ? context.c.outlineVariant
+                                : borderColor,
+                          ),
+
+                          color: exams == null
+                              ? context.c.surfaceContainerHigh
+                              : backgroundColor,
                         ),
 
                         padding: const EdgeInsets.symmetric(
@@ -818,28 +895,39 @@ class _LatestGrades extends StatelessWidget {
 }
 
 class _ServicesGrades extends StatelessWidget {
-  final ServiceGradeList data;
+  final _ServiceGradeList? data;
 
   const _ServicesGrades({required this.data});
 
   @override
   Widget build(BuildContext context) {
+    final entries = (data ?? _fakeServiceGradeList).entries;
+
     return SliverMainAxisGroup(
       slivers: [
-        for (final entry in data.entries)
+        for (final entry in entries)
           SliverPadding(
             padding: const EdgeInsets.only(left: 12, right: 12, top: 10),
 
             sliver: SliverMainAxisGroup(
               slivers: [
                 PinnedHeaderSliver(
-                  child: _ServiceWidget(service: entry.key, exams: entry.value),
+                  child: _ServiceWidget(
+                    service: entry.key,
+                    exams: entry.value,
+                    isLoading: data == null,
+                  ),
                 ),
 
                 ListWidget<Exam>(
                   items: entry.value,
+
                   itemBuilder: (context, item, borderRadius) {
-                    return _ExamWidget(exam: item, borderRadius: borderRadius);
+                    return _ExamWidget(
+                      exam: item,
+                      borderRadius: borderRadius,
+                      isLoading: data == null,
+                    );
                   },
                 ),
               ],
@@ -853,8 +941,13 @@ class _ServicesGrades extends StatelessWidget {
 class _ServiceWidget extends StatelessWidget {
   final Service service;
   final List<Exam> exams;
+  final bool isLoading;
 
-  const _ServiceWidget({required this.service, required this.exams});
+  const _ServiceWidget({
+    required this.service,
+    required this.exams,
+    required this.isLoading,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -864,48 +957,66 @@ class _ServiceWidget extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.only(top: 8, bottom: 2),
 
-      child: Container(
-        decoration: BoxDecoration(
-          border: Border.all(color: borderColor),
-          borderRadius: BorderRadius.circular(16),
-          color: headerColor,
-        ),
+      child: Skeletonizer.zone(
+        enabled: isLoading,
 
-        child: Pressable(
-          onPressed: () => showServiceDetails(context, service, exams),
+        child: Container(
+          decoration: BoxDecoration(
+            border: Border.all(
+              color: isLoading ? context.c.outlineVariant : borderColor,
+            ),
 
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+            borderRadius: BorderRadius.circular(16),
+            color: headerColor,
+          ),
 
-            child: Row(
-              spacing: 8,
+          child: Pressable(
+            onPressed: () => showServiceDetails(context, service, exams),
 
-              children: [
-                Expanded(
-                  child: Text(
-                    service.name,
+            child: Padding(
+              padding: .symmetric(
+                horizontal: 12,
+                vertical: isLoading ? 15 : 10,
+              ),
 
-                    overflow: TextOverflow.ellipsis,
-                    maxLines: 1,
+              child: Row(
+                spacing: 8,
 
-                    style: TextStyle(
-                      fontSize: 21,
-                      fontWeight: .w800,
-                      color: titleColor,
-                    ),
-                  ),
-                ),
+                children: isLoading
+                    ? [
+                        const Bone.text(width: 200, fontSize: 21),
 
-                if (service.selfAverage != null &&
-                    service.theoreticalMaxGrade != null)
-                  _GradeText(
-                    selfGrade: service.selfAverage!,
-                    maxGrade: service.theoreticalMaxGrade!,
-                    isMain: true,
-                    color: color,
-                    size: 23,
-                  ),
-              ],
+                        const Spacer(),
+
+                        const Bone.text(width: 60, fontSize: 23),
+                      ]
+                    : [
+                        Expanded(
+                          child: Text(
+                            service.name,
+
+                            overflow: TextOverflow.ellipsis,
+                            maxLines: 1,
+
+                            style: TextStyle(
+                              fontSize: 21,
+                              fontWeight: .w800,
+                              color: titleColor,
+                            ),
+                          ),
+                        ),
+
+                        if (service.selfAverage != null &&
+                            service.theoreticalMaxGrade != null)
+                          _GradeText(
+                            selfGrade: service.selfAverage!,
+                            maxGrade: service.theoreticalMaxGrade!,
+                            isMain: true,
+                            color: color,
+                            size: 23,
+                          ),
+                      ],
+              ),
             ),
           ),
         ),
@@ -917,8 +1028,13 @@ class _ServiceWidget extends StatelessWidget {
 class _ExamWidget extends StatelessWidget {
   final BorderRadius borderRadius;
   final Exam exam;
+  final bool isLoading;
 
-  const _ExamWidget({required this.exam, required this.borderRadius});
+  const _ExamWidget({
+    required this.exam,
+    required this.borderRadius,
+    required this.isLoading,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -928,21 +1044,25 @@ class _ExamWidget extends StatelessWidget {
     final title = Utils.getExamComment(context, exam);
     final subtitle = exam.date.asRelativeDate(context);
 
-    return ItemWidget(
-      backgroundColor: backgroundColor,
-      borderRadius: borderRadius,
+    return Skeletonizer(
+      enabled: isLoading,
 
-      title: Text(title, style: TextStyle(color: titleColor)),
-      subtitle: Text(subtitle, style: TextStyle(color: subtitleColor)),
+      child: ItemWidget(
+        backgroundColor: backgroundColor,
+        borderRadius: borderRadius,
 
-      trailing: _GradeText(
-        selfGrade: exam.selfGrade,
-        maxGrade: exam.theoreticalMaxGrade,
-        color: color,
-        size: 19,
+        title: Text(title, style: TextStyle(color: titleColor)),
+        subtitle: Text(subtitle, style: TextStyle(color: subtitleColor)),
+
+        trailing: _GradeText(
+          selfGrade: exam.selfGrade,
+          maxGrade: exam.theoreticalMaxGrade,
+          color: color,
+          size: 19,
+        ),
+
+        onPressed: () => showExamDetails(context, exam),
       ),
-
-      onPressed: () => showExamDetails(context, exam),
     );
   }
 }
