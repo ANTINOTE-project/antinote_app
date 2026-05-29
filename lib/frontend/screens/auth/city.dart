@@ -6,7 +6,6 @@ import "package:antinote_app/backend/src/accounts/place.dart";
 import "package:antinote_app/frontend/extensions/colors.dart";
 import "package:antinote_app/frontend/extensions/l10n.dart";
 import "package:antinote_app/frontend/routing/routes.dart";
-import "package:antinote_app/frontend/screens/auth/search/widgets/item.dart";
 import "package:antinote_app/frontend/widgets/customs/app_bar.dart";
 import "package:antinote_app/frontend/widgets/customs/field.dart";
 import "package:antinote_app/frontend/widgets/customs/list.dart";
@@ -23,16 +22,22 @@ class LoginFindCityScreen extends StatefulWidget {
 }
 
 class _LoginFindCityScreenState extends State<LoginFindCityScreen> {
-  final _mockCities = List.generate(15, (i) {
+  final List<City> _mockCities = List.generate(15, (i) {
     final r = Random(i);
 
-    return (
-      title: String.fromCharCodes(
+    return City(
+      name: String.fromCharCodes(
         List.generate(r.nextInt(10) + 12, (_) => r.nextInt(26) + 97),
       ),
-      subtitle: String.fromCharCodes(
+
+      address: String.fromCharCodes(
         List.generate(r.nextInt(15) + 20, (_) => r.nextInt(26) + 97),
       ),
+
+      latitude: 0,
+      longitude: 0,
+
+      region: "",
     );
   });
 
@@ -85,7 +90,8 @@ class _LoginFindCityScreenState extends State<LoginFindCityScreen> {
 
         children: [
           Padding(
-            padding: const EdgeInsets.all(12),
+            padding: const .all(12),
+
             // TODO: Faire en sorte que ça n'overflow pas.
             child: FieldWidget(
               controller: _controller,
@@ -120,89 +126,75 @@ class _LoginFindCityScreenState extends State<LoginFindCityScreen> {
                     );
                   }
 
-                  if (_isLoading(snapshot)) {
-                    return Skeletonizer(
-                      child: CustomScrollView(
-                        slivers: [
-                          SliverList.builder(
-                            itemCount: _mockCities.length,
+                  final cities = _isLoading(snapshot)
+                      ? _mockCities
+                      : snapshot.requireData;
 
-                            itemBuilder: (context, index) {
-                              final mock = _mockCities[index];
+                  return Skeletonizer(
+                    enabled: _isLoading(snapshot),
 
-                              return ListItemCard(
-                                isLoading: true,
-                                onPressed: null,
+                    child: CustomScrollView(
+                      slivers: [
+                        ListWidget(
+                          items: cities,
 
-                                leading: const Icon(HugeIconsSolid.aspectRatio),
+                          itemBuilder: (context, city, borderRadius) {
+                            return ItemWidget(
+                              borderRadius: borderRadius,
 
-                                title: mock.title,
-                                subtitle: mock.subtitle,
-                              );
-                            },
-                          ),
-                        ],
-                      ),
-                    );
-                  }
+                              onPressed: () async {
+                                final result = await context.push<LoginResult>(
+                                  Routes.auth.school,
 
-                  final cities = snapshot.requireData;
+                                  extra: {
+                                    "lat": city.latitude,
+                                    "long": city.longitude,
+                                  },
+                                );
 
-                  return CustomScrollView(
-                    slivers: [
-                      ListWidget(
-                        items: cities,
+                                if (result != null && context.mounted) {
+                                  context.pop(result);
+                                }
+                              },
 
-                        itemBuilder: (context, city, borderRadius) {
-                          return ItemWidget(
-                            borderRadius: borderRadius,
+                              leading: Icon(switch (city.placeType) {
+                                .city => HugeIconsSolid.building01,
+                                .town => HugeIconsSolid.building02,
+                                .village => HugeIconsSolid.home01,
+                                .hamlet => HugeIconsSolid.house01,
+                                .suburb => HugeIconsSolid.house04,
+                                .municipality => HugeIconsSolid.city01,
+                                .other => HugeIconsSolid.location01,
+                              }),
 
-                            onPressed: () async {
-                              final result = await context.push<LoginResult>(
-                                Routes.auth.school,
-                                extra: {
-                                  "lat": city.latitude,
-                                  "long": city.longitude,
-                                },
-                              );
-
-                              if (result != null && context.mounted) {
-                                context.pop(result);
-                              }
-                            },
-
-                            leading: Icon(switch (city.placeType) {
-                              .city => HugeIconsSolid.building01,
-                              .town => HugeIconsSolid.building02,
-                              .village => HugeIconsSolid.home01,
-                              .hamlet => HugeIconsSolid.house01,
-                              .suburb => HugeIconsSolid.house04,
-                              .municipality => HugeIconsSolid.city01,
-                              .other => HugeIconsSolid.location01,
-                            }),
-
-                            title: Text(
-                              city.name,
-
-                              overflow: .ellipsis,
-                              maxLines: 1,
-
-                              style: TextStyle(
-                                fontWeight: .w800,
-                                color: context.c.onPrimary,
+                              trailing: Icon(
+                                HugeIconsSolid.arrowRight01,
+                                color: context.c.outline,
                               ),
-                            ),
 
-                            subtitle: Text(
-                              city.address,
+                              title: Text(
+                                city.name,
 
-                              overflow: .ellipsis,
-                              maxLines: 1,
-                            ),
-                          );
-                        },
-                      ),
-                    ],
+                                overflow: .ellipsis,
+                                maxLines: 1,
+
+                                style: TextStyle(
+                                  fontWeight: .w800,
+                                  color: context.c.onPrimary,
+                                ),
+                              ),
+
+                              subtitle: Text(
+                                city.address,
+
+                                overflow: .ellipsis,
+                                maxLines: 1,
+                              ),
+                            );
+                          },
+                        ),
+                      ],
+                    ),
                   );
                 },
               ),

@@ -123,6 +123,7 @@ class ItemWidget extends StatelessWidget {
           color: backgroundColor ?? context.c.surfaceContainer,
           borderRadius: borderRadius,
         ),
+
         padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
 
         child: Row(
@@ -142,9 +143,7 @@ class ItemWidget extends StatelessWidget {
                       fontSize: 16,
                       fontWeight: .w900,
 
-                      color: backgroundColor == null
-                          ? context.c.onPrimary
-                          : null,
+                      color: context.c.onPrimary,
                     ),
 
                     overflow: .ellipsis,
@@ -159,9 +158,7 @@ class ItemWidget extends StatelessWidget {
                         fontSize: 12,
                         fontWeight: .w800,
 
-                        color: backgroundColor == null
-                            ? context.c.outline
-                            : null,
+                        color: context.c.outline,
                       ),
 
                       overflow: .ellipsis,
