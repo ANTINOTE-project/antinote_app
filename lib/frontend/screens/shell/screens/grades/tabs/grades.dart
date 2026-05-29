@@ -296,7 +296,7 @@ class _GradesTabState extends State<GradesTab> with ScreenMixin<GradesTab> {
     return buildRefreshIndicator(
       child: CustomScrollView(
         slivers: [
-          _AverageWidget(data: _data),
+          _Averages(data: _data),
 
           if (orderedExams.isNotEmpty) ...[
             _SectionWidget(
@@ -304,7 +304,7 @@ class _GradesTabState extends State<GradesTab> with ScreenMixin<GradesTab> {
               icon: HugeIconsSolid.note,
             ),
 
-            _LatestWidget(exams: orderedExams),
+            _LatestGrades(exams: orderedExams),
           ],
 
           if (organizedData.isNotEmpty) ...[
@@ -313,7 +313,7 @@ class _GradesTabState extends State<GradesTab> with ScreenMixin<GradesTab> {
               icon: HugeIconsSolid.gitbook,
             ),
 
-            _SubjectsWidget(data: organizedData),
+            _ServicesGrades(data: organizedData),
           ],
 
           SliverPadding(
@@ -334,14 +334,14 @@ class _GradesTabState extends State<GradesTab> with ScreenMixin<GradesTab> {
     return buildRefreshIndicator(
       child: CustomScrollView(
         slivers: [
-          const _AverageWidget(data: null),
+          const _Averages(data: null),
 
           _SectionWidget(
             label: context.l10n.latestGrades,
             icon: HugeIconsSolid.note,
           ),
 
-          const _LatestWidget(exams: null),
+          const _LatestGrades(exams: null),
         ],
       ),
     );
@@ -393,10 +393,10 @@ class _SectionWidget extends StatelessWidget {
   }
 }
 
-class _AverageWidget extends StatelessWidget {
+class _Averages extends StatelessWidget {
   final LatestGradesPage? data;
 
-  const _AverageWidget({required this.data});
+  const _Averages({required this.data});
 
   @override
   Widget build(BuildContext context) {
@@ -608,10 +608,10 @@ class _GradesCurvePainter extends CustomPainter {
       old.values != values || old.progress != progress;
 }
 
-class _LatestWidget extends StatelessWidget {
+class _LatestGrades extends StatelessWidget {
   final List<Exam>? exams;
 
-  const _LatestWidget({required this.exams});
+  const _LatestGrades({required this.exams});
 
   static const _fakeGrade = Grade.defaultUnknownGrade;
 
@@ -827,10 +827,10 @@ class _LatestWidget extends StatelessWidget {
   }
 }
 
-class _SubjectsWidget extends StatelessWidget {
+class _ServicesGrades extends StatelessWidget {
   final ServiceGradeList data;
 
-  const _SubjectsWidget({required this.data});
+  const _ServicesGrades({required this.data});
 
   @override
   Widget build(BuildContext context) {
