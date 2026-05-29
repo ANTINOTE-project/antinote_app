@@ -1,12 +1,14 @@
 import "package:antinote_app/frontend/extensions/colors.dart";
 import "package:antinote_app/frontend/widgets/pressable.dart";
 import "package:flutter/material.dart";
+import "package:skeletonizer/skeletonizer.dart";
 
 class ListWidget<T> extends StatelessWidget {
   final Widget Function(BuildContext context, T item, BorderRadius borderRadius)
   itemBuilder;
   final List<T> items;
 
+  final bool isLoading;
   final bool isSliver;
   final bool shrinkWrap;
   final ScrollPhysics? physics;
@@ -17,6 +19,7 @@ class ListWidget<T> extends StatelessWidget {
     required this.items,
     required this.itemBuilder,
 
+    this.isLoading = false,
     this.isSliver = true,
     this.shrinkWrap = false,
     this.physics,
@@ -53,8 +56,32 @@ class ListWidget<T> extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     if (isSliver) {
-      return SliverList.builder(
+      return Skeletonizer.sliver(
+        enabled: isLoading,
+
+        child: SliverList.builder(
+          itemCount: items.length,
+
+          itemBuilder: (context, index) {
+            final item = items[index];
+            final borderRadius = _getBorderRadius(index, items.length);
+
+            return Padding(
+              padding: const EdgeInsets.symmetric(vertical: 2),
+              child: itemBuilder(context, item, borderRadius),
+            );
+          },
+        ),
+      );
+    }
+
+    return Skeletonizer(
+      enabled: isLoading,
+
+      child: ListView.builder(
         itemCount: items.length,
+        shrinkWrap: shrinkWrap,
+        physics: physics,
 
         itemBuilder: (context, index) {
           final item = items[index];
@@ -65,23 +92,7 @@ class ListWidget<T> extends StatelessWidget {
             child: itemBuilder(context, item, borderRadius),
           );
         },
-      );
-    }
-
-    return ListView.builder(
-      itemCount: items.length,
-      shrinkWrap: shrinkWrap,
-      physics: physics,
-
-      itemBuilder: (context, index) {
-        final item = items[index];
-        final borderRadius = _getBorderRadius(index, items.length);
-
-        return Padding(
-          padding: const EdgeInsets.symmetric(vertical: 2),
-          child: itemBuilder(context, item, borderRadius),
-        );
-      },
+      ),
     );
   }
 }
