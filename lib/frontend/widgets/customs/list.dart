@@ -3,7 +3,8 @@ import "package:antinote_app/frontend/widgets/pressable.dart";
 import "package:flutter/material.dart";
 
 class ListWidget<T> extends StatelessWidget {
-  final Widget Function(BuildContext context, T item, BorderRadius borderRadius) itemBuilder;
+  final Widget Function(BuildContext context, T item, BorderRadius borderRadius)
+  itemBuilder;
   final List<T> items;
 
   final bool isSliver;
@@ -140,10 +141,15 @@ class ItemWidget extends StatelessWidget {
                     style: TextStyle(
                       fontSize: 16,
                       fontWeight: .w900,
-                      color: backgroundColor == null ? context.c.onPrimaryContainer : null,
+
+                      color: backgroundColor == null
+                          ? context.c.onPrimary
+                          : null,
                     ),
-                    maxLines: 1,
+
                     overflow: .ellipsis,
+                    maxLines: 1,
+
                     child: title,
                   ),
 
@@ -152,8 +158,15 @@ class ItemWidget extends StatelessWidget {
                       style: TextStyle(
                         fontSize: 12,
                         fontWeight: .w800,
-                        color: backgroundColor == null ? context.c.onPrimaryContainer : null,
+
+                        color: backgroundColor == null
+                            ? context.c.outline
+                            : null,
                       ),
+
+                      overflow: .ellipsis,
+                      maxLines: 1,
+
                       child: subtitle!,
                     ),
                 ],
