@@ -2,8 +2,8 @@ import "package:antinote/antinote.dart";
 import "package:antinote_app/frontend/extensions/colors.dart";
 import "package:antinote_app/frontend/extensions/l10n.dart";
 import "package:antinote_app/frontend/routing/routes.dart";
-import "package:antinote_app/frontend/screens/auth/search/widgets/item.dart";
 import "package:antinote_app/frontend/widgets/customs/app_bar.dart";
+import "package:antinote_app/frontend/widgets/customs/list.dart";
 import "package:antinote_app/main.dart";
 import "package:flutter/material.dart";
 import "package:go_router/go_router.dart";
@@ -45,59 +45,56 @@ class _LoginSelectSchoolScreenState extends State<LoginSelectSchoolScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBarWidget(title: context.l10n.loginSchool),
-      body: _buildList(),
-    );
-  }
 
-  Widget _buildList() {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 12),
+      body: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 12),
 
-      child: CustomScrollView(
-        slivers: [
-          SliverList.builder(
-            itemCount: _instances.length,
+        child: CustomScrollView(
+          slivers: [
+            ListWidget(
+              items: _instances,
 
-            itemBuilder: (context, index) {
-              final instance = _instances[index];
+              itemBuilder: (context, instance, borderRadius) {
+                return ItemWidget(
+                  borderRadius: borderRadius,
 
-              return ListItemCard(
-                onPressed: () async {
-                  try {
-                    final parameters = await MobileInstanceParameters.fetch(
-                      instance.baseUrl,
-                    );
-                    if (!context.mounted) return;
+                  onPressed: () async {
+                    try {
+                      final parameters = await MobileInstanceParameters.fetch(
+                        instance.baseUrl,
+                      );
 
-                    final result = await context.push<LoginResult>(
-                      Routes.auth.workspace,
-                      extra: {"parameters": parameters},
-                    );
+                      if (!context.mounted) return;
 
-                    if (result != null && context.mounted) {
-                      context.pop(result);
+                      final result = await context.push<LoginResult>(
+                        Routes.auth.workspace,
+                        extra: {"parameters": parameters},
+                      );
+
+                      if (result != null && context.mounted) {
+                        context.pop(result);
+                      }
+
+                      // catch
+                    } catch (e, st) {
+                      talker.error("Error during fetch of parameters", e, st);
                     }
+                  },
 
-                    // catch
-                  } catch (e, st) {
-                    talker.error("Error during fetch of parameters", e, st);
-                  }
-                },
+                  leading: const Icon(HugeIconsSolid.school),
 
-                leading: const Icon(HugeIconsSolid.school),
-                title: instance.name,
+                  title: Text(instance.name),
+                  subtitle: Text("${instance.distance.toStringAsFixed(2)} km"),
 
-                trailing: Text(
-                  "${instance.distance.toStringAsFixed(2)} km",
-                  style: TextStyle(
-                    color: context.c.inversePrimary,
-                    fontWeight: FontWeight.w500,
+                  trailing: Icon(
+                    HugeIconsSolid.arrowRight01,
+                    color: context.c.outline,
                   ),
-                ),
-              );
-            },
-          ),
-        ],
+                );
+              },
+            ),
+          ],
+        ),
       ),
     );
   }
