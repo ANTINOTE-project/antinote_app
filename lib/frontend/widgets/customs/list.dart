@@ -94,6 +94,7 @@ class ItemWidget extends StatelessWidget {
   final Widget? trailing;
 
   final VoidCallback? onPressed;
+  final VoidCallback? onLongPress;
 
   final BorderRadius borderRadius;
   final Color? backgroundColor;
@@ -108,6 +109,7 @@ class ItemWidget extends StatelessWidget {
     this.trailing,
 
     this.onPressed,
+    this.onLongPress,
 
     this.backgroundColor,
     required this.borderRadius,
@@ -117,6 +119,7 @@ class ItemWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return Pressable(
       onPressed: onPressed,
+      onLongPress: onLongPress,
 
       child: Container(
         decoration: BoxDecoration(

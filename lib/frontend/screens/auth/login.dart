@@ -1,10 +1,12 @@
 import "package:antinote_app/frontend/extensions/account_storage.dart";
+import "package:antinote_app/frontend/extensions/colors.dart";
 import "package:antinote_app/frontend/extensions/l10n.dart";
 import "package:antinote_app/frontend/extensions/session_manager.dart";
 import "package:antinote_app/frontend/routing/routes.dart";
-import "package:antinote_app/frontend/widgets/account.dart";
+import "package:antinote_app/frontend/widgets/animated/icon.dart";
 import "package:antinote_app/frontend/widgets/customs/app_bar.dart";
 import "package:antinote_app/frontend/widgets/customs/button.dart";
+import "package:antinote_app/frontend/widgets/customs/list.dart";
 import "package:antinote_app/frontend/widgets/customs/loading.dart";
 import "package:antinote_app/main.dart";
 import "package:antinote_app/protos/account.pb.dart";
@@ -108,89 +110,169 @@ class _LoginScreenState extends State<LoginScreen> with WidgetsBindingObserver {
   Widget build(BuildContext context) {
     return PopScope(
       canPop: context.sm.state.lastSeenAccountUid != null,
+
       child: Scaffold(
-        appBar: AppBarWidget(title: context.l10n.choseAnAccount, backButton: false),
+        appBar: AppBarWidget(
+          title: context.l10n.choseAnAccount,
+          backButton: false,
+        ),
 
-        body: _buildBody(),
-
-        floatingActionButton: _buildAddButton(),
         floatingActionButtonLocation: .centerFloat,
-      ),
-    );
-  }
+        floatingActionButton: Align(
+          alignment: Alignment.bottomCenter,
 
-  Widget _buildBody() {
-    return _accounts == null ? _buildLoading() : _buildList();
-  }
+          child: SafeArea(
+            child: Padding(
+              padding: const EdgeInsets.only(left: 12, right: 12),
 
-  Widget _buildLoading() {
-    return const Center(child: LoadingWidget(size: 30));
-  }
+              child: ButtonWidget(
+                onPressed: () async {
+                  final result = await context.push(Routes.auth.pick);
 
-  Widget _buildList() {
-    return Padding(
-      padding: const EdgeInsets.only(left: 12, right: 12, bottom: 70),
-
-      child: CustomScrollView(
-        slivers: [
-          SliverList.builder(
-            itemCount: _accounts?.length,
-            itemBuilder: (context, index) {
-              final account = _accounts?[index];
-              if (account == null) return null;
-
-              return AccountWidget(
-                account: account,
-
-                isLoggingIn: _loggingUid == account.uid,
-                loggable: _loggingUid == null,
-                isDefault: _defaultUid == account.uid,
-
-                onPressed: () => _onAccountPressed(account),
-
-                onRemoveDefault: () async {
-                  await context.as.setDefault(null);
-                  await _load();
+                  if (result != null && mounted) {
+                    await _load();
+                  }
                 },
 
-                onSetDefault: () async {
-                  await context.as.setDefault(account.uid);
-                  await _load();
-                },
-
-                onDelete: () async {
-                  await context.as.deleteAccount(account.uid);
-                  await _load();
-                },
-              );
-            },
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildAddButton() {
-    return Align(
-      alignment: Alignment.bottomCenter,
-
-      child: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.only(left: 12, right: 12, bottom: 12),
-
-          child: ButtonWidget(
-            onPressed: () async {
-              final result = await context.push(Routes.auth.pick);
-
-              if (result != null && mounted) {
-                await _load();
-              }
-            },
-
-            icon: HugeIconsSolid.add02,
-            label: context.l10n.addAnAccount,
+                icon: HugeIconsSolid.add02,
+                label: context.l10n.addAnAccount,
+              ),
+            ),
           ),
         ),
+
+        body: _accounts == null
+            ? const Center(child: LoadingWidget(size: 30))
+            : Padding(
+                padding: const EdgeInsets.only(left: 12, right: 12, bottom: 70),
+
+                child: CustomScrollView(
+                  slivers: [
+                    ListWidget(
+                      items: _accounts!,
+
+                      itemBuilder: (context, account, borderRadius) {
+                        return ItemWidget(
+                          borderRadius: borderRadius,
+
+                          onPressed: () => _onAccountPressed(account),
+
+                          onLongPress: () async {
+                            await showModalBottomSheet(
+                              context: context,
+
+                              builder: (context) {
+                                return SafeArea(
+                                  child: Padding(
+                                    padding: MediaQuery.viewInsetsOf(context),
+
+                                    child: Container(
+                                      padding: const EdgeInsets.symmetric(
+                                        horizontal: 16,
+                                        vertical: 14,
+                                      ),
+
+                                      child: Column(
+                                        mainAxisSize: .min,
+                                        spacing: 8,
+
+                                        children: [
+                                          if (_defaultUid == account.uid)
+                                            ButtonWidget(
+                                              onPressed: () async {
+                                                await context.as.setDefault(
+                                                  null,
+                                                );
+                                                await _load();
+
+                                                if (context.mounted) {
+                                                  context.pop();
+                                                }
+                                              },
+
+                                              label:
+                                                  context.l10n.disableAutoLogin,
+                                            )
+                                          else
+                                            ButtonWidget(
+                                              onPressed: () async {
+                                                await context.as.setDefault(
+                                                  account.uid,
+                                                );
+                                                await _load();
+
+                                                if (context.mounted) {
+                                                  context.pop();
+                                                }
+                                              },
+
+                                              label:
+                                                  context.l10n.enableAutoLogin,
+                                            ),
+
+                                          ButtonWidget(
+                                            onPressed: () async {
+                                              await context.as.deleteAccount(
+                                                account.uid,
+                                              );
+                                              await _load();
+
+                                              if (context.mounted) {
+                                                context.pop();
+                                              }
+                                            },
+
+                                            isDangerous: true,
+                                            icon: HugeIconsSolid.delete02,
+                                            label: context.l10n.delete,
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  ),
+                                );
+                              },
+                            );
+                          },
+
+                          leading: IconWidget(
+                            size: 28,
+                            iconOn: HugeIconsSolid.star,
+                            iconOff: HugeIconsSolid.userAccount,
+                            value: _defaultUid == account.uid,
+                          ),
+
+                          title: Text(
+                            account.name,
+                            style: const TextStyle(fontSize: 20),
+                          ),
+
+                          subtitle: Column(
+                            crossAxisAlignment: .start,
+
+                            children: [
+                              Text(
+                                account.establishmentName,
+                                style: const TextStyle(fontSize: 14),
+                              ),
+
+                              Text(
+                                account.workspaceName,
+                                style: const TextStyle(fontSize: 14),
+                              ),
+                            ],
+                          ),
+
+                          trailing: Icon(
+                            HugeIconsSolid.arrowRight01,
+                            color: context.c.outline,
+                          ),
+                        );
+                      },
+                    ),
+                  ],
+                ),
+              ),
       ),
     );
   }
