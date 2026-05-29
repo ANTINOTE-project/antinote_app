@@ -452,7 +452,7 @@ class _Averages extends StatelessWidget {
 
                   children: data == null
                       ? [
-                          const SizedBox(height: 40),
+                          const SizedBox(height: 58),
                           const Bone.text(width: 200, style: style),
                         ]
                       : [
@@ -670,14 +670,13 @@ class _LatestGrades extends StatelessWidget {
 
     return SliverToBoxAdapter(
       child: Skeletonizer.zone(
-        containersColor: context.c.surfaceContainerHighest,
         enabled: exams == null,
 
         child: SizedBox(
           height: 170,
 
           child: ListView.builder(
-            padding: const EdgeInsets.all(12),
+            padding: const .all(12),
 
             scrollDirection: .horizontal,
             itemCount: exams == null ? _fakeExams.length : exams!.length,
@@ -718,7 +717,10 @@ class _LatestGrades extends StatelessWidget {
                         decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(16),
                           border: Border.all(color: borderColor),
-                          color: backgroundColor,
+
+                          color: exams == null
+                              ? context.c.surfaceContainerHighest
+                              : backgroundColor,
                         ),
 
                         padding: const EdgeInsets.symmetric(
