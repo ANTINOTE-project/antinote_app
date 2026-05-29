@@ -9,13 +9,52 @@ import "package:antinote_app/frontend/extensions/l10n.dart";
 import "package:antinote_app/frontend/extensions/session_manager.dart";
 import "package:antinote_app/frontend/routing/routes.dart";
 import "package:antinote_app/frontend/widgets/customs/app_bar.dart";
-import "package:antinote_app/frontend/widgets/pressable.dart";
+import "package:antinote_app/frontend/widgets/customs/list.dart";
 import "package:flutter/material.dart";
 import "package:go_router/go_router.dart";
 import "package:hugeicons_pro/hugeicons.dart";
+import "package:skeletonizer/skeletonizer.dart";
+
+typedef Method = ({
+  IconData icon,
+  String title,
+  String subtitle,
+  VoidCallback onPressed,
+});
 
 class MethodsScreen extends StatelessWidget with WidgetsBindingObserver {
   const MethodsScreen({super.key});
+
+  List<Method> buildOptions(BuildContext context) {
+    return [
+      (
+        icon: HugeIconsSolid.maping,
+
+        title: context.l10n.loginCity,
+        subtitle: context.l10n.loginCitySubtitle,
+
+        onPressed: () async {
+          await sendResultIfLoggedIn(
+            context,
+            context.push<LoginResult>(Routes.auth.city),
+          );
+        },
+      ),
+      (
+        icon: HugeIconsSolid.link04,
+
+        title: context.l10n.loginUrl,
+        subtitle: context.l10n.loginUrlSubtitle,
+
+        onPressed: () async {
+          await sendResultIfLoggedIn(
+            context,
+            context.push<LoginResult>(Routes.auth.url),
+          );
+        },
+      ),
+    ];
+  }
 
   Future<void> sendResultIfLoggedIn(
     BuildContext context,
@@ -41,117 +80,50 @@ class MethodsScreen extends StatelessWidget with WidgetsBindingObserver {
   }
 
   @override
-  void didChangeAppLifecycleState(AppLifecycleState state) {}
-
-  @override
   Widget build(BuildContext context) {
+    final options = buildOptions(context);
+
     return Scaffold(
       appBar: AppBarWidget(title: context.l10n.addAnAccount),
-      body: _buildBody(context),
-    );
-  }
 
-  Widget _buildBody(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.all(12),
+      body: Padding(
+        padding: const EdgeInsets.all(12),
 
-      child: Column(
-        spacing: 8,
+        child: ListWidget(
+          isSliver: false,
+          items: options,
 
-        children: [
-          _buildOption(
-            context: context,
+          itemBuilder: (context, item, borderRadius) {
+            return ItemWidget(
+              borderRadius: borderRadius,
+              onPressed: item.onPressed,
 
-            icon: HugeIconsSolid.maping,
-            title: context.l10n.loginCity,
-            subtitle: context.l10n.loginCitySubtitle,
+              leading: Icon(item.icon),
 
-            onPressed: () async {
-              await sendResultIfLoggedIn(
-                context,
-                context.push<LoginResult>(Routes.auth.city),
-              );
-            },
-          ),
+              title: Text(
+                item.title,
 
-          _buildOption(
-            context: context,
-            icon: HugeIconsSolid.link04,
-            title: context.l10n.loginUrl,
-            subtitle: context.l10n.loginUrlSubtitle,
-            onPressed: () async {
-              await sendResultIfLoggedIn(
-                context,
-                context.push<LoginResult>(Routes.auth.url),
-              );
-            },
-          ),
+                maxLines: 3,
 
-          // TODO add qr code login
-          // _buildOption(
-          //   context: context,
-
-          //   icon: HugeIconsSolid.qrCode01,
-          //   title: context.l10n.loginQrCode,
-          //   subtitle: context.l10n.loginQrCodeSubtitle,
-
-          //   onPressed: () async {
-          //     await sendResultIfLoggedIn(context, context.push(Routes.auth.qrCode));
-          //   },
-          // ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildOption({
-    required BuildContext context,
-    required IconData icon,
-    required String title,
-    required String subtitle,
-    required VoidCallback onPressed,
-  }) {
-    return Pressable(
-      onPressed: onPressed,
-
-      child: Container(
-        decoration: BoxDecoration(
-          color: context.c.surfaceContainerHigh,
-          borderRadius: const BorderRadius.all(Radius.circular(20)),
-        ),
-
-        padding: const EdgeInsets.all(16),
-
-        child: Row(
-          spacing: 16,
-
-          children: [
-            Icon(icon, size: 32, color: context.c.primary),
-
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    title,
-                    style: const TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                  Text(
-                    subtitle,
-                    style: TextStyle(color: context.c.onSurfaceVariant),
-                  ),
-                ],
+                style: const TextStyle(fontSize: 18),
               ),
-            ),
 
-            Icon(
-              HugeIconsSolid.arrowRight01,
-              color: context.c.onSurfaceVariant,
-            ),
-          ],
+              subtitle: Text(
+                item.subtitle,
+
+                maxLines: 3,
+
+                style: const TextStyle(fontSize: 13),
+              ),
+
+              trailing: Skeleton.ignore(
+                child: Icon(
+                  HugeIconsSolid.arrowRight01,
+                  color: context.c.outline,
+                ),
+              ),
+            );
+          },
         ),
       ),
     );
