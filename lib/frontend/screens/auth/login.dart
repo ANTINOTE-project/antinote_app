@@ -109,10 +109,7 @@ class _LoginScreenState extends State<LoginScreen> with WidgetsBindingObserver {
     return PopScope(
       canPop: context.sm.state.lastSeenAccountUid != null,
       child: Scaffold(
-        appBar: AppBarWidget(
-          title: context.l10n.choseAnAccount,
-          backButton: false,
-        ),
+        appBar: AppBarWidget(title: context.l10n.choseAnAccount, backButton: false),
 
         body: _buildBody(),
 
@@ -153,12 +150,17 @@ class _LoginScreenState extends State<LoginScreen> with WidgetsBindingObserver {
 
                 onRemoveDefault: () async {
                   await context.as.setDefault(null);
+                  await _load();
                 },
+
                 onSetDefault: () async {
                   await context.as.setDefault(account.uid);
+                  await _load();
                 },
+
                 onDelete: () async {
                   await context.as.deleteAccount(account.uid);
+                  await _load();
                 },
               );
             },
