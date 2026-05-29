@@ -3,9 +3,17 @@ import "package:antinote_app/backend/src/accounts/storage/widget.dart";
 import "package:antinote_app/frontend/app.dart";
 import "package:antinote_app/frontend/routing/routes.dart";
 import "package:antinote_app/protos/account.pb.dart";
+import "package:flutter/foundation.dart";
 import "package:flutter/material.dart";
+import "package:flutter_inappwebview/flutter_inappwebview.dart";
 
-void mainEntrypoint() {
+Future<void> mainEntrypoint() async {
+  WidgetsFlutterBinding.ensureInitialized();
+
+  if (defaultTargetPlatform == TargetPlatform.android) {
+    await InAppWebViewController.setWebContentsDebuggingEnabled(kDebugMode);
+  }
+
   runApp(const MainApp());
 }
 
