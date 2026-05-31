@@ -501,6 +501,18 @@ abstract class AppLocalizations {
   /// In fr, this message translates to:
   /// **'Visio'**
   String get virtualClassroom;
+
+  /// No description provided for @homeworkDone.
+  ///
+  /// In fr, this message translates to:
+  /// **'Fait'**
+  String get homeworkDone;
+
+  /// No description provided for @homeworkNotDone.
+  ///
+  /// In fr, this message translates to:
+  /// **'Non fait'**
+  String get homeworkNotDone;
 }
 
 class _AppLocalizationsDelegate

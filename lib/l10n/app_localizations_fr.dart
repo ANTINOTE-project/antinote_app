@@ -224,4 +224,10 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get virtualClassroom => 'Visio';
+
+  @override
+  String get homeworkDone => 'Fait';
+
+  @override
+  String get homeworkNotDone => 'Non fait';
 }

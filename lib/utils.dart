@@ -4,6 +4,59 @@ import "package:flutter/material.dart";
 
 import "frontend/extensions/l10n.dart";
 
+class AdaptedColors {
+  const AdaptedColors({
+    required this.base,
+    required this.background,
+    required this.headerBackground,
+    required this.border,
+    required this.title,
+    required this.subtitle,
+  });
+
+  final Color base;
+  final Color background;
+  final Color headerBackground;
+  final Color border;
+  final Color title;
+  final Color subtitle;
+
+  factory AdaptedColors.fromScheme(int? colorValue, ColorScheme scheme) {
+    if (colorValue == null) {
+      return AdaptedColors(
+        base: scheme.onSurface,
+        background: scheme.surfaceContainerHigh,
+        headerBackground: scheme.surfaceContainerHighest,
+        border: scheme.outlineVariant,
+        title: scheme.onSurface,
+        subtitle: scheme.onSurfaceVariant,
+      );
+    }
+
+    final hsl = HSLColor.fromColor(Color(colorValue));
+    final isLight = scheme.brightness == Brightness.light;
+
+    Color adapt(
+      double lightLight,
+      double darkLight,
+      double minSat,
+      double maxSat,
+    ) => hsl
+        .withLightness(isLight ? lightLight : darkLight)
+        .withSaturation(hsl.saturation.clamp(minSat, maxSat))
+        .toColor();
+
+    return AdaptedColors(
+      base: adapt(0.40, 0.70, 0.40, 1.00),
+      background: adapt(0.88, 0.15, 0.15, 0.40),
+      headerBackground: adapt(0.78, 0.08, 0.35, 0.70),
+      border: adapt(0.55, 0.35, 0.20, 0.50),
+      title: adapt(0.45, 0.90, 0.60, 1.00),
+      subtitle: adapt(0.60, 0.58, 0.15, 0.35),
+    );
+  }
+}
+
 class Utils {
   Utils._();
 
@@ -11,65 +64,6 @@ class Utils {
     if (value == null || value.isNaN) return "—";
 
     return value.toStringAsFixed(digits);
-  }
-
-  @Deprecated(
-    "Use [ColorHarmonization.harmonizeWith] from the `dynamic_color` package instead for better accessibility.",
-  )
-  static (
-    Color color,
-    Color backgroundColor,
-    Color headerBackgroundColor,
-    Color borderColor,
-    Color titleColor,
-    Color subtitleColor,
-  )
-  adaptColorPair(int? colorValue, ColorScheme scheme) {
-    if (colorValue == null) {
-      return (
-        scheme.onSurface,
-        scheme.surfaceContainerHigh,
-        scheme.surfaceContainerHighest,
-        scheme.outlineVariant,
-        scheme.onSurface,
-        scheme.onSurfaceVariant,
-      );
-    }
-
-    final hsl = HSLColor.fromColor(Color(colorValue));
-    final isLight = scheme.brightness == Brightness.light;
-
-    final base = hsl
-        .withLightness(isLight ? 0.40 : 0.70)
-        .withSaturation(hsl.saturation.clamp(0.4, 1.0))
-        .toColor();
-
-    final background = hsl
-        .withLightness(isLight ? 0.88 : 0.15)
-        .withSaturation(hsl.saturation.clamp(0.15, 0.4))
-        .toColor();
-
-    final headerBackground = hsl
-        .withLightness(isLight ? 0.78 : 0.08)
-        .withSaturation(hsl.saturation.clamp(0.35, 0.7))
-        .toColor();
-
-    final border = hsl
-        .withLightness(isLight ? 0.55 : 0.35)
-        .withSaturation(hsl.saturation.clamp(0.2, 0.5))
-        .toColor();
-
-    final title = hsl
-        .withLightness(isLight ? 0.45 : 0.9)
-        .withSaturation(hsl.saturation.clamp(0.6, 1.0))
-        .toColor();
-
-    final subtitle = hsl
-        .withLightness(isLight ? 0.60 : 0.58)
-        .withSaturation(hsl.saturation.clamp(0.15, 0.35))
-        .toColor();
-
-    return (base, background, headerBackground, border, title, subtitle);
   }
 
   static ColorScheme harmonizeWithAccent(ColorScheme base, int designColor) {

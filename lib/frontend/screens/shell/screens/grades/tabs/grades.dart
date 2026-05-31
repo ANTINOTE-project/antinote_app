@@ -150,8 +150,7 @@ Future<void> _showDetails({
     context: context,
 
     builder: (context) {
-      final (color, backgroundColor, _, _, _, subtitleColor) =
-          Utils.adaptColorPair(serviceColor, context.c);
+      final colors = AdaptedColors.fromScheme(serviceColor, context.c);
 
       return Container(
         padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
@@ -209,14 +208,14 @@ Future<void> _showDetails({
                   itemBuilder: (context, item, borderRadius) {
                     return ItemWidget(
                       borderRadius: borderRadius,
-                      backgroundColor: backgroundColor,
+                      backgroundColor: colors.background,
 
                       leading: Icon(item.icon),
 
                       title: Text(
                         item.label,
                         style: TextStyle(
-                          color: subtitleColor,
+                          color: colors.subtitle,
                           fontSize: 18,
                           fontWeight: .bold,
                         ),
@@ -227,7 +226,7 @@ Future<void> _showDetails({
                               "x${Utils.formatNumber(item.coefficient)}",
 
                               style: TextStyle(
-                                color: color,
+                                color: colors.base,
                                 fontSize: 20,
                                 fontWeight: FontWeight.w800,
                               ),
@@ -237,14 +236,14 @@ Future<void> _showDetails({
                           ? _GradeText(
                               selfGrade: item.grade!,
                               maxGrade: item.theoreticalMaxGrade!,
-                              color: color,
+                              color: colors.base,
                               size: 20,
                             )
                           : item.rawValue != null
                           ? Text(
                               item.rawValue!,
                               style: TextStyle(
-                                color: color,
+                                color: colors.base,
                                 fontSize: 20,
                                 fontWeight: FontWeight.w800,
                               ),
@@ -258,7 +257,7 @@ Future<void> _showDetails({
               if (subtitle != null)
                 Text(
                   subtitle,
-                  style: TextStyle(color: subtitleColor, fontWeight: .bold),
+                  style: TextStyle(color: colors.subtitle, fontWeight: .bold),
                 ),
             ],
           ),
@@ -801,8 +800,10 @@ class _LatestGrades extends StatelessWidget {
             itemBuilder: (context, index) {
               final exam = exams == null ? _fakeExams[index] : exams![index];
 
-              final (color, backgroundColor, _, borderColor, _, subtitleColor) =
-                  Utils.adaptColorPair(exam.service.color, context.c);
+              final colors = AdaptedColors.fromScheme(
+                exam.service.color,
+                context.c,
+              );
 
               final date = DateFormat("dd/MM/yyyy").format(exam.date);
               final title = Utils.getExamComment(context, exam);
@@ -829,12 +830,12 @@ class _LatestGrades extends StatelessWidget {
                           border: Border.all(
                             color: exams == null
                                 ? context.c.outlineVariant
-                                : borderColor,
+                                : colors.border,
                           ),
 
                           color: exams == null
                               ? context.c.surfaceContainerHigh
-                              : backgroundColor,
+                              : colors.background,
                         ),
 
                         padding: const EdgeInsets.symmetric(
@@ -891,7 +892,7 @@ class _LatestGrades extends StatelessWidget {
                                     style: TextStyle(
                                       fontSize: 20,
                                       fontWeight: .w800,
-                                      color: color,
+                                      color: colors.base,
                                     ),
                                   ),
 
@@ -915,7 +916,7 @@ class _LatestGrades extends StatelessWidget {
                                         date,
                                         style: TextStyle(
                                           fontWeight: FontWeight.bold,
-                                          color: subtitleColor,
+                                          color: colors.subtitle,
                                         ),
                                       ),
 
@@ -924,7 +925,7 @@ class _LatestGrades extends StatelessWidget {
                                       _GradeText(
                                         selfGrade: exam.selfGrade,
                                         maxGrade: exam.theoreticalMaxGrade,
-                                        color: color,
+                                        color: colors.base,
                                       ),
                                     ],
                                   ),
@@ -997,8 +998,7 @@ class _ServiceWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final (color, _, headerColor, borderColor, titleColor, _) =
-        Utils.adaptColorPair(service.color, context.c);
+    final colors = AdaptedColors.fromScheme(service.color, context.c);
 
     return Padding(
       padding: const EdgeInsets.only(top: 8, bottom: 2),
@@ -1013,11 +1013,11 @@ class _ServiceWidget extends StatelessWidget {
           child: Ink(
             decoration: BoxDecoration(
               border: Border.all(
-                color: isLoading ? context.c.outlineVariant : borderColor,
+                color: isLoading ? context.c.outlineVariant : colors.border,
               ),
 
               borderRadius: BorderRadius.circular(16),
-              color: headerColor,
+              color: colors.headerBackground,
             ),
 
             padding: .symmetric(horizontal: 12, vertical: isLoading ? 15 : 10),
@@ -1044,7 +1044,7 @@ class _ServiceWidget extends StatelessWidget {
                           style: TextStyle(
                             fontSize: 21,
                             fontWeight: .w800,
-                            color: titleColor,
+                            color: colors.title,
                           ),
                         ),
                       ),
@@ -1055,7 +1055,7 @@ class _ServiceWidget extends StatelessWidget {
                           selfGrade: service.selfAverage!,
                           maxGrade: service.theoreticalMaxGrade!,
                           isMain: true,
-                          color: color,
+                          color: colors.base,
                           size: 23,
                         ),
                     ],
@@ -1075,23 +1075,22 @@ class _ExamWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final (color, backgroundColor, _, _, titleColor, subtitleColor) =
-        Utils.adaptColorPair(exam.service.color, context.c);
+    final colors = AdaptedColors.fromScheme(exam.service.color, context.c);
 
     final title = Utils.getExamComment(context, exam);
     final subtitle = exam.date.asRelativeDate(context);
 
     return ItemWidget(
-      backgroundColor: backgroundColor,
+      backgroundColor: colors.background,
       borderRadius: borderRadius,
 
-      title: Text(title, style: TextStyle(color: titleColor)),
-      subtitle: Text(subtitle, style: TextStyle(color: subtitleColor)),
+      title: Text(title, style: TextStyle(color: colors.title)),
+      subtitle: Text(subtitle, style: TextStyle(color: colors.subtitle)),
 
       trailing: _GradeText(
         selfGrade: exam.selfGrade,
         maxGrade: exam.theoreticalMaxGrade,
-        color: color,
+        color: colors.base,
         size: 19,
       ),
 

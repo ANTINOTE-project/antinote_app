@@ -97,6 +97,8 @@
   },
 
   "remotePeriods": "Périodes",
+  "virtualClassroom": "Visio",
 
-  "virtualClassroom": "Visio"
+  "homeworkDone": "Fait",
+  "homeworkNotDone": "Non fait"
 }
