@@ -969,14 +969,11 @@ class _ServicesGrades extends StatelessWidget {
                 ),
 
                 ListWidget<Exam>(
+                  isLoading: data == null,
                   items: entry.value,
 
                   itemBuilder: (context, item, borderRadius) {
-                    return _ExamWidget(
-                      exam: item,
-                      borderRadius: borderRadius,
-                      isLoading: data == null,
-                    );
+                    return _ExamWidget(exam: item, borderRadius: borderRadius);
                   },
                 ),
               ],
@@ -1073,13 +1070,8 @@ class _ServiceWidget extends StatelessWidget {
 class _ExamWidget extends StatelessWidget {
   final BorderRadius borderRadius;
   final Exam exam;
-  final bool isLoading;
 
-  const _ExamWidget({
-    required this.exam,
-    required this.borderRadius,
-    required this.isLoading,
-  });
+  const _ExamWidget({required this.exam, required this.borderRadius});
 
   @override
   Widget build(BuildContext context) {
@@ -1089,25 +1081,21 @@ class _ExamWidget extends StatelessWidget {
     final title = Utils.getExamComment(context, exam);
     final subtitle = exam.date.asRelativeDate(context);
 
-    return Skeletonizer(
-      enabled: isLoading,
+    return ItemWidget(
+      backgroundColor: backgroundColor,
+      borderRadius: borderRadius,
 
-      child: ItemWidget(
-        backgroundColor: backgroundColor,
-        borderRadius: borderRadius,
+      title: Text(title, style: TextStyle(color: titleColor)),
+      subtitle: Text(subtitle, style: TextStyle(color: subtitleColor)),
 
-        title: Text(title, style: TextStyle(color: titleColor)),
-        subtitle: Text(subtitle, style: TextStyle(color: subtitleColor)),
-
-        trailing: _GradeText(
-          selfGrade: exam.selfGrade,
-          maxGrade: exam.theoreticalMaxGrade,
-          color: color,
-          size: 19,
-        ),
-
-        onPressed: () => showExamDetails(context, exam),
+      trailing: _GradeText(
+        selfGrade: exam.selfGrade,
+        maxGrade: exam.theoreticalMaxGrade,
+        color: color,
+        size: 19,
       ),
+
+      onPressed: () => showExamDetails(context, exam),
     );
   }
 }
