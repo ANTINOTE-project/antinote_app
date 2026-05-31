@@ -72,26 +72,28 @@ class ClassWidget extends StatelessWidget {
 
     final duration = Utils.formatDuration(difference);
 
-    final cancelledBorder = BorderSide(
-      color: (accentColorScheme?.error ?? context.c.error).withAlpha(128),
+    final statusBorder = BorderSide(
+      color:
+          (clazz.canceled
+                  ? (accentColorScheme?.error ?? context.c.error)
+                  : (accentColorScheme?.secondary ?? context.c.secondary))
+              .withAlpha(128),
     );
 
     return Pressable(
       child: Column(
         children: [
-          if (clazz.canceled)
+          if (clazz.status != null)
             Container(
               decoration: BoxDecoration(
                 borderRadius: connectRight
-                    ? const .only(
-                        topLeft: .circular(20),
-                        bottomLeft: .zero,
-                        bottomRight: .zero,
-                        topRight: .zero,
-                      )
-                    : const .vertical(top: .circular(20), bottom: .zero),
-                border: .fromBorderSide(cancelledBorder),
-                color: context.c.errorContainer,
+                    ? const .only(topLeft: .circular(20))
+                    : const .vertical(top: .circular(20)),
+                border: .fromBorderSide(statusBorder),
+                color: clazz.canceled
+                    ? context.c.errorContainer
+                    : (accentColorScheme?.inversePrimary ??
+                          context.c.inversePrimary),
               ),
               padding: const .symmetric(horizontal: 12, vertical: 4),
               width: .infinity,
@@ -104,9 +106,13 @@ class ClassWidget extends StatelessWidget {
                     spacing: 6,
                     children: [
                       Icon(
-                        HugeIconsSolid.informationCircle,
+                        clazz.canceled
+                            ? HugeIconsSolid.alertCircle
+                            : HugeIconsSolid.informationCircle,
                         size: 20,
-                        color: context.c.error,
+                        color: clazz.canceled
+                            ? context.c.error
+                            : (accentColorScheme?.primary ?? context.c.primary),
                       ),
                       Expanded(
                         child: Text(
@@ -118,7 +124,10 @@ class ClassWidget extends StatelessWidget {
                           style: TextStyle(
                             fontSize: 15,
                             fontWeight: .w800,
-                            color: context.c.error,
+                            color: clazz.canceled
+                                ? context.c.error
+                                : (accentColorScheme?.primary ??
+                                      context.c.primary),
                           ),
                         ),
                       ),
@@ -132,17 +141,17 @@ class ClassWidget extends StatelessWidget {
               color: clazz.canceled
                   ? accentColorScheme?.surfaceContainerLow
                   : accentColorScheme?.primaryContainer,
-              border: clazz.canceled
+              border: clazz.status != null
                   ? .fromLTRB(
-                      bottom: cancelledBorder,
-                      left: cancelledBorder,
-                      right: cancelledBorder,
+                      bottom: statusBorder,
+                      left: statusBorder,
+                      right: statusBorder,
                     )
                   : .all(
                       color: accentColorScheme?.outline ?? context.c.outline,
                     ),
               borderRadius: connectRight
-                  ? (clazz.canceled
+                  ? (clazz.status != null
                         ? const .only(
                             bottomLeft: .circular(20),
                             topRight: .zero,
@@ -155,7 +164,7 @@ class ClassWidget extends StatelessWidget {
                             bottomRight: .zero,
                             topRight: .zero,
                           ))
-                  : (clazz.canceled
+                  : (clazz.status != null
                         ? const .vertical(top: .zero, bottom: .circular(20))
                         : const .all(.circular(20))),
             ),

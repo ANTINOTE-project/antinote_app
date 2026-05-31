@@ -104,6 +104,9 @@ class AppLocalizationsFr extends AppLocalizations {
   String get averageSelf => 'Moy. générale';
 
   @override
+  String get selfServiceAverage => 'Moy. de la matière';
+
+  @override
   String get averageClass => 'Moy. classe';
 
   @override
@@ -111,6 +114,9 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get coefficient => 'Coefficient';
+
+  @override
+  String get gradeCount => 'Nombre de notes';
 
   @override
   String get youGot => 'Tu as eu';

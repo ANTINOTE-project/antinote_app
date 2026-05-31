@@ -23,6 +23,7 @@ typedef _DetailsItem = ({
   Grade? grade,
   Grade? theoreticalMaxGrade,
   double? coefficient,
+  String? rawValue,
 });
 
 const _fakeGrade = Grade.defaultUnknownGrade;
@@ -239,6 +240,15 @@ Future<void> _showDetails({
                               color: color,
                               size: 20,
                             )
+                          : item.rawValue != null
+                          ? Text(
+                              item.rawValue!,
+                              style: TextStyle(
+                                color: color,
+                                fontSize: 20,
+                                fontWeight: FontWeight.w800,
+                              ),
+                            )
                           : null,
                     );
                   },
@@ -266,6 +276,7 @@ Future<void> showExamDetails(BuildContext context, Exam exam) async {
       grade: exam.selfGrade,
       theoreticalMaxGrade: exam.theoreticalMaxGrade,
       coefficient: null,
+      rawValue: null,
     ),
 
     if (exam.coefficient != null)
@@ -275,6 +286,7 @@ Future<void> showExamDetails(BuildContext context, Exam exam) async {
         coefficient: exam.coefficient,
         theoreticalMaxGrade: null,
         grade: null,
+        rawValue: null,
       ),
 
     if (exam.classAverage != null)
@@ -284,24 +296,27 @@ Future<void> showExamDetails(BuildContext context, Exam exam) async {
         grade: exam.classAverage,
         theoreticalMaxGrade: exam.theoreticalMaxGrade,
         coefficient: null,
+        rawValue: null,
       ),
 
     if (exam.maxGrade != null)
       (
         label: context.l10n.bestGrade,
-        icon: HugeIconsSolid.chartMaximum,
+        icon: HugeIconsSolid.plusSign,
         grade: exam.maxGrade,
         theoreticalMaxGrade: exam.theoreticalMaxGrade,
         coefficient: null,
+        rawValue: null,
       ),
 
     if (exam.minGrade != null)
       (
         label: context.l10n.worstGrade,
-        icon: HugeIconsSolid.chartMinimum,
+        icon: HugeIconsSolid.minusSign,
         grade: exam.minGrade,
         theoreticalMaxGrade: exam.theoreticalMaxGrade,
         coefficient: null,
+        rawValue: null,
       ),
   ];
 
@@ -322,11 +337,20 @@ Future<void> showServiceDetails(
 ) async {
   final items = <_DetailsItem>[
     (
-      label: context.l10n.averageSelf,
+      label: context.l10n.gradeCount,
+      icon: HugeIconsSolid.textNumberSign,
+      grade: null,
+      theoreticalMaxGrade: null,
+      coefficient: null,
+      rawValue: exams.length.toString(),
+    ),
+    (
+      label: context.l10n.selfServiceAverage,
       icon: HugeIconsSolid.male02,
       grade: service.selfAverage,
       theoreticalMaxGrade: service.theoreticalMaxGrade,
       coefficient: null,
+      rawValue: null,
     ),
 
     if (service.classAverage != null)
@@ -336,24 +360,27 @@ Future<void> showServiceDetails(
         grade: service.classAverage,
         theoreticalMaxGrade: service.theoreticalMaxGrade,
         coefficient: null,
+        rawValue: null,
       ),
 
     if (service.maxGrade != null)
       (
         label: context.l10n.bestGrade,
-        icon: HugeIconsSolid.chartMaximum,
+        icon: HugeIconsSolid.crown03,
         grade: service.maxGrade,
         theoreticalMaxGrade: service.theoreticalMaxGrade,
         coefficient: null,
+        rawValue: null,
       ),
 
     if (service.minGrade != null)
       (
         label: context.l10n.worstGrade,
-        icon: HugeIconsSolid.chartMinimum,
+        icon: HugeIconsStroke.crying,
         grade: service.minGrade,
         theoreticalMaxGrade: service.theoreticalMaxGrade,
         coefficient: null,
+        rawValue: null,
       ),
   ];
 

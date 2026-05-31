@@ -130,7 +130,7 @@ class _AppShellState extends State<AppShell> {
                   left: false,
 
                   child: Padding(
-                    padding: const .symmetric(horizontal: 8),
+                    padding: const .only(right: 6),
 
                     child: ClipRRect(
                       borderRadius: const .only(
@@ -192,27 +192,31 @@ class _AppShellState extends State<AppShell> {
 
           bottomNavigationBar: screenSize.width > screenSize.height
               ? null
-              : SafeArea(
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 12),
+              : Container(
+                  margin: const .symmetric(horizontal: 6),
+                  padding: const .symmetric(horizontal: 6),
+                  clipBehavior: .antiAlias,
+                  decoration: BoxDecoration(
+                    borderRadius: const .only(
+                      topLeft: .circular(24),
+                      topRight: .circular(24),
+                    ),
+                    color: context.c.surfaceContainer,
+                  ),
 
-                    child: ClipRRect(
-                      borderRadius: const .only(
-                        topLeft: .circular(24),
-                        topRight: .circular(24),
-                      ),
+                  child: SafeArea(
+                    left: false,
+                    right: false,
+                    child: NavigationBar(
+                      destinations: _screens
+                          .map((e) => _buildDestination(e, notifications))
+                          .toList(growable: false),
+                      onDestinationSelected: (value) => setState(() {
+                        currentPage = value;
+                      }),
 
-                      child: NavigationBar(
-                        destinations: _screens
-                            .map((e) => _buildDestination(e, notifications))
-                            .toList(growable: false),
-                        onDestinationSelected: (value) => setState(() {
-                          currentPage = value;
-                        }),
-
-                        selectedIndex: currentPage,
-                        height: 70,
-                      ),
+                      selectedIndex: currentPage,
+                      height: 70,
                     ),
                   ),
                 ),

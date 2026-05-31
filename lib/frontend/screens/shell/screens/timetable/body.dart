@@ -88,8 +88,8 @@ class _TimetableBlockSliverState extends State<TimetableBlockSliver> {
                     borderRadius: .only(
                       topRight: i == widget.block.configurations.length - 1
                           ? .zero
-                          : .circular(16),
-                      bottomRight: i == 0 ? .zero : .circular(16),
+                          : const .circular(16),
+                      bottomRight: i == 0 ? .zero : const .circular(16),
                     ),
                   ),
                   alignment: .center,

@@ -274,6 +274,12 @@ abstract class AppLocalizations {
   /// **'Moy. générale'**
   String get averageSelf;
 
+  /// No description provided for @selfServiceAverage.
+  ///
+  /// In fr, this message translates to:
+  /// **'Moy. de la matière'**
+  String get selfServiceAverage;
+
   /// No description provided for @averageClass.
   ///
   /// In fr, this message translates to:
@@ -291,6 +297,12 @@ abstract class AppLocalizations {
   /// In fr, this message translates to:
   /// **'Coefficient'**
   String get coefficient;
+
+  /// No description provided for @gradeCount.
+  ///
+  /// In fr, this message translates to:
+  /// **'Nombre de notes'**
+  String get gradeCount;
 
   /// No description provided for @youGot.
   ///

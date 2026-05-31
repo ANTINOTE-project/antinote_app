@@ -20,7 +20,6 @@ class TimetableAppBar extends StatelessWidget {
   Widget build(BuildContext context) {
     return SliverAppBar(
       pinned: true,
-
       title: TextButton.icon(
         label: Text(label),
 
