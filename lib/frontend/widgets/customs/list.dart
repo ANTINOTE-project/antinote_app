@@ -1,5 +1,5 @@
-import "package:antinote_app/frontend/extensions/colors.dart";
 import "package:antinote_app/frontend/widgets/pressable.dart";
+import "package:antinote_app/utils.dart";
 import "package:flutter/material.dart";
 import "package:skeletonizer/skeletonizer.dart";
 

@@ -1,7 +1,5 @@
 import "package:antinote/antinote.dart";
 import "package:antinote_app/backend/src/session/manager.dart";
-import "package:antinote_app/frontend/extensions/colors.dart";
-import "package:antinote_app/frontend/extensions/l10n.dart";
 import "package:antinote_app/frontend/screens/shell/screens/communication/index.dart";
 import "package:antinote_app/frontend/screens/shell/screens/grades/index.dart";
 import "package:antinote_app/frontend/screens/shell/screens/home.dart";

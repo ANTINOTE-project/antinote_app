@@ -1,7 +1,7 @@
 import "package:antinote/antinote.dart";
-import "package:antinote_app/frontend/extensions/l10n.dart";
 import "package:antinote_app/frontend/widgets/customs/app_bar.dart";
 import "package:antinote_app/main.dart";
+import "package:antinote_app/utils.dart";
 import "package:flutter/material.dart";
 import "package:go_router/go_router.dart";
 import "package:webview_flutter/webview_flutter.dart";

@@ -1,7 +1,3 @@
-import "package:antinote_app/frontend/extensions/account_storage.dart";
-import "package:antinote_app/frontend/extensions/colors.dart";
-import "package:antinote_app/frontend/extensions/l10n.dart";
-import "package:antinote_app/frontend/extensions/session_manager.dart";
 import "package:antinote_app/frontend/routing/routes.dart";
 import "package:antinote_app/frontend/widgets/animated/icon.dart";
 import "package:antinote_app/frontend/widgets/customs/app_bar.dart";
@@ -9,6 +5,7 @@ import "package:antinote_app/frontend/widgets/customs/button.dart";
 import "package:antinote_app/frontend/widgets/customs/list.dart";
 import "package:antinote_app/main.dart";
 import "package:antinote_app/protos/account.pb.dart";
+import "package:antinote_app/utils.dart";
 import "package:flutter/material.dart";
 import "package:go_router/go_router.dart";
 import "package:hugeicons_pro/hugeicons.dart";

@@ -2,8 +2,6 @@ import "dart:async";
 
 import "package:antinote/antinote.dart";
 import "package:antinote_app/backend/backend.dart";
-import "package:antinote_app/frontend/extensions/colors.dart";
-import "package:antinote_app/frontend/extensions/l10n.dart";
 import "package:antinote_app/frontend/screens/screen.dart";
 import "package:antinote_app/frontend/screens/shell/screens/timetable/app_bar.dart";
 import "package:antinote_app/frontend/screens/shell/screens/timetable/body.dart";

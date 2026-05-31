@@ -1,7 +1,7 @@
-import "package:antinote_app/frontend/extensions/colors.dart";
 import "package:antinote_app/frontend/widgets/animated/icon.dart";
 import "package:antinote_app/frontend/widgets/customs/loading.dart";
 import "package:antinote_app/frontend/widgets/pressable.dart";
+import "package:antinote_app/utils.dart";
 import "package:flutter/material.dart";
 
 class ButtonWidget extends StatelessWidget {

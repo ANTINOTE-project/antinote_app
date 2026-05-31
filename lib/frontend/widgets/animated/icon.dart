@@ -1,4 +1,4 @@
-import "package:antinote_app/frontend/extensions/colors.dart";
+import "package:antinote_app/utils.dart";
 import "package:flutter/material.dart";
 import "package:vibration/vibration.dart";
 
@@ -31,7 +31,8 @@ class IconWidget extends StatefulWidget {
   State<IconWidget> createState() => _IconWidgetState();
 }
 
-class _IconWidgetState extends State<IconWidget> with SingleTickerProviderStateMixin {
+class _IconWidgetState extends State<IconWidget>
+    with SingleTickerProviderStateMixin {
   late AnimationController _controller;
   late bool _showOn;
 
@@ -39,7 +40,10 @@ class _IconWidgetState extends State<IconWidget> with SingleTickerProviderStateM
   void initState() {
     super.initState();
     _showOn = widget.value;
-    _controller = AnimationController(vsync: this, duration: const Duration(milliseconds: 100))..value = 1.0;
+    _controller = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 100),
+    )..value = 1.0;
   }
 
   @override

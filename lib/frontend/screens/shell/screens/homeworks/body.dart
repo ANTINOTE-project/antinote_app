@@ -1,6 +1,4 @@
 import "package:antinote/antinote.dart";
-import "package:antinote_app/frontend/extensions/colors.dart";
-import "package:antinote_app/frontend/extensions/l10n.dart";
 import "package:antinote_app/frontend/widgets/pressable.dart";
 import "package:antinote_app/frontend/widgets/remote_html.dart";
 import "package:antinote_app/utils.dart";

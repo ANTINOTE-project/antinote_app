@@ -1,8 +1,7 @@
 import "package:antinote/antinote.dart";
 import "package:antinote_app/backend/backend.dart";
+import "package:antinote_app/l10n/app_localizations.dart";
 import "package:flutter/material.dart";
-
-import "frontend/extensions/l10n.dart";
 
 class AdaptedColors {
   const AdaptedColors({
@@ -231,4 +230,20 @@ extension PickViewConfiguration on Iterable<WeekMappedViewConfiguration> {
           ),
     );
   }
+}
+
+extension AccountStorageExtension on BuildContext {
+  AccountStorage get as => AccountStorage.of(this);
+}
+
+extension ColorsExtension on BuildContext {
+  ColorScheme get c => ColorScheme.of(this);
+}
+
+extension L10nExtension on BuildContext {
+  AppLocalizations get l10n => AppLocalizations.of(this)!;
+}
+
+extension SessionManagerExtension on BuildContext {
+  SessionManager get sm => SessionManager.of(this);
 }
