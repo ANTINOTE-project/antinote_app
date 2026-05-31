@@ -483,6 +483,12 @@ abstract class AppLocalizations {
   /// In fr, this message translates to:
   /// **'Périodes'**
   String get remotePeriods;
+
+  /// No description provided for @virtualClassroom.
+  ///
+  /// In fr, this message translates to:
+  /// **'Visio'**
+  String get virtualClassroom;
 }
 
 class _AppLocalizationsDelegate

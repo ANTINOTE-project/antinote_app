@@ -32,7 +32,8 @@ class Pressable extends StatefulWidget {
   State<Pressable> createState() => _PressableState();
 }
 
-class _PressableState extends State<Pressable> with SingleTickerProviderStateMixin {
+class _PressableState extends State<Pressable>
+    with SingleTickerProviderStateMixin {
   late AnimationController _controller;
   late Animation<double> _brightness;
 
@@ -89,14 +90,11 @@ class _PressableState extends State<Pressable> with SingleTickerProviderStateMix
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: widget.onPressed == null ? null : _onTap,
-
       onTapDown: (_) => _onTapDown(),
       onTapUp: (_) => _onTapUp(),
       onTapCancel: _onTapUp,
-
       onLongPress: widget.onLongPress,
       behavior: widget.behavior,
-
       child: FadeTransition(opacity: _brightness, child: widget.child),
     );
   }

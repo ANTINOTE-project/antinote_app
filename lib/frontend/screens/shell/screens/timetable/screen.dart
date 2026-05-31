@@ -2,15 +2,20 @@ import "dart:async";
 
 import "package:antinote/antinote.dart";
 import "package:antinote_app/backend/backend.dart";
+import "package:antinote_app/frontend/extensions/colors.dart";
+import "package:antinote_app/frontend/extensions/l10n.dart";
 import "package:antinote_app/frontend/screens/screen.dart";
 import "package:antinote_app/frontend/screens/shell/screens/timetable/app_bar.dart";
 import "package:antinote_app/frontend/screens/shell/screens/timetable/body.dart";
+import "package:antinote_app/frontend/screens/shell/screens/timetable/class_block.dart";
 import "package:antinote_app/frontend/widgets/customs/loading.dart";
 import "package:antinote_app/main.dart";
 import "package:antinote_app/utils.dart";
+import "package:collection/collection.dart";
 import "package:flutter/material.dart";
+import "package:hugeicons_pro/hugeicons.dart";
 
-typedef Classes = Map<DateTime, ValueNotifier<List<Class>?>>;
+typedef Classes = Map<DateTime, ValueNotifier<List<ClassBlock>?>>;
 
 class TimetableScreen extends StatefulWidget {
   const TimetableScreen({super.key});
@@ -58,11 +63,22 @@ class _TimetableScreenState extends State<TimetableScreen>
   }
 
   Future<void> updateClasses(DateRange days, {PronoteSession? session}) async {
+    final dayList = days.listDays();
+
+    for (final day in days.listDays()) {
+      if (!_scheduleDisplayData.isBusinessDay(day)) {
+        _classes[day]!.value = [];
+
+        dayList.removeWhere((element) => element.isAtSameMomentAs(day));
+      }
+    }
+
+    if (dayList.isEmpty) return;
     if (_animating) return;
 
     talker.info("Fetching days ${days.pprint(context)}");
     Future<void> update(PronoteSession session) async {
-      final loadedDays = {for (final day in days.listDays()) day: <Class>[]};
+      final loadedDays = {for (final day in dayList) day: <Class>[]};
 
       await session.ensurePage(16);
 
@@ -77,7 +93,9 @@ class _TimetableScreenState extends State<TimetableScreen>
       }
 
       for (final loadedDay in loadedDays.entries) {
-        _classes[loadedDay.key]!.value = loadedDay.value;
+        _classes[loadedDay.key]!.value = constructClassBlocksForDay(
+          loadedDay.value,
+        );
       }
     }
 
@@ -132,10 +150,66 @@ class _TimetableScreenState extends State<TimetableScreen>
                   lastDate: _scheduleDisplayData.lastDate,
                 ),
 
-                TimetableBody(
-                  data: _scheduleDisplayData,
-                  classes: _classes,
-                  days: days,
+                SliverCrossAxisGroup(
+                  slivers: [
+                    for (final day in days)
+                      ValueListenableBuilder(
+                        valueListenable: _classes[day]!,
+                        builder: (context, dayClasses, child) {
+                          if (dayClasses == null) {
+                            return const SliverFillRemaining(
+                              child: Center(child: LoadingWidget()),
+                            );
+                          }
+
+                          if (dayClasses.isEmpty) {
+                            final holiday = _scheduleDisplayData.holidays
+                                .firstWhereOrNull(
+                                  (element) => element.contains(day),
+                                );
+
+                            return SliverFillRemaining(
+                              hasScrollBody: false,
+                              child: Center(
+                                child: Column(
+                                  mainAxisAlignment: .center,
+                                  spacing: 6,
+                                  children: [
+                                    Icon(
+                                      holiday == null
+                                          ? HugeIconsSolid.calendar04
+                                          : HugeIconsSolid.beach,
+                                      size: 44,
+                                      color: context.c.outline,
+                                    ),
+                                    Text(
+                                      holiday?.name ??
+                                          context.l10n.noCourseToday,
+                                      style: TextStyle(
+                                        fontWeight: .bold,
+                                        color: context.c.outline,
+                                      ),
+                                      textAlign: .center,
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            );
+                          }
+
+                          return SliverMainAxisGroup(
+                            slivers: [
+                              for (final block in dayClasses)
+                                TimetableBlockSliver(
+                                  displayParameters: _scheduleDisplayData,
+                                  day: day,
+                                  block: block,
+                                ),
+                            ],
+                          );
+                        },
+                      ),
+                  ],
                 ),
               ],
             ),
@@ -150,9 +224,7 @@ class _TimetableScreenState extends State<TimetableScreen>
     BuildContext context,
     RefreshIndicatorBuilder buildRefreshIndicator,
   ) {
-    return buildRefreshIndicator(
-      child: const Center(child: LoadingWidget(size: 30)),
-    );
+    return buildRefreshIndicator(child: const Center(child: LoadingWidget()));
   }
 
   @override

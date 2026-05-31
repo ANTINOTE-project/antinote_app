@@ -6,7 +6,7 @@ import "package:antinote_app/frontend/screens/shell/screens/communication/index.
 import "package:antinote_app/frontend/screens/shell/screens/grades/index.dart";
 import "package:antinote_app/frontend/screens/shell/screens/home.dart";
 import "package:antinote_app/frontend/screens/shell/screens/homeworks/index.dart";
-import "package:antinote_app/frontend/screens/shell/screens/timetable/index.dart";
+import "package:antinote_app/frontend/screens/shell/screens/timetable/screen.dart";
 import "package:antinote_app/utils.dart";
 import "package:flutter/material.dart";
 import "package:hugeicons_pro/hugeicons.dart";
@@ -142,8 +142,15 @@ class _AppShellState extends State<AppShell> {
                         backgroundColor: context.c.surfaceContainerHigh,
                         destinations: _screens.mapL((e) {
                           final notificationCount = notifications
-                              .where((element) => e.associatedTabIds.contains(element.tab))
-                              .fold(0, (previousValue, element) => previousValue + element.count);
+                              .where(
+                                (element) =>
+                                    e.associatedTabIds.contains(element.tab),
+                              )
+                              .fold(
+                                0,
+                                (previousValue, element) =>
+                                    previousValue + element.count,
+                              );
 
                           return NavigationRailDestination(
                             icon: Badge.count(
@@ -190,7 +197,10 @@ class _AppShellState extends State<AppShell> {
                     padding: const EdgeInsets.symmetric(horizontal: 12),
 
                     child: ClipRRect(
-                      borderRadius: const .only(topLeft: .circular(24), topRight: .circular(24)),
+                      borderRadius: const .only(
+                        topLeft: .circular(24),
+                        topRight: .circular(24),
+                      ),
 
                       child: NavigationBar(
                         destinations: _screens

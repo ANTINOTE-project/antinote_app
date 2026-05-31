@@ -158,7 +158,7 @@ class ItemWidget extends StatelessWidget {
                       fontWeight: .w800,
                       fontFamily: "SNPro",
 
-                      color: context.c.onPrimary,
+                      color: context.c.onSurface,
                     ),
 
                     overflow: .ellipsis,

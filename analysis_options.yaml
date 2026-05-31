@@ -24,3 +24,6 @@ linter:
 
     use_key_in_widget_constructors: true
     prefer_final_fields: true
+
+formatter:
+  page_width: 80

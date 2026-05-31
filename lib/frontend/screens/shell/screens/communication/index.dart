@@ -32,16 +32,25 @@ class _CommunicationScreenState extends State<CommunicationScreen>
     return buildRefreshIndicator(
       child: ListWidget(
         items: threads,
-
+        isSliver: false,
         itemBuilder: (context, thread, borderRadius) {
           return ItemWidget(
             borderRadius: borderRadius,
-
+            title: Text(thread.title),
+            subtitle: Text(thread.authorName),
+            leading: Badge(
+              isLabelVisible: !thread.read,
+              child: Icon(switch (thread.commType) {
+                .discussion => HugeIconsSolid.conversation,
+                .news => HugeIconsSolid.news01,
+                .poll => HugeIconsSolid.pieChart,
+              }),
+            ),
+            trailing: Text(_minimalDateFormat.format(thread.publishDate)),
             onPressed: () async {
               await SessionManager.execute(
                 context: context,
                 channels: const [],
-
                 callback: (session) {
                   switch (thread.commType) {
                     case .poll:
@@ -73,18 +82,6 @@ class _CommunicationScreenState extends State<CommunicationScreen>
                 },
               );
             },
-
-            title: Text(thread.title),
-            subtitle: Text(thread.authorName),
-
-            // emphaseTitle: !thread.read,
-            leading: Icon(switch (thread.commType) {
-              .discussion => HugeIconsSolid.conversation,
-              .news => HugeIconsSolid.news01,
-              .poll => HugeIconsSolid.pieChart,
-            }),
-
-            trailing: Text(_minimalDateFormat.format(thread.publishDate)),
           );
         },
       ),

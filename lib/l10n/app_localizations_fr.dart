@@ -215,4 +215,7 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get remotePeriods => 'Périodes';
+
+  @override
+  String get virtualClassroom => 'Visio';
 }
