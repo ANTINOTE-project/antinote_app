@@ -60,7 +60,6 @@ class ClassWidget extends StatelessWidget {
       if (accent != null) {
         accentColorScheme = ColorScheme.fromSeed(
           seedColor: Color(accent),
-          dynamicSchemeVariant: .vibrant,
           brightness: context.c.brightness,
         );
       } else {
