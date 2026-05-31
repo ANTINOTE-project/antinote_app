@@ -33,7 +33,7 @@ dependencies:
   html: ^0.15.6
   collection: ^1.19.1
   webview_flutter: ^4.13.1
-  dynamic_color: ^1.8.1
+  
 dev_dependencies:
   flutter_test:
     sdk: flutter
