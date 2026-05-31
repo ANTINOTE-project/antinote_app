@@ -22,9 +22,11 @@ class ClassWidget extends StatelessWidget {
           .where(
             (element) => element is TitleContent || element is SubjectContent,
           )
-          .firstOrNull
-          ?.value
-          .name ??
+          .map(
+            (e) =>
+                e is TitleContent ? e.value : (e as SubjectContent).value.name,
+          )
+          .firstOrNull ??
       context.l10n.noSubject;
 
   static const _contentPriorities = [
