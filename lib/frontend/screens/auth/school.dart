@@ -1,3 +1,5 @@
+import "dart:math";
+
 import "package:antinote/antinote.dart";
 import "package:antinote_app/frontend/extensions/colors.dart";
 import "package:antinote_app/frontend/extensions/l10n.dart";
@@ -25,7 +27,25 @@ class LoginSelectSchoolScreen extends StatefulWidget {
 }
 
 class _LoginSelectSchoolScreenState extends State<LoginSelectSchoolScreen> {
-  List<GeolocatedInstance> _instances = [];
+  final List<GeolocatedInstance> _mockInstances = List.generate(20, (i) {
+    final r = Random(i);
+
+    return GeolocatedInstance(
+      baseUrl: Uri(),
+
+      name: String.fromCharCodes(
+        List.generate(r.nextInt(20) + 15, (_) => r.nextInt(26) + 97),
+      ),
+
+      postalCode: "00000",
+
+      latitude: 0,
+      longitude: 0,
+      distance: 0,
+    );
+  });
+
+  List<GeolocatedInstance>? _instances;
 
   Future<void> geolocateInstances() async {
     final instances = await findNearbyInstances(widget.lat, widget.long);
@@ -52,8 +72,8 @@ class _LoginSelectSchoolScreenState extends State<LoginSelectSchoolScreen> {
         child: CustomScrollView(
           slivers: [
             ListWidget(
-              isLoading: _instances.isEmpty,
-              items: _instances,
+              items: _instances == null ? _mockInstances : _instances!,
+              isLoading: _instances == null,
 
               itemBuilder: (context, instance, borderRadius) {
                 return ItemWidget(
