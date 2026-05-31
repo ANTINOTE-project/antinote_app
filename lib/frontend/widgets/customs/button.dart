@@ -56,13 +56,12 @@ class ButtonWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Pressable(
+      borderRadius: const BorderRadius.all(Radius.circular(16)),
+
       onPressed: () => _onPressed(context),
       hasFeedback: isEnabled || isLoading,
 
-      child: AnimatedContainer(
-        duration: _duration,
-        curve: _curve,
-
+      child: Ink(
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
 
         width: double.infinity,
@@ -70,7 +69,7 @@ class ButtonWidget extends StatelessWidget {
 
         decoration: BoxDecoration(
           color: _getButtonColor(context),
-          borderRadius: const BorderRadius.all(Radius.circular(20)),
+          borderRadius: const BorderRadius.all(Radius.circular(16)),
         ),
 
         child: Center(

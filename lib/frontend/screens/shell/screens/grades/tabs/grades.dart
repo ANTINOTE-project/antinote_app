@@ -813,6 +813,7 @@ class _LatestGrades extends StatelessWidget {
 
                 child: Pressable(
                   onPressed: () => showExamDetails(context, exam),
+                  borderRadius: BorderRadius.circular(16),
 
                   child: IntrinsicWidth(
                     child: ConstrainedBox(
@@ -821,7 +822,7 @@ class _LatestGrades extends StatelessWidget {
                         maxWidth: 250,
                       ),
 
-                      child: Container(
+                      child: Ink(
                         decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(16),
 
@@ -1008,63 +1009,59 @@ class _ServiceWidget extends StatelessWidget {
       child: Skeletonizer.zone(
         enabled: isLoading,
 
-        child: Container(
-          decoration: BoxDecoration(
-            border: Border.all(
-              color: isLoading ? context.c.outlineVariant : borderColor,
+        child: Pressable(
+          onPressed: () => showServiceDetails(context, service, exams),
+          borderRadius: BorderRadius.circular(16),
+
+          child: Ink(
+            decoration: BoxDecoration(
+              border: Border.all(
+                color: isLoading ? context.c.outlineVariant : borderColor,
+              ),
+
+              borderRadius: BorderRadius.circular(16),
+              color: headerColor,
             ),
 
-            borderRadius: BorderRadius.circular(16),
-            color: headerColor,
-          ),
+            padding: .symmetric(horizontal: 12, vertical: isLoading ? 15 : 10),
 
-          child: Pressable(
-            onPressed: () => showServiceDetails(context, service, exams),
+            child: Row(
+              spacing: 8,
 
-            child: Padding(
-              padding: .symmetric(
-                horizontal: 12,
-                vertical: isLoading ? 15 : 10,
-              ),
+              children: isLoading
+                  ? [
+                      const Bone.text(width: 200, fontSize: 21),
 
-              child: Row(
-                spacing: 8,
+                      const Spacer(),
 
-                children: isLoading
-                    ? [
-                        const Bone.text(width: 200, fontSize: 21),
+                      const Bone.text(width: 60, fontSize: 23),
+                    ]
+                  : [
+                      Expanded(
+                        child: Text(
+                          service.name,
 
-                        const Spacer(),
+                          overflow: TextOverflow.ellipsis,
+                          maxLines: 1,
 
-                        const Bone.text(width: 60, fontSize: 23),
-                      ]
-                    : [
-                        Expanded(
-                          child: Text(
-                            service.name,
-
-                            overflow: TextOverflow.ellipsis,
-                            maxLines: 1,
-
-                            style: TextStyle(
-                              fontSize: 21,
-                              fontWeight: .w800,
-                              color: titleColor,
-                            ),
+                          style: TextStyle(
+                            fontSize: 21,
+                            fontWeight: .w800,
+                            color: titleColor,
                           ),
                         ),
+                      ),
 
-                        if (service.selfAverage != null &&
-                            service.theoreticalMaxGrade != null)
-                          _GradeText(
-                            selfGrade: service.selfAverage!,
-                            maxGrade: service.theoreticalMaxGrade!,
-                            isMain: true,
-                            color: color,
-                            size: 23,
-                          ),
-                      ],
-              ),
+                      if (service.selfAverage != null &&
+                          service.theoreticalMaxGrade != null)
+                        _GradeText(
+                          selfGrade: service.selfAverage!,
+                          maxGrade: service.theoreticalMaxGrade!,
+                          isMain: true,
+                          color: color,
+                          size: 23,
+                        ),
+                    ],
             ),
           ),
         ),

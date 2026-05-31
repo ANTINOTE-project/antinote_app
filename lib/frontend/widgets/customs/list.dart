@@ -129,10 +129,12 @@ class ItemWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Pressable(
+      borderRadius: borderRadius,
+
       onPressed: onPressed,
       onLongPress: onLongPress,
 
-      child: Container(
+      child: Ink(
         decoration: BoxDecoration(
           color: backgroundColor ?? context.c.surfaceContainer,
           borderRadius: borderRadius,

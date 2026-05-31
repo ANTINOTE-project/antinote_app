@@ -229,6 +229,7 @@ class TimetableClassContent extends StatelessWidget {
   });
 
   final ClassContent content;
+
   // TODO: Make this nullable.
   final Color color;
   final FontWeight weight;

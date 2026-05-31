@@ -23,6 +23,8 @@ class AppBarWidget extends StatelessWidget implements PreferredSizeWidget {
     final leading = backButton && !(ModalRoute.isFirstOf(context) ?? false)
         ? Pressable(
             onPressed: context.pop,
+            hasVisuals: false,
+
             child: const Icon(HugeIconsSolid.arrowLeft01),
           )
         : null;
