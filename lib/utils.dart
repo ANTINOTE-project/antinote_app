@@ -57,7 +57,7 @@ class AdaptedColors {
       border: adapt(0.55, 0.35, 0.20, 0.50),
       title: adapt(0.45, 0.90, 0.60, 1.00),
       subtitle: adapt(0.60, 0.58, 0.15, 0.35),
-      text: adapt(0.55, 0.80, 0.10, 0.25),
+      text: adapt(0.35, 0.80, 0.08, 0.20),
     );
   }
 }
