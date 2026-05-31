@@ -6,6 +6,7 @@ import "package:antinote_app/frontend/screens/screen.dart";
 import "package:antinote_app/frontend/screens/shell/screens/grades/app_bar.dart";
 import "package:antinote_app/frontend/screens/shell/screens/grades/tabs/grades.dart";
 import "package:antinote_app/frontend/widgets/customs/loading.dart";
+import "package:collection/collection.dart";
 import "package:flutter/material.dart";
 
 typedef GradesScreenTab = ({Widget widget, String category});
@@ -35,9 +36,15 @@ class _GradesScreenState extends State<GradesScreen>
   }
 
   @override
-  Widget buildLoaded(BuildContext context, RefreshIndicatorBuilder buildRefreshIndicator) {
+  Widget buildLoaded(
+    BuildContext context,
+    RefreshIndicatorBuilder buildRefreshIndicator,
+  ) {
     final List<GradesScreenTab> tabs = [
-      (widget: GradesTab(periodId: _selectedPeriod.visualId), category: "grades"),
+      (
+        widget: GradesTab(periodId: _selectedPeriod.visualId),
+        category: "grades",
+      ),
       (widget: const SizedBox.shrink(), category: "report"),
     ];
 
@@ -62,7 +69,10 @@ class _GradesScreenState extends State<GradesScreen>
             ),
 
             SliverFillRemaining(
-              child: TabBarView(controller: _controller, children: tabs.mapL((e) => e.widget)),
+              child: TabBarView(
+                controller: _controller,
+                children: tabs.mapL((e) => e.widget),
+              ),
             ),
           ],
         );
@@ -71,19 +81,34 @@ class _GradesScreenState extends State<GradesScreen>
   }
 
   @override
-  Widget buildLoading(BuildContext context, RefreshIndicatorBuilder buildRefreshIndicator) {
-    return buildRefreshIndicator(child: const Center(child: LoadingWidget(size: 30)));
+  Widget buildLoading(
+    BuildContext context,
+    RefreshIndicatorBuilder buildRefreshIndicator,
+  ) {
+    return buildRefreshIndicator(
+      child: const Center(child: LoadingWidget(size: 30)),
+    );
   }
 
   @override
   FutureOr<void> loadActiveDataFromSession(PronoteSession session) async {
     await session.ensurePage(198);
 
-    // TODO use session.userResource to periods
-    _selectedPeriod = session.instance.defaultPeriod(DateTime.now());
+    final periodData = session.userResource.tabsForPeriods.firstWhereOrNull(
+      (element) => element.location == 198,
+    );
 
-    // Only "Trimestre *"
-    _periods = session.instance.periods.where((p) => p.type == 1).toList();
+    // TODO use session.userResource to periods
+    _selectedPeriod = session.instance.periods.firstWhere(
+      (element) => element.id == periodData?.defaultPeriod?.id,
+      orElse: () => session.instance.defaultPeriod(DateTime.now()),
+    );
+    _periods = session.instance.periods
+        .where(
+          (p) =>
+              periodData?.periods?.any((element) => element.id == p.id) ?? true,
+        )
+        .toList();
   }
 
   @override
