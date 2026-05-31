@@ -230,4 +230,9 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get homeworkNotDone => 'Non fait';
+
+  @override
+  String weekNumber(Object weekNumber) {
+    return 'Semaine $weekNumber';
+  }
 }

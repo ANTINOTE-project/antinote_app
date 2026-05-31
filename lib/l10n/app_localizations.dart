@@ -513,6 +513,12 @@ abstract class AppLocalizations {
   /// In fr, this message translates to:
   /// **'Non fait'**
   String get homeworkNotDone;
+
+  /// No description provided for @weekNumber.
+  ///
+  /// In fr, this message translates to:
+  /// **'Semaine {weekNumber}'**
+  String weekNumber(Object weekNumber);
 }
 
 class _AppLocalizationsDelegate

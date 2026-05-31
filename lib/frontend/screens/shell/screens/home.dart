@@ -45,7 +45,7 @@ class _HomeScreenState extends State<HomeScreen> with ScreenMixin<HomeScreen> {
     RefreshIndicatorBuilder buildRefreshIndicator,
   ) {
     return buildRefreshIndicator(
-      child: const Center(child: LoadingWidget(size: 30)),
+      child: const Center(child: LoadingWidget()),
     );
   }
 

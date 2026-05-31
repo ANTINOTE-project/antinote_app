@@ -86,7 +86,7 @@ class _GradesScreenState extends State<GradesScreen>
     RefreshIndicatorBuilder buildRefreshIndicator,
   ) {
     return buildRefreshIndicator(
-      child: const Center(child: LoadingWidget(size: 30)),
+      child: const Center(child: LoadingWidget()),
     );
   }
 

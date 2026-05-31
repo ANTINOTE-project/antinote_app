@@ -100,5 +100,6 @@
   "virtualClassroom": "Visio",
 
   "homeworkDone": "Fait",
-  "homeworkNotDone": "Non fait"
+  "homeworkNotDone": "Non fait",
+  "weekNumber": "Semaine {weekNumber}"
 }
