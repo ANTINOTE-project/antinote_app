@@ -4,6 +4,14 @@ import "package:antinote_app/l10n/app_localizations.dart";
 import "package:flutter/material.dart";
 
 class AdaptedColors {
+  final Color base;
+  final Color background;
+  final Color headerBackground;
+  final Color border;
+  final Color title;
+  final Color subtitle;
+  final Color text;
+
   const AdaptedColors({
     required this.base,
     required this.background,
@@ -11,14 +19,8 @@ class AdaptedColors {
     required this.border,
     required this.title,
     required this.subtitle,
+    required this.text,
   });
-
-  final Color base;
-  final Color background;
-  final Color headerBackground;
-  final Color border;
-  final Color title;
-  final Color subtitle;
 
   factory AdaptedColors.fromScheme(int? colorValue, ColorScheme scheme) {
     if (colorValue == null) {
@@ -29,6 +31,7 @@ class AdaptedColors {
         border: scheme.outlineVariant,
         title: scheme.onSurface,
         subtitle: scheme.onSurfaceVariant,
+        text: scheme.onSurfaceVariant,
       );
     }
 
@@ -40,10 +43,12 @@ class AdaptedColors {
       double darkLight,
       double minSat,
       double maxSat,
-    ) => hsl
-        .withLightness(isLight ? lightLight : darkLight)
-        .withSaturation(hsl.saturation.clamp(minSat, maxSat))
-        .toColor();
+    ) {
+      return hsl
+          .withLightness(isLight ? lightLight : darkLight)
+          .withSaturation(hsl.saturation.clamp(minSat, maxSat))
+          .toColor();
+    }
 
     return AdaptedColors(
       base: adapt(0.40, 0.70, 0.40, 1.00),
@@ -52,6 +57,7 @@ class AdaptedColors {
       border: adapt(0.55, 0.35, 0.20, 0.50),
       title: adapt(0.45, 0.90, 0.60, 1.00),
       subtitle: adapt(0.60, 0.58, 0.15, 0.35),
+      text: adapt(0.55, 0.80, 0.10, 0.25),
     );
   }
 }
