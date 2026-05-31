@@ -32,7 +32,10 @@ class Pressable extends StatelessWidget {
 
   void _onTapDown() async {
     if (!hasFeedback || !hasVibration) return;
-    await Vibration.vibrate(duration: 6);
+    
+    if (await Vibration.hasVibrator()) {
+      await Vibration.vibrate(duration: 6);
+    }
   }
 
   @override
