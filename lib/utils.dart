@@ -23,6 +23,10 @@ class Utils {
         : context.l10n.gradeOf(exam.service.name);
   }
 
+  static String formatDurationInMinutes(Duration d) {
+    return "${d.inMinutes} min";
+  }
+
   static String formatDuration(Duration d) {
     return "${d.inHours > 0 ? "${d.inHours}h " : ""}${d.inMinutes % 60} min";
   }

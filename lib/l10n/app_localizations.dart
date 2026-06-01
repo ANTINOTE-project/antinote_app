@@ -532,11 +532,17 @@ abstract class AppLocalizations {
   /// **'Pièces jointes'**
   String get homeworkAttachments;
 
-  /// No description provided for @forThe.
+  /// No description provided for @givenTheForThe.
   ///
   /// In fr, this message translates to:
-  /// **'Pour le {date}'**
-  String forThe(Object date);
+  /// **'Donné le {given} pour le {deadline}'**
+  String givenTheForThe(Object deadline, Object given);
+
+  /// No description provided for @homeworkDifficulty.
+  ///
+  /// In fr, this message translates to:
+  /// **'Difficulté'**
+  String get homeworkDifficulty;
 }
 
 class _AppLocalizationsDelegate

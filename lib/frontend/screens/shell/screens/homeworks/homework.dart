@@ -17,7 +17,9 @@ class HomeworkScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final scheme = Utils.buildColorScheme(context, homework.backgroundColor);
-    final date = DateFormat("dd/MM/yyyy").format(homework.deadlineDate);
+
+    final deadlineDate = DateFormat("dd/MM").format(homework.deadlineDate);
+    final givenDate = DateFormat("dd/MM").format(homework.givenDate);
 
     return Scaffold(
       appBar: const AppBarWidget(),
@@ -49,7 +51,9 @@ class HomeworkScreen extends StatelessWidget {
                   ),
 
                   Text(
-                    context.l10n.forThe(date),
+                    context.l10n.givenTheForThe(deadlineDate, givenDate),
+
+                    textAlign: .center,
 
                     style: TextStyle(
                       color: scheme.outline,
@@ -61,25 +65,74 @@ class HomeworkScreen extends StatelessWidget {
               ),
             ),
 
-            _Text(
-              label: context.l10n.homeworkDescription,
-              icon: HugeIconsSolid.task01,
-            ),
+            if (homework.duration > 0 || homework.difficultyLevel > 0) ...[
+              _Text(
+                label: context.l10n.homeworkDifficulty,
+                icon: HugeIconsSolid.star,
+              ),
 
-            ItemWidget(
-              borderRadius: const .all(ListWidget.radius),
+              ItemWidget(
+                borderRadius: const .all(ListWidget.radius),
 
-              title: HtmlText(
-                rawHtml: homework.description,
-                maxLines: 999999, // i dont know why null is not working
+                title: Row(
+                  spacing: 6,
 
-                style: TextStyle(
-                  color: scheme.onSurface,
-                  fontWeight: FontWeight.bold,
-                  fontSize: 15,
+                  children: [
+                    if (homework.duration > 0)
+                      Text(
+                        Utils.formatDurationInMinutes(
+                          Duration(minutes: homework.duration.round()),
+                        ),
+                      ),
+
+                    if (homework.duration > 0 && homework.difficultyLevel > 0)
+                      SizedBox(
+                        height: 20,
+
+                        child: VerticalDivider(
+                          color: context.c.outline,
+                          radius: .circular(999),
+                          thickness: 2,
+                          width: 5,
+                        ),
+                      ),
+
+                    if (homework.difficultyLevel > 0)
+                      ...List.generate(
+                        homework.difficultyLevel,
+
+                        (index) => Icon(
+                          HugeIconsSolid.star,
+                          color: scheme.primary,
+                          size: 16,
+                        ),
+                      ),
+                  ],
                 ),
               ),
-            ),
+            ],
+
+            if (homework.description.trim().isNotEmpty) ...[
+              _Text(
+                label: context.l10n.homeworkDescription,
+                icon: HugeIconsSolid.task01,
+              ),
+
+              ItemWidget(
+                borderRadius: const .all(ListWidget.radius),
+
+                title: HtmlText(
+                  rawHtml: homework.description,
+                  maxLines: 999999, // i dont know why null is not working
+
+                  style: TextStyle(
+                    color: scheme.onSurface,
+                    fontWeight: FontWeight.bold,
+                    fontSize: 15,
+                  ),
+                ),
+              ),
+            ],
 
             if (homework.attachments.isNotEmpty) ...[
               _Text(
@@ -141,7 +194,7 @@ class HomeworkScreen extends StatelessWidget {
                     },
 
                     leading: Icon(icon),
-                    title: Text(attachment.title),
+                    title: Text(attachment.title, maxLines: 3),
                   );
                 },
               ),

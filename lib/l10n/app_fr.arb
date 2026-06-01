@@ -104,5 +104,6 @@
   "weekNumber": "Semaine {weekNumber}",
   "homeworkDescription": "Description",
   "homeworkAttachments": "Pièces jointes",
-  "forThe": "Pour le {date}"
+  "givenTheForThe": "Donné le {given} pour le {deadline}",
+  "homeworkDifficulty": "Difficulté"
 }

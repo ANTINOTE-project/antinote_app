@@ -243,7 +243,10 @@ class AppLocalizationsFr extends AppLocalizations {
   String get homeworkAttachments => 'Pièces jointes';
 
   @override
-  String forThe(Object date) {
-    return 'Pour le $date';
+  String givenTheForThe(Object deadline, Object given) {
+    return 'Donné le $given pour le $deadline';
   }
+
+  @override
+  String get homeworkDifficulty => 'Difficulté';
 }
