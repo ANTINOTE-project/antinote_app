@@ -101,5 +101,8 @@
 
   "homeworkSetDone": "J'ai terminé",
   "homeworkSetNotDone": "Je n'ai pas terminé",
-  "weekNumber": "Semaine {weekNumber}"
+  "weekNumber": "Semaine {weekNumber}",
+  "homeworkDescription": "Description",
+  "homeworkAttachments": "Pièces jointes",
+  "forThe": "Pour le {date}"
 }

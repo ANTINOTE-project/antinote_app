@@ -519,6 +519,24 @@ abstract class AppLocalizations {
   /// In fr, this message translates to:
   /// **'Semaine {weekNumber}'**
   String weekNumber(Object weekNumber);
+
+  /// No description provided for @homeworkDescription.
+  ///
+  /// In fr, this message translates to:
+  /// **'Description'**
+  String get homeworkDescription;
+
+  /// No description provided for @homeworkAttachments.
+  ///
+  /// In fr, this message translates to:
+  /// **'Pièces jointes'**
+  String get homeworkAttachments;
+
+  /// No description provided for @forThe.
+  ///
+  /// In fr, this message translates to:
+  /// **'Pour le {date}'**
+  String forThe(Object date);
 }
 
 class _AppLocalizationsDelegate

@@ -235,4 +235,15 @@ class AppLocalizationsFr extends AppLocalizations {
   String weekNumber(Object weekNumber) {
     return 'Semaine $weekNumber';
   }
+
+  @override
+  String get homeworkDescription => 'Description';
+
+  @override
+  String get homeworkAttachments => 'Pièces jointes';
+
+  @override
+  String forThe(Object date) {
+    return 'Pour le $date';
+  }
 }
