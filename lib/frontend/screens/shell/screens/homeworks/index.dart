@@ -224,11 +224,7 @@ class _HomeworkCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final colors = AdaptedColors.fromScheme(
-      homework.backgroundColor,
-      context.c,
-    );
-
+    final scheme = Utils.buildColorScheme(context, homework.backgroundColor);
     final dateStr = DateFormat("dd/MM/yyyy").format(homework.deadlineDate);
 
     return Padding(
@@ -243,9 +239,9 @@ class _HomeworkCard extends StatelessWidget {
 
         child: Ink(
           decoration: BoxDecoration(
-            border: Border.all(color: colors.border),
+            border: Border.all(color: scheme.outline),
             borderRadius: BorderRadius.circular(20),
-            color: colors.background,
+            color: scheme.primaryContainer,
           ),
 
           padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
@@ -268,7 +264,7 @@ class _HomeworkCard extends StatelessWidget {
                       maxLines: 1,
 
                       style: TextStyle(
-                        color: colors.base,
+                        color: scheme.primary,
                         fontWeight: FontWeight.w800,
                         fontSize: 21,
                       ),
@@ -279,7 +275,7 @@ class _HomeworkCard extends StatelessWidget {
                     dateStr,
                     style: TextStyle(
                       fontWeight: FontWeight.bold,
-                      color: colors.subtitle,
+                      color: scheme.outline,
                     ),
                   ),
                 ],
@@ -293,7 +289,7 @@ class _HomeworkCard extends StatelessWidget {
                 maxLines: 3,
 
                 style: TextStyle(
-                  color: colors.text,
+                  color: scheme.onSurface,
                   fontWeight: FontWeight.bold,
                   fontSize: 15,
                 ),
@@ -309,7 +305,7 @@ class _HomeworkCard extends StatelessWidget {
                     homework.isDone
                         ? HugeIconsSolid.tick03
                         : HugeIconsStroke.tick03,
-                    color: colors.border,
+                    color: scheme.onPrimaryContainer,
                     size: 21,
                   ),
 
@@ -318,7 +314,7 @@ class _HomeworkCard extends StatelessWidget {
                         ? context.l10n.homeworkSetDone
                         : context.l10n.homeworkSetNotDone,
                     style: TextStyle(
-                      color: colors.border,
+                      color: scheme.onPrimaryContainer,
                       fontWeight: FontWeight.w800,
                       fontSize: 15.5,
                     ),

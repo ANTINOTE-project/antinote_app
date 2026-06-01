@@ -1,121 +1,7 @@
-import "dart:math";
-
 import "package:antinote/antinote.dart";
 import "package:antinote_app/backend/backend.dart";
 import "package:antinote_app/l10n/app_localizations.dart";
 import "package:flutter/material.dart";
-
-class AdaptedColors {
-  final Color base;
-  final Color background;
-  final Color headerBackground;
-  final Color border;
-  final Color title;
-  final Color subtitle;
-  final Color text;
-
-  const AdaptedColors({
-    required this.base,
-    required this.background,
-    required this.headerBackground,
-    required this.border,
-    required this.title,
-    required this.subtitle,
-    required this.text,
-  });
-
-  static double _linearize(double channel) {
-    channel /= 255.0;
-
-    return channel <= 0.03928
-        ? channel / 12.92
-        : pow((channel + 0.055) / 1.055, 2.4).toDouble();
-  }
-
-  static double luminance(Color c) {
-    final r = _linearize(c.r);
-    final g = _linearize(c.g);
-    final b = _linearize(c.b);
-
-    return 0.2126 * r + 0.7152 * g + 0.0722 * b;
-  }
-
-  static double contrast(Color a, Color b) {
-    final l1 = luminance(a);
-    final l2 = luminance(b);
-
-    final brightest = max(l1, l2);
-    final darkest = min(l1, l2);
-
-    return (brightest + 0.05) / (darkest + 0.05);
-  }
-
-  static Color ensureContrast(HSLColor originalHsl, Color bg, double minRatio) {
-    double l = originalHsl.lightness;
-
-    for (int i = 0; i < 60; i++) {
-      final candidate = originalHsl.withLightness(l).toColor();
-      final ratio = contrast(candidate, bg);
-
-      if (ratio >= minRatio) return candidate;
-
-      l += (ratio < minRatio) ? 0.03 : -0.03;
-      l = l.clamp(0.0, 1.0);
-    }
-
-    return originalHsl.toColor();
-  }
-
-  factory AdaptedColors.fromScheme(int? colorValue, ColorScheme scheme) {
-    if (colorValue == null) {
-      return AdaptedColors(
-        base: scheme.onSurface,
-        background: scheme.surfaceContainerHigh,
-        headerBackground: scheme.surfaceContainerHighest,
-        border: scheme.outlineVariant,
-        title: scheme.onSurface,
-        subtitle: scheme.onSurfaceVariant,
-        text: scheme.onSurfaceVariant,
-      );
-    }
-
-    final originalHsl = HSLColor.fromColor(Color(colorValue));
-    final isLight = scheme.brightness == Brightness.light;
-
-    Color adapt(
-      double lightLight,
-      double darkLight,
-      double minSat,
-      double maxSat,
-    ) {
-      final targetL = isLight ? lightLight : darkLight;
-      final targetS = originalHsl.saturation.clamp(minSat, maxSat);
-
-      return originalHsl
-          .withLightness(targetL)
-          .withSaturation(targetS)
-          .toColor();
-    }
-
-    final background = adapt(0.88, 0.15, 0.15, 0.40);
-
-    final fixedBorder = ensureContrast(
-      originalHsl.withSaturation(originalHsl.saturation.clamp(0.25, 0.60)),
-      background,
-      3.0,
-    );
-
-    return AdaptedColors(
-      base: adapt(0.40, 0.70, 0.40, 1.00),
-      background: background,
-      headerBackground: adapt(0.78, 0.08, 0.35, 0.70),
-      border: fixedBorder,
-      title: adapt(0.45, 0.90, 0.60, 1.00),
-      subtitle: adapt(0.60, 0.58, 0.15, 0.35),
-      text: adapt(0.35, 0.80, 0.08, 0.20),
-    );
-  }
-}
 
 class Utils {
   Utils._();
@@ -147,6 +33,15 @@ class Utils {
     }
 
     return "${d.inMinutes % 60} min";
+  }
+
+  static ColorScheme buildColorScheme(BuildContext context, int? color) {
+    if (color == null) return context.c;
+
+    return ColorScheme.fromSeed(
+      seedColor: Color(color),
+      brightness: context.c.brightness,
+    );
   }
 }
 
