@@ -4,7 +4,7 @@ import "package:go_router/go_router.dart";
 import "package:hugeicons_pro/hugeicons.dart";
 
 class AppBarWidget extends StatelessWidget implements PreferredSizeWidget {
-  final String title;
+  final String? title;
   final bool backButton;
   final List<Widget> actions;
 
@@ -31,9 +31,11 @@ class AppBarWidget extends StatelessWidget implements PreferredSizeWidget {
 
     return AppBar(
       automaticallyImplyLeading: false,
-
-      title: Text(title, style: const TextStyle(fontWeight: FontWeight.bold)),
       centerTitle: true,
+
+      title: title != null
+          ? Text(title!, style: const TextStyle(fontWeight: FontWeight.bold))
+          : null,
 
       leading: leading,
       actions: actions,
