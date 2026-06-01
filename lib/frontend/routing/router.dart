@@ -7,11 +7,13 @@ import "package:antinote_app/frontend/screens/auth/school.dart";
 import "package:antinote_app/frontend/screens/auth/url.dart";
 import "package:antinote_app/frontend/screens/auth/webview.dart";
 import "package:antinote_app/frontend/screens/auth/workspace.dart";
+import "package:antinote_app/frontend/screens/shell/screens/homeworks/homework.dart";
 import "package:antinote_app/frontend/screens/shell/shell.dart";
 import "package:go_router/go_router.dart";
 
 GoRouter makeRouter({String initialLocation = Routes.appShell}) => GoRouter(
   initialLocation: initialLocation,
+
   routes: [
     GoRoute(
       path: Routes.appShell,
@@ -25,7 +27,6 @@ GoRouter makeRouter({String initialLocation = Routes.appShell}) => GoRouter(
       path: Routes.auth.methods,
       builder: (context, state) => const MethodsScreen(),
     ),
-
     GoRoute(
       path: Routes.auth.city,
       builder: (context, state) => const LoginFindCityScreen(),
@@ -61,6 +62,13 @@ GoRouter makeRouter({String initialLocation = Routes.appShell}) => GoRouter(
           parameters: extra["parameters"] as MobileInstanceParameters,
           workspace: extra["workspace"] as Workspace,
         );
+      },
+    ),
+    GoRoute(
+      path: Routes.homework,
+      builder: (context, state) {
+        final extra = state.extra as Map<String, dynamic>;
+        return HomeworkScreen(homework: extra["homework"] as Homework);
       },
     ),
   ],

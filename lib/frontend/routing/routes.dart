@@ -3,6 +3,8 @@ abstract final class Routes {
 
   static const appShell = "/app_shell";
   static const news = "/news";
+  static const homework = "/homework";
+
   static const auth = _AuthRoute();
 }
 

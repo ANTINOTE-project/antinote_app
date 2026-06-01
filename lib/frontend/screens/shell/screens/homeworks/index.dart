@@ -2,12 +2,14 @@ import "dart:async";
 
 import "package:antinote/antinote.dart";
 import "package:antinote_app/backend/backend.dart";
+import "package:antinote_app/frontend/routing/routes.dart";
 import "package:antinote_app/frontend/screens/screen.dart";
 import "package:antinote_app/frontend/widgets/customs/loading.dart";
 import "package:antinote_app/frontend/widgets/html_text.dart";
 import "package:antinote_app/frontend/widgets/pressable.dart";
 import "package:antinote_app/utils.dart";
 import "package:flutter/material.dart";
+import "package:go_router/go_router.dart";
 import "package:hugeicons_pro/hugeicons.dart";
 import "package:intl/intl.dart";
 import "package:vibration/vibration.dart";
@@ -147,6 +149,13 @@ class _HomeworksScreenState extends State<HomeworksScreen>
 
                               child: Pressable(
                                 borderRadius: .circular(20),
+
+                                onPressed: () async {
+                                  await context.push(
+                                    Routes.homework,
+                                    extra: {"homework": homework},
+                                  );
+                                },
 
                                 child: Ink(
                                   decoration: BoxDecoration(
