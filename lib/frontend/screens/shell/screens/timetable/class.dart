@@ -77,141 +77,155 @@ class ClassWidget extends StatelessWidget {
               .withAlpha(128),
     );
 
-    return Pressable(
-      child: Column(
-        children: [
-          if (clazz.status != null)
-            Container(
-              decoration: BoxDecoration(
-                borderRadius: connectRight
-                    ? const .only(topLeft: .circular(20))
-                    : const .vertical(top: .circular(20)),
-                border: .fromBorderSide(statusBorder),
-                color: clazz.canceled
-                    ? context.c.errorContainer
-                    : (accentColorScheme?.inversePrimary ??
-                          context.c.inversePrimary),
-              ),
-              padding: const .symmetric(horizontal: 12, vertical: 4),
-              width: .infinity,
-              child: Column(
-                mainAxisAlignment: .center,
-                mainAxisSize: .min,
-                children: [
-                  Row(
-                    mainAxisSize: .min,
-                    spacing: 6,
-                    children: [
-                      Icon(
-                        clazz.canceled
-                            ? HugeIconsSolid.alertCircle
-                            : HugeIconsSolid.informationCircle,
-                        size: 20,
-                        color: clazz.canceled
-                            ? context.c.error
-                            : (accentColorScheme?.primary ?? context.c.primary),
-                      ),
-                      Expanded(
-                        child: Text(
-                          clazz.status ?? "",
+    // TODO: fix pressable position
+    return Expanded(
+      flex: clazz.endDate.difference(clazz.startDate).inMinutes,
+      child: Pressable(
+        borderRadius: connectRight
+            ? const .horizontal(left: .circular(20))
+            : const .all(.circular(20)),
+        child: Column(
+          children: [
+            if (clazz.status != null)
+              Container(
+                decoration: BoxDecoration(
+                  borderRadius: connectRight
+                      ? const .only(topLeft: .circular(20))
+                      : const .vertical(top: .circular(20)),
+                  border: .fromBorderSide(statusBorder),
+                  color: clazz.canceled
+                      ? context.c.errorContainer
+                      : (accentColorScheme?.inversePrimary ??
+                            context.c.inversePrimary),
+                ),
+                padding: const .symmetric(horizontal: 12, vertical: 4),
+                width: .infinity,
+                child: Column(
+                  mainAxisAlignment: .center,
+                  children: [
+                    Row(
+                      mainAxisSize: .min,
+                      spacing: 6,
+                      children: [
+                        Icon(
+                          clazz.canceled
+                              ? HugeIconsSolid.alertCircle
+                              : HugeIconsSolid.informationCircle,
+                          size: 20,
+                          color: clazz.canceled
+                              ? context.c.error
+                              : (accentColorScheme?.primary ??
+                                    context.c.primary),
+                        ),
+                        Expanded(
+                          child: Text(
+                            clazz.status ?? "",
 
-                          overflow: .ellipsis,
-                          maxLines: 1,
+                            overflow: .ellipsis,
+                            maxLines: 1,
 
-                          style: TextStyle(
-                            fontSize: 15,
-                            fontWeight: .w800,
-                            color: clazz.canceled
-                                ? context.c.error
-                                : (accentColorScheme?.primary ??
-                                      context.c.primary),
+                            style: TextStyle(
+                              fontSize: 15,
+                              fontWeight: .w800,
+                              color: clazz.canceled
+                                  ? context.c.error
+                                  : (accentColorScheme?.primary ??
+                                        context.c.primary),
+                            ),
                           ),
                         ),
-                      ),
-                    ],
-                  ),
-                ],
-              ),
-            ),
-          Container(
-            decoration: BoxDecoration(
-              color: clazz.canceled
-                  ? accentColorScheme?.surfaceContainerLow
-                  : accentColorScheme?.primaryContainer,
-              border: clazz.status != null
-                  ? .fromLTRB(
-                      bottom: statusBorder,
-                      left: statusBorder,
-                      right: statusBorder,
-                    )
-                  : .all(
-                      color: accentColorScheme?.outline ?? context.c.outline,
+                      ],
                     ),
-              borderRadius: connectRight
-                  ? (clazz.status != null
-                        ? const .only(
-                            bottomLeft: .circular(20),
-                            topRight: .zero,
-                            bottomRight: .zero,
-                            topLeft: .zero,
-                          )
-                        : const .only(
-                            bottomLeft: .circular(20),
-                            topLeft: .circular(20),
-                            bottomRight: .zero,
-                            topRight: .zero,
-                          ))
-                  : (clazz.status != null
-                        ? const .vertical(top: .zero, bottom: .circular(20))
-                        : const .all(.circular(20))),
-            ),
-            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-            width: .infinity,
-            child: Column(
-              spacing: 4,
-              crossAxisAlignment: .start,
-              children: [
-                Text(
-                  classTitle(context),
-                  overflow: .ellipsis,
-                  maxLines: 1,
-                  style: TextStyle(
-                    color: clazz.canceled
-                        ? accentColorScheme?.onSurface
-                        : accentColorScheme?.onPrimaryContainer,
-                    fontWeight: clazz.canceled
-                        ? FontWeight.normal
-                        : const .new(750),
-                    fontSize: 18,
-                  ),
+                  ],
                 ),
-                Wrap(
-                  spacing: 6,
+              ),
+            Expanded(
+              child: Container(
+                clipBehavior: .antiAlias,
+                decoration: BoxDecoration(
+                  color: clazz.canceled
+                      ? accentColorScheme?.surfaceContainerLow
+                      : accentColorScheme?.primaryContainer,
+                  border: clazz.status != null
+                      ? .fromLTRB(
+                          bottom: statusBorder,
+                          left: statusBorder,
+                          right: statusBorder,
+                        )
+                      : .all(
+                          color:
+                              accentColorScheme?.outline ?? context.c.outline,
+                        ),
+                  borderRadius: connectRight
+                      ? (clazz.status != null
+                            ? const .only(
+                                bottomLeft: .circular(20),
+                                topRight: .zero,
+                                bottomRight: .zero,
+                                topLeft: .zero,
+                              )
+                            : const .only(
+                                bottomLeft: .circular(20),
+                                topLeft: .circular(20),
+                                bottomRight: .zero,
+                                topRight: .zero,
+                              ))
+                      : (clazz.status != null
+                            ? const .vertical(top: .zero, bottom: .circular(20))
+                            : const .all(.circular(20))),
+                ),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 12,
+                  vertical: 8,
+                ),
+                width: .infinity,
+                child: Column(
+                  spacing: 4,
+                  crossAxisAlignment: .start,
                   children: [
-                    for (final content in listContents())
-                      TimetableClassContent(
+                    Text(
+                      classTitle(context),
+                      overflow: .ellipsis,
+                      maxLines: 1,
+                      style: TextStyle(
                         color: clazz.canceled
-                            ? (accentColorScheme ?? context.c).onSurface
-                            : (accentColorScheme ?? context.c)
-                                  .onPrimaryContainer,
-                        content: content,
-                        weight: clazz.canceled ? .w300 : .w600,
+                            ? accentColorScheme?.onSurface
+                            : accentColorScheme?.onPrimaryContainer,
+                        fontWeight: clazz.canceled
+                            ? FontWeight.normal
+                            : const .new(750),
+                        fontSize: 18,
+                      ),
+                    ),
+                    Wrap(
+                      spacing: 6,
+                      children: [
+                        for (final content in listContents())
+                          TimetableClassContent(
+                            color: clazz.canceled
+                                ? (accentColorScheme ?? context.c).onSurface
+                                : (accentColorScheme ?? context.c)
+                                      .onPrimaryContainer,
+                            content: content,
+                            weight: clazz.canceled ? .w300 : .w600,
+                          ),
+                      ],
+                    ),
+                    if (!clazz.canceled)
+                      Text(
+                        duration,
+                        style: TextStyle(
+                          color: accentColorScheme?.onSurface.withAlpha(128),
+                          fontSize: 14,
+                          fontWeight: .w500,
+                        ),
                       ),
                   ],
                 ),
-                if (!clazz.canceled)
-                  Text(
-                    duration,
-                    style: TextStyle(
-                      color: accentColorScheme?.onSurface.withAlpha(128),
-                      fontSize: 14,
-                      fontWeight: .w500,
-                    ),
-                  ),
-              ],
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }

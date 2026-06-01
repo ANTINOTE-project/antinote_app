@@ -3,7 +3,6 @@ import "dart:async";
 import "package:antinote/antinote.dart";
 import "package:antinote_app/backend/backend.dart";
 import "package:antinote_app/frontend/screens/screen.dart";
-import "package:antinote_app/frontend/screens/shell/screens/timetable/app_bar.dart";
 import "package:antinote_app/frontend/screens/shell/screens/timetable/body.dart";
 import "package:antinote_app/frontend/screens/shell/screens/timetable/class_block.dart";
 import "package:antinote_app/frontend/widgets/customs/loading.dart";
@@ -136,85 +135,232 @@ class _TimetableScreenState extends State<TimetableScreen>
           final dayGroup = _currentGroups[index];
           final days = dayGroup.listDays();
 
-          return RefreshIndicator(
-            onRefresh: () => reload(fromRefreshIndicator: true),
-
-            child: CustomScrollView(
-              slivers: [
-                TimetableAppBar(
-                  animateToDay: animateToDay,
-                  label: dayGroup.pprint(context),
-                  firstDate: _scheduleDisplayData.firstDate,
-                  lastDate: _scheduleDisplayData.lastDate,
+          return Scaffold(
+            appBar: buildAppBar(dayGroup, context),
+            body: RefreshIndicator(
+              onRefresh: () => reload(fromRefreshIndicator: true),
+              child: SingleChildScrollView(
+                padding: .only(
+                  bottom: MediaQuery.paddingOf(context).bottom + 10,
                 ),
+                child: IntrinsicHeight(
+                  child: Row(
+                    crossAxisAlignment: .stretch,
+                    children: [
+                      Expanded(
+                        flex: days.length * 15,
+                        child: buildTimeColumn(context, days),
+                      ),
 
-                SliverCrossAxisGroup(
-                  slivers: [
-                    for (final day in days)
-                      ValueListenableBuilder(
-                        valueListenable: _classes[day]!,
-                        builder: (context, dayClasses, child) {
-                          if (dayClasses == null) {
-                            return const SliverFillRemaining(
-                              child: Center(child: LoadingWidget()),
-                            );
-                          }
+                      for (final day in days)
+                        Expanded(
+                          flex: 85,
+                          child: ValueListenableBuilder(
+                            valueListenable: _classes[day]!,
+                            builder: (context, dayClasses, child) {
+                              if (dayClasses == null) {
+                                return const Center(child: LoadingWidget());
+                              }
 
-                          if (dayClasses.isEmpty) {
-                            final holiday = _scheduleDisplayData.holidays
-                                .firstWhereOrNull(
-                                  (element) => element.contains(day),
-                                );
+                              if (dayClasses.isEmpty) {
+                                final holiday = _scheduleDisplayData.holidays
+                                    .firstWhereOrNull(
+                                      (element) => element.contains(day),
+                                    );
 
-                            return SliverFillRemaining(
-                              hasScrollBody: false,
-                              child: Center(
-                                child: Column(
-                                  mainAxisAlignment: .center,
-                                  spacing: 6,
-                                  children: [
-                                    Icon(
-                                      holiday == null
-                                          ? HugeIconsSolid.calendar04
-                                          : HugeIconsSolid.beach,
-                                      size: 44,
-                                      color: context.c.outline,
-                                    ),
-                                    Text(
-                                      holiday?.name ??
-                                          context.l10n.noCourseToday,
-                                      style: TextStyle(
-                                        fontWeight: .bold,
+                                return Center(
+                                  child: Column(
+                                    mainAxisAlignment: .center,
+                                    spacing: 6,
+                                    children: [
+                                      Icon(
+                                        holiday == null
+                                            ? HugeIconsSolid.calendar04
+                                            : HugeIconsSolid.beach,
+                                        size: 44,
                                         color: context.c.outline,
                                       ),
-                                      textAlign: .center,
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            );
-                          }
+                                      Text(
+                                        holiday?.name ??
+                                            context.l10n.noCourseToday,
+                                        style: TextStyle(
+                                          fontWeight: .bold,
+                                          color: context.c.outline,
+                                        ),
+                                        textAlign: .center,
+                                      ),
+                                    ],
+                                  ),
+                                );
+                              }
 
-                          return SliverMainAxisGroup(
-                            slivers: [
-                              for (final block in dayClasses)
-                                TimetableBlockSliver(
-                                  displayParameters: _scheduleDisplayData,
-                                  day: day,
-                                  block: block,
-                                ),
-                            ],
-                          );
-                        },
-                      ),
-                  ],
+                              return buildClassesColumn(
+                                context,
+                                day,
+                                dayClasses,
+                              );
+                              // return Column(
+                              //   children: [
+                              //     for (final block in dayClasses)
+                              //       Expanded(
+                              //         flex: block.endTime
+                              //             .difference(block.startTime)
+                              //             .inMinutes,
+                              //         child: TimetableBlockSliver(
+                              //           displayParameters: _scheduleDisplayData,
+                              //           day: day,
+                              //           block: block,
+                              //         ),
+                              //       ),
+                              //   ],
+                              // );
+                            },
+                          ),
+                        ),
+                    ],
+                  ),
                 ),
-              ],
+              ),
             ),
           );
         },
       ),
     );
+  }
+
+  AppBar buildAppBar(DateRange dayGroup, BuildContext context) {
+    return AppBar(
+      title: TextButton.icon(
+        label: Text(dayGroup.pprint(context)),
+
+        icon: const Icon(HugeIconsSolid.calendar03),
+        iconAlignment: .end,
+
+        onPressed: () async {
+          final selected = await showDatePicker(
+            context: context,
+            firstDate: _scheduleDisplayData.firstDate,
+            lastDate: _scheduleDisplayData.lastDate,
+          );
+
+          if (selected == null) return;
+
+          animateToDay(selected.copyWith(isUtc: true).toDay());
+        },
+      ),
+    );
+  }
+
+  Widget buildTimeColumn(BuildContext context, List<DateTime> days) {
+    final relevantSlots = <int>{};
+    for (final day in days) {
+      for (final clazz in _classes[day]!.value ?? <ClassBlock>[]) {
+        relevantSlots.add(clazz.startSlot % _scheduleDisplayData.slotsPerDay);
+        relevantSlots.add(clazz.endSlot % _scheduleDisplayData.slotsPerDay - 1);
+      }
+    }
+
+    final displays = <Widget>[];
+
+    int? lastAppliedSlot;
+    for (
+      int i = relevantSlots.firstOrNull ?? 0;
+      i < (relevantSlots.lastOrNull ?? 0);
+      i++
+    ) {
+      final curSlot = _scheduleDisplayData.starts[i];
+      final curEndSlot = _scheduleDisplayData.endings[i];
+
+      if (lastAppliedSlot != null && lastAppliedSlot + 1 != i) {
+        final from = _scheduleDisplayData.starts[lastAppliedSlot + 1];
+        final to = _scheduleDisplayData.endings[i - 1];
+
+        final value =
+            (to.timing.hour - from.timing.hour) * Duration.minutesPerHour +
+            to.timing.minute -
+            from.timing.minute;
+
+        talker.info("${from.timing} -> ${to.timing} : $value");
+        displays.add(Expanded(flex: value, child: const SizedBox.expand()));
+      }
+
+      if (curEndSlot.timing == curSlot.timing) continue;
+
+      if (i > 0) {
+        final previous = _scheduleDisplayData.endings[i - 1];
+
+        final transitionValue =
+            (curSlot.timing.hour - previous.timing.hour) *
+                Duration.minutesPerHour +
+            curSlot.timing.minute -
+            previous.timing.minute;
+
+        if (transitionValue > 0) {
+          displays.add(
+            Expanded(flex: transitionValue, child: const SizedBox.expand()),
+          );
+        }
+      }
+
+      final value =
+          (curEndSlot.timing.hour - curSlot.timing.hour) *
+              Duration.minutesPerHour +
+          curEndSlot.timing.minute -
+          curSlot.timing.minute;
+      displays.add(
+        Expanded(
+          flex: value,
+          child: Stack(
+            fit: .expand,
+            children: [
+              if (curSlot.active)
+                Align(alignment: .topCenter, child: Text(curSlot.label)),
+              if (curEndSlot.active)
+                Align(alignment: .bottomCenter, child: Text(curEndSlot.label)),
+            ],
+          ),
+        ),
+      );
+
+      lastAppliedSlot = i;
+    }
+
+    return Column(children: displays);
+  }
+
+  Widget buildClassesColumn(
+    BuildContext context,
+    DateTime day,
+    List<ClassBlock> blocks,
+  ) {
+    final displays = <Widget>[];
+
+    DateTime? curTime;
+    for (final block in blocks) {
+      if (curTime != null && !curTime.isAtSameMomentAs(block.startTime)) {
+        displays.add(
+          Expanded(
+            flex: block.startTime.difference(curTime).inMinutes,
+            child: const SizedBox.expand(),
+          ),
+        );
+      }
+
+      displays.add(
+        Expanded(
+          flex: block.endTime.difference(block.startTime).inMinutes,
+          child: TimetableBlockWidget(
+            displayParameters: _scheduleDisplayData,
+            day: day,
+            block: block,
+          ),
+        ),
+      );
+
+      curTime = block.endTime;
+    }
+
+    return Column(children: displays);
   }
 
   @override

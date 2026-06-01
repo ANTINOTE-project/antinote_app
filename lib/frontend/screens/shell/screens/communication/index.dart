@@ -30,60 +30,66 @@ class _CommunicationScreenState extends State<CommunicationScreen>
     RefreshIndicatorBuilder buildRefreshIndicator,
   ) {
     return buildRefreshIndicator(
-      child: ListWidget(
-        items: threads,
-        isSliver: false,
-        itemBuilder: (context, thread, borderRadius) {
-          return ItemWidget(
-            borderRadius: borderRadius,
-            title: Text(thread.title),
-            subtitle: Text(thread.authorName),
-            leading: Badge(
-              isLabelVisible: !thread.read,
-              child: Icon(switch (thread.commType) {
-                .discussion => HugeIconsSolid.conversation,
-                .news => HugeIconsSolid.news01,
-                .poll => HugeIconsSolid.pieChart,
-              }),
-            ),
-            trailing: Text(_minimalDateFormat.format(thread.publishDate)),
-            onPressed: () async {
-              await SessionManager.execute(
-                context: context,
-                channels: const [],
-                callback: (session) {
-                  switch (thread.commType) {
-                    case .poll:
-                    case .news:
-                      {
-                        if (!context.mounted) return;
+      child: Padding(
+        padding: const .symmetric(horizontal: 12),
+        child: ListWidget(
+          items: threads,
+          isSliver: false,
+          itemBuilder: (context, thread, borderRadius) {
+            return ItemWidget(
+              borderRadius: borderRadius,
+              title: Text(thread.title),
+              subtitle: Text(thread.authorName),
+              leading: Badge(
+                isLabelVisible: !thread.read,
+                child: Icon(switch (thread.commType) {
+                  .discussion => HugeIconsSolid.conversation,
+                  .news => HugeIconsSolid.news01,
+                  .poll => HugeIconsSolid.pieChart,
+                }),
+              ),
+              trailing: Text(_minimalDateFormat.format(thread.publishDate)),
+              onPressed: () async {
+                await SessionManager.execute(
+                  context: context,
+                  channels: const [],
+                  callback: (session) {
+                    switch (thread.commType) {
+                      case .poll:
+                      case .news:
+                        {
+                          if (!context.mounted) return;
 
-                        final notifier = ValueNotifier(
-                          session.getCachedValue<News>(.NEWS, thread.visualId),
-                        );
-
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => NewsScreen(
-                              news: notifier,
-                              deleteNews: () {
-                                throw UnimplementedError();
-                              },
+                          final notifier = ValueNotifier(
+                            session.getCachedValue<News>(
+                              .NEWS,
+                              thread.visualId,
                             ),
-                          ),
-                        );
-                      }
-                    case .discussion:
-                      {
-                        throw UnimplementedError();
-                      }
-                  }
-                },
-              );
-            },
-          );
-        },
+                          );
+
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => NewsScreen(
+                                news: notifier,
+                                deleteNews: () {
+                                  throw UnimplementedError();
+                                },
+                              ),
+                            ),
+                          );
+                        }
+                      case .discussion:
+                        {
+                          throw UnimplementedError();
+                        }
+                    }
+                  },
+                );
+              },
+            );
+          },
+        ),
       ),
     );
   }

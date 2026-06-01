@@ -3,12 +3,16 @@ import "package:antinote/antinote.dart";
 final class ClassBlock {
   final List<List<Class>> configurations;
   final int startSlot;
+  final DateTime startTime;
   final int endSlot;
+  final DateTime endTime;
 
   const ClassBlock({
     required this.configurations,
     required this.startSlot,
+    required this.startTime,
     required this.endSlot,
+    required this.endTime,
   });
 
   static const _priorityCount = 3;
@@ -18,7 +22,9 @@ final class ClassBlock {
   factory ClassBlock.createConfigurations({
     required List<Class> classes,
     required int startSlot,
+    required DateTime startTime,
     required int endSlot,
+    required DateTime endTime,
   }) {
     final remaining = <int, List<Class>>{
       for (int i = 0; i < _priorityCount; i++) i: [],
@@ -68,7 +74,9 @@ final class ClassBlock {
     return ClassBlock(
       configurations: configs,
       startSlot: startSlot,
+      startTime: startTime,
       endSlot: endSlot,
+      endTime: endTime,
     );
   }
 }
@@ -79,13 +87,17 @@ List<ClassBlock> constructClassBlocksForDay(List<Class> classes) {
   List<ClassBlock> blocks = [];
 
   int? blockStart;
+  DateTime? blockStartTime;
   int? blockEnd;
+  DateTime? blockEndTime;
   List<Class> curClasses = [];
 
   for (final clazz in classes) {
     if (blockStart == null) {
       blockStart = clazz.blockSlot;
+      blockStartTime = clazz.startDate;
       blockEnd = clazz.blockSlot + clazz.blockLength;
+      blockEndTime = clazz.endDate;
 
       curClasses.add(clazz);
 
@@ -95,17 +107,22 @@ List<ClassBlock> constructClassBlocksForDay(List<Class> classes) {
     if (clazz.blockSlot < blockEnd!) {
       curClasses.add(clazz);
       blockEnd = clazz.blockSlot + clazz.blockLength;
+      blockEndTime = clazz.endDate;
     } else {
       blocks.add(
         ClassBlock.createConfigurations(
           classes: curClasses,
           startSlot: blockStart,
+          startTime: blockStartTime!,
           endSlot: blockEnd,
+          endTime: blockEndTime!,
         ),
       );
 
       blockStart = clazz.blockSlot;
+      blockStartTime = clazz.startDate;
       blockEnd = clazz.blockSlot + clazz.blockLength;
+      blockEndTime = clazz.endDate;
 
       curClasses.clear();
       curClasses.add(clazz);
@@ -117,7 +134,9 @@ List<ClassBlock> constructClassBlocksForDay(List<Class> classes) {
       ClassBlock.createConfigurations(
         classes: curClasses,
         startSlot: blockStart!,
+        startTime: blockStartTime!,
         endSlot: blockEnd!,
+        endTime: blockEndTime!,
       ),
     );
   }

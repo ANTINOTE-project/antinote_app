@@ -5,12 +5,12 @@ import "package:antinote_app/frontend/widgets/pressable.dart";
 import "package:antinote_app/utils.dart";
 import "package:flutter/material.dart";
 
-class TimetableBlockSliver extends StatefulWidget {
+class TimetableBlockWidget extends StatefulWidget {
   final SpecificInstanceParameters displayParameters;
   final DateTime day;
   final ClassBlock block;
 
-  const TimetableBlockSliver({
+  const TimetableBlockWidget({
     super.key,
     required this.displayParameters,
     required this.day,
@@ -18,27 +18,11 @@ class TimetableBlockSliver extends StatefulWidget {
   });
 
   @override
-  State<TimetableBlockSliver> createState() => _TimetableBlockSliverState();
+  State<TimetableBlockWidget> createState() => _TimetableBlockWidgetState();
 }
 
-class _TimetableBlockSliverState extends State<TimetableBlockSliver> {
+class _TimetableBlockWidgetState extends State<TimetableBlockWidget> {
   int configurationIndex = 0;
-
-  Widget _buildSliverConfiguration(
-    BuildContext context,
-    List<Class> configuration,
-  ) {
-    return SliverList.builder(
-      key: ValueKey(configurationIndex),
-      itemBuilder: (context, index) {
-        return ClassWidget(
-          clazz: configuration[index],
-          connectRight: widget.block.configurations.length > 1,
-        );
-      },
-      itemCount: configuration.length,
-    );
-  }
 
   Widget _buildWidgetConfiguration(
     BuildContext context,
@@ -104,41 +88,37 @@ class _TimetableBlockSliverState extends State<TimetableBlockSliver> {
   @override
   Widget build(BuildContext context) {
     if (widget.block.configurations.length == 1) {
-      return _buildSliverConfiguration(
+      return _buildWidgetConfiguration(
         context,
         widget.block.configurations.single,
       );
     }
 
     // TODO: Do something fancy here
-    return SliverToBoxAdapter(
-      // TODO: Avoid using this
-      child: IntrinsicHeight(
-        child: Row(
-          crossAxisAlignment: .stretch,
-          children: [
-            const Expanded(child: Placeholder()),
-            Expanded(
-              flex: 8,
-              child: AnimatedSize(
+    return IntrinsicHeight(
+      child: Row(
+        crossAxisAlignment: .stretch,
+        children: [
+          Expanded(
+            flex: 9,
+            child: AnimatedSize(
+              duration: const Duration(milliseconds: 300),
+              alignment: .topCenter,
+              curve: Curves.fastOutSlowIn,
+              child: AnimatedSwitcher(
                 duration: const Duration(milliseconds: 300),
-                alignment: .topCenter,
-                curve: Curves.fastOutSlowIn,
-                child: AnimatedSwitcher(
-                  duration: const Duration(milliseconds: 300),
-                  reverseDuration: const Duration(milliseconds: 50),
-                  switchInCurve: Curves.fastOutSlowIn,
-                  switchOutCurve: const ReversedCurve(Curves.fastOutSlowIn),
-                  child: _buildWidgetConfiguration(
-                    context,
-                    widget.block.configurations[configurationIndex],
-                  ),
+                reverseDuration: const Duration(milliseconds: 50),
+                switchInCurve: Curves.fastOutSlowIn,
+                switchOutCurve: const ReversedCurve(Curves.fastOutSlowIn),
+                child: _buildWidgetConfiguration(
+                  context,
+                  widget.block.configurations[configurationIndex],
                 ),
               ),
             ),
-            Expanded(child: _buildPicker(context)),
-          ],
-        ),
+          ),
+          Expanded(child: _buildPicker(context)),
+        ],
       ),
     );
   }
