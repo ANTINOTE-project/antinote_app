@@ -4,8 +4,8 @@ import "package:antinote/antinote.dart";
 import "package:antinote_app/backend/backend.dart";
 import "package:antinote_app/frontend/screens/screen.dart";
 import "package:antinote_app/frontend/widgets/customs/loading.dart";
+import "package:antinote_app/frontend/widgets/html_text.dart";
 import "package:antinote_app/frontend/widgets/pressable.dart";
-import "package:antinote_app/frontend/widgets/remote_html.dart";
 import "package:antinote_app/utils.dart";
 import "package:flutter/material.dart";
 import "package:hugeicons_pro/hugeicons.dart";
@@ -142,12 +142,8 @@ class _HomeworksScreenState extends State<HomeworksScreen>
                               "dd/MM/yyyy",
                             ).format(homework.deadlineDate);
 
-                            final title = RemoteHtml(
-                              rawHtml: homework.description,
-                            );
-
                             return Padding(
-                              padding: const .only(bottom: 8),
+                              padding: const .only(bottom: 10),
 
                               child: Pressable(
                                 borderRadius: .circular(20),
@@ -165,6 +161,7 @@ class _HomeworksScreenState extends State<HomeworksScreen>
                                   ),
 
                                   child: Column(
+                                    crossAxisAlignment: .start,
                                     spacing: 6,
 
                                     children: [
@@ -192,24 +189,25 @@ class _HomeworksScreenState extends State<HomeworksScreen>
                                           Text(
                                             date,
                                             style: TextStyle(
-                                              fontWeight: .w600,
+                                              fontWeight: .bold,
                                               color: colors.subtitle,
                                             ),
                                           ),
                                         ],
                                       ),
 
-                                      DefaultTextStyle(
+                                      HtmlText(
+                                        rawHtml: homework.description,
+                                        collapseLineBreaks: true,
+
+                                        overflow: .ellipsis,
+                                        maxLines: 3,
+
                                         style: TextStyle(
                                           color: colors.text,
                                           fontWeight: .bold,
                                           fontSize: 15,
                                         ),
-
-                                        overflow: .ellipsis,
-                                        maxLines: 3,
-
-                                        child: title,
                                       ),
 
                                       const SizedBox(height: 6),

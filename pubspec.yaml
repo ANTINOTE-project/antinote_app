@@ -33,6 +33,7 @@ dependencies:
   html: ^0.15.6
   collection: ^1.19.1
   webview_flutter: ^4.13.1
+  simple_html_css: ^5.0.0
   
 dev_dependencies:
   flutter_test:
