@@ -99,7 +99,7 @@
   "remotePeriods": "Périodes",
   "virtualClassroom": "Visio",
 
-  "homeworkDone": "Fait",
-  "homeworkNotDone": "Non fait",
+  "homeworkSetDone": "J'ai terminé",
+  "homeworkSetNotDone": "Je n'ai pas terminé",
   "weekNumber": "Semaine {weekNumber}"
 }

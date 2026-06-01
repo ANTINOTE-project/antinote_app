@@ -211,6 +211,37 @@ class _HomeworksScreenState extends State<HomeworksScreen>
 
                                         child: title,
                                       ),
+
+                                      const SizedBox(height: 6),
+
+                                      Row(
+                                        spacing: 6,
+
+                                        children: [
+                                          Icon(
+                                            homework.isDone
+                                                ? HugeIconsSolid.tick03
+                                                : HugeIconsStroke.tick03,
+
+                                            color: colors.border,
+                                            size: 21,
+                                          ),
+
+                                          Text(
+                                            homework.isDone
+                                                ? context.l10n.homeworkSetDone
+                                                : context
+                                                      .l10n
+                                                      .homeworkSetNotDone,
+
+                                            style: TextStyle(
+                                              color: colors.border,
+                                              fontWeight: .w800,
+                                              fontSize: 15.5,
+                                            ),
+                                          ),
+                                        ],
+                                      ),
                                     ],
                                   ),
                                 ),

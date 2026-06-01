@@ -226,10 +226,10 @@ class AppLocalizationsFr extends AppLocalizations {
   String get virtualClassroom => 'Visio';
 
   @override
-  String get homeworkDone => 'Fait';
+  String get homeworkSetDone => 'J\'ai terminé';
 
   @override
-  String get homeworkNotDone => 'Non fait';
+  String get homeworkSetNotDone => 'Je n\'ai pas terminé';
 
   @override
   String weekNumber(Object weekNumber) {
