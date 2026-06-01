@@ -102,7 +102,7 @@ class _HomeworksScreenState extends State<HomeworksScreen>
 
                       children: [
                         Padding(
-                          padding: const .symmetric(horizontal: 6),
+                          padding: const .symmetric(horizontal: 8),
 
                           child: Pressable(
                             hasVisuals: false,
@@ -164,77 +164,54 @@ class _HomeworksScreenState extends State<HomeworksScreen>
                                     vertical: 8,
                                   ),
 
-                                  child: IntrinsicHeight(
-                                    child: Row(
-                                      children: [
-                                        Expanded(
-                                          child: Column(
-                                            crossAxisAlignment: .start,
-                                            mainAxisSize: .min,
+                                  child: Column(
+                                    spacing: 6,
 
-                                            children: [
-                                              Text(
-                                                homework.subject.name ??
-                                                    context.l10n.noSubject,
+                                    children: [
+                                      Row(
+                                        mainAxisAlignment: .spaceBetween,
+                                        spacing: 10,
 
-                                                overflow: .ellipsis,
-                                                maxLines: 1,
+                                        children: [
+                                          Expanded(
+                                            child: Text(
+                                              homework.subject.name ??
+                                                  context.l10n.noSubject,
 
-                                                style: TextStyle(
-                                                  color: colors.base,
-                                                  fontWeight: .w800,
-                                                  fontSize: 21,
-                                                ),
+                                              overflow: .ellipsis,
+                                              maxLines: 1,
+
+                                              style: TextStyle(
+                                                color: colors.base,
+                                                fontWeight: .w800,
+                                                fontSize: 21,
                                               ),
-
-                                              DefaultTextStyle(
-                                                style: TextStyle(
-                                                  color: colors.text,
-                                                  fontWeight: .bold,
-                                                  fontSize: 15,
-                                                ),
-
-                                                overflow: .ellipsis,
-                                                maxLines: 3,
-
-                                                child: title,
-                                              ),
-                                            ],
+                                            ),
                                           ),
+
+                                          Text(
+                                            date,
+                                            style: TextStyle(
+                                              fontWeight: .w600,
+                                              color: colors.subtitle,
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+
+                                      DefaultTextStyle(
+                                        style: TextStyle(
+                                          color: colors.text,
+                                          fontWeight: .bold,
+                                          fontSize: 15,
                                         ),
 
-                                        const SizedBox(width: 8),
+                                        overflow: .ellipsis,
+                                        maxLines: 3,
 
-                                        Column(
-                                          mainAxisAlignment: .spaceBetween,
-                                          crossAxisAlignment: .end,
-
-                                          children: [
-                                            Text(
-                                              homework.isDone
-                                                  ? context.l10n.homeworkDone
-                                                  : context
-                                                        .l10n
-                                                        .homeworkNotDone,
-                                              style: TextStyle(
-                                                fontWeight: .w600,
-                                                color: context.c.outline,
-                                              ),
-                                            ),
-
-                                            const Spacer(),
-
-                                            Text(
-                                              date,
-                                              style: TextStyle(
-                                                fontWeight: .w600,
-                                                color: context.c.outline,
-                                              ),
-                                            ),
-                                          ],
-                                        ),
-                                      ],
-                                    ),
+                                        child: title,
+                                      ),
+                                    ],
                                   ),
                                 ),
                               ),
