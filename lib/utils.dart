@@ -1,3 +1,5 @@
+import "dart:math";
+
 import "package:antinote/antinote.dart";
 import "package:antinote_app/backend/backend.dart";
 import "package:antinote_app/l10n/app_localizations.dart";
@@ -22,6 +24,48 @@ class AdaptedColors {
     required this.text,
   });
 
+  static double _linearize(double channel) {
+    channel /= 255.0;
+
+    return channel <= 0.03928
+        ? channel / 12.92
+        : pow((channel + 0.055) / 1.055, 2.4).toDouble();
+  }
+
+  static double luminance(Color c) {
+    final r = _linearize(c.r);
+    final g = _linearize(c.g);
+    final b = _linearize(c.b);
+
+    return 0.2126 * r + 0.7152 * g + 0.0722 * b;
+  }
+
+  static double contrast(Color a, Color b) {
+    final l1 = luminance(a);
+    final l2 = luminance(b);
+
+    final brightest = max(l1, l2);
+    final darkest = min(l1, l2);
+
+    return (brightest + 0.05) / (darkest + 0.05);
+  }
+
+  static Color ensureContrast(HSLColor originalHsl, Color bg, double minRatio) {
+    double l = originalHsl.lightness;
+
+    for (int i = 0; i < 60; i++) {
+      final candidate = originalHsl.withLightness(l).toColor();
+      final ratio = contrast(candidate, bg);
+
+      if (ratio >= minRatio) return candidate;
+
+      l += (ratio < minRatio) ? 0.03 : -0.03;
+      l = l.clamp(0.0, 1.0);
+    }
+
+    return originalHsl.toColor();
+  }
+
   factory AdaptedColors.fromScheme(int? colorValue, ColorScheme scheme) {
     if (colorValue == null) {
       return AdaptedColors(
@@ -35,7 +79,7 @@ class AdaptedColors {
       );
     }
 
-    final hsl = HSLColor.fromColor(Color(colorValue));
+    final originalHsl = HSLColor.fromColor(Color(colorValue));
     final isLight = scheme.brightness == Brightness.light;
 
     Color adapt(
@@ -44,17 +88,28 @@ class AdaptedColors {
       double minSat,
       double maxSat,
     ) {
-      return hsl
-          .withLightness(isLight ? lightLight : darkLight)
-          .withSaturation(hsl.saturation.clamp(minSat, maxSat))
+      final targetL = isLight ? lightLight : darkLight;
+      final targetS = originalHsl.saturation.clamp(minSat, maxSat);
+
+      return originalHsl
+          .withLightness(targetL)
+          .withSaturation(targetS)
           .toColor();
     }
 
+    final background = adapt(0.88, 0.15, 0.15, 0.40);
+
+    final fixedBorder = ensureContrast(
+      originalHsl.withSaturation(originalHsl.saturation.clamp(0.25, 0.60)),
+      background,
+      3.0,
+    );
+
     return AdaptedColors(
       base: adapt(0.40, 0.70, 0.40, 1.00),
-      background: adapt(0.88, 0.15, 0.15, 0.40),
+      background: background,
       headerBackground: adapt(0.78, 0.08, 0.35, 0.70),
-      border: adapt(0.55, 0.35, 0.20, 0.50),
+      border: fixedBorder,
       title: adapt(0.45, 0.90, 0.60, 1.00),
       subtitle: adapt(0.60, 0.58, 0.15, 0.35),
       text: adapt(0.35, 0.80, 0.08, 0.20),
