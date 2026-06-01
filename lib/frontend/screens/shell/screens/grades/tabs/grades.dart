@@ -24,118 +24,6 @@ typedef _DetailsItem = ({
   String? rawValue,
 });
 
-const _fakeGrade = Grade.defaultUnknownGrade;
-
-const _fakeServices = [
-  Service(
-    id: "1",
-    name: "Mathématiques",
-    type: null,
-    order: null,
-    selfAverage: null,
-    theoreticalMaxGrade: null,
-    defaultTheoreticalMaxGrade: null,
-    classAverage: null,
-    minGrade: null,
-    maxGrade: null,
-    color: null,
-    inGroups: null,
-  ),
-  Service(
-    id: "2",
-    name: "Français",
-    type: null,
-    order: null,
-    selfAverage: null,
-    theoreticalMaxGrade: null,
-    defaultTheoreticalMaxGrade: null,
-    classAverage: null,
-    minGrade: null,
-    maxGrade: null,
-    color: null,
-    inGroups: null,
-  ),
-  Service(
-    id: "3",
-    name: "Histoire",
-    type: null,
-    order: null,
-    selfAverage: null,
-    theoreticalMaxGrade: null,
-    defaultTheoreticalMaxGrade: null,
-    classAverage: null,
-    minGrade: null,
-    maxGrade: null,
-    color: null,
-    inGroups: null,
-  ),
-  Service(
-    id: "4",
-    name: "Anglais",
-    type: null,
-    order: null,
-    selfAverage: null,
-    theoreticalMaxGrade: null,
-    defaultTheoreticalMaxGrade: null,
-    classAverage: null,
-    minGrade: null,
-    maxGrade: null,
-    color: null,
-    inGroups: null,
-  ),
-  Service(
-    id: "5",
-    name: "Physique",
-    type: null,
-    order: null,
-    selfAverage: null,
-    theoreticalMaxGrade: null,
-    defaultTheoreticalMaxGrade: null,
-    classAverage: null,
-    minGrade: null,
-    maxGrade: null,
-    color: null,
-    inGroups: null,
-  ),
-];
-
-const _fakePeriod = Period(
-  id: null,
-  name: "",
-  type: null,
-  notationPeriodType: null,
-  startDate: null,
-  endDate: null,
-);
-
-final _fakeExams = List.filled(
-  20,
-  Exam(
-    id: "",
-    type: 0,
-    selfGrade: _fakeGrade,
-    theoreticalMaxGrade: _fakeGrade,
-    defaultMaxGrade: _fakeGrade,
-    date: DateTime.now(),
-    service: _fakeServices.first,
-    period: _fakePeriod,
-    themes: [],
-    classAverage: null,
-    isInGroups: null,
-    maxGrade: null,
-    minGrade: null,
-    comment: null,
-    coefficient: null,
-    isOptional: null,
-    isBonus: null,
-    isCountedAs20TheoreticalMaxGrade: null,
-  ),
-);
-
-final _fakeServiceGradeList = {
-  for (final service in _fakeServices) service: _fakeExams.take(3).toList(),
-};
-
 Future<void> _showDetails({
   required BuildContext context,
   required String name,
@@ -793,10 +681,10 @@ class _LatestGrades extends StatelessWidget {
             padding: const .all(12),
 
             scrollDirection: .horizontal,
-            itemCount: exams == null ? _fakeExams.length : exams!.length,
+            itemCount: exams == null ? fakeExams.length : exams!.length,
 
             itemBuilder: (context, index) {
-              final exam = exams == null ? _fakeExams[index] : exams![index];
+              final exam = exams == null ? fakeExams[index] : exams![index];
 
               final colors = AdaptedColors.fromScheme(
                 exam.service.color,
@@ -949,7 +837,7 @@ class _ServicesGrades extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final entries = (data ?? _fakeServiceGradeList).entries;
+    final entries = (data ?? fakeServiceGradeList).entries;
 
     return SliverMainAxisGroup(
       slivers: [

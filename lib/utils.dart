@@ -253,3 +253,115 @@ extension L10nExtension on BuildContext {
 extension SessionManagerExtension on BuildContext {
   SessionManager get sm => SessionManager.of(this);
 }
+
+const fakeGrade = Grade.defaultUnknownGrade;
+
+const fakeServices = [
+  Service(
+    id: "1",
+    name: "Mathématiques",
+    type: null,
+    order: null,
+    selfAverage: null,
+    theoreticalMaxGrade: null,
+    defaultTheoreticalMaxGrade: null,
+    classAverage: null,
+    minGrade: null,
+    maxGrade: null,
+    color: null,
+    inGroups: null,
+  ),
+  Service(
+    id: "2",
+    name: "Français",
+    type: null,
+    order: null,
+    selfAverage: null,
+    theoreticalMaxGrade: null,
+    defaultTheoreticalMaxGrade: null,
+    classAverage: null,
+    minGrade: null,
+    maxGrade: null,
+    color: null,
+    inGroups: null,
+  ),
+  Service(
+    id: "3",
+    name: "Histoire",
+    type: null,
+    order: null,
+    selfAverage: null,
+    theoreticalMaxGrade: null,
+    defaultTheoreticalMaxGrade: null,
+    classAverage: null,
+    minGrade: null,
+    maxGrade: null,
+    color: null,
+    inGroups: null,
+  ),
+  Service(
+    id: "4",
+    name: "Anglais",
+    type: null,
+    order: null,
+    selfAverage: null,
+    theoreticalMaxGrade: null,
+    defaultTheoreticalMaxGrade: null,
+    classAverage: null,
+    minGrade: null,
+    maxGrade: null,
+    color: null,
+    inGroups: null,
+  ),
+  Service(
+    id: "5",
+    name: "Physique",
+    type: null,
+    order: null,
+    selfAverage: null,
+    theoreticalMaxGrade: null,
+    defaultTheoreticalMaxGrade: null,
+    classAverage: null,
+    minGrade: null,
+    maxGrade: null,
+    color: null,
+    inGroups: null,
+  ),
+];
+
+const fakePeriod = Period(
+  id: null,
+  name: "",
+  type: null,
+  notationPeriodType: null,
+  startDate: null,
+  endDate: null,
+);
+
+final fakeExams = List.filled(
+  20,
+  Exam(
+    id: "",
+    type: 0,
+    selfGrade: fakeGrade,
+    theoreticalMaxGrade: fakeGrade,
+    defaultMaxGrade: fakeGrade,
+    date: DateTime.now(),
+    service: fakeServices.first,
+    period: fakePeriod,
+    themes: [],
+    classAverage: null,
+    isInGroups: null,
+    maxGrade: null,
+    minGrade: null,
+    comment: null,
+    coefficient: null,
+    isOptional: null,
+    isBonus: null,
+    isCountedAs20TheoreticalMaxGrade: null,
+  ),
+);
+
+final fakeServiceGradeList = {
+  for (final service in fakeServices) service: fakeExams.take(3).toList(),
+};
