@@ -19,7 +19,7 @@ class HomeworksScreen extends StatefulWidget {
 
 class _HomeworksScreenState extends State<HomeworksScreen>
     with ScreenMixin<HomeworksScreen> {
-  final List<Homework> _homeworks = [];
+  List<Homework> _homeworks = [];
 
   late int _firstWeekNumber;
   late int _lastWeekNumber;
@@ -95,6 +95,7 @@ class _HomeworksScreenState extends State<HomeworksScreen>
                 final date = DateFormat(
                   "dd/MM/yyyy",
                 ).format(homework.deadlineDate);
+
                 final title = RemoteHtml(rawHtml: homework.description);
 
                 return Padding(
@@ -112,72 +113,75 @@ class _HomeworksScreenState extends State<HomeworksScreen>
 
                       padding: const .symmetric(horizontal: 12, vertical: 8),
 
-                      child: Row(
-                        spacing: 12,
+                      child: IntrinsicHeight(
+                        child: Row(
+                          children: [
+                            Expanded(
+                              child: Column(
+                                crossAxisAlignment: .start,
+                                mainAxisSize: .min,
 
-                        children: [
-                          Expanded(
-                            child: Column(
-                              crossAxisAlignment: .start,
-                              spacing: 6,
+                                children: [
+                                  Text(
+                                    homework.subject.name ??
+                                        context.l10n.noSubject,
+
+                                    overflow: .ellipsis,
+                                    maxLines: 1,
+
+                                    style: TextStyle(
+                                      color: colors.base,
+                                      fontWeight: .w800,
+                                      fontSize: 21,
+                                    ),
+                                  ),
+
+                                  DefaultTextStyle(
+                                    style: TextStyle(
+                                      color: colors.text,
+                                      fontWeight: .bold,
+                                      fontSize: 15,
+                                    ),
+
+                                    overflow: .ellipsis,
+                                    maxLines: 3,
+
+                                    child: title,
+                                  ),
+                                ],
+                              ),
+                            ),
+
+                            const SizedBox(width: 8),
+
+                            Column(
+                              mainAxisAlignment: .spaceBetween,
+                              crossAxisAlignment: .end,
 
                               children: [
                                 Text(
-                                  homework.subject.name ?? "",
-
-                                  overflow: .ellipsis,
-                                  maxLines: 1,
-
+                                  homework.isDone
+                                      ? context.l10n.homeworkDone
+                                      : context.l10n.homeworkNotDone,
                                   style: TextStyle(
-                                    color: colors.base,
-                                    fontWeight: .w800,
-                                    fontSize: 21,
+                                    fontWeight: .w600,
+                                    color: context.c.outline,
                                   ),
                                 ),
 
-                                DefaultTextStyle(
+                                const Spacer(),
+
+                                Text(
+                                  date,
                                   style: TextStyle(
-                                    color: colors.text,
-                                    fontWeight: .bold,
-                                    fontSize: 15,
+                                    fontWeight: .w600,
+                                    color: context.c.outline,
                                   ),
-
-                                  overflow: .ellipsis,
-                                  maxLines: 1,
-
-                                  child: title,
                                 ),
                               ],
                             ),
-                          ),
-
-                          Column(
-                            mainAxisAlignment: .spaceBetween,
-                            crossAxisAlignment: .end,
-
-                            children: [
-                              Text(
-                                homework.isDone
-                                    ? context.l10n.homeworkDone
-                                    : context.l10n.homeworkNotDone,
-
-                                style: TextStyle(
-                                  fontWeight: .w600,
-                                  color: context.c.outline,
-                                ),
-                              ),
-
-                              Text(
-                                date,
-
-                                style: TextStyle(
-                                  fontWeight: .w600,
-                                  color: context.c.outline,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ],
+                          ],
+                        ),
                       ),
                     ),
                   ),
@@ -219,9 +223,7 @@ class _HomeworksScreenState extends State<HomeworksScreen>
       NotebookPageAccessor(weeks: {_weekNumber ?? _firstWeekNumber}),
     );
 
-    _homeworks
-      ..clear()
-      ..addAll(page.homeworkSet?.homeworks ?? [])
+    _homeworks = page.homeworkSet?.homeworks ?? []
       ..sort((a, b) => a.deadlineDate.compareTo(b.deadlineDate));
   }
 }
