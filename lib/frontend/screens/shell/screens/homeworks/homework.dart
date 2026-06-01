@@ -1,12 +1,13 @@
 import "package:antinote/antinote.dart";
+import "package:antinote_app/backend/src/session/manager.dart";
 import "package:antinote_app/frontend/widgets/customs/app_bar.dart";
 import "package:antinote_app/frontend/widgets/customs/list.dart";
 import "package:antinote_app/frontend/widgets/html_text.dart";
-import "package:antinote_app/main.dart";
 import "package:antinote_app/utils.dart";
 import "package:flutter/material.dart";
 import "package:hugeicons_pro/hugeicons.dart";
 import "package:intl/intl.dart";
+import "package:url_launcher/url_launcher.dart";
 
 class HomeworkScreen extends StatelessWidget {
   final Homework homework;
@@ -93,27 +94,54 @@ class HomeworkScreen extends StatelessWidget {
                 shrinkWrap: true,
                 isSliver: false,
 
-                itemBuilder: (context, homework, borderRadius) {
-                  final icon = switch (homework.type) {
-                    .text => HugeIconsSolid.text,
-                    .pdf => HugeIconsSolid.pdf02,
-                    .archive => HugeIconsSolid.archive,
-                    .spreadsheet => HugeIconsSolid.googleSheet,
-                    .image => HugeIconsSolid.image01,
-                    .audio => HugeIconsSolid.audioWave01,
-                    .video => HugeIconsSolid.video01,
-                    .slides => HugeIconsSolid.slideshare,
-                    .geogebra => HugeIconsSolid.math,
-                    .other => HugeIconsSolid.documentAttachment,
-                  };
+                itemBuilder: (context, attachment, borderRadius) {
+                  final icon = switch (attachment) {
+                    LinkAttachment() => HugeIconsSolid.link01,
 
-                  talker.log(homework.type);
+                    FileAttachment(type: final type) => switch (type) {
+                      .text => HugeIconsSolid.text,
+                      .pdf => HugeIconsSolid.pdf02,
+                      .archive => HugeIconsSolid.archive,
+                      .spreadsheet => HugeIconsSolid.googleSheet,
+                      .image => HugeIconsSolid.image01,
+                      .audio => HugeIconsSolid.audioWave01,
+                      .video => HugeIconsSolid.video01,
+                      .slides => HugeIconsSolid.slideshare,
+                      .geogebra => HugeIconsSolid.math,
+                      .other => HugeIconsSolid.documentAttachment,
+                    },
+                  };
 
                   return ItemWidget(
                     borderRadius: borderRadius,
 
+                    onPressed: () async {
+                      final url = switch (attachment) {
+                        LinkAttachment(url: final url) => Uri.parse(url),
+
+                        FileAttachment() => await SessionManager.execute(
+                          context: context,
+
+                          callback: (session) async {
+                            return await attachment.getLinkToAttachment(
+                              session,
+                            );
+                          },
+                        ),
+                      };
+
+                      await launchUrl(
+                        url,
+
+                        mode: LaunchMode.inAppBrowserView,
+                        browserConfiguration: const BrowserConfiguration(
+                          showTitle: true,
+                        ),
+                      );
+                    },
+
                     leading: Icon(icon),
-                    title: Text(homework.title),
+                    title: Text(attachment.title),
                   );
                 },
               ),
