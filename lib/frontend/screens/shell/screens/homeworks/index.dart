@@ -23,8 +23,7 @@ class HomeworksScreen extends StatefulWidget {
 
 class _HomeworksScreenState extends State<HomeworksScreen>
     with ScreenMixin<HomeworksScreen> {
-  final Map<DateTime, List<Homework>> _organizedHomeworks = {};
-  List<Homework> _homeworks = [];
+  final Map<int, Map<DateTime, List<Homework>>> _weeks = {};
 
   late int _firstWeekNumber;
   late int _lastWeekNumber;
@@ -32,17 +31,12 @@ class _HomeworksScreenState extends State<HomeworksScreen>
   int? _weekNumber;
   int _weekChangeDirection = 0;
 
-  void _changeWeek(int delta) {
-    final current = _weekNumber ?? _firstWeekNumber;
-    final clamped = (current + delta).clamp(_firstWeekNumber, _lastWeekNumber);
-    if (clamped == current) return;
+  PageController? _pageController;
 
-    setState(() {
-      _weekNumber = clamped;
-      _weekChangeDirection = delta;
-    });
-
-    reload();
+  @override
+  void dispose() {
+    _pageController?.dispose();
+    super.dispose();
   }
 
   @override
@@ -50,225 +44,64 @@ class _HomeworksScreenState extends State<HomeworksScreen>
     BuildContext context,
     RefreshIndicatorBuilder buildRefreshIndicator,
   ) {
+    if (_pageController == null) {
+      return const Center(child: LoadingWidget());
+    }
+
+    final currentWeek = _weekNumber ?? _firstWeekNumber;
+
     return buildRefreshIndicator(
-      child: GestureDetector(
-        behavior: HitTestBehavior.opaque,
+      child: Scaffold(
+        appBar: PreferredSize(
+          preferredSize: const .fromHeight(kToolbarHeight),
 
-        onHorizontalDragEnd: (details) {
-          final v = details.primaryVelocity ?? 0;
+          child: _HomeworksAppBar(
+            firstWeekNumber: _firstWeekNumber,
+            lastWeekNumber: _lastWeekNumber,
 
-          if (v < -300) {
-            _changeWeek(1);
-          } else if (v > 300) {
-            _changeWeek(-1);
-          }
-        },
+            weekNumber: currentWeek,
+            weekChangeDirection: _weekChangeDirection,
+          ),
+        ),
 
-        child: CustomScrollView(
-          slivers: [
-            _HomeworksAppBar(
-              firstWeekNumber: _firstWeekNumber,
-              lastWeekNumber: _lastWeekNumber,
+        body: PageView.builder(
+          itemCount: _lastWeekNumber - _firstWeekNumber + 1,
+          controller: _pageController,
 
-              weekNumber: _weekNumber ?? _firstWeekNumber,
-              weekChangeDirection: _weekChangeDirection,
+          onPageChanged: (index) {
+            final targetWeek = _firstWeekNumber + index;
+            if (targetWeek == _weekNumber) return;
 
-              setWeekNumber: (wn) {
-                final current = _weekNumber ?? _firstWeekNumber;
-                final clamped = wn.clamp(_firstWeekNumber, _lastWeekNumber);
+            final sign = (targetWeek - (_weekNumber ?? targetWeek)).sign;
 
-                setState(() {
-                  _weekNumber = clamped;
-                  _weekChangeDirection = (clamped - current).sign;
-                });
+            setState(() {
+              _weekChangeDirection = sign;
+              _weekNumber = targetWeek;
+            });
 
-                reload();
-              },
-            ),
+            reload();
+          },
 
-            SliverPadding(
-              padding: const .only(left: 12, right: 12),
+          itemBuilder: (context, index) {
+            final week = _firstWeekNumber + index;
+            final homeworks = _weeks[week];
 
-              sliver: SliverList.builder(
-                itemCount: _organizedHomeworks.length,
+            if (homeworks == null) {
+              return const Center(child: LoadingWidget());
+            }
 
-                itemBuilder: (context, index) {
-                  final date = _organizedHomeworks.keys.elementAt(index);
-                  final homeworksForSubject = _organizedHomeworks[date]!;
+            return CustomScrollView(
+              slivers: [
+                _HomeworkList(organizedHomeworks: homeworks),
 
-                  return Padding(
-                    padding: const EdgeInsets.only(bottom: 14),
-
-                    child: Column(
-                      spacing: 12,
-
-                      children: [
-                        Padding(
-                          padding: const .symmetric(horizontal: 8),
-
-                          child: Pressable(
-                            hasVisuals: false,
-
-                            child: Row(
-                              mainAxisAlignment: .spaceBetween,
-
-                              children: [
-                                Text(
-                                  date.asRelativeDate(context),
-
-                                  style: TextStyle(
-                                    color: context.c.outline,
-                                    fontWeight: .bold,
-                                    fontSize: 16,
-                                  ),
-                                ),
-
-                                Icon(
-                                  HugeIconsSolid.arrowDown01,
-                                  color: context.c.outline,
-                                  size: 22,
-                                ),
-                              ],
-                            ),
-                          ),
-                        ),
-
-                        Column(
-                          children: homeworksForSubject.mapL((homework) {
-                            final colors = AdaptedColors.fromScheme(
-                              homework.backgroundColor,
-                              context.c,
-                            );
-
-                            final date = DateFormat(
-                              "dd/MM/yyyy",
-                            ).format(homework.deadlineDate);
-
-                            return Padding(
-                              padding: const .only(bottom: 10),
-
-                              child: Pressable(
-                                borderRadius: .circular(20),
-
-                                onPressed: () async {
-                                  await context.push(
-                                    Routes.homework,
-                                    extra: {"homework": homework},
-                                  );
-                                },
-
-                                child: Ink(
-                                  decoration: BoxDecoration(
-                                    border: .all(color: colors.border),
-                                    borderRadius: .circular(20),
-                                    color: colors.background,
-                                  ),
-
-                                  padding: const .symmetric(
-                                    horizontal: 12,
-                                    vertical: 8,
-                                  ),
-
-                                  child: Column(
-                                    crossAxisAlignment: .start,
-                                    spacing: 6,
-
-                                    children: [
-                                      Row(
-                                        mainAxisAlignment: .spaceBetween,
-                                        spacing: 10,
-
-                                        children: [
-                                          Expanded(
-                                            child: Text(
-                                              homework.subject.name ??
-                                                  context.l10n.noSubject,
-
-                                              overflow: .ellipsis,
-                                              maxLines: 1,
-
-                                              style: TextStyle(
-                                                color: colors.base,
-                                                fontWeight: .w800,
-                                                fontSize: 21,
-                                              ),
-                                            ),
-                                          ),
-
-                                          Text(
-                                            date,
-                                            style: TextStyle(
-                                              fontWeight: .bold,
-                                              color: colors.subtitle,
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-
-                                      HtmlText(
-                                        rawHtml: homework.description,
-                                        collapseLineBreaks: true,
-
-                                        overflow: .ellipsis,
-                                        maxLines: 3,
-
-                                        style: TextStyle(
-                                          color: colors.text,
-                                          fontWeight: .bold,
-                                          fontSize: 15,
-                                        ),
-                                      ),
-
-                                      const SizedBox(height: 6),
-
-                                      Row(
-                                        spacing: 6,
-
-                                        children: [
-                                          Icon(
-                                            homework.isDone
-                                                ? HugeIconsSolid.tick03
-                                                : HugeIconsStroke.tick03,
-
-                                            color: colors.border,
-                                            size: 21,
-                                          ),
-
-                                          Text(
-                                            homework.isDone
-                                                ? context.l10n.homeworkSetDone
-                                                : context
-                                                      .l10n
-                                                      .homeworkSetNotDone,
-
-                                            style: TextStyle(
-                                              color: colors.border,
-                                              fontWeight: .w800,
-                                              fontSize: 15.5,
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              ),
-                            );
-                          }),
-                        ),
-                      ],
-                    ),
-                  );
-                },
-              ),
-            ),
-
-            SliverPadding(
-              padding: EdgeInsets.only(
-                bottom: MediaQuery.of(context).padding.bottom + 10,
-              ),
-            ),
-          ],
+                SliverPadding(
+                  padding: EdgeInsets.only(
+                    bottom: MediaQuery.paddingOf(context).bottom,
+                  ),
+                ),
+              ],
+            );
+          },
         ),
       ),
     );
@@ -279,7 +112,7 @@ class _HomeworksScreenState extends State<HomeworksScreen>
     BuildContext context,
     RefreshIndicatorBuilder buildRefreshIndicator,
   ) {
-    return buildRefreshIndicator(child: const Center(child: LoadingWidget()));
+    return const Center(child: LoadingWidget());
   }
 
   @override
@@ -292,58 +125,240 @@ class _HomeworksScreenState extends State<HomeworksScreen>
     );
 
     _weekNumber ??= session.instance.getWeekNumberForDate(.now());
-
-    final page = await session.access(
-      NotebookPageAccessor(weeks: {_weekNumber ?? _firstWeekNumber}),
+    _pageController ??= PageController(
+      initialPage: (_weekNumber ?? _firstWeekNumber) - _firstWeekNumber,
     );
 
-    _homeworks = page.homeworkSet?.homeworks ?? []
+    final week = _weekNumber!;
+    if (_weeks.containsKey(week)) return;
+
+    final page = await session.access(NotebookPageAccessor(weeks: {week}));
+
+    final homeworks = page.homeworkSet?.homeworks ?? []
       ..sort((a, b) => a.deadlineDate.compareTo(b.deadlineDate));
 
-    _organizedHomeworks.clear();
+    final organized = <DateTime, List<Homework>>{};
 
-    for (final homework in _homeworks) {
-      _organizedHomeworks.putIfAbsent(homework.deadlineDate, () => []);
-      _organizedHomeworks[homework.deadlineDate]!.add(homework);
+    for (final homework in homeworks) {
+      organized.putIfAbsent(homework.deadlineDate, () => []);
+      organized[homework.deadlineDate]!.add(homework);
     }
+
+    _weeks[week] = organized;
+  }
+}
+
+class _HomeworkList extends StatelessWidget {
+  final Map<DateTime, List<Homework>> organizedHomeworks;
+
+  const _HomeworkList({required this.organizedHomeworks});
+
+  @override
+  Widget build(BuildContext context) {
+    return SliverPadding(
+      padding: const .only(left: 12, right: 12),
+
+      sliver: SliverList.builder(
+        itemCount: organizedHomeworks.length,
+
+        itemBuilder: (context, index) {
+          final date = organizedHomeworks.keys.elementAt(index);
+          final homeworksForSubject = organizedHomeworks[date]!;
+
+          return Padding(
+            padding: const EdgeInsets.only(bottom: 14),
+
+            child: Column(
+              spacing: 12,
+
+              children: [
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 8),
+
+                  child: Pressable(
+                    hasVisuals: false,
+
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+
+                      children: [
+                        Text(
+                          date.asRelativeDate(context),
+
+                          style: TextStyle(
+                            color: context.c.outline,
+                            fontWeight: FontWeight.bold,
+                            fontSize: 16,
+                          ),
+                        ),
+
+                        Icon(
+                          HugeIconsSolid.arrowDown01,
+                          color: context.c.outline,
+                          size: 22,
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+
+                Column(
+                  children: homeworksForSubject.mapL(
+                    (homework) => _HomeworkCard(homework: homework),
+                  ),
+                ),
+              ],
+            ),
+          );
+        },
+      ),
+    );
+  }
+}
+
+class _HomeworkCard extends StatelessWidget {
+  final Homework homework;
+
+  const _HomeworkCard({required this.homework});
+
+  @override
+  Widget build(BuildContext context) {
+    final colors = AdaptedColors.fromScheme(
+      homework.backgroundColor,
+      context.c,
+    );
+
+    final dateStr = DateFormat("dd/MM/yyyy").format(homework.deadlineDate);
+
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 10),
+
+      child: Pressable(
+        borderRadius: BorderRadius.circular(20),
+
+        onPressed: () async {
+          await context.push(Routes.homework, extra: {"homework": homework});
+        },
+
+        child: Ink(
+          decoration: BoxDecoration(
+            border: Border.all(color: colors.border),
+            borderRadius: BorderRadius.circular(20),
+            color: colors.background,
+          ),
+
+          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            spacing: 6,
+
+            children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                spacing: 10,
+
+                children: [
+                  Expanded(
+                    child: Text(
+                      homework.subject.name ?? context.l10n.noSubject,
+
+                      overflow: TextOverflow.ellipsis,
+                      maxLines: 1,
+
+                      style: TextStyle(
+                        color: colors.base,
+                        fontWeight: FontWeight.w800,
+                        fontSize: 21,
+                      ),
+                    ),
+                  ),
+
+                  Text(
+                    dateStr,
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      color: colors.subtitle,
+                    ),
+                  ),
+                ],
+              ),
+
+              HtmlText(
+                rawHtml: homework.description,
+                collapseLineBreaks: true,
+
+                overflow: TextOverflow.ellipsis,
+                maxLines: 3,
+
+                style: TextStyle(
+                  color: colors.text,
+                  fontWeight: FontWeight.bold,
+                  fontSize: 15,
+                ),
+              ),
+
+              const SizedBox(height: 6),
+
+              Row(
+                spacing: 6,
+
+                children: [
+                  Icon(
+                    homework.isDone
+                        ? HugeIconsSolid.tick03
+                        : HugeIconsStroke.tick03,
+                    color: colors.border,
+                    size: 21,
+                  ),
+
+                  Text(
+                    homework.isDone
+                        ? context.l10n.homeworkSetDone
+                        : context.l10n.homeworkSetNotDone,
+                    style: TextStyle(
+                      color: colors.border,
+                      fontWeight: FontWeight.w800,
+                      fontSize: 15.5,
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
   }
 }
 
 class _HomeworksAppBar extends StatelessWidget {
-  final void Function(int wn) setWeekNumber;
   final int weekNumber;
   final int weekChangeDirection;
-
   final int firstWeekNumber;
   final int lastWeekNumber;
 
   const _HomeworksAppBar({
-    required this.setWeekNumber,
     required this.weekNumber,
     required this.weekChangeDirection,
-
     required this.firstWeekNumber,
     required this.lastWeekNumber,
   });
 
   @override
   Widget build(BuildContext context) {
-    return SliverAppBar(
-      pinned: true,
-
+    return AppBar(
       title: _WeekPicker(
         weekNumber: weekNumber,
         weekChangeDirection: weekChangeDirection,
         firstWeekNumber: firstWeekNumber,
         lastWeekNumber: lastWeekNumber,
-        setWeekNumber: setWeekNumber,
       ),
     );
   }
 }
 
 class _WeekPicker extends StatefulWidget {
-  final void Function(int) setWeekNumber;
   final int weekNumber;
   final int weekChangeDirection;
 
@@ -351,7 +366,6 @@ class _WeekPicker extends StatefulWidget {
   final int lastWeekNumber;
 
   const _WeekPicker({
-    required this.setWeekNumber,
     required this.weekNumber,
     required this.weekChangeDirection,
     required this.firstWeekNumber,
@@ -416,13 +430,6 @@ class _WeekPickerState extends State<_WeekPicker>
     }
   }
 
-  void _change(int delta) {
-    final next = widget.weekNumber + delta;
-    if (next < widget.firstWeekNumber || next > widget.lastWeekNumber) return;
-
-    widget.setWeekNumber(next);
-  }
-
   @override
   void dispose() {
     _controller.dispose();
@@ -434,51 +441,37 @@ class _WeekPickerState extends State<_WeekPicker>
     final canGoBack = widget.weekNumber > widget.firstWeekNumber;
     final canGoForward = widget.weekNumber < widget.lastWeekNumber;
 
-    return GestureDetector(
-      behavior: HitTestBehavior.opaque,
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      spacing: 8,
 
-      onHorizontalDragEnd: (details) {
-        final v = details.primaryVelocity ?? 0;
+      children: [
+        _DotIndicator(active: canGoBack),
 
-        if (v < -300) {
-          _change(1);
-        } else if (v > 300) {
-          _change(-1);
-        }
-      },
+        AnimatedBuilder(
+          animation: _controller,
 
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.center,
-        spacing: 8,
+          builder: (context, child) {
+            return Transform.translate(
+              offset: Offset(_slideAnim.value, 0),
 
-        children: [
-          _DotIndicator(active: canGoBack),
+              child: Opacity(
+                opacity: _fadeAnim.value.clamp(0.0, 1.0),
+                child: child,
+              ),
+            );
+          },
 
-          AnimatedBuilder(
-            animation: _controller,
+          child: Text(
+            context.l10n.weekNumber(widget.weekNumber),
+            key: ValueKey(widget.weekNumber),
 
-            builder: (context, child) {
-              return Transform.translate(
-                offset: Offset(_slideAnim.value, 0),
-
-                child: Opacity(
-                  opacity: _fadeAnim.value.clamp(0.0, 1.0),
-                  child: child,
-                ),
-              );
-            },
-
-            child: Text(
-              context.l10n.weekNumber(widget.weekNumber),
-              key: ValueKey(widget.weekNumber),
-
-              style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
-            ),
+            style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
           ),
+        ),
 
-          _DotIndicator(active: canGoForward),
-        ],
-      ),
+        _DotIndicator(active: canGoForward),
+      ],
     );
   }
 }
