@@ -40,10 +40,11 @@ class HtmlText extends StatelessWidget {
         processedHtml,
 
         linksCallback: (url) {
-          launchUrlString(url);
+          final decoded = Uri.decodeFull(url);
+          launchUrlString(decoded, mode: LaunchMode.externalApplication);
         },
 
-        defaultTextStyle: style ?? DefaultTextStyle.of(context).style,
+        defaultTextStyle: style,
       ),
 
       overflow: overflow,
