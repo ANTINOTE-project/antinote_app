@@ -50,58 +50,62 @@ class _HomeworksScreenState extends State<HomeworksScreen>
 
     final currentWeek = _weekNumber ?? _firstWeekNumber;
 
-    return buildRefreshIndicator(
-      child: Scaffold(
-        appBar: PreferredSize(
-          preferredSize: const .fromHeight(kToolbarHeight),
+    return Scaffold(
+      appBar: PreferredSize(
+        preferredSize: const .fromHeight(kToolbarHeight),
 
-          child: _HomeworksAppBar(
-            firstWeekNumber: _firstWeekNumber,
-            lastWeekNumber: _lastWeekNumber,
+        child: _HomeworksAppBar(
+          firstWeekNumber: _firstWeekNumber,
+          lastWeekNumber: _lastWeekNumber,
 
-            weekNumber: currentWeek,
-            weekChangeDirection: _weekChangeDirection,
-          ),
+          weekNumber: currentWeek,
+          weekChangeDirection: _weekChangeDirection,
         ),
+      ),
 
-        body: PageView.builder(
-          itemCount: _lastWeekNumber - _firstWeekNumber + 1,
-          controller: _pageController,
+      body: buildRefreshIndicator(
+        child: RefreshIndicator(
+          onRefresh: () => reload(fromRefreshIndicator: true),
 
-          onPageChanged: (index) {
-            final targetWeek = _firstWeekNumber + index;
-            if (targetWeek == _weekNumber) return;
+          child: PageView.builder(
+            itemCount: _lastWeekNumber - _firstWeekNumber + 1,
+            controller: _pageController,
 
-            final sign = (targetWeek - (_weekNumber ?? targetWeek)).sign;
+            onPageChanged: (index) {
+              final targetWeek = _firstWeekNumber + index;
+              if (targetWeek == _weekNumber) return;
 
-            setState(() {
-              _weekChangeDirection = sign;
-              _weekNumber = targetWeek;
-            });
+              final sign = (targetWeek - (_weekNumber ?? targetWeek)).sign;
 
-            reload();
-          },
+              setState(() {
+                _weekChangeDirection = sign;
+                _weekNumber = targetWeek;
+              });
 
-          itemBuilder: (context, index) {
-            final week = _firstWeekNumber + index;
-            final homeworks = _weeks[week];
+              reload();
+            },
 
-            if (homeworks == null) {
-              return const Center(child: LoadingWidget());
-            }
+            itemBuilder: (context, index) {
+              final week = _firstWeekNumber + index;
+              final homeworks = _weeks[week];
 
-            return CustomScrollView(
-              slivers: [
-                _HomeworkList(organizedHomeworks: homeworks),
+              if (homeworks == null) {
+                return const Center(child: LoadingWidget());
+              }
 
-                SliverPadding(
-                  padding: EdgeInsets.only(
-                    bottom: MediaQuery.paddingOf(context).bottom,
+              return CustomScrollView(
+                slivers: [
+                  _HomeworkList(organizedHomeworks: homeworks),
+
+                  SliverPadding(
+                    padding: EdgeInsets.only(
+                      bottom: MediaQuery.paddingOf(context).bottom,
+                    ),
                   ),
-                ),
-              ],
-            );
-          },
+                ],
+              );
+            },
+          ),
         ),
       ),
     );
