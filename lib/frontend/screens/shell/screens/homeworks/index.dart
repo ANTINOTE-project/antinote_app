@@ -1,12 +1,14 @@
 import "dart:async";
 
 import "package:antinote/antinote.dart";
+import "package:antinote_app/backend/backend.dart";
 import "package:antinote_app/frontend/screens/screen.dart";
 import "package:antinote_app/frontend/widgets/customs/loading.dart";
 import "package:antinote_app/frontend/widgets/pressable.dart";
 import "package:antinote_app/frontend/widgets/remote_html.dart";
 import "package:antinote_app/utils.dart";
 import "package:flutter/material.dart";
+import "package:hugeicons_pro/hugeicons.dart";
 import "package:intl/intl.dart";
 import "package:vibration/vibration.dart";
 
@@ -19,6 +21,7 @@ class HomeworksScreen extends StatefulWidget {
 
 class _HomeworksScreenState extends State<HomeworksScreen>
     with ScreenMixin<HomeworksScreen> {
+  final Map<DateTime, List<Homework>> _organizedHomeworks = {};
   List<Homework> _homeworks = [];
 
   late int _firstWeekNumber;
@@ -61,7 +64,7 @@ class _HomeworksScreenState extends State<HomeworksScreen>
 
         child: CustomScrollView(
           slivers: [
-            HomeworksAppBar(
+            _HomeworksAppBar(
               firstWeekNumber: _firstWeekNumber,
               lastWeekNumber: _lastWeekNumber,
 
@@ -81,112 +84,168 @@ class _HomeworksScreenState extends State<HomeworksScreen>
               },
             ),
 
-            SliverList.builder(
-              itemCount: _homeworks.length,
+            SliverPadding(
+              padding: const .only(left: 12, right: 12),
 
-              itemBuilder: (context, index) {
-                final homework = _homeworks[index];
+              sliver: SliverList.builder(
+                itemCount: _organizedHomeworks.length,
 
-                final colors = AdaptedColors.fromScheme(
-                  homework.backgroundColor,
-                  context.c,
-                );
+                itemBuilder: (context, index) {
+                  final date = _organizedHomeworks.keys.elementAt(index);
+                  final homeworksForSubject = _organizedHomeworks[date]!;
 
-                final date = DateFormat(
-                  "dd/MM/yyyy",
-                ).format(homework.deadlineDate);
+                  return Padding(
+                    padding: const EdgeInsets.only(bottom: 14),
 
-                final title = RemoteHtml(rawHtml: homework.description);
+                    child: Column(
+                      spacing: 12,
 
-                return Padding(
-                  padding: const .only(bottom: 8, left: 12, right: 12),
+                      children: [
+                        Padding(
+                          padding: const .symmetric(horizontal: 6),
 
-                  child: Pressable(
-                    borderRadius: .circular(20),
+                          child: Pressable(
+                            hasVisuals: false,
 
-                    child: Ink(
-                      decoration: BoxDecoration(
-                        border: .all(color: colors.border),
-                        borderRadius: .circular(20),
-                        color: colors.background,
-                      ),
-
-                      padding: const .symmetric(horizontal: 12, vertical: 8),
-
-                      child: IntrinsicHeight(
-                        child: Row(
-                          children: [
-                            Expanded(
-                              child: Column(
-                                crossAxisAlignment: .start,
-                                mainAxisSize: .min,
-
-                                children: [
-                                  Text(
-                                    homework.subject.name ??
-                                        context.l10n.noSubject,
-
-                                    overflow: .ellipsis,
-                                    maxLines: 1,
-
-                                    style: TextStyle(
-                                      color: colors.base,
-                                      fontWeight: .w800,
-                                      fontSize: 21,
-                                    ),
-                                  ),
-
-                                  DefaultTextStyle(
-                                    style: TextStyle(
-                                      color: colors.text,
-                                      fontWeight: .bold,
-                                      fontSize: 15,
-                                    ),
-
-                                    overflow: .ellipsis,
-                                    maxLines: 3,
-
-                                    child: title,
-                                  ),
-                                ],
-                              ),
-                            ),
-
-                            const SizedBox(width: 8),
-
-                            Column(
+                            child: Row(
                               mainAxisAlignment: .spaceBetween,
-                              crossAxisAlignment: .end,
 
                               children: [
                                 Text(
-                                  homework.isDone
-                                      ? context.l10n.homeworkDone
-                                      : context.l10n.homeworkNotDone,
+                                  date.asRelativeDate(context),
+
                                   style: TextStyle(
-                                    fontWeight: .w600,
                                     color: context.c.outline,
+                                    fontWeight: .bold,
+                                    fontSize: 16,
                                   ),
                                 ),
 
-                                const Spacer(),
-
-                                Text(
-                                  date,
-                                  style: TextStyle(
-                                    fontWeight: .w600,
-                                    color: context.c.outline,
-                                  ),
+                                Icon(
+                                  HugeIconsSolid.arrowDown01,
+                                  color: context.c.outline,
+                                  size: 22,
                                 ),
                               ],
                             ),
-                          ],
+                          ),
                         ),
-                      ),
+
+                        Column(
+                          children: homeworksForSubject.mapL((homework) {
+                            final colors = AdaptedColors.fromScheme(
+                              homework.backgroundColor,
+                              context.c,
+                            );
+
+                            final date = DateFormat(
+                              "dd/MM/yyyy",
+                            ).format(homework.deadlineDate);
+
+                            final title = RemoteHtml(
+                              rawHtml: homework.description,
+                            );
+
+                            return Padding(
+                              padding: const .only(bottom: 8),
+
+                              child: Pressable(
+                                borderRadius: .circular(20),
+
+                                child: Ink(
+                                  decoration: BoxDecoration(
+                                    border: .all(color: colors.border),
+                                    borderRadius: .circular(20),
+                                    color: colors.background,
+                                  ),
+
+                                  padding: const .symmetric(
+                                    horizontal: 12,
+                                    vertical: 8,
+                                  ),
+
+                                  child: IntrinsicHeight(
+                                    child: Row(
+                                      children: [
+                                        Expanded(
+                                          child: Column(
+                                            crossAxisAlignment: .start,
+                                            mainAxisSize: .min,
+
+                                            children: [
+                                              Text(
+                                                homework.subject.name ??
+                                                    context.l10n.noSubject,
+
+                                                overflow: .ellipsis,
+                                                maxLines: 1,
+
+                                                style: TextStyle(
+                                                  color: colors.base,
+                                                  fontWeight: .w800,
+                                                  fontSize: 21,
+                                                ),
+                                              ),
+
+                                              DefaultTextStyle(
+                                                style: TextStyle(
+                                                  color: colors.text,
+                                                  fontWeight: .bold,
+                                                  fontSize: 15,
+                                                ),
+
+                                                overflow: .ellipsis,
+                                                maxLines: 3,
+
+                                                child: title,
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+
+                                        const SizedBox(width: 8),
+
+                                        Column(
+                                          mainAxisAlignment: .spaceBetween,
+                                          crossAxisAlignment: .end,
+
+                                          children: [
+                                            Text(
+                                              homework.isDone
+                                                  ? context.l10n.homeworkDone
+                                                  : context
+                                                        .l10n
+                                                        .homeworkNotDone,
+                                              style: TextStyle(
+                                                fontWeight: .w600,
+                                                color: context.c.outline,
+                                              ),
+                                            ),
+
+                                            const Spacer(),
+
+                                            Text(
+                                              date,
+                                              style: TextStyle(
+                                                fontWeight: .w600,
+                                                color: context.c.outline,
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            );
+                          }),
+                        ),
+                      ],
                     ),
-                  ),
-                );
-              },
+                  );
+                },
+              ),
             ),
 
             SliverPadding(
@@ -225,10 +284,17 @@ class _HomeworksScreenState extends State<HomeworksScreen>
 
     _homeworks = page.homeworkSet?.homeworks ?? []
       ..sort((a, b) => a.deadlineDate.compareTo(b.deadlineDate));
+
+    _organizedHomeworks.clear();
+
+    for (final homework in _homeworks) {
+      _organizedHomeworks.putIfAbsent(homework.deadlineDate, () => []);
+      _organizedHomeworks[homework.deadlineDate]!.add(homework);
+    }
   }
 }
 
-class HomeworksAppBar extends StatelessWidget {
+class _HomeworksAppBar extends StatelessWidget {
   final void Function(int wn) setWeekNumber;
   final int weekNumber;
   final int weekChangeDirection;
@@ -236,9 +302,7 @@ class HomeworksAppBar extends StatelessWidget {
   final int firstWeekNumber;
   final int lastWeekNumber;
 
-  const HomeworksAppBar({
-    super.key,
-
+  const _HomeworksAppBar({
     required this.setWeekNumber,
     required this.weekNumber,
     required this.weekChangeDirection,
