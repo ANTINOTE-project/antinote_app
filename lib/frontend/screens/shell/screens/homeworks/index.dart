@@ -51,15 +51,12 @@ class _HomeworksScreenState extends State<HomeworksScreen>
     final currentWeek = _weekNumber ?? _firstWeekNumber;
 
     return Scaffold(
-      appBar: PreferredSize(
-        preferredSize: const .fromHeight(kToolbarHeight),
-
-        child: _HomeworksAppBar(
-          firstWeekNumber: _firstWeekNumber,
-          lastWeekNumber: _lastWeekNumber,
-
+      appBar: AppBar(
+        title: _WeekPicker(
           weekNumber: currentWeek,
           weekChangeDirection: _weekChangeDirection,
+          firstWeekNumber: _firstWeekNumber,
+          lastWeekNumber: _lastWeekNumber,
         ),
       ),
 
@@ -331,32 +328,6 @@ class _HomeworkCard extends StatelessWidget {
             ],
           ),
         ),
-      ),
-    );
-  }
-}
-
-class _HomeworksAppBar extends StatelessWidget {
-  final int weekNumber;
-  final int weekChangeDirection;
-  final int firstWeekNumber;
-  final int lastWeekNumber;
-
-  const _HomeworksAppBar({
-    required this.weekNumber,
-    required this.weekChangeDirection,
-    required this.firstWeekNumber,
-    required this.lastWeekNumber,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return AppBar(
-      title: _WeekPicker(
-        weekNumber: weekNumber,
-        weekChangeDirection: weekChangeDirection,
-        firstWeekNumber: firstWeekNumber,
-        lastWeekNumber: lastWeekNumber,
       ),
     );
   }
