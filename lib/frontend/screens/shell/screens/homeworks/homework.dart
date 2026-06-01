@@ -14,6 +14,6 @@ class HomeworkScreen extends StatelessWidget {
     final scheme = Utils.buildColorScheme(context, homework.backgroundColor);
     final date = DateFormat("dd/MM/yyyy").format(homework.deadlineDate);
 
-    return const Scaffold(appBar: AppBarWidget(title: ""));
+    return const Scaffold(appBar: AppBarWidget());
   }
 }

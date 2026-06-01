@@ -10,7 +10,7 @@ class AppBarWidget extends StatelessWidget implements PreferredSizeWidget {
 
   const AppBarWidget({
     super.key,
-    required this.title,
+    this.title,
     this.backButton = true,
     this.actions = const [],
   });
