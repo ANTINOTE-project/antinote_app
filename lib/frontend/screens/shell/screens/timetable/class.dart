@@ -52,19 +52,22 @@ class ClassWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final difference = clazz.endDate.difference(clazz.startDate);
-    final ColorScheme? accentColorScheme;
+    final ColorScheme? scheme;
+
     if (clazz is Lesson) {
       final accent = (clazz as Lesson).backgroundColor;
+
       if (accent != null) {
-        accentColorScheme = ColorScheme.fromSeed(
-          seedColor: Color(accent),
-          brightness: context.c.brightness,
-        );
+        scheme = Utils.buildColorScheme(context, accent);
+
+        // accent is null
       } else {
-        accentColorScheme = null;
+        scheme = null;
       }
+
+      // is not lesson
     } else {
-      accentColorScheme = null;
+      scheme = null;
     }
 
     final duration = Utils.formatDuration(difference);
@@ -72,18 +75,20 @@ class ClassWidget extends StatelessWidget {
     final statusBorder = BorderSide(
       color:
           (clazz.canceled
-                  ? (accentColorScheme?.error ?? context.c.error)
-                  : (accentColorScheme?.secondary ?? context.c.secondary))
+                  ? (scheme?.error ?? context.c.error)
+                  : (scheme?.secondary ?? context.c.secondary))
               .withAlpha(128),
     );
 
     // TODO: fix pressable position
     return Expanded(
       flex: clazz.endDate.difference(clazz.startDate).inMinutes,
+
       child: Pressable(
         borderRadius: connectRight
             ? const .horizontal(left: .circular(20))
             : const .all(.circular(20)),
+
         child: Column(
           children: [
             if (clazz.status != null)
@@ -95,17 +100,20 @@ class ClassWidget extends StatelessWidget {
                   border: .fromBorderSide(statusBorder),
                   color: clazz.canceled
                       ? context.c.errorContainer
-                      : (accentColorScheme?.inversePrimary ??
-                            context.c.inversePrimary),
+                      : (scheme?.inversePrimary ?? context.c.inversePrimary),
                 ),
+
                 padding: const .symmetric(horizontal: 12, vertical: 4),
                 width: .infinity,
+
                 child: Column(
                   mainAxisAlignment: .center,
+
                   children: [
                     Row(
                       mainAxisSize: .min,
                       spacing: 6,
+
                       children: [
                         Icon(
                           clazz.canceled
@@ -114,9 +122,9 @@ class ClassWidget extends StatelessWidget {
                           size: 20,
                           color: clazz.canceled
                               ? context.c.error
-                              : (accentColorScheme?.primary ??
-                                    context.c.primary),
+                              : (scheme?.primary ?? context.c.primary),
                         ),
+
                         Expanded(
                           child: Text(
                             clazz.status ?? "",
@@ -129,8 +137,7 @@ class ClassWidget extends StatelessWidget {
                               fontWeight: .w800,
                               color: clazz.canceled
                                   ? context.c.error
-                                  : (accentColorScheme?.primary ??
-                                        context.c.primary),
+                                  : (scheme?.primary ?? context.c.primary),
                             ),
                           ),
                         ),
@@ -139,23 +146,24 @@ class ClassWidget extends StatelessWidget {
                   ],
                 ),
               ),
+
             Expanded(
               child: Container(
                 clipBehavior: .antiAlias,
+
                 decoration: BoxDecoration(
                   color: clazz.canceled
-                      ? accentColorScheme?.surfaceContainerLow
-                      : accentColorScheme?.primaryContainer,
+                      ? scheme?.surfaceContainerLow
+                      : scheme?.primaryContainer,
+
                   border: clazz.status != null
                       ? .fromLTRB(
                           bottom: statusBorder,
                           left: statusBorder,
                           right: statusBorder,
                         )
-                      : .all(
-                          color:
-                              accentColorScheme?.outline ?? context.c.outline,
-                        ),
+                      : .all(color: scheme?.outline ?? context.c.outline),
+
                   borderRadius: connectRight
                       ? (clazz.status != null
                             ? const .only(
@@ -174,48 +182,57 @@ class ClassWidget extends StatelessWidget {
                             ? const .vertical(top: .zero, bottom: .circular(20))
                             : const .all(.circular(20))),
                 ),
+
                 padding: const EdgeInsets.symmetric(
                   horizontal: 12,
                   vertical: 8,
                 ),
+
                 width: .infinity,
+
                 child: Column(
-                  spacing: 4,
                   crossAxisAlignment: .start,
+                  spacing: 4,
+
                   children: [
                     Text(
                       classTitle(context),
+
                       overflow: .ellipsis,
                       maxLines: 1,
+
                       style: TextStyle(
                         color: clazz.canceled
-                            ? accentColorScheme?.onSurface
-                            : accentColorScheme?.onPrimaryContainer,
+                            ? scheme?.onSurface
+                            : scheme?.onPrimaryContainer,
                         fontWeight: clazz.canceled
                             ? FontWeight.normal
                             : const .new(750),
                         fontSize: 18,
                       ),
                     ),
+
                     Wrap(
                       spacing: 6,
+
                       children: [
                         for (final content in listContents())
-                          TimetableClassContent(
+                          _TimetableClassContent(
                             color: clazz.canceled
-                                ? (accentColorScheme ?? context.c).onSurface
-                                : (accentColorScheme ?? context.c)
-                                      .onPrimaryContainer,
+                                ? (scheme ?? context.c).onSurface
+                                : (scheme ?? context.c).onPrimaryContainer,
                             content: content,
                             weight: clazz.canceled ? .w300 : .w600,
                           ),
                       ],
                     ),
+
                     if (!clazz.canceled)
                       Text(
                         duration,
+
                         style: TextStyle(
-                          color: accentColorScheme?.onSurface.withAlpha(128),
+                          color: scheme?.onSurfaceVariant,
                           fontSize: 14,
                           fontWeight: .w500,
                         ),
@@ -231,9 +248,8 @@ class ClassWidget extends StatelessWidget {
   }
 }
 
-class TimetableClassContent extends StatelessWidget {
-  const TimetableClassContent({
-    super.key,
+class _TimetableClassContent extends StatelessWidget {
+  const _TimetableClassContent({
     required this.color,
     required this.content,
     this.weight = .w600,
@@ -280,8 +296,10 @@ class TimetableClassContent extends StatelessWidget {
 
     return Row(
       mainAxisSize: .min,
+
       children: [
         Icon(icon, color: color, fontWeight: FontWeight(weight.value - 250)),
+
         if (data != null)
           Text(
             data,

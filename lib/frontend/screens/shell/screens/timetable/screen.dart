@@ -32,7 +32,7 @@ class _TimetableScreenState extends State<TimetableScreen>
   bool _animating = false;
   int? _lastPage;
 
-  Future<void> animateToDay(DateTime day) async {
+  Future<void> _animateToDay(DateTime day) async {
     final index = _currentGroups.indexWhere((element) => element.contains(day));
 
     _animating = true;
@@ -46,7 +46,7 @@ class _TimetableScreenState extends State<TimetableScreen>
     _animating = false;
   }
 
-  void onPageDrag() {
+  void _onPageDrag() {
     final curPage = _pageController?.page?.round();
     if (curPage == null) return;
 
@@ -59,7 +59,7 @@ class _TimetableScreenState extends State<TimetableScreen>
     }
   }
 
-  Future<void> updateClasses(DateRange days, {PronoteSession? session}) async {
+  Future<void> _updateClasses(DateRange days, {PronoteSession? session}) async {
     final dayList = days.listDays();
 
     for (final day in days.listDays()) {
@@ -74,6 +74,7 @@ class _TimetableScreenState extends State<TimetableScreen>
     if (_animating) return;
 
     talker.info("Fetching days ${days.pprint(context)}");
+
     Future<void> update(PronoteSession session) async {
       final loadedDays = {for (final day in dayList) day: <Class>[]};
 
@@ -105,7 +106,7 @@ class _TimetableScreenState extends State<TimetableScreen>
 
   @override
   void dispose() {
-    _pageController?.removeListener(onPageDrag);
+    _pageController?.removeListener(_onPageDrag);
     super.dispose();
   }
 
@@ -136,27 +137,33 @@ class _TimetableScreenState extends State<TimetableScreen>
           final days = dayGroup.listDays();
 
           return Scaffold(
-            appBar: buildAppBar(dayGroup, context),
+            appBar: _buildAppBar(dayGroup, context),
+
             body: RefreshIndicator(
               onRefresh: () => reload(fromRefreshIndicator: true),
+
               child: SingleChildScrollView(
                 padding: .only(
-                  bottom: MediaQuery.paddingOf(context).bottom + 10,
+                  bottom: MediaQuery.paddingOf(context).bottom + 20,
                 ),
+
                 child: IntrinsicHeight(
                   child: Row(
                     crossAxisAlignment: .stretch,
+
                     children: [
                       Expanded(
                         flex: days.length * 15,
-                        child: buildTimeColumn(context, days),
+                        child: _buildTimeColumn(context, days),
                       ),
 
                       for (final day in days)
                         Expanded(
                           flex: 85,
+
                           child: ValueListenableBuilder(
                             valueListenable: _classes[day]!,
+
                             builder: (context, dayClasses, child) {
                               if (dayClasses == null) {
                                 return const Center(child: LoadingWidget());
@@ -172,29 +179,34 @@ class _TimetableScreenState extends State<TimetableScreen>
                                   child: Column(
                                     mainAxisAlignment: .center,
                                     spacing: 6,
+
                                     children: [
                                       Icon(
                                         holiday == null
                                             ? HugeIconsSolid.calendar04
                                             : HugeIconsSolid.beach,
-                                        size: 44,
+
                                         color: context.c.outline,
+                                        size: 44,
                                       ),
+
                                       Text(
                                         holiday?.name ??
                                             context.l10n.noCourseToday,
+
+                                        textAlign: .center,
+
                                         style: TextStyle(
                                           fontWeight: .bold,
                                           color: context.c.outline,
                                         ),
-                                        textAlign: .center,
                                       ),
                                     ],
                                   ),
                                 );
                               }
 
-                              return buildClassesColumn(
+                              return _buildClassesColumn(
                                 context,
                                 day,
                                 dayClasses,
@@ -213,7 +225,7 @@ class _TimetableScreenState extends State<TimetableScreen>
     );
   }
 
-  AppBar buildAppBar(DateRange dayGroup, BuildContext context) {
+  AppBar _buildAppBar(DateRange dayGroup, BuildContext context) {
     return AppBar(
       title: TextButton.icon(
         label: Text(dayGroup.pprint(context)),
@@ -230,14 +242,15 @@ class _TimetableScreenState extends State<TimetableScreen>
 
           if (selected == null) return;
 
-          animateToDay(selected.copyWith(isUtc: true).toDay());
+          _animateToDay(selected.copyWith(isUtc: true).toDay());
         },
       ),
     );
   }
 
-  Widget buildTimeColumn(BuildContext context, List<DateTime> days) {
+  Widget _buildTimeColumn(BuildContext context, List<DateTime> days) {
     final relevantSlots = <int>{};
+
     for (final day in days) {
       for (final clazz in _classes[day]!.value ?? <ClassBlock>[]) {
         relevantSlots.add(clazz.startSlot % _scheduleDisplayData.slotsPerDay);
@@ -292,25 +305,32 @@ class _TimetableScreenState extends State<TimetableScreen>
               Duration.minutesPerHour +
           curEndSlot.timing.minute -
           curSlot.timing.minute;
+
       displays.add(
         Expanded(
           flex: value,
+
           child: Stack(
             fit: .expand,
+
             children: [
               if (curSlot.active)
                 Align(
                   alignment: .topCenter,
+
                   child: Column(
                     mainAxisSize: .min,
                     children: [const Divider(height: 0), Text(curSlot.label)],
                   ),
                 ),
+
               if (curEndSlot.active)
                 Align(
                   alignment: .bottomCenter,
+
                   child: Column(
                     mainAxisSize: .min,
+
                     children: [
                       Text(curEndSlot.label),
                       const Divider(height: 0),
@@ -328,7 +348,7 @@ class _TimetableScreenState extends State<TimetableScreen>
     return Column(children: displays);
   }
 
-  Widget buildClassesColumn(
+  Widget _buildClassesColumn(
     BuildContext context,
     DateTime day,
     List<ClassBlock> blocks,
@@ -336,6 +356,7 @@ class _TimetableScreenState extends State<TimetableScreen>
     final displays = <Widget>[];
 
     DateTime? curTime;
+
     for (final block in blocks) {
       if (curTime != null && !curTime.isAtSameMomentAs(block.startTime)) {
         displays.add(
@@ -349,6 +370,7 @@ class _TimetableScreenState extends State<TimetableScreen>
       displays.add(
         Expanded(
           flex: block.endTime.difference(block.startTime).inMinutes,
+
           child: TimetableBlockWidget(
             displayParameters: _scheduleDisplayData,
             day: day,
@@ -408,9 +430,9 @@ class _TimetableScreenState extends State<TimetableScreen>
       }
 
       _pageController = PageController(initialPage: currentGroupIndex);
-      _pageController?.addListener(onPageDrag);
+      _pageController?.addListener(_onPageDrag);
     }
 
-    await updateClasses(_currentGroups[currentGroupIndex], session: session);
+    await _updateClasses(_currentGroups[currentGroupIndex], session: session);
   }
 }
