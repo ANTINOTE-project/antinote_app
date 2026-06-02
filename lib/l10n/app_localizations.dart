@@ -184,6 +184,12 @@ abstract class AppLocalizations {
   /// **'Renseigne l\'URL de ton espace PRONOTE pour t\'y connecter directement'**
   String get loginUrlSubtitle;
 
+  /// No description provided for @loginButton.
+  ///
+  /// In fr, this message translates to:
+  /// **'Se connecter'**
+  String get loginButton;
+
   /// No description provided for @loginSchool.
   ///
   /// In fr, this message translates to:

@@ -57,6 +57,9 @@ class AppLocalizationsFr extends AppLocalizations {
       'Renseigne l\'URL de ton espace PRONOTE pour t\'y connecter directement';
 
   @override
+  String get loginButton => 'Se connecter';
+
+  @override
   String get loginSchool => 'Choisis ton établissement';
 
   @override

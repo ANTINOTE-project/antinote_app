@@ -1,13 +1,17 @@
 import "dart:async";
 
 import "package:antinote/antinote.dart";
+import "package:antinote_app/frontend/routing/routes.dart";
 import "package:antinote_app/frontend/widgets/customs/app_bar.dart";
+import "package:antinote_app/frontend/widgets/customs/button.dart";
 import "package:antinote_app/frontend/widgets/customs/field.dart";
 import "package:antinote_app/frontend/widgets/customs/list.dart";
+import "package:antinote_app/frontend/widgets/customs/loading.dart";
 import "package:antinote_app/main.dart";
 import "package:antinote_app/utils.dart";
 import "package:flutter/foundation.dart";
 import "package:flutter/material.dart";
+import "package:go_router/go_router.dart";
 
 class LoginUrlScreen extends StatefulWidget {
   const LoginUrlScreen({super.key});
@@ -21,6 +25,7 @@ class _LoginUrlScreenState extends State<LoginUrlScreen> {
   Timer? _debounce;
 
   Completer<SpecificInstanceParameters?>? lastApplicableParameters;
+  Uri? instanceUrl;
 
   @override
   void dispose() {
@@ -38,47 +43,49 @@ class _LoginUrlScreenState extends State<LoginUrlScreen> {
     });
 
     _debounce = Timer(const Duration(seconds: 1), () async {
-      final url = Uri.tryParse(_controller.text.trim());
+      instanceUrl = Uri.tryParse(_controller.text.trim());
 
-      if (url == null) {
-        lastApplicableParameters?.complete(null);
-
-        return;
+      if (instanceUrl == null) {
+        return lastApplicableParameters?.complete(null);
       }
 
       try {
         final workspacesSession = await PronoteSession.init(
-          url,
+          instanceUrl!,
           workspace: Workspace.common,
         );
+
         await workspacesSession.access(const InstanceParametersAccessor());
         await workspacesSession.access(const DisconnectionAccessor.unlogged());
 
         for (final workspace in workspacesSession.broadInstance.workspaces) {
           try {
             final session = await PronoteSession.init(
-              url,
+              instanceUrl!,
               workspace: workspace,
             );
+
             await session.access(const InstanceParametersAccessor());
             await session.access(const DisconnectionAccessor.unlogged());
 
             lastApplicableParameters?.complete(session.instance);
             break;
+
+            // catch
           } catch (e, st) {
             if (kDebugMode) {
               talker.error(
-                "Could not start ${workspace.label} session at $url",
+                "Could not start ${workspace.label} session at $instanceUrl",
                 e,
                 st,
               );
             }
           }
         }
-      } catch (e) {
-        lastApplicableParameters?.complete(null);
 
-        return;
+        // catch
+      } catch (e) {
+        return lastApplicableParameters?.complete(null);
       }
     });
   }
@@ -87,11 +94,13 @@ class _LoginUrlScreenState extends State<LoginUrlScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBarWidget(title: context.l10n.loginUrl),
+
       body: CustomScrollView(
         slivers: [
           SliverToBoxAdapter(
             child: Padding(
-              padding: const EdgeInsets.all(12),
+              padding: const .symmetric(horizontal: 12, vertical: 8),
+
               // TODO: Faire en sorte que ça n'overflow pas.
               child: FieldWidget(
                 controller: _controller,
@@ -100,66 +109,114 @@ class _LoginUrlScreenState extends State<LoginUrlScreen> {
               ),
             ),
           ),
+
           FutureBuilder(
             future: lastApplicableParameters?.future,
+
             builder: (context, snapshot) {
-              if (snapshot.connectionState == .none) {
-                return const SliverOffstage();
+              if (snapshot.connectionState == ConnectionState.none) {
+                return const SliverToBoxAdapter(child: SizedBox.shrink());
               }
 
-              if (snapshot.connectionState != .done) {
+              if (snapshot.connectionState != ConnectionState.done) {
                 return const SliverFillRemaining(
-                  child: Center(child: CircularProgressIndicator()),
+                  child: Center(child: LoadingWidget()),
                 );
               }
 
               if (!snapshot.hasData) {
-                return Center(child: Text(context.l10n.couldNotLoad));
+                return SliverFillRemaining(
+                  child: Center(child: Text(context.l10n.couldNotLoad)),
+                );
               }
 
               final instance = snapshot.requireData!;
 
               return SliverPadding(
-                padding: const .symmetric(horizontal: 12),
+                padding: const EdgeInsets.symmetric(horizontal: 12),
 
-                sliver: ListWidget(
-                  items: [
-                    (
-                      title: context.l10n.instanceName,
-                      subtitle: context.l10n.instanceNameValue(
-                        instance.establishmentName,
-                        instance.loginEstablishmentName,
-                      ),
-                    ),
-                    (
-                      title: context.l10n.remoteVersion,
-                      subtitle: instance.version.toString(),
-                    ),
-                    (
-                      title: context.l10n.remoteYear,
-                      subtitle: context.l10n.remoteYearSubtitle(
-                        instance.firstDate,
-                        instance.lastDate,
-                      ),
-                    ),
-                    (
-                      title: context.l10n.remoteYear,
-                      subtitle: context.l10n.remoteYearSubtitle(
-                        instance.firstDate,
-                        instance.lastDate,
-                      ),
-                    ),
-                    (title: context.l10n.remotePeriods, subtitle: ""),
-                  ],
+                sliver: SliverToBoxAdapter(
+                  child: Column(
+                    spacing: 8,
 
-                  itemBuilder: (context, item, borderRadius) {
-                    return ItemWidget(
-                      borderRadius: borderRadius,
+                    children: [
+                      ListWidget(
+                        physics: const NeverScrollableScrollPhysics(),
+                        shrinkWrap: true,
+                        isSliver: false,
 
-                      title: Text(item.title),
-                      subtitle: Text(item.subtitle),
-                    );
-                  },
+                        items: [
+                          (
+                            title: context.l10n.instanceName,
+                            subtitle: context.l10n.instanceNameValue(
+                              instance.establishmentName,
+                              instance.loginEstablishmentName,
+                            ),
+                          ),
+                          (
+                            title: context.l10n.remoteVersion,
+                            subtitle: instance.version.toString(),
+                          ),
+                          (
+                            title: context.l10n.remoteYear,
+                            subtitle: context.l10n.remoteYearSubtitle(
+                              instance.firstDate,
+                              instance.lastDate,
+                            ),
+                          ),
+                          (
+                            title: context.l10n.remoteYear,
+                            subtitle: context.l10n.remoteYearSubtitle(
+                              instance.firstDate,
+                              instance.lastDate,
+                            ),
+                          ),
+                          (title: context.l10n.remotePeriods, subtitle: ""),
+                        ],
+
+                        itemBuilder: (context, item, borderRadius) {
+                          return ItemWidget(
+                            borderRadius: borderRadius,
+
+                            title: Text(item.title),
+                            subtitle: Text(item.subtitle),
+                          );
+                        },
+                      ),
+
+                      ButtonWidget(
+                        onPressed: () async {
+                          try {
+                            final parameters =
+                                await MobileInstanceParameters.fetch(
+                                  instanceUrl!,
+                                );
+
+                            if (!context.mounted) return;
+
+                            final result = await context.push<LoginResult>(
+                              Routes.auth.workspace,
+                              extra: {"parameters": parameters},
+                            );
+
+                            if (result != null && context.mounted) {
+                              context.pop(result);
+                            }
+
+                            // catch
+                          } catch (e, st) {
+                            talker.error(
+                              "Error during fetch of parameters",
+                              e,
+                              st,
+                            );
+                          }
+                        },
+
+                        label: context.l10n.loginButton,
+                      ),
+                    ],
+                  ),
                 ),
               );
             },
