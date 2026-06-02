@@ -67,7 +67,7 @@ class ClassWidget extends StatelessWidget {
       accentColorScheme = null;
     }
 
-    final duration = Utils.formatDurationCompact(difference);
+    final duration = Utils.formatDuration(difference);
 
     final statusBorder = BorderSide(
       color:

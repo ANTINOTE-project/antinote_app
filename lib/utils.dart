@@ -27,13 +27,13 @@ class Utils {
     return "${d.inMinutes} min";
   }
 
-  static String formatDuration(Duration d) {
-    return "${d.inHours > 0 ? "${d.inHours}h " : ""}${d.inMinutes % 60} min";
-  }
-
-  static String formatDurationCompact(Duration d) {
+  static String formatDuration(Duration d, {bool isCompact = false}) {
     if (d.inMinutes > 60) {
-      return "${d.inHours > 0 ? "${d.inHours}h" : ""}${d.inMinutes % 60}";
+      if (isCompact) {
+        return "${d.inHours > 0 ? "${d.inHours}h" : ""}${d.inMinutes % 60}";
+      }
+
+      return "${d.inHours > 0 ? "${d.inHours}h " : ""}${d.inMinutes % 60} min";
     }
 
     return "${d.inMinutes} min";
