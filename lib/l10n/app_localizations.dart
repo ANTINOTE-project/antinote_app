@@ -169,13 +169,13 @@ abstract class AppLocalizations {
   /// No description provided for @loginUrl.
   ///
   /// In fr, this message translates to:
-  /// **'Rentre l\'adresse du PRONOTE de ton établissement'**
+  /// **'URL de ton établissement'**
   String get loginUrl;
 
   /// No description provided for @loginUrlSubtitle.
   ///
   /// In fr, this message translates to:
-  /// **'Renseigne l\'URL de ton espace PRONOTE pour t\'y connecter directement'**
+  /// **'Renseigne l\'URL de ton espace PRONOTE pour t\'y connecter'**
   String get loginUrlSubtitle;
 
   /// No description provided for @loginButton.

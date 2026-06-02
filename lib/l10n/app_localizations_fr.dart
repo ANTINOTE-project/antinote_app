@@ -47,11 +47,11 @@ class AppLocalizationsFr extends AppLocalizations {
       'Entre le nom de ta ville et choisis ton établissement';
 
   @override
-  String get loginUrl => 'Rentre l\'adresse du PRONOTE de ton établissement';
+  String get loginUrl => 'URL de ton établissement';
 
   @override
   String get loginUrlSubtitle =>
-      'Renseigne l\'URL de ton espace PRONOTE pour t\'y connecter directement';
+      'Renseigne l\'URL de ton espace PRONOTE pour t\'y connecter';
 
   @override
   String get loginButton => 'Se connecter';
