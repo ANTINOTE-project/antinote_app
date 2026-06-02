@@ -335,6 +335,7 @@ class _HomeworkListState extends State<_HomeworkList> {
 
 class _HomeworkCard extends StatelessWidget {
   final Homework homework;
+
   const _HomeworkCard({required this.homework});
 
   @override
@@ -396,6 +397,8 @@ class _HomeworkCard extends StatelessWidget {
 
               HtmlText(
                 rawHtml: homework.description,
+
+                removeStyleAndFontSize: true,
                 collapseLineBreaks: true,
 
                 overflow: TextOverflow.ellipsis,
