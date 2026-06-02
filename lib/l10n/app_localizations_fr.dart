@@ -33,6 +33,12 @@ class AppLocalizationsFr extends AppLocalizations {
   String get delete => 'Supprimer';
 
   @override
+  String get cancel => 'Annuler';
+
+  @override
+  String get validate => 'Valider';
+
+  @override
   String get loginQrCode => 'QR Code';
 
   @override
@@ -76,6 +82,13 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get loginPassword => 'Mot de passe';
+
+  @override
+  String get loginPinCode => 'Code PIN';
+
+  @override
+  String get loginPinCodeSubtitle =>
+      'Veuillez rentrer votre code PIN vous connecter à votre compte PRONOTE.';
 
   @override
   String get home => 'Accueil';
