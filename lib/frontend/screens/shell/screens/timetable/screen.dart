@@ -199,21 +199,6 @@ class _TimetableScreenState extends State<TimetableScreen>
                                 day,
                                 dayClasses,
                               );
-                              // return Column(
-                              //   children: [
-                              //     for (final block in dayClasses)
-                              //       Expanded(
-                              //         flex: block.endTime
-                              //             .difference(block.startTime)
-                              //             .inMinutes,
-                              //         child: TimetableBlockSliver(
-                              //           displayParameters: _scheduleDisplayData,
-                              //           day: day,
-                              //           block: block,
-                              //         ),
-                              //       ),
-                              //   ],
-                              // );
                             },
                           ),
                         ),
