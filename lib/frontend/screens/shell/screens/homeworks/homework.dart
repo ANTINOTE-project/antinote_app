@@ -21,12 +21,20 @@ class HomeworkScreen extends StatelessWidget {
     final deadlineDate = DateFormat("dd/MM").format(homework.deadlineDate);
     final givenDate = DateFormat("dd/MM").format(homework.givenDate);
 
-    final render = switch (homework.assignmentToRenderType) {
+    final renderLabel = switch (homework.assignmentToRenderType) {
       .pronoteRender => context.l10n.homeworkRenderPronote,
       .noRender => context.l10n.homeworkRenderNone,
       .paperRender => context.l10n.homeworkRenderPaper,
       .kiosqueRender => context.l10n.homeworkRenderKiosque, // unknown
       .pronoteAudioRecordingRender => context.l10n.homeworkRenderPronoteAudio,
+    };
+
+    final renderIcon = switch (homework.assignmentToRenderType) {
+      .pronoteRender => HugeIconsSolid.fileUpload,
+      .noRender => null,
+      .paperRender => HugeIconsSolid.course,
+      .kiosqueRender => HugeIconsSolid.note01, // unknown
+      .pronoteAudioRecordingRender => HugeIconsSolid.mic01,
     };
 
     return Scaffold(
@@ -121,8 +129,12 @@ class HomeworkScreen extends StatelessWidget {
                         topRight: Radius.zero,
                       ),
 
+                      leading: renderIcon != null
+                          ? Icon(renderIcon, color: scheme.onSurface, size: 21)
+                          : null,
+
                       title: Text(
-                        render,
+                        renderLabel,
                         style: TextStyle(color: scheme.onSurface),
                       ),
                     ),
