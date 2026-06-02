@@ -36,18 +36,19 @@ class ClassWidget extends StatelessWidget {
     VirtualClassroomContent,
   ];
 
-  List<ClassContent> listContents() =>
-      clazz.contents
-          .where(
-            (element) => element is! TitleContent && element is! SubjectContent,
-          )
-          .toList(growable: false)
-        ..sortByCompare(
-          (element) => element.runtimeType,
-          (a, b) => _contentPriorities
-              .indexOf(a)
-              .compareTo(_contentPriorities.indexOf(b)),
-        );
+  List<ClassContent> listContents() {
+    return clazz.contents
+        .where(
+          (element) => element is! TitleContent && element is! SubjectContent,
+        )
+        .toList(growable: false)
+      ..sortByCompare(
+        (element) => element.runtimeType,
+        (a, b) => _contentPriorities
+            .indexOf(a)
+            .compareTo(_contentPriorities.indexOf(b)),
+      );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -68,20 +69,38 @@ class ClassWidget extends StatelessWidget {
       color: clazz.canceled ? scheme.error : scheme.secondary,
     );
 
-    const double radius = 20.0;
+    const double radius = 20;
+    const double reducedRadius = 6;
 
     final outerBorderRadius = connectRight
-        ? const BorderRadius.horizontal(left: Radius.circular(radius))
+        ? const BorderRadius.only(
+            topLeft: Radius.circular(radius),
+            bottomLeft: Radius.circular(radius),
+            topRight: Radius.circular(reducedRadius),
+            bottomRight: Radius.circular(reducedRadius),
+          )
         : BorderRadius.circular(radius);
 
     final headerBorderRadius = connectRight
-        ? const BorderRadius.only(topLeft: Radius.circular(radius))
+        ? const BorderRadius.only(
+            topLeft: Radius.circular(radius),
+            topRight: Radius.circular(reducedRadius),
+          )
         : const BorderRadius.vertical(top: Radius.circular(radius));
 
+    // War crime here
     final bodyBorderRadius = connectRight
         ? (clazz.status != null
-              ? const BorderRadius.only(bottomLeft: Radius.circular(radius))
-              : const BorderRadius.horizontal(left: Radius.circular(radius)))
+              ? const BorderRadius.only(
+                  bottomLeft: Radius.circular(radius),
+                  bottomRight: Radius.circular(reducedRadius),
+                )
+              : const BorderRadius.only(
+                  topLeft: Radius.circular(radius),
+                  bottomLeft: Radius.circular(radius),
+                  topRight: Radius.circular(reducedRadius),
+                  bottomRight: Radius.circular(reducedRadius),
+                ))
         : (clazz.status != null
               ? const BorderRadius.vertical(bottom: Radius.circular(radius))
               : BorderRadius.circular(radius));
@@ -98,17 +117,14 @@ class ClassWidget extends StatelessWidget {
               Ink(
                 decoration: BoxDecoration(
                   borderRadius: headerBorderRadius,
-                  border: Border.fromBorderSide(statusBorder),
+                  border: .fromBorderSide(statusBorder),
                   color: clazz.canceled
-                      ? context.c.errorContainer
-                      : scheme.inversePrimary,
+                      ? scheme.errorContainer
+                      : scheme.secondaryContainer,
                 ),
 
+                padding: const .symmetric(horizontal: 12, vertical: 4),
                 width: double.infinity,
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 12,
-                  vertical: 4,
-                ),
 
                 child: Column(
                   mainAxisAlignment: .center,
@@ -124,10 +140,10 @@ class ClassWidget extends StatelessWidget {
                               ? HugeIconsSolid.alertCircle
                               : HugeIconsSolid.informationCircle,
 
-                          size: 20,
                           color: clazz.canceled
-                              ? context.c.error
-                              : scheme.primary,
+                              ? scheme.error
+                              : scheme.secondary,
+                          size: 21,
                         ),
 
                         Expanded(
@@ -138,11 +154,11 @@ class ClassWidget extends StatelessWidget {
                             maxLines: 1,
 
                             style: TextStyle(
-                              fontSize: 15,
-                              fontWeight: .w800,
+                              fontSize: 16,
+                              fontWeight: .w900,
                               color: clazz.canceled
                                   ? context.c.error
-                                  : scheme.primary,
+                                  : scheme.secondary,
                             ),
                           ),
                         ),
@@ -170,12 +186,12 @@ class ClassWidget extends StatelessWidget {
                   borderRadius: bodyBorderRadius,
                 ),
 
-                padding: const .symmetric(horizontal: 12, vertical: 8),
+                padding: const .symmetric(horizontal: 10, vertical: 5),
                 width: double.infinity,
 
                 child: Column(
                   crossAxisAlignment: .start,
-                  spacing: 1,
+                  spacing: 2,
 
                   children: [
                     Text(

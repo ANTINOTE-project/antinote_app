@@ -56,33 +56,33 @@ class _TimetableBlockWidgetState extends State<TimetableBlockWidget> {
             Expanded(
               child: Pressable(
                 onPressed: () {
+                  if (i == configurationIndex) return;
+
                   setState(() {
                     configurationIndex = i;
                   });
                 },
 
                 child: Container(
-                  margin: .only(
-                    left: 4,
-                    right: 4,
-                    top: i > 0 ? 1 : 4,
-                    bottom: i == widget.block.configurations.length - 1 ? 4 : 1,
-                  ),
-
                   decoration: BoxDecoration(
                     color: i == configurationIndex
-                        ? context.c.tertiaryContainer
+                        ? context.c.secondaryContainer
                         : null,
+
                     borderRadius: .only(
+                      bottomRight: i == 0 ? .zero : const .circular(16),
                       topRight: i == widget.block.configurations.length - 1
                           ? .zero
                           : const .circular(16),
-                      bottomRight: i == 0 ? .zero : const .circular(16),
                     ),
                   ),
 
                   alignment: .center,
-                  child: Text((i + 1).toString()),
+
+                  child: Text(
+                    (i + 1).toString(),
+                    style: const TextStyle(fontWeight: .w800),
+                  ),
                 ),
               ),
             ),
@@ -115,7 +115,12 @@ class _TimetableBlockWidgetState extends State<TimetableBlockWidget> {
               switchInCurve: Curves.fastOutSlowIn,
               switchOutCurve: const ReversedCurve(Curves.fastOutSlowIn),
 
+              transitionBuilder: (child, animation) {
+                return FadeTransition(opacity: animation, child: child);
+              },
+
               child: IndexedStack(
+                key: ValueKey(configurationIndex),
                 index: configurationIndex,
 
                 children: [
