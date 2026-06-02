@@ -26,4 +26,6 @@ class _AuthRoute {
   String get webview => "/auth/webview";
 
   String get password => "/auth/password";
+
+  String get qrCode => "/auth/qr_code";
 }

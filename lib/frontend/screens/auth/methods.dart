@@ -25,7 +25,7 @@ class MethodsScreen extends StatelessWidget with WidgetsBindingObserver {
   List<Method> buildOptions(BuildContext context) {
     return [
       (
-        icon: HugeIconsSolid.maping,
+        icon: HugeIconsSolid.mapsSearch,
 
         title: context.l10n.loginCity,
         subtitle: context.l10n.loginCitySubtitle,
@@ -34,6 +34,19 @@ class MethodsScreen extends StatelessWidget with WidgetsBindingObserver {
           await sendResultIfLoggedIn(
             context,
             context.push<LoginResult>(Routes.auth.city),
+          );
+        },
+      ),
+      (
+        icon: HugeIconsSolid.qrCode01,
+
+        title: context.l10n.loginQrCode,
+        subtitle: context.l10n.loginQrCodeSubtitle,
+
+        onPressed: () async {
+          await sendResultIfLoggedIn(
+            context,
+            context.push<LoginResult>(Routes.auth.qrCode),
           );
         },
       ),

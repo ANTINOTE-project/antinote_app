@@ -4,6 +4,7 @@ import "package:antinote_app/frontend/screens/auth/accounts.dart";
 import "package:antinote_app/frontend/screens/auth/city.dart";
 import "package:antinote_app/frontend/screens/auth/methods.dart";
 import "package:antinote_app/frontend/screens/auth/password.dart";
+import "package:antinote_app/frontend/screens/auth/qr_code.dart";
 import "package:antinote_app/frontend/screens/auth/school.dart";
 import "package:antinote_app/frontend/screens/auth/url.dart";
 import "package:antinote_app/frontend/screens/auth/webview.dart";
@@ -74,6 +75,10 @@ GoRouter makeRouter({String initialLocation = Routes.appShell}) => GoRouter(
           baseUrl: extra["baseUrl"] as Uri,
         );
       },
+    ),
+    GoRoute(
+      path: Routes.auth.qrCode,
+      builder: (context, state) => const LoginQrCodeScreen(),
     ),
 
     GoRoute(
