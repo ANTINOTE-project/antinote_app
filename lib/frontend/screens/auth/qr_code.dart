@@ -18,8 +18,8 @@ class _LoginQrCodeScreenState extends State<LoginQrCodeScreen> {
 
   @override
   void dispose() {
-    super.dispose();
     _scanController.dispose();
+    super.dispose();
   }
 
   Future<Future<LoginResult>?> _askForPin(String qrCodeContent) async {
