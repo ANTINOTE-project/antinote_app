@@ -52,59 +52,63 @@ class ClassWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final difference = clazz.endDate.difference(clazz.startDate);
-    final ColorScheme? scheme;
+    ColorScheme scheme = context.c;
 
     if (clazz is Lesson) {
       final accent = (clazz as Lesson).backgroundColor;
 
       if (accent != null) {
         scheme = Utils.buildColorScheme(context, accent);
-
-        // accent is null
-      } else {
-        scheme = null;
       }
-
-      // is not lesson
-    } else {
-      scheme = null;
     }
 
     final duration = Utils.formatDuration(difference);
 
     final statusBorder = BorderSide(
-      color:
-          (clazz.canceled
-                  ? (scheme?.error ?? context.c.error)
-                  : (scheme?.secondary ?? context.c.secondary))
-              .withAlpha(128),
+      color: clazz.canceled ? scheme.error : scheme.secondary,
     );
 
-    // TODO: fix pressable position
+    const double radius = 20.0;
+
+    final outerBorderRadius = connectRight
+        ? const BorderRadius.horizontal(left: Radius.circular(radius))
+        : BorderRadius.circular(radius);
+
+    final headerBorderRadius = connectRight
+        ? const BorderRadius.only(topLeft: Radius.circular(radius))
+        : const BorderRadius.vertical(top: Radius.circular(radius));
+
+    final bodyBorderRadius = connectRight
+        ? (clazz.status != null
+              ? const BorderRadius.only(bottomLeft: Radius.circular(radius))
+              : const BorderRadius.horizontal(left: Radius.circular(radius)))
+        : (clazz.status != null
+              ? const BorderRadius.vertical(bottom: Radius.circular(radius))
+              : BorderRadius.circular(radius));
+
     return Expanded(
       flex: clazz.endDate.difference(clazz.startDate).inMinutes,
 
       child: Pressable(
-        borderRadius: connectRight
-            ? const .horizontal(left: .circular(20))
-            : const .all(.circular(20)),
+        borderRadius: outerBorderRadius,
 
         child: Column(
           children: [
             if (clazz.status != null)
-              Container(
+              Ink(
                 decoration: BoxDecoration(
-                  borderRadius: connectRight
-                      ? const .only(topLeft: .circular(20))
-                      : const .vertical(top: .circular(20)),
-                  border: .fromBorderSide(statusBorder),
+                  borderRadius: headerBorderRadius,
+                  border: Border.fromBorderSide(statusBorder),
                   color: clazz.canceled
                       ? context.c.errorContainer
-                      : (scheme?.inversePrimary ?? context.c.inversePrimary),
+                      : scheme.inversePrimary,
                 ),
 
-                padding: const .symmetric(horizontal: 12, vertical: 4),
-                width: .infinity,
+                width: double.infinity,
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 12,
+                  vertical: 4,
+                ),
 
                 child: Column(
                   mainAxisAlignment: .center,
@@ -119,10 +123,11 @@ class ClassWidget extends StatelessWidget {
                           clazz.canceled
                               ? HugeIconsSolid.alertCircle
                               : HugeIconsSolid.informationCircle,
+
                           size: 20,
                           color: clazz.canceled
                               ? context.c.error
-                              : (scheme?.primary ?? context.c.primary),
+                              : scheme.primary,
                         ),
 
                         Expanded(
@@ -137,7 +142,7 @@ class ClassWidget extends StatelessWidget {
                               fontWeight: .w800,
                               color: clazz.canceled
                                   ? context.c.error
-                                  : (scheme?.primary ?? context.c.primary),
+                                  : scheme.primary,
                             ),
                           ),
                         ),
@@ -148,51 +153,29 @@ class ClassWidget extends StatelessWidget {
               ),
 
             Expanded(
-              child: Container(
-                clipBehavior: .antiAlias,
-
+              child: Ink(
                 decoration: BoxDecoration(
                   color: clazz.canceled
-                      ? scheme?.surfaceContainerLow
-                      : scheme?.primaryContainer,
+                      ? scheme.surfaceContainerLow
+                      : scheme.primaryContainer,
 
                   border: clazz.status != null
-                      ? .fromLTRB(
+                      ? Border(
                           bottom: statusBorder,
                           left: statusBorder,
                           right: statusBorder,
                         )
-                      : .all(color: scheme?.outline ?? context.c.outline),
+                      : Border.all(color: scheme.outline),
 
-                  borderRadius: connectRight
-                      ? (clazz.status != null
-                            ? const .only(
-                                bottomLeft: .circular(20),
-                                topRight: .zero,
-                                bottomRight: .zero,
-                                topLeft: .zero,
-                              )
-                            : const .only(
-                                bottomLeft: .circular(20),
-                                topLeft: .circular(20),
-                                bottomRight: .zero,
-                                topRight: .zero,
-                              ))
-                      : (clazz.status != null
-                            ? const .vertical(top: .zero, bottom: .circular(20))
-                            : const .all(.circular(20))),
+                  borderRadius: bodyBorderRadius,
                 ),
 
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 12,
-                  vertical: 8,
-                ),
-
-                width: .infinity,
+                padding: const .symmetric(horizontal: 12, vertical: 8),
+                width: double.infinity,
 
                 child: Column(
                   crossAxisAlignment: .start,
-                  spacing: 4,
+                  spacing: 1,
 
                   children: [
                     Text(
@@ -202,29 +185,22 @@ class ClassWidget extends StatelessWidget {
                       maxLines: 1,
 
                       style: TextStyle(
-                        color: clazz.canceled
-                            ? scheme?.onSurface
-                            : scheme?.onPrimaryContainer,
-                        fontWeight: clazz.canceled
-                            ? FontWeight.normal
-                            : const .new(750),
-                        fontSize: 18,
+                        color: clazz.canceled ? scheme.outline : scheme.primary,
+                        fontWeight: clazz.canceled ? .bold : .w800,
+                        fontSize: 22,
                       ),
                     ),
 
-                    Wrap(
-                      spacing: 6,
+                    _ContentOverflowRow(
+                      contents: listContents(),
 
-                      children: [
-                        for (final content in listContents())
-                          _TimetableClassContent(
-                            color: clazz.canceled
-                                ? (scheme ?? context.c).onSurface
-                                : (scheme ?? context.c).onPrimaryContainer,
-                            content: content,
-                            weight: clazz.canceled ? .w300 : .w600,
-                          ),
-                      ],
+                      color: clazz.canceled
+                          ? scheme.outline
+                          : scheme.onPrimaryContainer,
+
+                      dividerColor: clazz.canceled
+                          ? scheme.outline
+                          : scheme.outline,
                     ),
 
                     if (!clazz.canceled)
@@ -232,9 +208,9 @@ class ClassWidget extends StatelessWidget {
                         duration,
 
                         style: TextStyle(
-                          color: scheme?.onSurfaceVariant,
+                          color: scheme.onSurfaceVariant,
+                          fontWeight: .w800,
                           fontSize: 14,
-                          fontWeight: .w500,
                         ),
                       ),
                   ],
@@ -248,62 +224,232 @@ class ClassWidget extends StatelessWidget {
   }
 }
 
-class _TimetableClassContent extends StatelessWidget {
-  const _TimetableClassContent({
-    required this.color,
-    required this.content,
-    this.weight = .w600,
-  });
-
-  final ClassContent content;
-
-  // TODO: Make this nullable.
+class _ContentOverflowRow extends StatelessWidget {
+  final List<ClassContent> contents;
   final Color color;
-  final FontWeight weight;
+  final Color dividerColor;
+
+  const _ContentOverflowRow({
+    required this.contents,
+    required this.color,
+    required this.dividerColor,
+  });
 
   @override
   Widget build(BuildContext context) {
-    final (data: data, icon: icon) =
-        switch (content) {
-              TitleContent() => (data: null, icon: null),
-              SubjectContent() => (data: null, icon: null),
-              TeacherContent(value: final value) => (
-                data: value.name,
-                icon: HugeIconsSolid.teacher,
+    return _OverflowMeasureRow(
+      color: color,
+      dividerColor: dividerColor,
+      contents: contents,
+    );
+  }
+}
+
+class _OverflowMeasureRow extends StatefulWidget {
+  final List<ClassContent> contents;
+  final Color color;
+  final Color dividerColor;
+
+  const _OverflowMeasureRow({
+    required this.contents,
+    required this.color,
+    required this.dividerColor,
+  });
+
+  @override
+  State<_OverflowMeasureRow> createState() => _OverflowMeasureRowState();
+}
+
+class _OverflowMeasureRowState extends State<_OverflowMeasureRow> {
+  final List<GlobalKey> _keys = [];
+  int? _visibleCount;
+
+  @override
+  void initState() {
+    super.initState();
+
+    _resetKeys();
+    WidgetsBinding.instance.addPostFrameCallback((_) => _measure());
+  }
+
+  @override
+  void didUpdateWidget(_OverflowMeasureRow old) {
+    super.didUpdateWidget(old);
+
+    if (old.contents != widget.contents) {
+      setState(() {
+        _visibleCount = null;
+        _resetKeys();
+      });
+
+      WidgetsBinding.instance.addPostFrameCallback((_) => _measure());
+    }
+  }
+
+  void _resetKeys() {
+    _keys.clear();
+
+    for (var i = 0; i < widget.contents.length; i++) {
+      _keys.add(GlobalKey());
+    }
+  }
+
+  void _measure() {
+    if (!mounted) return;
+
+    final rowBox = context.findRenderObject() as RenderBox?;
+    if (rowBox == null) return;
+
+    final maxWidth = rowBox.size.width;
+
+    const overflowBadgeWidth = 32.0;
+    const dividerWidth = 2.0 + 12.0;
+
+    double usedWidth = 0;
+    int visible = 0;
+
+    for (int i = 0; i < _keys.length; i++) {
+      final key = _keys[i];
+      final box = key.currentContext?.findRenderObject() as RenderBox?;
+      if (box == null) continue;
+
+      final itemWidth = box.size.width;
+      final divider = i > 0 ? dividerWidth : 0;
+      final remaining = widget.contents.length - i - 1;
+      final needsBadge = remaining > 0;
+      final reservedBadge = needsBadge ? overflowBadgeWidth : 0;
+
+      if (usedWidth + divider + itemWidth + reservedBadge <= maxWidth) {
+        usedWidth += divider + itemWidth;
+        visible++;
+      } else {
+        break;
+      }
+    }
+
+    if (visible != _visibleCount) {
+      setState(() => _visibleCount = visible);
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final count = _visibleCount ?? widget.contents.length;
+    final hidden = widget.contents.length - count;
+
+    if (_visibleCount == null) {
+      return Opacity(
+        opacity: 0,
+
+        child: Row(
+          spacing: 6,
+
+          children: [
+            for (final (i, content) in widget.contents.indexed) ...[
+              if (i > 0) _Divider(color: widget.dividerColor),
+
+              _ClassContent(
+                key: _keys[i],
+                color: widget.color,
+                content: content,
               ),
-              PersonalContent(value: final value) => (
-                data: value.name,
-                icon: HugeIconsSolid.more, // TODO: find better icon
+            ],
+          ],
+        ),
+      );
+    }
+
+    return Row(
+      spacing: 6,
+
+      children: [
+        for (int i = 0; i < count; i++) ...[
+          if (i > 0) _Divider(color: widget.dividerColor),
+          _ClassContent(color: widget.color, content: widget.contents[i]),
+        ],
+
+        if (hidden > 0)
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 2),
+
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(999),
+              color: widget.color.withAlpha(30),
+            ),
+
+            child: Text(
+              "+$hidden",
+
+              style: TextStyle(
+                color: widget.color,
+                fontWeight: .w800,
+                fontSize: 12,
               ),
-              ClassroomContent(value: final value) => (
-                data: value.label,
-                icon: HugeIconsSolid.school,
-              ),
-              VirtualClassroomContent(value: final value) => (
-                data: context.l10n.virtualClassroom,
-                icon: HugeIconsSolid.computerVideoCall,
-              ),
-              ClassGroupContent(value: final value) => (
-                data: value.label,
-                icon: HugeIconsSolid.group01,
-              ),
-              UnknownContent(value: final value) => (
-                data: value.get("L"),
-                icon: HugeIconsSolid.fileUnknown,
-              ),
-            }
-            as ({String? data, IconData? icon});
+            ),
+          ),
+      ],
+    );
+  }
+}
+
+class _Divider extends StatelessWidget {
+  final Color color;
+
+  const _Divider({required this.color});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      decoration: BoxDecoration(borderRadius: .circular(999), color: color),
+      margin: const EdgeInsets.symmetric(vertical: 4),
+
+      height: 18,
+      width: 2,
+    );
+  }
+}
+
+class _ClassContent extends StatelessWidget {
+  final ClassContent content;
+  final Color color;
+
+  const _ClassContent({super.key, required this.content, required this.color});
+
+  @override
+  Widget build(BuildContext context) {
+    final (String? data, IconData? icon) = switch (content) {
+      TeacherContent(value: final v) => (v.name, HugeIconsSolid.teacher),
+
+      // TODO: find better icon
+      PersonalContent(value: final v) => (v.name, HugeIconsSolid.more),
+
+      ClassroomContent(value: final v) => (v.label, HugeIconsSolid.school),
+
+      VirtualClassroomContent() => (
+        context.l10n.virtualClassroom,
+        HugeIconsSolid.computerVideoCall,
+      ),
+
+      ClassGroupContent(value: final v) => (v.label, HugeIconsSolid.userGroup),
+
+      UnknownContent(value: final v) => (
+        v.get("L"),
+        HugeIconsSolid.fileUnknown,
+      ),
+      _ => (null, null),
+    };
 
     return Row(
       mainAxisSize: .min,
+      spacing: 4,
 
       children: [
-        Icon(icon, color: color, fontWeight: FontWeight(weight.value - 250)),
+        if (icon != null) Icon(icon, color: color, size: 19),
 
         if (data != null)
           Text(
             data,
-            style: TextStyle(color: color, fontWeight: weight),
+            style: TextStyle(color: color, fontWeight: .bold),
           ),
       ],
     );

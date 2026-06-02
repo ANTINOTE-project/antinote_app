@@ -104,6 +104,12 @@ class _TimetableScreenState extends State<TimetableScreen>
     }
   }
 
+  Holiday? _getHolidayForDay(DateTime day) {
+    return _scheduleDisplayData.holidays.firstWhereOrNull(
+      (element) => element.contains(day),
+    );
+  }
+
   @override
   void dispose() {
     _pageController?.removeListener(_onPageDrag);
@@ -145,11 +151,13 @@ class _TimetableScreenState extends State<TimetableScreen>
               child: SingleChildScrollView(
                 padding: .only(
                   bottom: MediaQuery.paddingOf(context).bottom + 20,
+                  right: 12,
                 ),
 
                 child: IntrinsicHeight(
                   child: Row(
                     crossAxisAlignment: .stretch,
+                    spacing: 8,
 
                     children: [
                       Expanded(
@@ -170,10 +178,7 @@ class _TimetableScreenState extends State<TimetableScreen>
                               }
 
                               if (dayClasses.isEmpty) {
-                                final holiday = _scheduleDisplayData.holidays
-                                    .firstWhereOrNull(
-                                      (element) => element.contains(day),
-                                    );
+                                final holiday = _getHolidayForDay(day);
 
                                 return Center(
                                   child: Column(
@@ -228,10 +233,12 @@ class _TimetableScreenState extends State<TimetableScreen>
   AppBar _buildAppBar(DateRange dayGroup, BuildContext context) {
     return AppBar(
       title: TextButton.icon(
-        label: Text(dayGroup.pprint(context)),
+        label: Text(
+          dayGroup.pprint(context),
+          style: const TextStyle(fontWeight: .bold, fontSize: 16),
+        ),
 
-        icon: const Icon(HugeIconsSolid.calendar03),
-        iconAlignment: .end,
+        icon: const Icon(HugeIconsSolid.calendar03, size: 22),
 
         onPressed: () async {
           final selected = await showDatePicker(
@@ -258,14 +265,13 @@ class _TimetableScreenState extends State<TimetableScreen>
       }
     }
 
-    final displays = <Widget>[];
+    final relevantFirst = relevantSlots.firstOrNull ?? 0;
+    final relevantLast = relevantSlots.lastOrNull ?? 0;
 
+    final displays = <Widget>[];
     int? lastAppliedSlot;
-    for (
-      int i = relevantSlots.firstOrNull ?? 0;
-      i <= (relevantSlots.lastOrNull ?? 0);
-      i++
-    ) {
+
+    for (int i = relevantFirst; i <= relevantLast; i++) {
       final curSlot = _scheduleDisplayData.starts[i];
       final curEndSlot = _scheduleDisplayData.endings[i];
 
@@ -320,7 +326,20 @@ class _TimetableScreenState extends State<TimetableScreen>
 
                   child: Column(
                     mainAxisSize: .min,
-                    children: [const Divider(height: 0), Text(curSlot.label)],
+                    spacing: 2,
+
+                    children: [
+                      const Divider(height: 0),
+
+                      Text(
+                        curSlot.label,
+
+                        style: TextStyle(
+                          color: context.c.outline,
+                          fontWeight: .w800,
+                        ),
+                      ),
+                    ],
                   ),
                 ),
 
@@ -330,9 +349,18 @@ class _TimetableScreenState extends State<TimetableScreen>
 
                   child: Column(
                     mainAxisSize: .min,
+                    spacing: 2,
 
                     children: [
-                      Text(curEndSlot.label),
+                      Text(
+                        curEndSlot.label,
+
+                        style: TextStyle(
+                          color: context.c.outline,
+                          fontWeight: .w800,
+                        ),
+                      ),
+
                       const Divider(height: 0),
                     ],
                   ),
@@ -354,7 +382,6 @@ class _TimetableScreenState extends State<TimetableScreen>
     List<ClassBlock> blocks,
   ) {
     final displays = <Widget>[];
-
     DateTime? curTime;
 
     for (final block in blocks) {
@@ -373,8 +400,8 @@ class _TimetableScreenState extends State<TimetableScreen>
 
           child: TimetableBlockWidget(
             displayParameters: _scheduleDisplayData,
-            day: day,
             block: block,
+            day: day,
           ),
         ),
       );
