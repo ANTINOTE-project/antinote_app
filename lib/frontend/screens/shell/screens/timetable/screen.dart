@@ -250,7 +250,7 @@ class _TimetableScreenState extends State<TimetableScreen>
     int? lastAppliedSlot;
     for (
       int i = relevantSlots.firstOrNull ?? 0;
-      i < (relevantSlots.lastOrNull ?? 0);
+      i <= (relevantSlots.lastOrNull ?? 0);
       i++
     ) {
       final curSlot = _scheduleDisplayData.starts[i];
@@ -299,9 +299,24 @@ class _TimetableScreenState extends State<TimetableScreen>
             fit: .expand,
             children: [
               if (curSlot.active)
-                Align(alignment: .topCenter, child: Text(curSlot.label)),
+                Align(
+                  alignment: .topCenter,
+                  child: Column(
+                    mainAxisSize: .min,
+                    children: [const Divider(height: 0), Text(curSlot.label)],
+                  ),
+                ),
               if (curEndSlot.active)
-                Align(alignment: .bottomCenter, child: Text(curEndSlot.label)),
+                Align(
+                  alignment: .bottomCenter,
+                  child: Column(
+                    mainAxisSize: .min,
+                    children: [
+                      Text(curEndSlot.label),
+                      const Divider(height: 0),
+                    ],
+                  ),
+                ),
             ],
           ),
         ),

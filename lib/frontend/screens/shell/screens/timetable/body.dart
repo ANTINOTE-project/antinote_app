@@ -94,26 +94,23 @@ class _TimetableBlockWidgetState extends State<TimetableBlockWidget> {
       );
     }
 
-    // TODO: Do something fancy here
     return IntrinsicHeight(
       child: Row(
         crossAxisAlignment: .stretch,
         children: [
           Expanded(
             flex: 9,
-            child: AnimatedSize(
+            child: AnimatedSwitcher(
               duration: const Duration(milliseconds: 300),
-              alignment: .topCenter,
-              curve: Curves.fastOutSlowIn,
-              child: AnimatedSwitcher(
-                duration: const Duration(milliseconds: 300),
-                reverseDuration: const Duration(milliseconds: 50),
-                switchInCurve: Curves.fastOutSlowIn,
-                switchOutCurve: const ReversedCurve(Curves.fastOutSlowIn),
-                child: _buildWidgetConfiguration(
-                  context,
-                  widget.block.configurations[configurationIndex],
-                ),
+              reverseDuration: const Duration(milliseconds: 50),
+              switchInCurve: Curves.fastOutSlowIn,
+              switchOutCurve: const ReversedCurve(Curves.fastOutSlowIn),
+              child: IndexedStack(
+                index: configurationIndex,
+                children: [
+                  for (final configuration in widget.block.configurations)
+                    _buildWidgetConfiguration(context, configuration),
+                ],
               ),
             ),
           ),

@@ -82,8 +82,14 @@ class _AccountsScreenState extends State<AccountsScreen>
 
     final sm = context.sm;
     final beforeUid = sm.state.lastSeenAccountUid;
+    final beforeSession = sm.state.lastSeenSession;
+    final beforeSessionVersion = sm.state.lastSeenSessionVersion;
 
     try {
+      if (sm.state.lastSeenAccountUid != _loggingUid) {
+        sm.state.lastSeenSession = null;
+        sm.state.lastSeenSessionVersion = null;
+      }
       sm.state.lastSeenAccountUid = _loggingUid;
 
       await sm.runTask(
@@ -106,6 +112,8 @@ class _AccountsScreenState extends State<AccountsScreen>
       talker.error("Login failed", e, st);
 
       sm.state.lastSeenAccountUid = beforeUid;
+      sm.state.lastSeenSession = beforeSession;
+      sm.state.lastSeenSessionVersion = beforeSessionVersion;
 
       setState(() {
         _loggingUid = null;
