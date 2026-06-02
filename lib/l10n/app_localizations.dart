@@ -160,6 +160,12 @@ abstract class AppLocalizations {
   /// **'Valider'**
   String get validate;
 
+  /// No description provided for @retry.
+  ///
+  /// In fr, this message translates to:
+  /// **'Réessayer'**
+  String get retry;
+
   /// No description provided for @loginQrCode.
   ///
   /// In fr, this message translates to:

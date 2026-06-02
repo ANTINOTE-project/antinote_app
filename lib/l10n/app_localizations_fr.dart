@@ -42,6 +42,9 @@ class AppLocalizationsFr extends AppLocalizations {
   String get validate => 'Valider';
 
   @override
+  String get retry => 'Réessayer';
+
+  @override
   String get loginQrCode => 'QR Code';
 
   @override

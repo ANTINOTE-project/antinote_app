@@ -15,6 +15,7 @@
 
   "cancel": "Annuler",
   "validate": "Valider",
+  "retry": "Réessayer",
 
   "loginQrCode": "QR Code",
   "loginQrCodeSubtitle": "Scanne un QR code depuis un ordinateur déjà connecté à PRONOTE",

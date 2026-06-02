@@ -1,5 +1,8 @@
+import "dart:async";
+
 import "package:antinote/antinote.dart";
 import "package:antinote_app/frontend/widgets/customs/app_bar.dart";
+import "package:antinote_app/frontend/widgets/customs/button.dart";
 import "package:antinote_app/frontend/widgets/customs/field.dart";
 import "package:antinote_app/frontend/widgets/customs/loading.dart";
 import "package:antinote_app/utils.dart";
@@ -17,6 +20,7 @@ class LoginQrCodeScreen extends StatefulWidget {
 
 class _LoginQrCodeScreenState extends State<LoginQrCodeScreen> {
   final _scanController = MobileScannerController();
+  bool _isProcessing = false;
 
   @override
   void dispose() {
@@ -41,7 +45,7 @@ class _LoginQrCodeScreenState extends State<LoginQrCodeScreen> {
       appBar: AppBarWidget(title: context.l10n.loginQrCode),
 
       body: Padding(
-        padding: const .all(16),
+        padding: const EdgeInsets.all(16),
 
         child: LayoutBuilder(
           builder: (context, constraints) {
@@ -49,17 +53,15 @@ class _LoginQrCodeScreenState extends State<LoginQrCodeScreen> {
 
             final scanWindow = Rect.fromCenter(
               center: size.center(Offset.zero),
-
               width: 250,
               height: 250,
             );
 
             return ClipRRect(
-              borderRadius: .circular(24),
+              borderRadius: BorderRadius.circular(24),
 
               child: MobileScanner(
                 controller: _scanController,
-
                 scanWindow: scanWindow,
                 tapToFocus: true,
 
@@ -67,12 +69,12 @@ class _LoginQrCodeScreenState extends State<LoginQrCodeScreen> {
                   return Center(
                     child: Column(
                       mainAxisAlignment: .center,
-                      spacing: 8,
+                      spacing: 6,
 
                       children: [
                         Icon(
                           HugeIconsSolid.securityWarning,
-                          color: context.c.error,
+                          color: context.c.errorContainer,
                           size: 32,
                         ),
 
@@ -80,10 +82,17 @@ class _LoginQrCodeScreenState extends State<LoginQrCodeScreen> {
                           context.l10n.anErrorOccurred,
 
                           style: TextStyle(
-                            fontWeight: .bold,
-                            color: context.c.error,
-                            fontSize: 16,
+                            fontWeight: .w800,
+                            color: context.c.errorContainer,
+                            fontSize: 17,
                           ),
+                        ),
+
+                        const SizedBox(height: 10),
+
+                        ButtonWidget(
+                          onPressed: () => _scanController.start(),
+                          label: context.l10n.retry,
                         ),
                       ],
                     ),
@@ -95,7 +104,7 @@ class _LoginQrCodeScreenState extends State<LoginQrCodeScreen> {
                     children: [
                       ColorFiltered(
                         colorFilter: ColorFilter.mode(
-                          context.c.scrim.withAlpha(125),
+                          context.c.scrim.withAlpha(128),
                           BlendMode.srcOut,
                         ),
 
@@ -142,16 +151,23 @@ class _LoginQrCodeScreenState extends State<LoginQrCodeScreen> {
                 },
 
                 onDetect: (result) async {
-                  final readValue = result.barcodes.first.rawValue;
-                  await _scanController.pause();
+                  if (_isProcessing) return;
+                  _isProcessing = true;
 
-                  final createdCredentials = await _askForPin(readValue!);
+                  final readValue = result.barcodes.first.rawValue;
+
+                  if (readValue == null) {
+                    _isProcessing = false;
+                    return;
+                  }
+
+                  final createdCredentials = await _askForPin(readValue);
 
                   if (createdCredentials != null && context.mounted) {
                     context.pop(createdCredentials);
-                  } else {
-                    await _scanController.start();
                   }
+
+                  _isProcessing = false;
                 },
               ),
             );
