@@ -1,5 +1,6 @@
 import "package:antinote/antinote.dart";
 import "package:antinote_app/backend/src/session/manager.dart";
+import "package:antinote_app/frontend/widgets/animated/icon.dart";
 import "package:antinote_app/frontend/widgets/customs/app_bar.dart";
 import "package:antinote_app/frontend/widgets/customs/list.dart";
 import "package:antinote_app/frontend/widgets/html_text.dart";
@@ -9,19 +10,38 @@ import "package:hugeicons_pro/hugeicons.dart";
 import "package:intl/intl.dart";
 import "package:url_launcher/url_launcher.dart";
 
-class HomeworkScreen extends StatelessWidget {
+class HomeworkScreen extends StatefulWidget {
   final Homework homework;
 
   const HomeworkScreen({super.key, required this.homework});
 
   @override
+  State<HomeworkScreen> createState() => _HomeworkScreenState();
+}
+
+class _HomeworkScreenState extends State<HomeworkScreen> {
+  late bool _isDone;
+
+  @override
+  void initState() {
+    super.initState();
+
+    _isDone = widget.homework.isDone;
+  }
+
+  @override
   Widget build(BuildContext context) {
-    final scheme = Utils.buildColorScheme(context, homework.backgroundColor);
+    final scheme = Utils.buildColorScheme(
+      context,
+      widget.homework.backgroundColor,
+    );
 
-    final deadlineDate = DateFormat("dd/MM").format(homework.deadlineDate);
-    final givenDate = DateFormat("dd/MM").format(homework.givenDate);
+    final deadlineDate = DateFormat(
+      "dd/MM",
+    ).format(widget.homework.deadlineDate);
+    final givenDate = DateFormat("dd/MM").format(widget.homework.givenDate);
 
-    final renderLabel = switch (homework.assignmentToRenderType) {
+    final renderLabel = switch (widget.homework.assignmentToRenderType) {
       .pronoteRender => context.l10n.homeworkRenderPronote,
       .noRender => context.l10n.homeworkRenderNone,
       .paperRender => context.l10n.homeworkRenderPaper,
@@ -29,7 +49,7 @@ class HomeworkScreen extends StatelessWidget {
       .pronoteAudioRecordingRender => context.l10n.homeworkRenderPronoteAudio,
     };
 
-    final renderIcon = switch (homework.assignmentToRenderType) {
+    final renderIcon = switch (widget.homework.assignmentToRenderType) {
       .pronoteRender => HugeIconsSolid.fileUpload,
       .noRender => null,
       .paperRender => HugeIconsSolid.course,
@@ -54,7 +74,7 @@ class HomeworkScreen extends StatelessWidget {
               child: Column(
                 children: [
                   Text(
-                    homework.subject.name ?? context.l10n.noSubject,
+                    widget.homework.subject.name ?? context.l10n.noSubject,
 
                     overflow: .ellipsis,
                     maxLines: 1,
@@ -95,32 +115,93 @@ class HomeworkScreen extends StatelessWidget {
                   ItemWidget(
                     backgroundColor: scheme.primaryContainer,
 
-                    borderRadius: homework.assignmentToRenderType == .noRender
+                    borderRadius:
+                        widget.homework.assignmentToRenderType == .noRender
                         ? borderRadius
                         : borderRadius.copyWith(
                             bottomLeft: Radius.zero,
                             bottomRight: Radius.zero,
                           ),
 
-                    leading: Icon(
-                      homework.isDone
-                          ? HugeIconsSolid.tick03
-                          : HugeIconsStroke.tick03,
+                    onPressed: () async {
+                      setState(() {
+                        _isDone = !_isDone;
+                      });
 
-                      color: scheme.onPrimaryContainer,
+                      await SessionManager.execute(
+                        context: context,
+
+                        callback: (session) async {
+                          final cachedHomework = session
+                              .getCachedValue<Homework>(
+                                CacheType.HOMEWORK,
+                                widget.homework.visualId,
+                              );
+
+                          await session.access(
+                            ChangeHomeworkStateAccessor(
+                              homeworksToUpdate: {cachedHomework: _isDone},
+                            ),
+                          );
+                        },
+                      );
+                    },
+
+                    leading: IconWidget(
+                      iconOn: HugeIconsSolid.tick03,
+                      iconOff: HugeIconsStroke.tick03,
+
+                      colorOn: scheme.onPrimaryContainer,
+                      colorOff: scheme.onPrimaryContainer,
+
                       size: 21,
+                      value: _isDone,
                     ),
 
-                    title: Text(
-                      homework.isDone
-                          ? context.l10n.homeworkSetDone
-                          : context.l10n.homeworkSetNotDone,
+                    title: AnimatedSize(
+                      duration: const Duration(milliseconds: 200),
+                      curve: Curves.easeInOutCubic,
 
-                      style: TextStyle(color: scheme.onPrimaryContainer),
+                      child: AnimatedSwitcher(
+                        duration: const Duration(milliseconds: 200),
+
+                        switchInCurve: Curves.easeOutCubic,
+                        switchOutCurve: Curves.easeInCubic,
+
+                        transitionBuilder: (child, animation) {
+                          return FadeTransition(
+                            opacity: animation,
+
+                            child: SlideTransition(
+                              position:
+                                  Tween<Offset>(
+                                    begin: const Offset(0.1, 0.0),
+                                    end: Offset.zero,
+                                  ).animate(
+                                    CurvedAnimation(
+                                      parent: animation,
+                                      curve: Curves.easeOutCubic,
+                                    ),
+                                  ),
+
+                              child: child,
+                            ),
+                          );
+                        },
+
+                        child: Text(
+                          _isDone
+                              ? context.l10n.homeworkSetDone
+                              : context.l10n.homeworkSetNotDone,
+
+                          key: ValueKey(_isDone),
+                          style: TextStyle(color: scheme.onPrimaryContainer),
+                        ),
+                      ),
                     ),
                   ),
 
-                  if (homework.assignmentToRenderType != .noRender)
+                  if (widget.homework.assignmentToRenderType != .noRender)
                     ItemWidget(
                       backgroundColor: scheme.surfaceContainer,
 
@@ -142,7 +223,7 @@ class HomeworkScreen extends StatelessWidget {
               ),
             ),
 
-            if (homework.description.trim().isNotEmpty) ...[
+            if (widget.homework.description.trim().isNotEmpty) ...[
               _Text(label: context.l10n.homeworkDescription, scheme: scheme),
 
               ItemWidget(
@@ -150,7 +231,7 @@ class HomeworkScreen extends StatelessWidget {
                 borderRadius: const .all(ListWidget.radius),
 
                 title: HtmlText(
-                  rawHtml: homework.description,
+                  rawHtml: widget.homework.description,
 
                   removeStyleAndFontSize: true,
                   maxLines: 999999, // i dont know why null is not working
@@ -164,7 +245,8 @@ class HomeworkScreen extends StatelessWidget {
               ),
             ],
 
-            if (homework.duration > 0 || homework.difficultyLevel > 0) ...[
+            if (widget.homework.duration > 0 ||
+                widget.homework.difficultyLevel > 0) ...[
               _Text(label: context.l10n.homeworkDifficulty, scheme: scheme),
 
               ItemWidget(
@@ -175,14 +257,15 @@ class HomeworkScreen extends StatelessWidget {
                   spacing: 6,
 
                   children: [
-                    if (homework.duration > 0)
+                    if (widget.homework.duration > 0)
                       Text(
                         Utils.formatDurationInMinutes(
-                          Duration(minutes: homework.duration.round()),
+                          Duration(minutes: widget.homework.duration.round()),
                         ),
                       ),
 
-                    if (homework.duration > 0 && homework.difficultyLevel > 0)
+                    if (widget.homework.duration > 0 &&
+                        widget.homework.difficultyLevel > 0)
                       SizedBox(
                         height: 20,
 
@@ -194,9 +277,9 @@ class HomeworkScreen extends StatelessWidget {
                         ),
                       ),
 
-                    if (homework.difficultyLevel > 0)
+                    if (widget.homework.difficultyLevel > 0)
                       ...List.generate(
-                        homework.difficultyLevel,
+                        widget.homework.difficultyLevel,
 
                         (index) => Icon(
                           HugeIconsSolid.star,
@@ -209,11 +292,11 @@ class HomeworkScreen extends StatelessWidget {
               ),
             ],
 
-            if (homework.attachments.isNotEmpty) ...[
+            if (widget.homework.attachments.isNotEmpty) ...[
               _Text(label: context.l10n.homeworkAttachments, scheme: scheme),
 
               ListWidget(
-                items: homework.attachments,
+                items: widget.homework.attachments,
 
                 physics: const NeverScrollableScrollPhysics(),
                 shrinkWrap: true,
