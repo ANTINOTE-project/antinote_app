@@ -107,6 +107,8 @@ class HomeworkScreen extends StatelessWidget {
                       homework.isDone
                           ? context.l10n.homeworkSetDone
                           : context.l10n.homeworkSetNotDone,
+
+                      style: TextStyle(color: scheme.onPrimaryContainer),
                     ),
                   ),
 
@@ -119,7 +121,10 @@ class HomeworkScreen extends StatelessWidget {
                         topRight: Radius.zero,
                       ),
 
-                      title: Text(render),
+                      title: Text(
+                        render,
+                        style: TextStyle(color: scheme.onSurface),
+                      ),
                     ),
                 ],
               ),
@@ -134,6 +139,8 @@ class HomeworkScreen extends StatelessWidget {
 
                 title: HtmlText(
                   rawHtml: homework.description,
+
+                  removeStyleAndFontSize: true,
                   maxLines: 999999, // i dont know why null is not working
 
                   style: TextStyle(
