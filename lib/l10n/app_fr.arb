@@ -11,8 +11,11 @@
   "addAnAccount": "Ajouter un compte",
   "delete": "Supprimer",
 
+  "anErrorOccurred": "Une erreur s'est produite",
+
   "cancel": "Annuler",
   "validate": "Valider",
+  "retry": "Réessayer",
 
   "loginQrCode": "QR Code",
   "loginQrCodeSubtitle": "Scanne un QR code depuis un ordinateur déjà connecté à PRONOTE",
@@ -29,7 +32,7 @@
   "loginUsername": "Identifiant",
   "loginPassword": "Mot de passe",
   "loginPinCode": "Code PIN",
-  "loginPinCodeSubtitle": "Veuillez rentrer votre code PIN vous connecter à votre compte PRONOTE.",
+  "loginPinCodeSubtitle": "Veuillez rentrer votre code PIN vous connecter à votre compte PRONOTE",
 
   "home": "Accueil",
   "timetable": "Cours",

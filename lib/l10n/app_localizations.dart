@@ -142,6 +142,12 @@ abstract class AppLocalizations {
   /// **'Supprimer'**
   String get delete;
 
+  /// No description provided for @anErrorOccurred.
+  ///
+  /// In fr, this message translates to:
+  /// **'Une erreur s\'est produite'**
+  String get anErrorOccurred;
+
   /// No description provided for @cancel.
   ///
   /// In fr, this message translates to:
@@ -153,6 +159,12 @@ abstract class AppLocalizations {
   /// In fr, this message translates to:
   /// **'Valider'**
   String get validate;
+
+  /// No description provided for @retry.
+  ///
+  /// In fr, this message translates to:
+  /// **'Réessayer'**
+  String get retry;
 
   /// No description provided for @loginQrCode.
   ///
@@ -247,7 +259,7 @@ abstract class AppLocalizations {
   /// No description provided for @loginPinCodeSubtitle.
   ///
   /// In fr, this message translates to:
-  /// **'Veuillez rentrer votre code PIN vous connecter à votre compte PRONOTE.'**
+  /// **'Veuillez rentrer votre code PIN vous connecter à votre compte PRONOTE'**
   String get loginPinCodeSubtitle;
 
   /// No description provided for @home.
