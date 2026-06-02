@@ -54,13 +54,15 @@ class FieldWidget extends StatelessWidget {
         keyboardType: keyboardType,
         obscureText: obscureText,
 
+        style: const TextStyle(fontWeight: .w600),
+
         decoration: InputDecoration(
           enabledBorder: InputBorder.none,
           focusedBorder: InputBorder.none,
 
           contentPadding: const EdgeInsets.symmetric(horizontal: 16),
 
-          hintStyle: TextStyle(color: context.c.onSurfaceVariant),
+          hintStyle: TextStyle(color: context.c.outline, fontWeight: .w600),
           hintText: hintText,
           hintMaxLines: 1,
 
