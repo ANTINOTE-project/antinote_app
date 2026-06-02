@@ -7,6 +7,7 @@ import "package:antinote_app/frontend/routing/routes.dart";
 import "package:antinote_app/frontend/widgets/customs/app_bar.dart";
 import "package:antinote_app/frontend/widgets/customs/list.dart";
 import "package:antinote_app/utils.dart";
+import "package:flutter/foundation.dart";
 import "package:flutter/material.dart";
 import "package:go_router/go_router.dart";
 import "package:hugeicons_pro/hugeicons.dart";
@@ -94,7 +95,37 @@ class MethodsScreen extends StatelessWidget with WidgetsBindingObserver {
     final options = buildOptions(context);
 
     return Scaffold(
-      appBar: AppBarWidget(title: context.l10n.addAnAccount),
+      appBar: AppBarWidget(
+        title: context.l10n.addAnAccount,
+
+        actions: [
+          if (kDebugMode)
+            IconButton(
+              onPressed: () async {
+                await sendResultIfLoggedIn(
+                  context,
+                  PasswordCredentials(
+                    username: "demonstration",
+                    password: "pronotevs",
+
+                    workspace: const Workspace(
+                      type: WorkspaceType.mobileEleve,
+                      label: "",
+                      pathSegment: "mobile.eleve.html",
+                    ),
+
+                    deviceUuid: Credentials.generateDeviceUuid(),
+                    pronoteBaseUrl: Uri.parse(
+                      "https://demo.index-education.net/pronote",
+                    ),
+                  ).login(),
+                );
+              },
+
+              icon: const Icon(HugeIconsSolid.developer),
+            ),
+        ],
+      ),
 
       body: Padding(
         padding: const EdgeInsets.all(12),
