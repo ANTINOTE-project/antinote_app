@@ -543,6 +543,12 @@ abstract class AppLocalizations {
   /// In fr, this message translates to:
   /// **'Difficulté'**
   String get homeworkDifficulty;
+
+  /// No description provided for @homeworkState.
+  ///
+  /// In fr, this message translates to:
+  /// **'État'**
+  String get homeworkState;
 }
 
 class _AppLocalizationsDelegate

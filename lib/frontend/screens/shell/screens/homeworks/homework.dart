@@ -29,7 +29,7 @@ class HomeworkScreen extends StatelessWidget {
         padding: const .symmetric(horizontal: 12),
 
         child: Column(
-          spacing: 12,
+          spacing: 10,
 
           children: [
             Padding(
@@ -65,13 +65,64 @@ class HomeworkScreen extends StatelessWidget {
               ),
             ),
 
+            _Text(
+              label: context.l10n.homeworkState,
+              icon: HugeIconsSolid.taskDone01,
+              scheme: scheme,
+            ),
+
+            ItemWidget(
+              backgroundColor: scheme.primaryContainer,
+              borderRadius: const .all(ListWidget.radius),
+
+              leading: Icon(
+                homework.isDone
+                    ? HugeIconsSolid.tick03
+                    : HugeIconsStroke.tick03,
+                color: scheme.onPrimaryContainer,
+                size: 21,
+              ),
+
+              title: Text(
+                homework.isDone
+                    ? context.l10n.homeworkSetDone
+                    : context.l10n.homeworkSetNotDone,
+              ),
+            ),
+
+            if (homework.description.trim().isNotEmpty) ...[
+              _Text(
+                label: context.l10n.homeworkDescription,
+                icon: HugeIconsSolid.task01,
+                scheme: scheme,
+              ),
+
+              ItemWidget(
+                backgroundColor: scheme.surfaceContainer,
+                borderRadius: const .all(ListWidget.radius),
+
+                title: HtmlText(
+                  rawHtml: homework.description,
+                  maxLines: 999999, // i dont know why null is not working
+
+                  style: TextStyle(
+                    color: scheme.onSurface,
+                    fontWeight: FontWeight.bold,
+                    fontSize: 15,
+                  ),
+                ),
+              ),
+            ],
+
             if (homework.duration > 0 || homework.difficultyLevel > 0) ...[
               _Text(
                 label: context.l10n.homeworkDifficulty,
                 icon: HugeIconsSolid.star,
+                scheme: scheme,
               ),
 
               ItemWidget(
+                backgroundColor: scheme.surfaceContainer,
                 borderRadius: const .all(ListWidget.radius),
 
                 title: Row(
@@ -90,7 +141,7 @@ class HomeworkScreen extends StatelessWidget {
                         height: 20,
 
                         child: VerticalDivider(
-                          color: context.c.outline,
+                          color: scheme.outline,
                           radius: .circular(999),
                           thickness: 2,
                           width: 5,
@@ -112,32 +163,11 @@ class HomeworkScreen extends StatelessWidget {
               ),
             ],
 
-            if (homework.description.trim().isNotEmpty) ...[
-              _Text(
-                label: context.l10n.homeworkDescription,
-                icon: HugeIconsSolid.task01,
-              ),
-
-              ItemWidget(
-                borderRadius: const .all(ListWidget.radius),
-
-                title: HtmlText(
-                  rawHtml: homework.description,
-                  maxLines: 999999, // i dont know why null is not working
-
-                  style: TextStyle(
-                    color: scheme.onSurface,
-                    fontWeight: FontWeight.bold,
-                    fontSize: 15,
-                  ),
-                ),
-              ),
-            ],
-
             if (homework.attachments.isNotEmpty) ...[
               _Text(
                 label: context.l10n.homeworkAttachments,
                 icon: HugeIconsSolid.attachment,
+                scheme: scheme,
               ),
 
               ListWidget(
@@ -167,6 +197,7 @@ class HomeworkScreen extends StatelessWidget {
 
                   return ItemWidget(
                     borderRadius: borderRadius,
+                    backgroundColor: scheme.surfaceContainer,
 
                     onPressed: () async {
                       final url = switch (attachment) {
@@ -213,8 +244,9 @@ class HomeworkScreen extends StatelessWidget {
 class _Text extends StatelessWidget {
   final String label;
   final IconData icon;
+  final ColorScheme scheme;
 
-  const _Text({required this.label, required this.icon});
+  const _Text({required this.label, required this.icon, required this.scheme});
 
   @override
   Widget build(BuildContext context) {
@@ -225,13 +257,13 @@ class _Text extends StatelessWidget {
         spacing: 6,
 
         children: [
-          Icon(icon, color: context.c.outline, size: 22),
+          Icon(icon, color: scheme.outline, size: 19),
 
           Text(
             label,
 
             style: TextStyle(
-              color: context.c.outline,
+              color: scheme.outline,
               fontWeight: .bold,
               fontSize: 15,
             ),

@@ -105,5 +105,6 @@
   "homeworkDescription": "Description",
   "homeworkAttachments": "Pièces jointes",
   "givenTheForThe": "Donné le {given} pour le {deadline}",
-  "homeworkDifficulty": "Difficulté"
+  "homeworkDifficulty": "Difficulté",
+  "homeworkState": "État"
 }

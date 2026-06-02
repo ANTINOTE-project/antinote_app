@@ -249,4 +249,7 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get homeworkDifficulty => 'Difficulté';
+
+  @override
+  String get homeworkState => 'État';
 }
