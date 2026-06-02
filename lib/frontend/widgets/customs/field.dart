@@ -7,11 +7,12 @@ class FieldWidget extends StatelessWidget {
   final Function(String)? onChanged;
   final Function(String)? onSubmitted;
 
-  final bool autoCorrect;
-  final Iterable<String> autofillHints;
+  final bool? autoCorrect;
+  final Iterable<String>? autofillHints;
 
-  final String hintText;
-  final TextInputType keyboardType;
+  final String? hintText;
+  final TextInputType? keyboardType;
+  final TextInputAction? inputAction;
   final bool obscureText;
 
   final Widget? prefixIcon;
@@ -24,12 +25,12 @@ class FieldWidget extends StatelessWidget {
     this.onChanged,
     this.onSubmitted,
 
-    this.autoCorrect = false,
-    this.autofillHints = const <String>[],
-
-    this.hintText = "",
-    this.keyboardType = TextInputType.text,
+    this.autoCorrect,
+    this.autofillHints,
+    this.hintText,
+    this.keyboardType,
     this.obscureText = false,
+    this.inputAction,
 
     this.prefixIcon,
     this.suffixIcon,
@@ -54,20 +55,30 @@ class FieldWidget extends StatelessWidget {
         keyboardType: keyboardType,
         obscureText: obscureText,
 
-        style: const TextStyle(fontWeight: .w600),
+        textAlignVertical: TextAlignVertical.center,
+        style: const TextStyle(fontWeight: FontWeight.w600),
 
         decoration: InputDecoration(
           enabledBorder: InputBorder.none,
           focusedBorder: InputBorder.none,
 
-          contentPadding: const EdgeInsets.symmetric(horizontal: 16),
+          contentPadding: const EdgeInsets.symmetric(
+            horizontal: 16,
+            vertical: 12,
+          ),
 
-          hintStyle: TextStyle(color: context.c.outline, fontWeight: .w600),
+          hintStyle: TextStyle(
+            color: context.c.outline,
+            fontWeight: FontWeight.w600,
+          ),
           hintText: hintText,
           hintMaxLines: 1,
 
           prefixIcon: prefixIcon,
+          prefixIconConstraints: const BoxConstraints(minWidth: 48),
+
           suffixIcon: suffixIcon,
+          suffixIconConstraints: const BoxConstraints(minWidth: 48),
         ),
       ),
     );

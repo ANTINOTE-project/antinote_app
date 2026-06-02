@@ -94,12 +94,6 @@ abstract class AppLocalizations {
   /// A list of this localizations delegate's supported locales.
   static const List<Locale> supportedLocales = <Locale>[Locale('fr')];
 
-  /// No description provided for @appTitle.
-  ///
-  /// In fr, this message translates to:
-  /// **'ANTINOTE'**
-  String get appTitle;
-
   /// No description provided for @today.
   ///
   /// In fr, this message translates to:
@@ -118,6 +112,18 @@ abstract class AppLocalizations {
   /// **'Hier'**
   String get yesterday;
 
+  /// No description provided for @disableAutoLogin.
+  ///
+  /// In fr, this message translates to:
+  /// **'Désactiver la connexion automatique'**
+  String get disableAutoLogin;
+
+  /// No description provided for @enableAutoLogin.
+  ///
+  /// In fr, this message translates to:
+  /// **'Activer la connexion automatique'**
+  String get enableAutoLogin;
+
   /// No description provided for @choseAnAccount.
   ///
   /// In fr, this message translates to:
@@ -135,18 +141,6 @@ abstract class AppLocalizations {
   /// In fr, this message translates to:
   /// **'Supprimer'**
   String get delete;
-
-  /// No description provided for @disableAutoLogin.
-  ///
-  /// In fr, this message translates to:
-  /// **'Désactiver la connexion automatique'**
-  String get disableAutoLogin;
-
-  /// No description provided for @enableAutoLogin.
-  ///
-  /// In fr, this message translates to:
-  /// **'Activer la connexion automatique'**
-  String get enableAutoLogin;
 
   /// No description provided for @loginQrCode.
   ///
@@ -214,11 +208,23 @@ abstract class AppLocalizations {
   /// **'Renseigne tes identifiants'**
   String get loginCredentials;
 
-  /// No description provided for @loginWebview.
+  /// No description provided for @loginToAccount.
   ///
   /// In fr, this message translates to:
   /// **'Connecte toi à ton compte'**
-  String get loginWebview;
+  String get loginToAccount;
+
+  /// No description provided for @loginUsername.
+  ///
+  /// In fr, this message translates to:
+  /// **'Identifiant'**
+  String get loginUsername;
+
+  /// No description provided for @loginPassword.
+  ///
+  /// In fr, this message translates to:
+  /// **'Mot de passe'**
+  String get loginPassword;
 
   /// No description provided for @home.
   ///

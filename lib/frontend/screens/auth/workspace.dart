@@ -53,11 +53,11 @@ class _LoginSelectWorkspaceScreenState
         Routes.auth.webview,
         extra: {"parameters": widget.parameters, "workspace": workspace},
       );
-
-      // TODO add credentials login
     } else {
-      talker.warning("Credentials login is not implemented yet");
-      result = null;
+      result = await context.push<LoginResult>(
+        Routes.auth.password,
+        extra: {"workspace": workspace, "baseUrl": widget.parameters.baseUrl},
+      );
     }
 
     if (result != null && context.mounted) {

@@ -24,4 +24,6 @@ class _AuthRoute {
   String get workspace => "/auth/workspace";
 
   String get webview => "/auth/webview";
+
+  String get password => "/auth/password";
 }

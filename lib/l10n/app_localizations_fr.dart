@@ -9,9 +9,6 @@ class AppLocalizationsFr extends AppLocalizations {
   AppLocalizationsFr([String locale = 'fr']) : super(locale);
 
   @override
-  String get appTitle => 'ANTINOTE';
-
-  @override
   String get today => 'Aujourd\'hui';
 
   @override
@@ -21,6 +18,12 @@ class AppLocalizationsFr extends AppLocalizations {
   String get yesterday => 'Hier';
 
   @override
+  String get disableAutoLogin => 'Désactiver la connexion automatique';
+
+  @override
+  String get enableAutoLogin => 'Activer la connexion automatique';
+
+  @override
   String get choseAnAccount => 'Choisir un compte';
 
   @override
@@ -28,12 +31,6 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get delete => 'Supprimer';
-
-  @override
-  String get disableAutoLogin => 'Désactiver la connexion automatique';
-
-  @override
-  String get enableAutoLogin => 'Activer la connexion automatique';
 
   @override
   String get loginQrCode => 'QR Code';
@@ -72,7 +69,13 @@ class AppLocalizationsFr extends AppLocalizations {
   String get loginCredentials => 'Renseigne tes identifiants';
 
   @override
-  String get loginWebview => 'Connecte toi à ton compte';
+  String get loginToAccount => 'Connecte toi à ton compte';
+
+  @override
+  String get loginUsername => 'Identifiant';
+
+  @override
+  String get loginPassword => 'Mot de passe';
 
   @override
   String get home => 'Accueil';

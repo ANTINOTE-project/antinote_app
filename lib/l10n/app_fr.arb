@@ -1,34 +1,30 @@
 {
   "@@locale": "fr",
-  "appTitle": "ANTINOTE",
 
   "today": "Aujourd'hui",
   "tomorrow": "Demain",
   "yesterday": "Hier",
 
+  "disableAutoLogin": "Désactiver la connexion automatique",
+  "enableAutoLogin": "Activer la connexion automatique",
   "choseAnAccount": "Choisir un compte",
   "addAnAccount": "Ajouter un compte",
   "delete": "Supprimer",
 
-  "disableAutoLogin": "Désactiver la connexion automatique",
-  "enableAutoLogin": "Activer la connexion automatique",
-
   "loginQrCode": "QR Code",
   "loginQrCodeSubtitle": "Scanne un QR code depuis un ordinateur déjà connecté à PRONOTE",
-
   "loginCity": "Recherche ta ville",
   "loginCitySubtitle": "Entre le nom de ta ville et choisis ton établissement",
-
   "loginUrl": "Rentre l'adresse du PRONOTE de ton établissement",
   "loginUrlSubtitle": "Renseigne l'URL de ton espace PRONOTE pour t'y connecter directement",
   "loginButton": "Se connecter",
-
   "loginSchool": "Choisis ton établissement",
   "loginSelect": "Choisis ton espace",
-
   "activateCas": "Se connecter via ENT",
   "loginCredentials": "Renseigne tes identifiants",
-  "loginWebview": "Connecte toi à ton compte",
+  "loginToAccount": "Connecte toi à ton compte",
+  "loginUsername": "Identifiant",
+  "loginPassword": "Mot de passe",
 
   "home": "Accueil",
   "timetable": "Cours",
