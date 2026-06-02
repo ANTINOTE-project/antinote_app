@@ -106,5 +106,10 @@
   "homeworkAttachments": "Pièces jointes",
   "givenTheForThe": "Donné le {given} pour le {deadline}",
   "homeworkDifficulty": "Difficulté",
-  "homeworkState": "État"
+  "homeworkState": "État",
+  "homeworkRenderPronote": "À rendre en ligne",
+  "homeworkRenderNone": "Rien à rendre",
+  "homeworkRenderPaper": "À rendre en main propre",
+  "homeworkRenderKiosque": "À rendre au kiosque",
+  "homeworkRenderPronoteAudio": "Enregistrement audio à rendre en ligne"
 }

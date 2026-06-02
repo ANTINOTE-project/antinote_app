@@ -252,4 +252,20 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get homeworkState => 'État';
+
+  @override
+  String get homeworkRenderPronote => 'À rendre en ligne';
+
+  @override
+  String get homeworkRenderNone => 'Rien à rendre';
+
+  @override
+  String get homeworkRenderPaper => 'À rendre en main propre';
+
+  @override
+  String get homeworkRenderKiosque => 'À rendre au kiosque';
+
+  @override
+  String get homeworkRenderPronoteAudio =>
+      'Enregistrement audio à rendre en ligne';
 }

@@ -21,6 +21,14 @@ class HomeworkScreen extends StatelessWidget {
     final deadlineDate = DateFormat("dd/MM").format(homework.deadlineDate);
     final givenDate = DateFormat("dd/MM").format(homework.givenDate);
 
+    final render = switch (homework.assignmentToRenderType) {
+      .pronoteRender => context.l10n.homeworkRenderPronote,
+      .noRender => context.l10n.homeworkRenderNone,
+      .paperRender => context.l10n.homeworkRenderPaper,
+      .kiosqueRender => context.l10n.homeworkRenderKiosque, // unknown
+      .pronoteAudioRecordingRender => context.l10n.homeworkRenderPronoteAudio,
+    };
+
     return Scaffold(
       appBar: const AppBarWidget(),
 
@@ -29,7 +37,7 @@ class HomeworkScreen extends StatelessWidget {
         padding: const .symmetric(horizontal: 12),
 
         child: Column(
-          spacing: 10,
+          spacing: 6,
 
           children: [
             Padding(
@@ -65,37 +73,60 @@ class HomeworkScreen extends StatelessWidget {
               ),
             ),
 
-            _Text(
-              label: context.l10n.homeworkState,
-              icon: HugeIconsSolid.taskDone01,
-              scheme: scheme,
-            ),
+            _Text(label: context.l10n.homeworkState, scheme: scheme),
 
-            ItemWidget(
-              backgroundColor: scheme.primaryContainer,
-              borderRadius: const .all(ListWidget.radius),
+            ListWidget(
+              items: const [null],
 
-              leading: Icon(
-                homework.isDone
-                    ? HugeIconsSolid.tick03
-                    : HugeIconsStroke.tick03,
-                color: scheme.onPrimaryContainer,
-                size: 21,
-              ),
+              physics: const NeverScrollableScrollPhysics(),
+              shrinkWrap: true,
+              isSliver: false,
 
-              title: Text(
-                homework.isDone
-                    ? context.l10n.homeworkSetDone
-                    : context.l10n.homeworkSetNotDone,
+              itemBuilder: (context, _, borderRadius) => Column(
+                children: [
+                  ItemWidget(
+                    backgroundColor: scheme.primaryContainer,
+
+                    borderRadius: homework.assignmentToRenderType == .noRender
+                        ? borderRadius
+                        : borderRadius.copyWith(
+                            bottomLeft: Radius.zero,
+                            bottomRight: Radius.zero,
+                          ),
+
+                    leading: Icon(
+                      homework.isDone
+                          ? HugeIconsSolid.tick03
+                          : HugeIconsStroke.tick03,
+
+                      color: scheme.onPrimaryContainer,
+                      size: 21,
+                    ),
+
+                    title: Text(
+                      homework.isDone
+                          ? context.l10n.homeworkSetDone
+                          : context.l10n.homeworkSetNotDone,
+                    ),
+                  ),
+
+                  if (homework.assignmentToRenderType != .noRender)
+                    ItemWidget(
+                      backgroundColor: scheme.surfaceContainer,
+
+                      borderRadius: borderRadius.copyWith(
+                        topLeft: Radius.zero,
+                        topRight: Radius.zero,
+                      ),
+
+                      title: Text(render),
+                    ),
+                ],
               ),
             ),
 
             if (homework.description.trim().isNotEmpty) ...[
-              _Text(
-                label: context.l10n.homeworkDescription,
-                icon: HugeIconsSolid.task01,
-                scheme: scheme,
-              ),
+              _Text(label: context.l10n.homeworkDescription, scheme: scheme),
 
               ItemWidget(
                 backgroundColor: scheme.surfaceContainer,
@@ -115,11 +146,7 @@ class HomeworkScreen extends StatelessWidget {
             ],
 
             if (homework.duration > 0 || homework.difficultyLevel > 0) ...[
-              _Text(
-                label: context.l10n.homeworkDifficulty,
-                icon: HugeIconsSolid.star,
-                scheme: scheme,
-              ),
+              _Text(label: context.l10n.homeworkDifficulty, scheme: scheme),
 
               ItemWidget(
                 backgroundColor: scheme.surfaceContainer,
@@ -164,11 +191,7 @@ class HomeworkScreen extends StatelessWidget {
             ],
 
             if (homework.attachments.isNotEmpty) ...[
-              _Text(
-                label: context.l10n.homeworkAttachments,
-                icon: HugeIconsSolid.attachment,
-                scheme: scheme,
-              ),
+              _Text(label: context.l10n.homeworkAttachments, scheme: scheme),
 
               ListWidget(
                 items: homework.attachments,
@@ -243,32 +266,27 @@ class HomeworkScreen extends StatelessWidget {
 
 class _Text extends StatelessWidget {
   final String label;
-  final IconData icon;
   final ColorScheme scheme;
 
-  const _Text({required this.label, required this.icon, required this.scheme});
+  const _Text({required this.label, required this.scheme});
 
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const .only(left: 6, top: 10),
+      padding: const .only(left: 8, top: 14),
 
-      child: Row(
-        spacing: 6,
+      child: Align(
+        alignment: .centerLeft,
 
-        children: [
-          Icon(icon, color: scheme.outline, size: 19),
+        child: Text(
+          label,
 
-          Text(
-            label,
-
-            style: TextStyle(
-              color: scheme.outline,
-              fontWeight: .bold,
-              fontSize: 15,
-            ),
+          style: TextStyle(
+            color: scheme.outline,
+            fontWeight: .bold,
+            fontSize: 15,
           ),
-        ],
+        ),
       ),
     );
   }

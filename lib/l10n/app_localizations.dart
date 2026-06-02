@@ -549,6 +549,36 @@ abstract class AppLocalizations {
   /// In fr, this message translates to:
   /// **'État'**
   String get homeworkState;
+
+  /// No description provided for @homeworkRenderPronote.
+  ///
+  /// In fr, this message translates to:
+  /// **'À rendre en ligne'**
+  String get homeworkRenderPronote;
+
+  /// No description provided for @homeworkRenderNone.
+  ///
+  /// In fr, this message translates to:
+  /// **'Rien à rendre'**
+  String get homeworkRenderNone;
+
+  /// No description provided for @homeworkRenderPaper.
+  ///
+  /// In fr, this message translates to:
+  /// **'À rendre en main propre'**
+  String get homeworkRenderPaper;
+
+  /// No description provided for @homeworkRenderKiosque.
+  ///
+  /// In fr, this message translates to:
+  /// **'À rendre au kiosque'**
+  String get homeworkRenderKiosque;
+
+  /// No description provided for @homeworkRenderPronoteAudio.
+  ///
+  /// In fr, this message translates to:
+  /// **'Enregistrement audio à rendre en ligne'**
+  String get homeworkRenderPronoteAudio;
 }
 
 class _AppLocalizationsDelegate
