@@ -36,7 +36,7 @@ class Utils {
       return "${d.inHours > 0 ? "${d.inHours}h" : ""}${d.inMinutes % 60}";
     }
 
-    return "${d.inMinutes % 60} min";
+    return "${d.inMinutes} min";
   }
 
   static ColorScheme buildColorScheme(BuildContext context, int? color) {
