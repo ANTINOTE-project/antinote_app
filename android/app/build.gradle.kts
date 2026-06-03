@@ -18,9 +18,9 @@ android {
         targetCompatibility = JavaVersion.VERSION_17
     }
 
-//    buildFeatures {
-//        resValues = true
-//    }
+    buildFeatures {
+        resValues = true
+    }
 
     defaultConfig {
         applicationId = "fr.antinote.antinote_app"
@@ -38,18 +38,18 @@ android {
 
     flavorDimensions += "default"
 
-//    productFlavors {
-//        create("dev") {
-//            dimension = "default"
-//            applicationIdSuffix = ".dev"
-//            versionNameSuffix = "-dev"
-//            resValue("string", "app_name", "ANTINOTE Dev")
-//        }
-//        create("prod") {
-//            dimension = "default"
-//            resValue("string", "app_name", "ANTINOTE")
-//        }
-//    }
+    productFlavors {
+        create("dev") {
+            dimension = "default"
+            applicationIdSuffix = ".dev"
+            versionNameSuffix = "-dev"
+            resValue("string", "app_name", "ANTINOTE Dev")
+        }
+        create("prod") {
+            dimension = "default"
+            resValue("string", "app_name", "ANTINOTE")
+        }
+    }
 }
 
 kotlin {
