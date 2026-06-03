@@ -1,4 +1,3 @@
-import "package:antinote_app/frontend/widgets/pressable.dart";
 import "package:flutter/material.dart";
 import "package:go_router/go_router.dart";
 import "package:hugeicons_pro/hugeicons.dart";
@@ -21,11 +20,9 @@ class AppBarWidget extends StatelessWidget implements PreferredSizeWidget {
   @override
   Widget build(BuildContext context) {
     final leading = backButton && !(ModalRoute.isFirstOf(context) ?? false)
-        ? Pressable(
+        ? IconButton(
             onPressed: context.pop,
-            hasVisuals: false,
-
-            child: const Icon(HugeIconsSolid.arrowLeft01),
+            icon: const Icon(HugeIconsSolid.arrowLeft01, size: 22),
           )
         : null;
 
