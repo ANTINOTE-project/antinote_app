@@ -10,6 +10,7 @@ class ListWidget<T> extends StatelessWidget {
 
   final bool isLoading;
   final bool isSliver;
+  final bool isColumn;
   final bool shrinkWrap;
   final ScrollPhysics? physics;
 
@@ -21,6 +22,7 @@ class ListWidget<T> extends StatelessWidget {
 
     this.isLoading = false,
     this.isSliver = true,
+    this.isColumn = false,
     this.shrinkWrap = false,
     this.physics,
   });
@@ -55,6 +57,35 @@ class ListWidget<T> extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    if (isColumn) {
+      final child = Skeletonizer(
+        enabled: isLoading,
+
+        child: Column(
+          mainAxisSize: shrinkWrap ? .min : .max,
+
+          children: [
+            for (int i = 0; i < items.length; i++)
+              Padding(
+                padding: const .symmetric(vertical: 2),
+
+                child: itemBuilder(
+                  context,
+                  items[i],
+                  _getBorderRadius(i, items.length),
+                ),
+              ),
+          ],
+        ),
+      );
+
+      if (isSliver) {
+        return SliverToBoxAdapter(child: child);
+      }
+
+      return child;
+    }
+
     if (isSliver) {
       return Skeletonizer.sliver(
         enabled: isLoading,

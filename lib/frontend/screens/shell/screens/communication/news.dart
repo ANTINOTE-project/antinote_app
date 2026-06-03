@@ -317,7 +317,8 @@ class _Answer extends StatelessWidget {
       // TODO
       MultipleChoiceNewsQuestionAnswer() => _ChoiceAnswer(question: question),
 
-      TextualResponseNewsQuestionAnswer() => const SizedBox.shrink(), // TODO
+      // TODO
+      TextualResponseNewsQuestionAnswer() => const SizedBox.shrink(),
     };
   }
 }
@@ -337,11 +338,44 @@ class _ChoiceAnswer extends StatelessWidget {
       groupValue: _answer.answers.singleOrNull,
       onChanged: (value) {},
 
-      child: Column(
-        children: [
-          for (final choice in question.picks)
-            RadioListTile(value: choice.rank, title: Text(choice.label)),
-        ],
+      child: ListWidget(
+        items: question.picks,
+
+        isSliver: false,
+        isColumn: true,
+
+        itemBuilder: (context, choice, borderRadius) {
+          final selected = _answer.answers.contains(choice.rank);
+
+          return ItemWidget(
+            backgroundColor: selected
+                ? context.c.primaryContainer
+                : context.c.surfaceContainerHigh,
+
+            borderRadius: choice == question.picks.first
+                ? borderRadius.copyWith(
+                    topLeft: ListWidget.defaultRadius,
+                    topRight: ListWidget.defaultRadius,
+                  )
+                : borderRadius,
+
+            title: Text(
+              choice.label,
+              maxLines: 999,
+              style: const TextStyle(fontSize: 15),
+            ),
+
+            leading: SizedBox(
+              width: 24,
+              height: 24,
+
+              child: Radio<int>(
+                value: choice.rank,
+                materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+              ),
+            ),
+          );
+        },
       ),
     );
   }
