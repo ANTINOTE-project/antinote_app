@@ -127,16 +127,7 @@ class _NewsScreenState extends State<NewsScreen> {
     return Scaffold(
       body: CustomScrollView(
         slivers: [
-          SliverAppBar.medium(
-            title: Text(
-              _news.label,
-
-              overflow: .ellipsis,
-              maxLines: 1,
-
-              style: const TextStyle(fontWeight: .w800),
-            ),
-
+          SliverAppBar(
             leading: IconButton(
               onPressed: context.pop,
               icon: const Icon(HugeIconsSolid.arrowLeft01, size: 22),
@@ -164,26 +155,48 @@ class _NewsScreenState extends State<NewsScreen> {
             child: Padding(
               padding: const .symmetric(horizontal: 12),
 
-              child: ItemWidget(
-                borderRadius: const .all(ListWidget.radius),
+              child: Column(
+                spacing: 8,
 
-                title: Text(_news.author, style: const TextStyle(fontSize: 16)),
-                subtitle: Text(subtitle),
+                children: [
+                  Padding(
+                    padding: const .only(left: 6),
 
-                trailing: Text(
-                  _dateFormat.format(_news.creationTime),
+                    child: Align(
+                      alignment: .centerLeft,
 
-                  style: TextStyle(
-                    fontWeight: .w800,
-                    color: context.c.outline,
-                    fontSize: 13,
+                      child: Text(
+                        _news.label,
+                        style: const TextStyle(fontWeight: .w800, fontSize: 22),
+                      ),
+                    ),
                   ),
-                ),
+
+                  ItemWidget(
+                    borderRadius: const .all(ListWidget.radius),
+
+                    title: Text(
+                      _news.author,
+                      style: const TextStyle(fontSize: 16),
+                    ),
+                    subtitle: Text(subtitle),
+
+                    trailing: Text(
+                      _dateFormat.format(_news.creationTime),
+
+                      style: TextStyle(
+                        fontWeight: .w800,
+                        color: context.c.outline,
+                        fontSize: 13,
+                      ),
+                    ),
+                  ),
+                ],
               ),
             ),
           ),
 
-          const SliverToBoxAdapter(child: SizedBox(height: 8)),
+          const SliverToBoxAdapter(child: SizedBox(height: 16)),
 
           SliverPadding(
             padding: const .symmetric(horizontal: 12),
@@ -219,23 +232,37 @@ class _Question extends StatelessWidget {
     ].contains(question.responseType);
 
     return Column(
-      spacing: 6,
+      spacing: 3,
 
       children: [
         ItemWidget(
-          borderRadius: borderRadius,
+          borderRadius: hasResponse
+              ? borderRadius.copyWith(
+                  bottomLeft: ListWidget.defaultRadius,
+                  bottomRight: ListWidget.defaultRadius,
+                )
+              : borderRadius,
 
           title: HtmlText(
             rawHtml: question.htmlText,
-            removeStyleAndFontSize: true,
+
             style: TextStyle(color: context.c.onSurface, fontWeight: .bold),
+            removeStyleAndFontSize: true,
+
+            maxLines: 999,
           ),
         ),
 
         if (hasResponse) ...[
           _Answer(
             question: question,
+
             answerEmitted: (newAnswer) async {}, // TODO,
+
+            borderRadius: borderRadius.copyWith(
+              topLeft: ListWidget.defaultRadius,
+              topRight: ListWidget.defaultRadius,
+            ),
           ),
         ],
       ],
@@ -247,7 +274,13 @@ class _Answer extends StatelessWidget {
   final Future<void> Function(NewsQuestionAnswer newAnswer) answerEmitted;
   final NewsQuestion question;
 
-  const _Answer({required this.question, required this.answerEmitted});
+  final BorderRadius borderRadius;
+
+  const _Answer({
+    required this.question,
+    required this.answerEmitted,
+    required this.borderRadius,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -255,7 +288,8 @@ class _Answer extends StatelessWidget {
 
     return switch (answer) {
       RANewsQuestionAnswer(answered: final answered) => ItemWidget(
-        borderRadius: const .all(ListWidget.radius),
+        backgroundColor: context.c.surfaceContainerHigh,
+        borderRadius: borderRadius,
 
         title: Text(
           context.l10n.raMessage,
