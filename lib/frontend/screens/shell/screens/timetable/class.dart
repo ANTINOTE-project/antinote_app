@@ -74,35 +74,35 @@ class ClassWidget extends StatelessWidget {
 
     final outerBorderRadius = connectRight
         ? const BorderRadius.only(
-            topLeft: Radius.circular(radius),
-            bottomLeft: Radius.circular(radius),
-            topRight: Radius.circular(reducedRadius),
-            bottomRight: Radius.circular(reducedRadius),
+            topLeft: .circular(radius),
+            bottomLeft: .circular(radius),
+            topRight: .circular(reducedRadius),
+            bottomRight: .circular(reducedRadius),
           )
         : BorderRadius.circular(radius);
 
     final headerBorderRadius = connectRight
         ? const BorderRadius.only(
-            topLeft: Radius.circular(radius),
-            topRight: Radius.circular(reducedRadius),
+            topLeft: .circular(radius),
+            topRight: .circular(reducedRadius),
           )
-        : const BorderRadius.vertical(top: Radius.circular(radius));
+        : const BorderRadius.vertical(top: .circular(radius));
 
     // War crime here
     final bodyBorderRadius = connectRight
         ? (clazz.status != null
               ? const BorderRadius.only(
-                  bottomLeft: Radius.circular(radius),
-                  bottomRight: Radius.circular(reducedRadius),
+                  bottomLeft: .circular(radius),
+                  bottomRight: .circular(reducedRadius),
                 )
               : const BorderRadius.only(
-                  topLeft: Radius.circular(radius),
-                  bottomLeft: Radius.circular(radius),
-                  topRight: Radius.circular(reducedRadius),
-                  bottomRight: Radius.circular(reducedRadius),
+                  topLeft: .circular(radius),
+                  bottomLeft: .circular(radius),
+                  topRight: .circular(reducedRadius),
+                  bottomRight: .circular(reducedRadius),
                 ))
         : (clazz.status != null
-              ? const BorderRadius.vertical(bottom: Radius.circular(radius))
+              ? const BorderRadius.vertical(bottom: .circular(radius))
               : BorderRadius.circular(radius));
 
     return Expanded(
