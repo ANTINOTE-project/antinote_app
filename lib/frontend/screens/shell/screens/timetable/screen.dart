@@ -44,6 +44,8 @@ class _TimetableScreenState extends State<TimetableScreen>
     );
 
     _animating = false;
+
+    reload();
   }
 
   void _onPageDrag() {
@@ -243,6 +245,7 @@ class _TimetableScreenState extends State<TimetableScreen>
         onPressed: () async {
           final selected = await showDatePicker(
             context: context,
+            currentDate: dayGroup.start,
             firstDate: _scheduleDisplayData.firstDate,
             lastDate: _scheduleDisplayData.lastDate,
           );

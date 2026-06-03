@@ -1,4 +1,5 @@
 import "package:antinote/antinote.dart";
+import "package:antinote_app/frontend/widgets/overflow_row.dart";
 import "package:antinote_app/frontend/widgets/pressable.dart";
 import "package:antinote_app/utils.dart";
 import "package:collection/collection.dart";
@@ -187,7 +188,6 @@ class ClassWidget extends StatelessWidget {
                     color: clazz.canceled
                         ? scheme.surfaceContainerLow
                         : scheme.primaryContainer,
-
                     border: clazz.status != null
                         ? Border(
                             bottom: statusBorder,
@@ -195,18 +195,14 @@ class ClassWidget extends StatelessWidget {
                             right: statusBorder,
                           )
                         : Border.all(color: scheme.outline),
-
                     borderRadius: bodyBorderRadius,
                   ),
-
                   padding: .symmetric(
                     horizontal: 10,
                     vertical: clazz.canceled ? 2 : 5,
                   ),
                   width: double.infinity,
-
                   child: Column(
-                    mainAxisAlignment: .spaceBetween,
                     spacing: clazz.canceled ? 0 : 2,
                     crossAxisAlignment: .start,
 
@@ -228,11 +224,9 @@ class ClassWidget extends StatelessWidget {
 
                       _ContentOverflowRow(
                         contents: listContents(),
-
                         color: clazz.canceled
                             ? scheme.outline
                             : scheme.onPrimaryContainer,
-
                         dividerColor: clazz.canceled
                             ? scheme.outline
                             : scheme.outline,
@@ -273,155 +267,22 @@ class _ContentOverflowRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return _OverflowMeasureRow(
-      color: color,
-      dividerColor: dividerColor,
-      contents: contents,
-    );
-  }
-}
-
-class _OverflowMeasureRow extends StatefulWidget {
-  final List<ClassContent> contents;
-  final Color color;
-  final Color dividerColor;
-
-  const _OverflowMeasureRow({
-    required this.contents,
-    required this.color,
-    required this.dividerColor,
-  });
-
-  @override
-  State<_OverflowMeasureRow> createState() => _OverflowMeasureRowState();
-}
-
-class _OverflowMeasureRowState extends State<_OverflowMeasureRow> {
-  final List<GlobalKey> _keys = [];
-  int? _visibleCount;
-
-  @override
-  void initState() {
-    super.initState();
-
-    _resetKeys();
-    WidgetsBinding.instance.addPostFrameCallback((_) => _measure());
-  }
-
-  @override
-  void didUpdateWidget(_OverflowMeasureRow old) {
-    super.didUpdateWidget(old);
-
-    if (old.contents != widget.contents) {
-      setState(() {
-        _visibleCount = null;
-        _resetKeys();
-      });
-
-      WidgetsBinding.instance.addPostFrameCallback((_) => _measure());
-    }
-  }
-
-  void _resetKeys() {
-    _keys.clear();
-
-    for (var i = 0; i < widget.contents.length; i++) {
-      _keys.add(GlobalKey());
-    }
-  }
-
-  void _measure() {
-    if (!mounted) return;
-
-    final rowBox = context.findRenderObject() as RenderBox?;
-    if (rowBox == null) return;
-
-    final maxWidth = rowBox.size.width;
-
-    const overflowBadgeWidth = 32.0;
-    const dividerWidth = 2.0 + 12.0;
-
-    double usedWidth = 0;
-    int visible = 0;
-
-    for (int i = 0; i < _keys.length; i++) {
-      final key = _keys[i];
-      final box = key.currentContext?.findRenderObject() as RenderBox?;
-      if (box == null) continue;
-
-      final itemWidth = box.size.width;
-      final divider = i > 0 ? dividerWidth : 0;
-      final remaining = widget.contents.length - i - 1;
-      final needsBadge = remaining > 0;
-      final reservedBadge = needsBadge ? overflowBadgeWidth : 0;
-
-      if (usedWidth + divider + itemWidth + reservedBadge <= maxWidth) {
-        usedWidth += divider + itemWidth;
-        visible++;
-      } else {
-        break;
-      }
-    }
-
-    if (visible != _visibleCount) {
-      setState(() => _visibleCount = visible);
-    }
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    final count = _visibleCount ?? widget.contents.length;
-    final hidden = widget.contents.length - count;
-
-    if (_visibleCount == null) {
-      return Opacity(
-        opacity: 0,
-
-        child: Row(
-          spacing: 6,
-
-          children: [
-            for (final (i, content) in widget.contents.indexed) ...[
-              if (i > 0) _Divider(color: widget.dividerColor),
-
-              _ClassContent(
-                key: _keys[i],
-                color: widget.color,
-                content: content,
-              ),
-            ],
-          ],
-        ),
-      );
-    }
-
-    return Row(
+    return OverflowRow(
       spacing: 6,
-
+      badgeStyle: TextStyle(color: color, fontWeight: .w800, fontSize: 12),
+      badgeDecoration: BoxDecoration(
+        color: color.withAlpha(32),
+        borderRadius: .circular(999),
+      ),
       children: [
-        for (int i = 0; i < count; i++) ...[
-          if (i > 0) _Divider(color: widget.dividerColor),
-          _ClassContent(color: widget.color, content: widget.contents[i]),
-        ],
-
-        if (hidden > 0)
-          Container(
-            padding: const .symmetric(horizontal: 7, vertical: 2),
-
-            decoration: BoxDecoration(
-              color: widget.color.withAlpha(30),
-              borderRadius: .circular(999),
-            ),
-
-            child: Text(
-              "+$hidden",
-
-              style: TextStyle(
-                color: widget.color,
-                fontWeight: .w800,
-                fontSize: 12,
-              ),
-            ),
+        for (int i = 0; i < contents.length; i++)
+          Row(
+            mainAxisSize: .min,
+            spacing: 6,
+            children: [
+              if (i > 0) _Divider(color: dividerColor),
+              _ClassContent(color: color, content: contents[i]),
+            ],
           ),
       ],
     );

@@ -106,8 +106,10 @@ List<ClassBlock> constructClassBlocksForDay(List<Class> classes) {
 
     if (clazz.blockSlot < blockEnd!) {
       curClasses.add(clazz);
-      blockEnd = clazz.blockSlot + clazz.blockLength;
-      blockEndTime = clazz.endDate;
+      if (clazz.blockSlot + clazz.blockLength > blockEnd) {
+        blockEnd = clazz.blockSlot + clazz.blockLength;
+        blockEndTime = clazz.endDate;
+      }
     } else {
       blocks.add(
         ClassBlock.createConfigurations(
