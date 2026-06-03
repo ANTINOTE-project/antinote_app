@@ -190,6 +190,7 @@ class ClassWidget extends StatelessWidget {
                 width: double.infinity,
 
                 child: Column(
+                  mainAxisAlignment: .spaceBetween,
                   crossAxisAlignment: .start,
                   spacing: 2,
 

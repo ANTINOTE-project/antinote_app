@@ -41,56 +41,6 @@ class _TimetableBlockWidgetState extends State<TimetableBlockWidget> {
     );
   }
 
-  Widget _buildPicker(BuildContext context) {
-    return Container(
-      clipBehavior: .antiAlias,
-
-      decoration: BoxDecoration(
-        borderRadius: .horizontal(right: const .circular(20)),
-        color: context.c.surfaceContainerLow,
-      ),
-
-      child: Column(
-        children: [
-          for (int i = 0; i < widget.block.configurations.length; i++)
-            Expanded(
-              child: Pressable(
-                onPressed: () {
-                  if (i == configurationIndex) return;
-
-                  setState(() {
-                    configurationIndex = i;
-                  });
-                },
-
-                child: Container(
-                  decoration: BoxDecoration(
-                    color: i == configurationIndex
-                        ? context.c.secondaryContainer
-                        : null,
-
-                    borderRadius: .only(
-                      bottomRight: i == 0 ? .zero : const .circular(16),
-                      topRight: i == widget.block.configurations.length - 1
-                          ? .zero
-                          : const .circular(16),
-                    ),
-                  ),
-
-                  alignment: .center,
-
-                  child: Text(
-                    (i + 1).toString(),
-                    style: const TextStyle(fontWeight: .w800),
-                  ),
-                ),
-              ),
-            ),
-        ],
-      ),
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
     if (widget.block.configurations.length == 1) {
@@ -131,7 +81,67 @@ class _TimetableBlockWidgetState extends State<TimetableBlockWidget> {
             ),
           ),
 
-          Expanded(child: _buildPicker(context)),
+          Expanded(
+            child: Container(
+              padding: const .only(left: 2),
+
+              decoration: BoxDecoration(
+                borderRadius: .horizontal(right: const .circular(20)),
+                color: context.c.surfaceContainerLow,
+              ),
+
+              clipBehavior: .antiAlias,
+
+              child: Column(
+                children: [
+                  ...widget.block.configurations.asMap().entries.map((entry) {
+                    final i = entry.key;
+
+                    final borderRadius = BorderRadius.only(
+                      bottomRight: i == 0 ? .zero : const .circular(16),
+                      topLeft: i == 0 ? const .circular(4) : .zero,
+                      topRight: i == widget.block.configurations.length - 1
+                          ? .zero
+                          : const .circular(16),
+                      bottomLeft: i == widget.block.configurations.length - 1
+                          ? const .circular(4)
+                          : .zero,
+                    );
+
+                    return Expanded(
+                      child: Pressable(
+                        borderRadius: borderRadius,
+
+                        onPressed: () {
+                          if (i == configurationIndex) return;
+
+                          setState(() => configurationIndex = i);
+                        },
+
+                        child: Ink(
+                          decoration: BoxDecoration(
+                            borderRadius: borderRadius,
+                            color: i == configurationIndex
+                                ? context.c.secondaryContainer
+                                : null,
+                          ),
+
+                          child: Container(
+                            alignment: .center,
+
+                            child: Text(
+                              (i + 1).toString(),
+                              style: const TextStyle(fontWeight: .w800),
+                            ),
+                          ),
+                        ),
+                      ),
+                    );
+                  }),
+                ],
+              ),
+            ),
+          ),
         ],
       ),
     );
