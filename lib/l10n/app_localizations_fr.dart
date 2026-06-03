@@ -214,10 +214,10 @@ class AppLocalizationsFr extends AppLocalizations {
   String get self => 'moi';
 
   @override
-  String get nominativePoll => 'Sondage nominatif';
+  String get nominativePoll => 'sondage nominatif';
 
   @override
-  String get anonymousPoll => 'Sondage anonyme';
+  String get anonymousPoll => 'sondage anonyme';
 
   @override
   String get raMessage => 'J\'ai pris connaissance de cette information';

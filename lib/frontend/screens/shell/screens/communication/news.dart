@@ -117,13 +117,12 @@ class _NewsScreenState extends State<NewsScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final String pollSuffix = !_news.isPoll
+        ? ""
+        : " (${_news.anonymousResponse ? context.l10n.anonymousPoll : context.l10n.nominativePoll})";
+
     final subtitle =
-        context.l10n.recipient(_news.recipientFirstName ?? context.l10n.self) +
-        (!_news.isPoll
-            ? ""
-            : (_news.anonymousResponse
-                  ? context.l10n.anonymousPoll
-                  : context.l10n.nominativePoll));
+        "${context.l10n.recipient(_news.recipientFirstName ?? context.l10n.self)}$pollSuffix";
 
     return Scaffold(
       body: CustomScrollView(
@@ -186,22 +185,18 @@ class _NewsScreenState extends State<NewsScreen> {
 
           const SliverToBoxAdapter(child: SizedBox(height: 8)),
 
-          SliverToBoxAdapter(
-            child: Padding(
-              padding: const .symmetric(horizontal: 12),
+          SliverPadding(
+            padding: const .symmetric(horizontal: 12),
 
-              child: Container(
-                child: Column(
-                  children: [
-                    for (int i = 0; i < _news.questions.length; i++)
-                      _Question(
-                        question: _news.questions[i],
-                        isFirst: i == 0,
-                        isLast: i == _news.questions.length - 1,
-                      ),
-                  ],
-                ),
-              ),
+            sliver: ListWidget(
+              items: _news.questions,
+
+              itemBuilder: (context, question, borderRadius) {
+                return _Question(
+                  question: question,
+                  borderRadius: borderRadius,
+                );
+              },
             ),
           ),
         ],
@@ -212,100 +207,69 @@ class _NewsScreenState extends State<NewsScreen> {
 
 class _Question extends StatelessWidget {
   final NewsQuestion question;
+  final BorderRadius borderRadius;
 
-  final bool isFirst;
-  final bool isLast;
-
-  const _Question({
-    required this.question,
-    required this.isFirst,
-    required this.isLast,
-  });
-
-  static const radius = Radius.circular(16);
-  static const defaultRadius = Radius.circular(6);
+  const _Question({required this.question, required this.borderRadius});
 
   @override
   Widget build(BuildContext context) {
-    final borderRadius = switch ((isFirst, isLast)) {
-      (true, true) => const BorderRadius.all(radius),
-
-      (true, _) => const BorderRadius.only(
-        topLeft: radius,
-        topRight: radius,
-        bottomLeft: defaultRadius,
-        bottomRight: defaultRadius,
-      ),
-
-      (_, true) => const BorderRadius.only(
-        topLeft: defaultRadius,
-        topRight: defaultRadius,
-        bottomLeft: radius,
-        bottomRight: radius,
-      ),
-
-      _ => const BorderRadius.all(defaultRadius),
-    };
-
     final hasResponse = !<NewsQuestionAnswerType>[
       .withoutResponse,
       .withoutReceiptAcknowledgment,
     ].contains(question.responseType);
 
-    return Container(
-      decoration: BoxDecoration(
-        color: context.c.surfaceContainerLow,
-        borderRadius: borderRadius,
-      ),
+    return Column(
+      spacing: 6,
 
-      padding: const .symmetric(horizontal: 12, vertical: 8),
+      children: [
+        ItemWidget(
+          borderRadius: borderRadius,
 
-      child: Column(
-        children: [
-          HtmlText(
+          title: HtmlText(
             rawHtml: question.htmlText,
-            style: TextStyle(color: context.c.onSurface, fontWeight: .w600),
+            removeStyleAndFontSize: true,
+            style: TextStyle(color: context.c.onSurface, fontWeight: .bold),
           ),
+        ),
 
-          if (hasResponse) ...[
-            const Divider(),
-
-            _Answer(
-              question: question,
-              answerEmitted: (newAnswer) => throw UnimplementedError(),
-            ),
-          ],
+        if (hasResponse) ...[
+          _Answer(
+            question: question,
+            answerEmitted: (newAnswer) async {}, // TODO,
+          ),
         ],
-      ),
+      ],
     );
   }
 }
 
-class _Answer extends StatefulWidget {
+class _Answer extends StatelessWidget {
+  final Future<void> Function(NewsQuestionAnswer newAnswer) answerEmitted;
+  final NewsQuestion question;
+
   const _Answer({required this.question, required this.answerEmitted});
 
-  final NewsQuestion question;
-  final Future<void> Function(NewsQuestionAnswer newAnswer) answerEmitted;
-
-  @override
-  State<_Answer> createState() => _AnswerState();
-}
-
-class _AnswerState extends State<_Answer> {
   @override
   Widget build(BuildContext context) {
-    final answer = widget.question.answer;
+    final answer = question.answer;
 
     return switch (answer) {
-      RANewsQuestionAnswer(answered: final answered) => ListTile(
-        title: Text(context.l10n.raMessage),
+      RANewsQuestionAnswer(answered: final answered) => ItemWidget(
+        borderRadius: const .all(ListWidget.radius),
+
+        title: Text(
+          context.l10n.raMessage,
+          maxLines: 3,
+          style: TextStyle(fontSize: 15, color: context.c.outline),
+        ),
 
         trailing: Checkbox(
           value: answered,
 
           onChanged: (value) async {
             if (answered) return;
-            await widget.answerEmitted(answer.buildAnswered());
+
+            await answerEmitted(answer.buildAnswered());
           },
         ),
       ),
@@ -314,14 +278,10 @@ class _AnswerState extends State<_Answer> {
       NoResponseNewsQuestionAnswer() => const SizedBox.shrink(),
 
       // TODO
-      SingleChoiceNewsQuestionAnswer() => _ChoiceAnswer(
-        question: widget.question,
-      ),
+      SingleChoiceNewsQuestionAnswer() => _ChoiceAnswer(question: question),
 
       // TODO
-      MultipleChoiceNewsQuestionAnswer() => _ChoiceAnswer(
-        question: widget.question,
-      ),
+      MultipleChoiceNewsQuestionAnswer() => _ChoiceAnswer(question: question),
 
       TextualResponseNewsQuestionAnswer() => const SizedBox.shrink(), // TODO
     };

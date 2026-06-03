@@ -76,8 +76,8 @@
   "recipient": "À {recipient}",
   "self": "moi",
 
-  "nominativePoll": "Sondage nominatif",
-  "anonymousPoll": "Sondage anonyme",
+  "nominativePoll": "sondage nominatif",
+  "anonymousPoll": "sondage anonyme",
 
   "raMessage": "J'ai pris connaissance de cette information",
 

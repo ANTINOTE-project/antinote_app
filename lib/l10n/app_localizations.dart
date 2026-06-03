@@ -487,13 +487,13 @@ abstract class AppLocalizations {
   /// No description provided for @nominativePoll.
   ///
   /// In fr, this message translates to:
-  /// **'Sondage nominatif'**
+  /// **'sondage nominatif'**
   String get nominativePoll;
 
   /// No description provided for @anonymousPoll.
   ///
   /// In fr, this message translates to:
-  /// **'Sondage anonyme'**
+  /// **'sondage anonyme'**
   String get anonymousPoll;
 
   /// No description provided for @raMessage.
