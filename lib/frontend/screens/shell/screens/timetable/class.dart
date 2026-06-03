@@ -105,136 +105,155 @@ class ClassWidget extends StatelessWidget {
               ? const BorderRadius.vertical(bottom: .circular(radius))
               : BorderRadius.circular(radius));
 
+    final containerBorderRadius = connectRight
+        ? const BorderRadius.only(
+            topLeft: .circular(radius),
+            bottomLeft: .circular(radius),
+          )
+        : BorderRadius.circular(radius);
+
     return Expanded(
       flex: clazz.endDate.difference(clazz.startDate).inMinutes,
 
-      child: Pressable(
-        borderRadius: outerBorderRadius,
+      child: Container(
+        decoration: BoxDecoration(
+          color: context.c.surfaceContainerLow,
+          borderRadius: containerBorderRadius,
+        ),
 
-        child: Column(
-          children: [
-            if (clazz.status != null)
-              Ink(
-                decoration: BoxDecoration(
-                  borderRadius: headerBorderRadius,
-                  border: .fromBorderSide(statusBorder),
-                  color: clazz.canceled
-                      ? scheme.errorContainer
-                      : scheme.secondaryContainer,
-                ),
+        child: Pressable(
+          borderRadius: outerBorderRadius,
 
-                padding: const .symmetric(horizontal: 12, vertical: 4),
-                width: double.infinity,
+          child: Column(
+            children: [
+              if (clazz.status != null)
+                Ink(
+                  decoration: BoxDecoration(
+                    borderRadius: headerBorderRadius,
+                    border: .fromBorderSide(statusBorder),
+                    color: clazz.canceled
+                        ? scheme.errorContainer
+                        : scheme.secondaryContainer,
+                  ),
 
-                child: Column(
-                  mainAxisAlignment: .center,
+                  padding: const .symmetric(horizontal: 12, vertical: 4),
+                  width: double.infinity,
 
-                  children: [
-                    Row(
-                      mainAxisSize: .min,
-                      spacing: 6,
+                  child: Column(
+                    mainAxisAlignment: .center,
 
-                      children: [
-                        Icon(
-                          clazz.canceled
-                              ? HugeIconsSolid.alertCircle
-                              : HugeIconsSolid.informationCircle,
+                    children: [
+                      Row(
+                        mainAxisSize: .min,
+                        spacing: 6,
 
-                          color: clazz.canceled
-                              ? scheme.error
-                              : scheme.secondary,
-                          size: 21,
-                        ),
+                        children: [
+                          Icon(
+                            clazz.canceled
+                                ? HugeIconsSolid.alertCircle
+                                : HugeIconsSolid.informationCircle,
 
-                        Expanded(
-                          child: Text(
-                            clazz.status ?? "",
+                            color: clazz.canceled
+                                ? scheme.error
+                                : scheme.secondary,
+                            size: 20,
+                          ),
 
-                            overflow: .ellipsis,
-                            maxLines: 1,
+                          Expanded(
+                            child: Text(
+                              clazz.status ?? "",
 
-                            style: TextStyle(
-                              fontSize: 16,
-                              fontWeight: .w900,
-                              color: clazz.canceled
-                                  ? context.c.error
-                                  : scheme.secondary,
+                              overflow: .ellipsis,
+                              maxLines: 1,
+
+                              style: TextStyle(
+                                fontSize: 15,
+                                fontWeight: .w900,
+                                color: clazz.canceled
+                                    ? context.c.error
+                                    : scheme.secondary,
+                              ),
                             ),
                           ),
-                        ),
-                      ],
-                    ),
-                  ],
-                ),
-              ),
-
-            Expanded(
-              child: Ink(
-                decoration: BoxDecoration(
-                  color: clazz.canceled
-                      ? scheme.surfaceContainerLow
-                      : scheme.primaryContainer,
-
-                  border: clazz.status != null
-                      ? Border(
-                          bottom: statusBorder,
-                          left: statusBorder,
-                          right: statusBorder,
-                        )
-                      : Border.all(color: scheme.outline),
-
-                  borderRadius: bodyBorderRadius,
-                ),
-
-                padding: const .symmetric(horizontal: 10, vertical: 5),
-                width: double.infinity,
-
-                child: Column(
-                  mainAxisAlignment: .spaceBetween,
-                  crossAxisAlignment: .start,
-                  spacing: 2,
-
-                  children: [
-                    Text(
-                      classTitle(context),
-
-                      overflow: .ellipsis,
-                      maxLines: 1,
-
-                      style: TextStyle(
-                        color: clazz.canceled ? scheme.outline : scheme.primary,
-                        fontWeight: clazz.canceled ? .bold : .w800,
-                        fontSize: 22,
+                        ],
                       ),
-                    ),
+                    ],
+                  ),
+                ),
 
-                    _ContentOverflowRow(
-                      contents: listContents(),
+              Expanded(
+                child: Ink(
+                  decoration: BoxDecoration(
+                    color: clazz.canceled
+                        ? scheme.surfaceContainerLow
+                        : scheme.primaryContainer,
 
-                      color: clazz.canceled
-                          ? scheme.outline
-                          : scheme.onPrimaryContainer,
+                    border: clazz.status != null
+                        ? Border(
+                            bottom: statusBorder,
+                            left: statusBorder,
+                            right: statusBorder,
+                          )
+                        : Border.all(color: scheme.outline),
 
-                      dividerColor: clazz.canceled
-                          ? scheme.outline
-                          : scheme.outline,
-                    ),
+                    borderRadius: bodyBorderRadius,
+                  ),
 
-                    if (!clazz.canceled)
+                  padding: .symmetric(
+                    horizontal: 10,
+                    vertical: clazz.canceled ? 2 : 5,
+                  ),
+                  width: double.infinity,
+
+                  child: Column(
+                    mainAxisAlignment: .spaceBetween,
+                    spacing: clazz.canceled ? 0 : 2,
+                    crossAxisAlignment: .start,
+
+                    children: [
                       Text(
-                        duration,
+                        classTitle(context),
+
+                        overflow: .ellipsis,
+                        maxLines: 1,
 
                         style: TextStyle(
-                          color: scheme.onSurfaceVariant,
-                          fontWeight: .w800,
-                          fontSize: 14,
+                          color: clazz.canceled
+                              ? scheme.outline
+                              : scheme.primary,
+                          fontWeight: clazz.canceled ? .bold : .w800,
+                          fontSize: clazz.canceled ? 20 : 22,
                         ),
                       ),
-                  ],
+
+                      _ContentOverflowRow(
+                        contents: listContents(),
+
+                        color: clazz.canceled
+                            ? scheme.outline
+                            : scheme.onPrimaryContainer,
+
+                        dividerColor: clazz.canceled
+                            ? scheme.outline
+                            : scheme.outline,
+                      ),
+
+                      if (!clazz.canceled)
+                        Text(
+                          duration,
+
+                          style: TextStyle(
+                            color: scheme.onSurfaceVariant,
+                            fontWeight: .w800,
+                            fontSize: 14,
+                          ),
+                        ),
+                    ],
+                  ),
                 ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );
@@ -387,11 +406,11 @@ class _OverflowMeasureRowState extends State<_OverflowMeasureRow> {
 
         if (hidden > 0)
           Container(
-            padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 2),
+            padding: const .symmetric(horizontal: 7, vertical: 2),
 
             decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(999),
               color: widget.color.withAlpha(30),
+              borderRadius: .circular(999),
             ),
 
             child: Text(
@@ -418,7 +437,7 @@ class _Divider extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       decoration: BoxDecoration(borderRadius: .circular(999), color: color),
-      margin: const EdgeInsets.symmetric(vertical: 4),
+      margin: const .symmetric(vertical: 4),
 
       height: 18,
       width: 2,

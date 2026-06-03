@@ -56,7 +56,7 @@ class _TimetableBlockWidgetState extends State<TimetableBlockWidget> {
 
         children: [
           Expanded(
-            flex: 9,
+            flex: 89,
 
             child: AnimatedSwitcher(
               duration: const Duration(milliseconds: 300),
@@ -82,8 +82,10 @@ class _TimetableBlockWidgetState extends State<TimetableBlockWidget> {
           ),
 
           Expanded(
+            flex: 11,
+
             child: Container(
-              padding: const .only(left: 2),
+              padding: const .only(left: 4),
 
               decoration: BoxDecoration(
                 borderRadius: .horizontal(right: const .circular(20)),
