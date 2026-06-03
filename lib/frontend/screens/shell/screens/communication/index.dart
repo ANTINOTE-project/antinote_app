@@ -6,6 +6,7 @@ import "package:antinote_app/frontend/screens/screen.dart";
 import "package:antinote_app/frontend/screens/shell/models/communication.dart";
 import "package:antinote_app/frontend/screens/shell/screens/communication/news.dart";
 import "package:antinote_app/frontend/widgets/customs/list.dart";
+import "package:antinote_app/utils.dart";
 import "package:flutter/material.dart";
 import "package:hugeicons_pro/hugeicons.dart";
 import "package:intl/intl.dart";
@@ -22,7 +23,7 @@ class _CommunicationScreenState extends State<CommunicationScreen>
   CommunicationFilter filter = CommunicationFilter.defaultFilter;
   late List<CommunicationThreadPreview> threads;
 
-  static final _minimalDateFormat = DateFormat("MMM d");
+  static final _minimalDateFormat = DateFormat(DateFormat.MONTH_DAY);
 
   @override
   Widget buildLoaded(
@@ -31,28 +32,45 @@ class _CommunicationScreenState extends State<CommunicationScreen>
   ) {
     return buildRefreshIndicator(
       child: Padding(
-        padding: const .symmetric(horizontal: 12),
+        padding: const .symmetric(horizontal: 12, vertical: 4),
+
         child: ListWidget(
           items: threads,
           isSliver: false,
+
           itemBuilder: (context, thread, borderRadius) {
             return ItemWidget(
               borderRadius: borderRadius,
+
               title: Text(thread.title),
               subtitle: Text(thread.authorName),
+
               leading: Badge(
                 isLabelVisible: !thread.read,
+                smallSize: 7,
+
                 child: Icon(switch (thread.commType) {
                   .discussion => HugeIconsSolid.conversation,
                   .news => HugeIconsSolid.news01,
                   .poll => HugeIconsSolid.pieChart,
-                }),
+                }, size: 24),
               ),
-              trailing: Text(_minimalDateFormat.format(thread.publishDate)),
+
+              trailing: Text(
+                _minimalDateFormat.format(thread.publishDate),
+
+                style: TextStyle(
+                  fontWeight: .w800,
+                  color: context.c.outline,
+                  fontSize: 13,
+                ),
+              ),
+
               onPressed: () async {
                 await SessionManager.execute(
                   context: context,
                   channels: const [],
+
                   callback: (session) {
                     switch (thread.commType) {
                       case .poll:
@@ -69,9 +87,11 @@ class _CommunicationScreenState extends State<CommunicationScreen>
 
                           Navigator.push(
                             context,
+
                             MaterialPageRoute(
                               builder: (context) => NewsScreen(
                                 news: notifier,
+
                                 deleteNews: () {
                                   throw UnimplementedError();
                                 },
@@ -104,7 +124,7 @@ class _CommunicationScreenState extends State<CommunicationScreen>
     );
   }
 
-  Future<List<CommunicationThreadPreview>> loadThreads(
+  Future<List<CommunicationThreadPreview>> _loadThreads(
     PronoteSession session,
     CommunicationType type,
   ) async {
@@ -138,6 +158,7 @@ class _CommunicationScreenState extends State<CommunicationScreen>
           final page = await session.access(
             const DiscussionPageAccessor(showRead: true, withMessages: true),
           );
+
           return page.discussions.mapL(
             (e) => CommunicationThreadPreview(
               title: e.subject,
@@ -163,14 +184,14 @@ class _CommunicationScreenState extends State<CommunicationScreen>
       (element) => session.user.hasAccessToTab(element.pageId),
     )) {
       if (commType.pageId == curPage) {
-        threads.addAll(await loadThreads(session, commType));
+        threads.addAll(await _loadThreads(session, commType));
         toLoad.remove(commType);
         break;
       }
     }
 
     for (final commType in toLoad) {
-      threads.addAll(await loadThreads(session, commType));
+      threads.addAll(await _loadThreads(session, commType));
     }
 
     this.threads = threads
