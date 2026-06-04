@@ -5,7 +5,7 @@ plugins {
 
 dependencies {
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.11.0")
-    implementation("com.google.protobuf:protobuf-kotlin:4.34.1")
+    implementation("com.google.protobuf:protobuf-kotlin:4.35.0")
 }
 
 android {
@@ -24,7 +24,7 @@ android {
 
     defaultConfig {
         applicationId = "fr.antinote.antinote_app"
-        minSdk = flutter.minSdkVersion
+        minSdk = 24
         targetSdk = flutter.targetSdkVersion
         versionCode = flutter.versionCode
         versionName = flutter.versionName
