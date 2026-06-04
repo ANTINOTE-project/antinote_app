@@ -105,7 +105,7 @@ Future<void> _showDetails({
                         item.label,
 
                         style: TextStyle(
-                          color: scheme.onSecondaryContainer,
+                          color: scheme.onSurface,
                           fontSize: 18,
                           fontWeight: .bold,
                         ),
@@ -116,7 +116,7 @@ Future<void> _showDetails({
                               "x${Utils.formatNumber(item.coefficient)}",
 
                               style: TextStyle(
-                                color: scheme.onPrimaryContainer,
+                                color: scheme.primary,
                                 fontSize: 20,
                                 fontWeight: FontWeight.w800,
                               ),
@@ -126,14 +126,14 @@ Future<void> _showDetails({
                           ? _GradeText(
                               selfGrade: item.grade!,
                               maxGrade: item.theoreticalMaxGrade!,
-                              color: scheme.onPrimaryContainer,
+                              color: scheme.primary,
                               size: 20,
                             )
                           : item.rawValue != null
                           ? Text(
                               item.rawValue!,
                               style: TextStyle(
-                                color: scheme.onPrimaryContainer,
+                                color: scheme.primary,
                                 fontSize: 20,
                                 fontWeight: FontWeight.w800,
                               ),
