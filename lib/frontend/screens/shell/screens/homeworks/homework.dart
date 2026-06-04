@@ -2,13 +2,13 @@ import "package:antinote/antinote.dart";
 import "package:antinote_app/backend/src/session/manager.dart";
 import "package:antinote_app/frontend/widgets/animated/icon.dart";
 import "package:antinote_app/frontend/widgets/customs/app_bar.dart";
+import "package:antinote_app/frontend/widgets/customs/attachment_item_widget.dart";
 import "package:antinote_app/frontend/widgets/customs/list.dart";
-import "package:antinote_app/frontend/widgets/html_text.dart";
+import "package:antinote_app/frontend/widgets/remote_html.dart";
 import "package:antinote_app/utils.dart";
 import "package:flutter/material.dart";
 import "package:hugeicons_pro/hugeicons.dart";
 import "package:intl/intl.dart";
-import "package:url_launcher/url_launcher.dart";
 
 class HomeworkScreen extends StatefulWidget {
   final Homework homework;
@@ -230,15 +230,11 @@ class _HomeworkScreenState extends State<HomeworkScreen> {
                 backgroundColor: scheme.surfaceContainer,
                 borderRadius: const .all(ListWidget.radius),
 
-                title: HtmlText(
+                title: RemoteHtml(
                   rawHtml: widget.homework.description,
-
-                  removeStyleAndFontSize: true,
-                  maxLines: 999999, // i dont know why null is not working
-
                   style: TextStyle(
                     color: scheme.onSurface,
-                    fontWeight: FontWeight.bold,
+                    fontWeight: FontWeight.normal,
                     fontSize: 15,
                   ),
                 ),
@@ -303,54 +299,10 @@ class _HomeworkScreenState extends State<HomeworkScreen> {
                 isSliver: false,
 
                 itemBuilder: (context, attachment, borderRadius) {
-                  final icon = switch (attachment) {
-                    LinkAttachment() => HugeIconsSolid.link01,
-
-                    FileAttachment(type: final type) => switch (type) {
-                      .text => HugeIconsSolid.text,
-                      .pdf => HugeIconsSolid.pdf02,
-                      .archive => HugeIconsSolid.archive,
-                      .spreadsheet => HugeIconsSolid.googleSheet,
-                      .image => HugeIconsSolid.image01,
-                      .audio => HugeIconsSolid.audioWave01,
-                      .video => HugeIconsSolid.video01,
-                      .slides => HugeIconsSolid.slideshare,
-                      .geogebra => HugeIconsSolid.math,
-                      .other => HugeIconsSolid.documentAttachment,
-                    },
-                  };
-
-                  return ItemWidget(
+                  return AttachmentItemWidget(
+                    attachment: attachment,
                     borderRadius: borderRadius,
                     backgroundColor: scheme.surfaceContainer,
-
-                    onPressed: () async {
-                      final url = switch (attachment) {
-                        LinkAttachment(url: final url) => Uri.parse(url),
-
-                        FileAttachment() => await SessionManager.execute(
-                          context: context,
-
-                          callback: (session) async {
-                            return await attachment.getLinkToAttachment(
-                              session,
-                            );
-                          },
-                        ),
-                      };
-
-                      await launchUrl(
-                        url,
-
-                        mode: LaunchMode.inAppBrowserView,
-                        browserConfiguration: const BrowserConfiguration(
-                          showTitle: true,
-                        ),
-                      );
-                    },
-
-                    leading: Icon(icon),
-                    title: Text(attachment.title, maxLines: 3),
                   );
                 },
               ),

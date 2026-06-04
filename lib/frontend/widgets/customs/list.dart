@@ -14,6 +14,9 @@ class ListWidget<T> extends StatelessWidget {
   final bool shrinkWrap;
   final ScrollPhysics? physics;
 
+  final bool gotBefore;
+  final bool gotAfter;
+
   const ListWidget({
     super.key,
 
@@ -25,14 +28,17 @@ class ListWidget<T> extends StatelessWidget {
     this.isColumn = false,
     this.shrinkWrap = false,
     this.physics,
+
+    this.gotBefore = false,
+    this.gotAfter = false,
   });
 
   static const radius = Radius.circular(16);
   static const defaultRadius = Radius.circular(6);
 
-  static BorderRadius _getBorderRadius(int index, int length) {
-    final isFirst = index == 0;
-    final isLast = index == length - 1;
+  BorderRadius _getBorderRadius(int index, int length) {
+    final isFirst = index == 0 && !gotBefore;
+    final isLast = index == length - 1 && !gotAfter;
 
     return switch ((isFirst, isLast)) {
       (true, true) => const BorderRadius.all(radius),
@@ -60,15 +66,12 @@ class ListWidget<T> extends StatelessWidget {
     if (isColumn) {
       final child = Skeletonizer(
         enabled: isLoading,
-
         child: Column(
           mainAxisSize: shrinkWrap ? .min : .max,
-
           children: [
             for (int i = 0; i < items.length; i++)
               Padding(
                 padding: const .symmetric(vertical: 2),
-
                 child: itemBuilder(
                   context,
                   items[i],

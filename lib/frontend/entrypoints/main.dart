@@ -4,8 +4,12 @@ import "package:antinote_app/frontend/app.dart";
 import "package:antinote_app/frontend/routing/routes.dart";
 import "package:antinote_app/protos/account.pb.dart";
 import "package:flutter/material.dart";
+import "package:logging/logging.dart";
 
 void mainEntrypoint() {
+  Logger('fwfh.HtmlWidget').onRecord.forEach((element) {
+    print(element);
+  });
   runApp(const MainApp());
 }
 

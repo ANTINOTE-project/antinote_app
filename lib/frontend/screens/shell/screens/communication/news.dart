@@ -1,6 +1,7 @@
 import "package:antinote/antinote.dart";
+import "package:antinote_app/frontend/widgets/customs/attachment_item_widget.dart";
 import "package:antinote_app/frontend/widgets/customs/list.dart";
-import "package:antinote_app/frontend/widgets/html_text.dart";
+import "package:antinote_app/frontend/widgets/remote_html.dart";
 import "package:antinote_app/utils.dart";
 import "package:flutter/material.dart";
 import "package:go_router/go_router.dart";
@@ -236,21 +237,37 @@ class _Question extends StatelessWidget {
 
       children: [
         ItemWidget(
-          borderRadius: hasResponse
+          borderRadius: hasResponse || question.attachments.isNotEmpty
               ? borderRadius.copyWith(
                   bottomLeft: ListWidget.defaultRadius,
                   bottomRight: ListWidget.defaultRadius,
                 )
               : borderRadius,
-
-          title: HtmlText(
+          title: RemoteHtml(
             rawHtml: question.htmlText,
+            style: TextStyle(color: context.c.onSurface, fontWeight: .normal),
 
-            style: TextStyle(color: context.c.onSurface, fontWeight: .bold),
-            removeStyleAndFontSize: true,
+            // style: TextStyle(color: context.c.onSurface, fontWeight: .bold),
+            // removeStyleAndFontSize: true,
 
-            maxLines: 999,
+            // maxLines: 999,
           ),
+        ),
+
+        ListWidget(
+          items: question.attachments,
+          shrinkWrap: true,
+          isColumn: true,
+          isSliver: false,
+          gotBefore: true,
+          gotAfter: hasResponse,
+          itemBuilder: (context, attachment, borderRadius) {
+            return AttachmentItemWidget(
+              attachment: attachment,
+              borderRadius: borderRadius,
+              backgroundColor: context.c.surfaceContainer,
+            );
+          },
         ),
 
         if (hasResponse) ...[

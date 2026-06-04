@@ -5,7 +5,8 @@ import "package:antinote_app/backend/backend.dart";
 import "package:antinote_app/utils.dart";
 import "package:flutter/material.dart";
 
-typedef RefreshIndicatorBuilder = Widget Function({required Widget child});
+typedef RefreshIndicatorBuilder =
+    Widget Function({required Widget child, bool pullable});
 
 mixin ScreenMixin<T extends StatefulWidget> on State<T> {
   List<String> get loadChannels => ["communication"];
@@ -109,9 +110,13 @@ mixin ScreenMixin<T extends StatefulWidget> on State<T> {
     Future<void> refreshFunction() async =>
         await reload(fromRefreshIndicator: true);
 
-    Widget buildRefreshIndicator({required Widget child}) => RefreshIndicator(
+    Widget buildRefreshIndicator({
+      required Widget child,
+      bool pullable = true,
+    }) => RefreshIndicator(
       key: loaded ? loadedRefreshIndicator : unloadedRefreshIndicator,
       onRefresh: refreshFunction,
+
       child: child,
     );
 

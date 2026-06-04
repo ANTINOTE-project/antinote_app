@@ -75,8 +75,6 @@ class _TimetableScreenState extends State<TimetableScreen>
     if (dayList.isEmpty) return;
     if (_animating) return;
 
-    talker.info("Fetching days ${days.pprint(context)}");
-
     Future<void> update(PronoteSession session) async {
       final loadedDays = {for (final day in dayList) day: <Class>[]};
 
@@ -136,6 +134,7 @@ class _TimetableScreenState extends State<TimetableScreen>
     );
 
     return buildRefreshIndicator(
+
       child: PageView.builder(
         itemCount: _currentGroups.length,
         controller: _pageController,

@@ -6,8 +6,8 @@ import "package:antinote_app/backend/backend.dart";
 import "package:antinote_app/frontend/routing/routes.dart";
 import "package:antinote_app/frontend/screens/screen.dart";
 import "package:antinote_app/frontend/widgets/customs/loading.dart";
-import "package:antinote_app/frontend/widgets/html_text.dart";
 import "package:antinote_app/frontend/widgets/pressable.dart";
+import "package:antinote_app/frontend/widgets/remote_html.dart";
 import "package:antinote_app/utils.dart";
 import "package:collection/collection.dart";
 import "package:flutter/material.dart";
@@ -395,20 +395,11 @@ class _HomeworkCard extends StatelessWidget {
                 ],
               ),
 
-              HtmlText(
+              RemoteHtml(
                 rawHtml: homework.description,
-
-                removeStyleAndFontSize: true,
-                collapseLineBreaks: true,
-
-                overflow: TextOverflow.ellipsis,
+                compact: true,
                 maxLines: 3,
-
-                style: TextStyle(
-                  color: scheme.onSurface,
-                  fontWeight: FontWeight.bold,
-                  fontSize: 15,
-                ),
+                style: TextStyle(color: scheme.onSurface, fontSize: 15),
               ),
 
               const SizedBox(height: 6),

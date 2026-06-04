@@ -1,6 +1,6 @@
 import "package:flutter/material.dart";
-import "package:simple_html_css/simple_html_css.dart";
-import "package:url_launcher/url_launcher_string.dart";
+
+// import "package:simple_html_css/simple_html_css.dart";
 
 class HtmlText extends StatelessWidget {
   final bool removeStyleAndFontSize;
@@ -50,7 +50,9 @@ class HtmlText extends StatelessWidget {
     }
 
     return Text.rich(
-      HTML.toTextSpan(
+      TextSpan(),
+
+      /*HTML.toTextSpan(
         context,
         processedHtml,
 
@@ -60,8 +62,7 @@ class HtmlText extends StatelessWidget {
         },
 
         defaultTextStyle: style,
-      ),
-
+      )*/
       overflow: overflow,
       maxLines: maxLines,
     );

@@ -1,6 +1,7 @@
 import "package:antinote/antinote.dart";
 import "package:antinote_app/frontend/widgets/overflow_row.dart";
 import "package:antinote_app/frontend/widgets/pressable.dart";
+import "package:antinote_app/main.dart";
 import "package:antinote_app/utils.dart";
 import "package:collection/collection.dart";
 import "package:flutter/material.dart";
@@ -123,8 +124,10 @@ class ClassWidget extends StatelessWidget {
         ),
 
         child: Pressable(
+          onPressed: () {
+            talker.info("TODO: Create class details page");
+          },
           borderRadius: outerBorderRadius,
-
           child: Column(
             children: [
               if (clazz.status != null)

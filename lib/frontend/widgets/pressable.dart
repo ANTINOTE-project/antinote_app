@@ -32,7 +32,7 @@ class Pressable extends StatelessWidget {
 
   void _onTapDown() async {
     if (!hasFeedback || !hasVibration) return;
-    
+
     if (await Vibration.hasVibrator()) {
       await Vibration.vibrate(duration: 6);
     }
@@ -47,7 +47,9 @@ class Pressable extends StatelessWidget {
       child: InkWell(
         onTap: onPressed,
         onLongPress: onLongPress,
-        onTapDown: hasFeedback ? (_) => _onTapDown() : null,
+        onTapDown: hasFeedback && (onPressed != null || onLongPress != null)
+            ? (_) => _onTapDown()
+            : null,
 
         highlightColor: hasFeedback && hasVisuals ? null : Colors.transparent,
         splashFactory: hasFeedback && hasVisuals
