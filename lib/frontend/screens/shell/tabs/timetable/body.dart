@@ -1,6 +1,6 @@
 import "package:antinote/antinote.dart";
-import "package:antinote_app/frontend/screens/shell/screens/timetable/class.dart";
-import "package:antinote_app/frontend/screens/shell/screens/timetable/class_block.dart";
+import "package:antinote_app/frontend/screens/shell/tabs/timetable/class.dart";
+import "package:antinote_app/frontend/screens/shell/tabs/timetable/class_block.dart";
 import "package:antinote_app/frontend/widgets/pressable.dart";
 import "package:antinote_app/utils.dart";
 import "package:collection/collection.dart";

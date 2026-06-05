@@ -1,15 +1,15 @@
 import "package:antinote/antinote.dart";
 import "package:antinote_app/backend/src/session/manager.dart";
-import "package:antinote_app/frontend/screens/shell/screens/communication/index.dart";
-import "package:antinote_app/frontend/screens/shell/screens/grades/index.dart";
-import "package:antinote_app/frontend/screens/shell/screens/home.dart";
-import "package:antinote_app/frontend/screens/shell/screens/homeworks/index.dart";
-import "package:antinote_app/frontend/screens/shell/screens/timetable/screen.dart";
+import "package:antinote_app/frontend/screens/shell/tabs/communication/index.dart";
+import "package:antinote_app/frontend/screens/shell/tabs/grades/index.dart";
+import "package:antinote_app/frontend/screens/shell/tabs/home.dart";
+import "package:antinote_app/frontend/screens/shell/tabs/homeworks/index.dart";
+import "package:antinote_app/frontend/screens/shell/tabs/timetable/screen.dart";
 import "package:antinote_app/utils.dart";
 import "package:flutter/material.dart";
 import "package:hugeicons_pro/hugeicons.dart";
 
-typedef ScreenDestination = ({
+typedef _TabDestination = ({
   IconData icon,
   String label,
   Widget screen,
@@ -25,7 +25,7 @@ class AppShell extends StatefulWidget {
 }
 
 class _AppShellState extends State<AppShell> {
-  late final List<ScreenDestination> _screens = [
+  late final List<_TabDestination> _tabs = [
     (
       icon: HugeIconsSolid.home01,
       label: context.l10n.home,
@@ -138,7 +138,7 @@ class _AppShellState extends State<AppShell> {
 
                       child: NavigationRail(
                         backgroundColor: context.c.surfaceContainerHigh,
-                        destinations: _screens.mapL((e) {
+                        destinations: _tabs.mapL((e) {
                           final notificationCount = notifications
                               .where(
                                 (element) =>
@@ -182,7 +182,7 @@ class _AppShellState extends State<AppShell> {
                   duration: const Duration(milliseconds: 300),
                   switchInCurve: Curves.fastOutSlowIn,
                   switchOutCurve: const ReversedCurve(Curves.fastOutSlowIn),
-                  child: _screens[currentPage].screen,
+                  child: _tabs[currentPage].screen,
                 ),
               ),
             ],
@@ -206,7 +206,7 @@ class _AppShellState extends State<AppShell> {
                     left: false,
                     right: false,
                     child: NavigationBar(
-                      destinations: _screens
+                      destinations: _tabs
                           .map((e) => _buildDestination(e, notifications))
                           .toList(growable: false),
                       onDestinationSelected: (value) => setState(() {
@@ -224,7 +224,7 @@ class _AppShellState extends State<AppShell> {
   }
 
   NavigationDestination _buildDestination(
-    ScreenDestination e,
+    _TabDestination e,
     List<NotificationPreview> notifications,
   ) {
     final notificationCount = notifications

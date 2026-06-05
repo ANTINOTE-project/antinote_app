@@ -4,7 +4,7 @@ import "dart:math";
 import "package:antinote/antinote.dart";
 import "package:antinote_app/backend/backend.dart";
 import "package:antinote_app/frontend/screens/screen.dart";
-import "package:antinote_app/frontend/screens/shell/screens/homeworks/homework.dart";
+import "package:antinote_app/frontend/screens/shell/tabs/homeworks/homework.dart";
 import "package:antinote_app/frontend/widgets/bottom_padding.dart";
 import "package:antinote_app/frontend/widgets/customs/loading.dart";
 import "package:antinote_app/frontend/widgets/pressable.dart";
