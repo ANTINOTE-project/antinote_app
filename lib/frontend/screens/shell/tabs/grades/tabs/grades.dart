@@ -4,7 +4,7 @@ import "dart:ui";
 
 import "package:antinote/antinote.dart";
 import "package:antinote_app/backend/backend.dart";
-import "package:antinote_app/frontend/screens/screen.dart";
+import "package:antinote_app/frontend/screens/tab.dart";
 import "package:antinote_app/frontend/widgets/bottom_padding.dart";
 import "package:antinote_app/frontend/widgets/customs/list.dart";
 import "package:antinote_app/frontend/widgets/pressable.dart";
@@ -294,7 +294,7 @@ class GradesTab extends StatefulWidget {
   State<GradesTab> createState() => _GradesTabState();
 }
 
-class _GradesTabState extends State<GradesTab> with ScreenMixin<GradesTab> {
+class _GradesTabState extends State<GradesTab> with TabMixin<GradesTab> {
   late LatestGradesPage _data;
 
   @override

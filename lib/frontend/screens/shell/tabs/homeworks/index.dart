@@ -3,8 +3,8 @@ import "dart:math";
 
 import "package:antinote/antinote.dart";
 import "package:antinote_app/backend/backend.dart";
-import "package:antinote_app/frontend/screens/screen.dart";
 import "package:antinote_app/frontend/screens/shell/tabs/homeworks/homework.dart";
+import "package:antinote_app/frontend/screens/tab.dart";
 import "package:antinote_app/frontend/widgets/bottom_padding.dart";
 import "package:antinote_app/frontend/widgets/customs/loading.dart";
 import "package:antinote_app/frontend/widgets/pressable.dart";
@@ -25,7 +25,7 @@ class HomeworksScreen extends StatefulWidget {
 }
 
 class _HomeworksScreenState extends State<HomeworksScreen>
-    with ScreenMixin<HomeworksScreen> {
+    with TabMixin<HomeworksScreen> {
   late Map<int, GlobalKey<SliverAnimatedListState>> _weeks;
   late SpecificInstanceParameters _data;
   final Homeworks _homeworks = {};

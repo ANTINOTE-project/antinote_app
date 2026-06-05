@@ -9,7 +9,7 @@ import "package:flutter/material.dart";
 typedef RefreshIndicatorBuilder =
     Widget Function({required Widget child, bool pullable});
 
-mixin ScreenMixin<T extends StatefulWidget> on State<T> {
+mixin TabMixin<T extends StatefulWidget> on State<T> {
   List<String> get loadChannels => ["communication"];
   FutureOr<void> loadActiveDataFromSession(PronoteSession session);
 
