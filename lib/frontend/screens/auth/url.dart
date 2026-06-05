@@ -119,9 +119,7 @@ class _LoginUrlScreenState extends State<LoginUrlScreen> {
               }
 
               if (snapshot.connectionState != ConnectionState.done) {
-                return const SliverFillRemaining(
-                  child: Center(child: LoadingWidget()),
-                );
+                return const SliverFillRemaining(child: LoadingWidget());
               }
 
               if (!snapshot.hasData) {

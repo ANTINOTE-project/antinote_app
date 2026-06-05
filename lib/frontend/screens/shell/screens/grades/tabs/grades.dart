@@ -5,6 +5,7 @@ import "dart:ui";
 import "package:antinote/antinote.dart";
 import "package:antinote_app/backend/backend.dart";
 import "package:antinote_app/frontend/screens/screen.dart";
+import "package:antinote_app/frontend/widgets/bottom_padding.dart";
 import "package:antinote_app/frontend/widgets/customs/list.dart";
 import "package:antinote_app/frontend/widgets/pressable.dart";
 import "package:antinote_app/utils.dart";
@@ -347,11 +348,7 @@ class _GradesTabState extends State<GradesTab> with ScreenMixin<GradesTab> {
             _ServicesGrades(data: organizedData),
           ],
 
-          SliverPadding(
-            padding: EdgeInsets.only(
-              bottom: MediaQuery.of(context).padding.bottom + 10,
-            ),
-          ),
+          const BottomPadding(padding: 10),
         ],
       ),
     );

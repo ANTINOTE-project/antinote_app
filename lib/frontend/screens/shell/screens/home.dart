@@ -4,7 +4,6 @@ import "package:antinote/antinote.dart";
 import "package:antinote_app/frontend/routing/routes.dart";
 import "package:antinote_app/frontend/screens/screen.dart";
 import "package:antinote_app/frontend/widgets/customs/button.dart";
-import "package:antinote_app/frontend/widgets/customs/loading.dart";
 import "package:flutter/material.dart";
 import "package:go_router/go_router.dart";
 
@@ -29,6 +28,7 @@ class _HomeScreenState extends State<HomeScreen> with ScreenMixin<HomeScreen> {
           mainAxisAlignment: .center,
 
           children: [
+            // TODO remove this temporary button
             ButtonWidget(
               onPressed: () => context.push(Routes.auth.accounts),
               label: "Page de connexion",
@@ -36,16 +36,6 @@ class _HomeScreenState extends State<HomeScreen> with ScreenMixin<HomeScreen> {
           ],
         ),
       ),
-    );
-  }
-
-  @override
-  Widget buildLoading(
-    BuildContext context,
-    RefreshIndicatorBuilder buildRefreshIndicator,
-  ) {
-    return buildRefreshIndicator(
-      child: const Center(child: LoadingWidget()),
     );
   }
 

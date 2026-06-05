@@ -134,7 +134,6 @@ class _TimetableScreenState extends State<TimetableScreen>
     );
 
     return buildRefreshIndicator(
-
       child: PageView.builder(
         itemCount: _currentGroups.length,
         controller: _pageController,
@@ -175,7 +174,7 @@ class _TimetableScreenState extends State<TimetableScreen>
 
                             builder: (context, dayClasses, child) {
                               if (dayClasses == null) {
-                                return const Center(child: LoadingWidget());
+                                return const LoadingWidget();
                               }
 
                               if (dayClasses.isEmpty) {
@@ -412,14 +411,6 @@ class _TimetableScreenState extends State<TimetableScreen>
     }
 
     return Column(children: displays);
-  }
-
-  @override
-  Widget buildLoading(
-    BuildContext context,
-    RefreshIndicatorBuilder buildRefreshIndicator,
-  ) {
-    return buildRefreshIndicator(child: const Center(child: LoadingWidget()));
   }
 
   @override

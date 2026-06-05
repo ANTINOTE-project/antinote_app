@@ -4,7 +4,6 @@ import "package:antinote/antinote.dart" hide Tab;
 import "package:antinote_app/frontend/screens/screen.dart";
 import "package:antinote_app/frontend/screens/shell/screens/grades/app_bar.dart";
 import "package:antinote_app/frontend/screens/shell/screens/grades/tabs/grades.dart";
-import "package:antinote_app/frontend/widgets/customs/loading.dart";
 import "package:antinote_app/utils.dart";
 import "package:collection/collection.dart";
 import "package:flutter/material.dart";
@@ -81,16 +80,6 @@ class _GradesScreenState extends State<GradesScreen>
   }
 
   @override
-  Widget buildLoading(
-    BuildContext context,
-    RefreshIndicatorBuilder buildRefreshIndicator,
-  ) {
-    return buildRefreshIndicator(
-      child: const Center(child: LoadingWidget()),
-    );
-  }
-
-  @override
   FutureOr<void> loadActiveDataFromSession(PronoteSession session) async {
     await session.ensurePage(198);
 
@@ -98,11 +87,11 @@ class _GradesScreenState extends State<GradesScreen>
       (element) => element.location == 198,
     );
 
-    // TODO use session.userResource to periods
     _selectedPeriod = session.instance.periods.firstWhere(
       (element) => element.id == periodData?.defaultPeriod?.id,
       orElse: () => session.instance.defaultPeriod(DateTime.now()),
     );
+
     _periods = session.instance.periods
         .where(
           (p) =>

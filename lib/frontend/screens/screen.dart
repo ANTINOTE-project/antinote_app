@@ -2,6 +2,7 @@ import "dart:async";
 
 import "package:antinote/antinote.dart";
 import "package:antinote_app/backend/backend.dart";
+import "package:antinote_app/frontend/widgets/customs/loading.dart";
 import "package:antinote_app/utils.dart";
 import "package:flutter/material.dart";
 
@@ -78,7 +79,7 @@ mixin ScreenMixin<T extends StatefulWidget> on State<T> {
   Widget buildLoading(
     BuildContext context,
     RefreshIndicatorBuilder buildRefreshIndicator,
-  );
+  ) => const LoadingWidget();
 
   Widget buildErrored(
     BuildContext context,

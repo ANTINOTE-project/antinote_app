@@ -147,7 +147,7 @@ class _LoginQrCodeScreenState extends State<LoginQrCodeScreen> {
                 },
 
                 placeholderBuilder: (context) {
-                  return const Center(child: LoadingWidget());
+                  return const LoadingWidget();
                 },
 
                 onDetect: (result) async {

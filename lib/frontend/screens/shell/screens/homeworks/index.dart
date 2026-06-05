@@ -5,6 +5,7 @@ import "package:antinote/antinote.dart";
 import "package:antinote_app/backend/backend.dart";
 import "package:antinote_app/frontend/routing/routes.dart";
 import "package:antinote_app/frontend/screens/screen.dart";
+import "package:antinote_app/frontend/widgets/bottom_padding.dart";
 import "package:antinote_app/frontend/widgets/customs/loading.dart";
 import "package:antinote_app/frontend/widgets/pressable.dart";
 import "package:antinote_app/frontend/widgets/remote_html.dart";
@@ -26,30 +27,14 @@ class HomeworksScreen extends StatefulWidget {
 
 class _HomeworksScreenState extends State<HomeworksScreen>
     with ScreenMixin<HomeworksScreen> {
-  late SpecificInstanceParameters _homeworksDisplayData;
-  late Map<int, GlobalKey<SliverAnimatedListState>> weeks;
+  late Map<int, GlobalKey<SliverAnimatedListState>> _weeks;
+  late SpecificInstanceParameters _data;
   final Homeworks _homeworks = {};
 
   PageController? _pageController;
-
-  bool _animating = false;
   int? _lastPage;
 
-  Future<void> animateToWeek(int weekNumber) async {
-    final index = weekNumber - _homeworksDisplayData.firstWeekNumber;
-
-    _animating = true;
-
-    await _pageController?.animateToPage(
-      index,
-      duration: const Duration(milliseconds: 300),
-      curve: Curves.fastOutSlowIn,
-    );
-
-    _animating = false;
-  }
-
-  void onPageDrag() {
+  void _onPageDrag() {
     final curPage = _pageController?.page?.round();
     if (curPage == null) return;
 
@@ -62,9 +47,7 @@ class _HomeworksScreenState extends State<HomeworksScreen>
     }
   }
 
-  Future<void> updateHomeworks(int week, {PronoteSession? session}) async {
-    if (_animating) return;
-
+  Future<void> _updateHomeworks(int week, {PronoteSession? session}) async {
     Future<void> update(PronoteSession session) async {
       await session.ensurePage(88);
 
@@ -92,16 +75,18 @@ class _HomeworksScreenState extends State<HomeworksScreen>
         _homeworks[day]!.value = newHomeworks;
 
         if (newHomeworks.isEmpty && (oldHomeworks?.isNotEmpty ?? true)) {
-          weeks[week - _homeworksDisplayData.firstWeekNumber]?.currentState
-              ?.removeItem(days.indexOf(day), (context, animation) {
-                return AnimatedScale(
-                  alignment: .topCenter,
-                  scale: animation.value,
-                  duration: const Duration(seconds: 4),
-                  curve: Curves.fastOutSlowIn,
-                  child: _HomeworkList(day: day, homeworks: const []),
-                );
-              });
+          _weeks[week - _data.firstWeekNumber]?.currentState?.removeItem(
+            days.indexOf(day),
+            (context, animation) {
+              return AnimatedScale(
+                alignment: .topCenter,
+                scale: animation.value,
+                duration: const Duration(seconds: 4),
+                curve: Curves.fastOutSlowIn,
+                child: _HomeworkList(day: day, homeworks: const []),
+              );
+            },
+          );
         }
       }
     }
@@ -115,7 +100,7 @@ class _HomeworksScreenState extends State<HomeworksScreen>
 
   @override
   void dispose() {
-    _pageController?.removeListener(onPageDrag);
+    _pageController?.removeListener(_onPageDrag);
     _pageController?.dispose();
     super.dispose();
   }
@@ -127,21 +112,20 @@ class _HomeworksScreenState extends State<HomeworksScreen>
   ) {
     return buildRefreshIndicator(
       child: PageView.builder(
-        itemCount: weeks.length,
+        itemCount: _weeks.length,
         controller: _pageController,
-        itemBuilder: (context, index) {
-          final weekNumber = index + _homeworksDisplayData.firstWeekNumber;
 
-          final weekStart = _homeworksDisplayData.getDateForWeekNumber(
-            weekNumber,
-          );
+        itemBuilder: (context, index) {
+          final weekNumber = index + _data.firstWeekNumber;
+
+          final weekStart = _data.getDateForWeekNumber(weekNumber);
           final weekEnd = weekStart.add(const Duration(days: 6));
 
           final days = DateRange(
             start: weekStart,
             end: DateTime.fromMillisecondsSinceEpoch(
               min(
-                _homeworksDisplayData.lastDate.millisecondsSinceEpoch,
+                _data.lastDate.millisecondsSinceEpoch,
                 weekEnd.millisecondsSinceEpoch,
               ),
               isUtc: true,
@@ -157,33 +141,34 @@ class _HomeworksScreenState extends State<HomeworksScreen>
           return Scaffold(
             appBar: AppBar(
               title: _WeekPicker(
-                firstWeekNumber: _homeworksDisplayData.firstWeekNumber,
-                weekCount: weeks.length,
+                firstWeekNumber: _data.firstWeekNumber,
+                weekCount: _weeks.length,
                 curWeekIndex: index,
               ),
             ),
+
             body: RefreshIndicator(
               onRefresh: () => reload(fromRefreshIndicator: true),
+
               child: CustomScrollView(
                 slivers: [
                   SliverAnimatedList(
-                    key: weeks[index],
+                    initialItemCount: displayableDays.length,
+                    key: _weeks[index],
+
                     itemBuilder: (context, index, animation) {
                       final day = displayableDays[index];
+
                       return ValueListenableBuilder(
                         valueListenable: _homeworks[day]!,
-                        builder: (context, value, child) {
+                        builder: (context, value, _) {
                           return _HomeworkList(day: day, homeworks: value);
                         },
                       );
                     },
-                    initialItemCount: displayableDays.length,
                   ),
-                  SliverPadding(
-                    padding: EdgeInsets.only(
-                      bottom: MediaQuery.paddingOf(context).bottom,
-                    ),
-                  ),
+
+                  const BottomPadding(),
                 ],
               ),
             ),
@@ -194,16 +179,8 @@ class _HomeworksScreenState extends State<HomeworksScreen>
   }
 
   @override
-  Widget buildLoading(
-    BuildContext context,
-    RefreshIndicatorBuilder buildRefreshIndicator,
-  ) {
-    return const Center(child: LoadingWidget());
-  }
-
-  @override
   FutureOr<void> loadActiveDataFromSession(PronoteSession session) async {
-    _homeworksDisplayData = session.instance;
+    _data = session.instance;
 
     final firstWeekNumber = session.instance.firstWeekNumber;
     final lastWeekNumber = session.instance.getWeekNumberForDate(
@@ -211,7 +188,7 @@ class _HomeworksScreenState extends State<HomeworksScreen>
     );
 
     if (!loaded) {
-      weeks = {
+      _weeks = {
         for (
           int weekIndex = 0;
           weekIndex <= lastWeekNumber - firstWeekNumber;
@@ -242,10 +219,13 @@ class _HomeworksScreenState extends State<HomeworksScreen>
       }
 
       _pageController = PageController(initialPage: currentWeekIndex);
-      _pageController?.addListener(onPageDrag);
+      _pageController?.addListener(_onPageDrag);
     }
 
-    await updateHomeworks(currentWeekIndex + firstWeekNumber, session: session);
+    await _updateHomeworks(
+      currentWeekIndex + firstWeekNumber,
+      session: session,
+    );
   }
 }
 
@@ -262,7 +242,7 @@ class _HomeworkList extends StatefulWidget {
 class _HomeworkListState extends State<_HomeworkList> {
   final ExpansibleController controller = ExpansibleController();
 
-  void displayIfNeeded() {
+  void _displayIfNeeded() {
     if (!DateTime.now().copyWith(isUtc: true).toDay().isAfter(widget.day) ||
         (widget.homeworks?.any((element) => !element.isDone) ?? false)) {
       controller.expand();
@@ -272,14 +252,15 @@ class _HomeworkListState extends State<_HomeworkList> {
   @override
   void initState() {
     super.initState();
-    displayIfNeeded();
+    _displayIfNeeded();
   }
 
   @override
   void didUpdateWidget(covariant _HomeworkList oldWidget) {
     super.didUpdateWidget(oldWidget);
+
     if (oldWidget.homeworks != widget.homeworks) {
-      displayIfNeeded();
+      _displayIfNeeded();
     }
   }
 
@@ -287,14 +268,18 @@ class _HomeworkListState extends State<_HomeworkList> {
   Widget build(BuildContext context) {
     return Expansible(
       controller: controller,
+
       headerBuilder: (context, animation) {
         return Padding(
           padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
+
           child: Pressable(
             onPressed: widget.homeworks == null ? null : controller.toggle,
             hasVisuals: false,
+
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
+
               children: [
                 Text(
                   widget.day.asRelativeDate(context),
@@ -304,6 +289,7 @@ class _HomeworkListState extends State<_HomeworkList> {
                     fontSize: 16,
                   ),
                 ),
+
                 widget.homeworks == null
                     ? const LoadingWidget(size: 12)
                     : Transform.rotate(
@@ -319,6 +305,7 @@ class _HomeworkListState extends State<_HomeworkList> {
           ),
         );
       },
+
       bodyBuilder: (BuildContext context, Animation<double> animation) {
         if (widget.homeworks == null) return const SizedBox.shrink();
 
@@ -353,20 +340,20 @@ class _HomeworkCard extends StatelessWidget {
 
         child: Ink(
           decoration: BoxDecoration(
-            border: Border.all(color: scheme.outline),
-            borderRadius: BorderRadius.circular(20),
+            border: .all(color: scheme.outline),
+            borderRadius: const .all(.circular(20)),
             color: scheme.primaryContainer,
           ),
 
-          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+          padding: const .symmetric(horizontal: 12, vertical: 8),
 
           child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
+            crossAxisAlignment: .start,
             spacing: 6,
 
             children: [
               Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                mainAxisAlignment: .spaceBetween,
                 spacing: 10,
 
                 children: [
@@ -374,12 +361,12 @@ class _HomeworkCard extends StatelessWidget {
                     child: Text(
                       homework.subject.name ?? context.l10n.noSubject,
 
-                      overflow: TextOverflow.ellipsis,
+                      overflow: .ellipsis,
                       maxLines: 1,
 
                       style: TextStyle(
                         color: scheme.primary,
-                        fontWeight: FontWeight.w800,
+                        fontWeight: .w800,
                         fontSize: 21,
                       ),
                     ),
@@ -387,10 +374,7 @@ class _HomeworkCard extends StatelessWidget {
 
                   Text(
                     dateStr,
-                    style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                      color: scheme.outline,
-                    ),
+                    style: TextStyle(fontWeight: .bold, color: scheme.outline),
                   ),
                 ],
               ),
@@ -422,7 +406,7 @@ class _HomeworkCard extends StatelessWidget {
                         : context.l10n.homeworkSetNotDone,
                     style: TextStyle(
                       color: scheme.onPrimaryContainer,
-                      fontWeight: FontWeight.w800,
+                      fontWeight: .w800,
                       fontSize: 15.5,
                     ),
                   ),
