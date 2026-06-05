@@ -15,6 +15,7 @@ class App extends StatefulWidget {
 }
 
 class _AppState extends State<App> {
+  final _themeNotifier = ThemeNotifier();
   late final GoRouter _router;
 
   @override
@@ -24,29 +25,37 @@ class _AppState extends State<App> {
   }
 
   @override
+  void dispose() {
+    _themeNotifier.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
-    const theme = MaterialTheme();
+    return ListenableBuilder(
+      listenable: _themeNotifier,
 
-    return MaterialApp.router(
-      debugShowCheckedModeBanner: false,
+      builder: (context, child) {
+        return MaterialApp.router(
+          debugShowCheckedModeBanner: false,
 
-      title: "ANTINOTE",
+          title: "ANTINOTE",
 
-      highContrastDarkTheme: theme.darkHighContrast(),
-      highContrastTheme: theme.lightHighContrast(),
-      darkTheme: theme.dark(),
-      theme: theme.light(),
+          theme: _themeNotifier.light,
+          darkTheme: _themeNotifier.dark,
 
-      routerConfig: _router,
+          routerConfig: _router,
 
-      localizationsDelegates: const [
-        AppLocalizations.delegate,
-        GlobalMaterialLocalizations.delegate,
-        GlobalWidgetsLocalizations.delegate,
-        GlobalCupertinoLocalizations.delegate,
-      ],
+          localizationsDelegates: const [
+            AppLocalizations.delegate,
+            GlobalMaterialLocalizations.delegate,
+            GlobalWidgetsLocalizations.delegate,
+            GlobalCupertinoLocalizations.delegate,
+          ],
 
-      supportedLocales: AppLocalizations.supportedLocales,
+          supportedLocales: AppLocalizations.supportedLocales,
+        );
+      },
     );
   }
 }
