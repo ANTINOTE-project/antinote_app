@@ -36,24 +36,28 @@ class _AppState extends State<App> {
       listenable: _themeNotifier,
 
       builder: (context, child) {
-        return MaterialApp.router(
-          debugShowCheckedModeBanner: false,
+        return ThemeScope(
+          notifier: _themeNotifier,
 
-          title: "ANTINOTE",
+          child: MaterialApp.router(
+            debugShowCheckedModeBanner: false,
 
-          theme: _themeNotifier.light,
-          darkTheme: _themeNotifier.dark,
+            title: "ANTINOTE",
 
-          routerConfig: _router,
+            theme: _themeNotifier.light,
+            darkTheme: _themeNotifier.dark,
 
-          localizationsDelegates: const [
-            AppLocalizations.delegate,
-            GlobalMaterialLocalizations.delegate,
-            GlobalWidgetsLocalizations.delegate,
-            GlobalCupertinoLocalizations.delegate,
-          ],
+            routerConfig: _router,
 
-          supportedLocales: AppLocalizations.supportedLocales,
+            localizationsDelegates: const [
+              AppLocalizations.delegate,
+              GlobalMaterialLocalizations.delegate,
+              GlobalWidgetsLocalizations.delegate,
+              GlobalCupertinoLocalizations.delegate,
+            ],
+
+            supportedLocales: AppLocalizations.supportedLocales,
+          ),
         );
       },
     );

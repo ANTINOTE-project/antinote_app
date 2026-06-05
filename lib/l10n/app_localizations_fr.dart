@@ -9,6 +9,30 @@ class AppLocalizationsFr extends AppLocalizations {
   AppLocalizationsFr([String locale = 'fr']) : super(locale);
 
   @override
+  String get themeCoral => 'Corail';
+
+  @override
+  String get themeIndigo => 'Indigo';
+
+  @override
+  String get themeGreen => 'Vert';
+
+  @override
+  String get themeTeal => 'Sarcelle';
+
+  @override
+  String get themePurple => 'Violet';
+
+  @override
+  String get themeOrange => 'Orange';
+
+  @override
+  String get themePink => 'Rose';
+
+  @override
+  String get themeBlue => 'Bleu';
+
+  @override
   String get today => 'Aujourd\'hui';
 
   @override

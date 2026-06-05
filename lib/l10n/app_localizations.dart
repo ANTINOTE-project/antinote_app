@@ -94,6 +94,54 @@ abstract class AppLocalizations {
   /// A list of this localizations delegate's supported locales.
   static const List<Locale> supportedLocales = <Locale>[Locale('fr')];
 
+  /// No description provided for @themeCoral.
+  ///
+  /// In fr, this message translates to:
+  /// **'Corail'**
+  String get themeCoral;
+
+  /// No description provided for @themeIndigo.
+  ///
+  /// In fr, this message translates to:
+  /// **'Indigo'**
+  String get themeIndigo;
+
+  /// No description provided for @themeGreen.
+  ///
+  /// In fr, this message translates to:
+  /// **'Vert'**
+  String get themeGreen;
+
+  /// No description provided for @themeTeal.
+  ///
+  /// In fr, this message translates to:
+  /// **'Sarcelle'**
+  String get themeTeal;
+
+  /// No description provided for @themePurple.
+  ///
+  /// In fr, this message translates to:
+  /// **'Violet'**
+  String get themePurple;
+
+  /// No description provided for @themeOrange.
+  ///
+  /// In fr, this message translates to:
+  /// **'Orange'**
+  String get themeOrange;
+
+  /// No description provided for @themePink.
+  ///
+  /// In fr, this message translates to:
+  /// **'Rose'**
+  String get themePink;
+
+  /// No description provided for @themeBlue.
+  ///
+  /// In fr, this message translates to:
+  /// **'Bleu'**
+  String get themeBlue;
+
   /// No description provided for @today.
   ///
   /// In fr, this message translates to:

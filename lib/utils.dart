@@ -1,5 +1,6 @@
 import "package:antinote/antinote.dart";
 import "package:antinote_app/backend/backend.dart";
+import "package:antinote_app/frontend/theme.dart";
 import "package:antinote_app/l10n/app_localizations.dart";
 import "package:flutter/material.dart";
 
@@ -206,6 +207,10 @@ extension L10nExtension on BuildContext {
 
 extension SessionManagerExtension on BuildContext {
   SessionManager get sm => SessionManager.of(this);
+}
+
+extension ThemeScopeExtension on BuildContext {
+  ThemeNotifier get tn => ThemeScope.of(this);
 }
 
 const fakeGrade = Grade.defaultUnknownGrade;

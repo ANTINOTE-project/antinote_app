@@ -9,6 +9,7 @@ import "package:antinote_app/frontend/screens/auth/school.dart";
 import "package:antinote_app/frontend/screens/auth/url.dart";
 import "package:antinote_app/frontend/screens/auth/webview.dart";
 import "package:antinote_app/frontend/screens/auth/workspace.dart";
+import "package:antinote_app/frontend/screens/settings/index.dart";
 import "package:antinote_app/frontend/screens/shell/shell.dart";
 import "package:go_router/go_router.dart";
 
@@ -20,6 +21,13 @@ GoRouter makeRouter({String initialLocation = Routes.appShell}) => GoRouter(
       path: Routes.appShell,
       builder: (context, state) => const AppShell(),
     ),
+
+    GoRoute(
+      path: Routes.settings,
+      builder: (context, state) => const SettingsScreen(),
+    ),
+
+    // Auth routes
     GoRoute(
       path: Routes.auth.accounts,
       builder: (context, state) => const AccountsScreen(),

@@ -35,6 +35,8 @@ class AppBarWidget extends StatelessWidget implements PreferredSizeWidget {
           : null,
 
       leading: leading,
+
+      actionsPadding: const .only(right: 6),
       actions: actions,
     );
   }

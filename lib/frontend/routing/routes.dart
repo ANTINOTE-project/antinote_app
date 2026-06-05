@@ -2,6 +2,7 @@ abstract final class Routes {
   const Routes._();
 
   static const appShell = "/app_shell";
+  static const settings = "/settings";
   static const news = "/news";
 
   static const auth = _AuthRoute();

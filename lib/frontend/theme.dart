@@ -7,7 +7,9 @@ class ThemeScope extends InheritedWidget {
   const ThemeScope({super.key, required this.notifier, required super.child});
 
   static ThemeNotifier of(BuildContext context) {
-    return context.dependOnInheritedWidgetOfExactType<ThemeScope>()!.notifier;
+    final result = context.dependOnInheritedWidgetOfExactType<ThemeScope>();
+    assert(result != null, "No ThemeScope found in context");
+    return result!.notifier;
   }
 
   @override
@@ -16,9 +18,9 @@ class ThemeScope extends InheritedWidget {
 
 class ThemeNotifier extends ChangeNotifier {
   static const _seedKey = "seed_color";
-  static const _defaultSeed = Color(0xff904a40);
+  static const defaultSeed = Color(0xff904a40);
 
-  Color _seedColor = _defaultSeed;
+  Color _seedColor = defaultSeed;
   Color get seedColor => _seedColor;
 
   ThemeNotifier() {
