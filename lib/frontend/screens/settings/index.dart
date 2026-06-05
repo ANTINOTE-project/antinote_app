@@ -182,19 +182,24 @@ class _ColorPickerState extends State<_ColorPicker> {
                       color: color,
                     ),
 
-                    foregroundDecoration: isSelected
-                        ? BoxDecoration(
-                            borderRadius: .circular(14),
+                    foregroundDecoration: BoxDecoration(
+                      borderRadius: .circular(14),
 
-                            border: Border.all(
-                              color: context.c.onSurface,
-                              width: 2,
-                            ),
-                          )
-                        : null,
+                      border: Border.all(
+                        color: isSelected
+                            ? context.c.onPrimary
+                            : context.c.outline,
+                        width: isSelected ? 3 : 1,
+                        strokeAlign: 1,
+                      ),
+                    ),
 
                     child: isSelected
-                        ? const Icon(HugeIconsSolid.tick03, size: 24)
+                        ? Icon(
+                            HugeIconsSolid.tick03,
+                            size: 24,
+                            color: context.c.onPrimary,
+                          )
                         : null,
                   ),
                 ),
