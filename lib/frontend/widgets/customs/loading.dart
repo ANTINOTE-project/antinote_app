@@ -11,7 +11,11 @@ class LoadingWidget extends StatelessWidget {
       child: SizedBox(
         width: size,
         height: size,
-        child: CircularProgressIndicator(strokeWidth: size / 7),
+
+        child: CircularProgressIndicator(
+          strokeWidth: size / 7,
+          strokeCap: .round,
+        ),
       ),
     );
   }
