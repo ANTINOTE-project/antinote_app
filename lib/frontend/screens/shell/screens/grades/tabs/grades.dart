@@ -720,7 +720,7 @@ class _LatestGrades extends StatelessWidget {
                           border: Border.all(
                             color: exams == null
                                 ? context.c.outlineVariant
-                                : scheme.outline,
+                                : scheme.inversePrimary,
                           ),
 
                           color: exams == null
@@ -903,7 +903,9 @@ class _ServiceWidget extends StatelessWidget {
           child: Ink(
             decoration: BoxDecoration(
               border: Border.all(
-                color: isLoading ? context.c.outlineVariant : scheme.outline,
+                color: isLoading
+                    ? context.c.outlineVariant
+                    : scheme.inversePrimary,
               ),
 
               borderRadius: BorderRadius.circular(16),

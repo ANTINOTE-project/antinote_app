@@ -124,10 +124,12 @@ class ClassWidget extends StatelessWidget {
         ),
 
         child: Pressable(
+          borderRadius: outerBorderRadius,
+
           onPressed: () {
             talker.info("TODO: Create class details page");
           },
-          borderRadius: outerBorderRadius,
+
           child: Column(
             children: [
               if (clazz.status != null)
@@ -197,14 +199,16 @@ class ClassWidget extends StatelessWidget {
                             left: statusBorder,
                             right: statusBorder,
                           )
-                        : Border.all(color: scheme.outline),
+                        : Border.all(color: scheme.inversePrimary),
                     borderRadius: bodyBorderRadius,
                   ),
+
                   padding: .symmetric(
                     horizontal: 10,
                     vertical: clazz.canceled ? 2 : 5,
                   ),
                   width: double.infinity,
+
                   child: Column(
                     spacing: clazz.canceled ? 0 : 2,
                     crossAxisAlignment: .start,
