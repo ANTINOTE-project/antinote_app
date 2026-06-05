@@ -177,11 +177,14 @@ class _AppShellState extends State<AppShell> {
                     ),
                   ),
                 ),
+
               Expanded(
                 child: AnimatedSwitcher(
                   duration: const Duration(milliseconds: 300),
+
                   switchInCurve: Curves.fastOutSlowIn,
                   switchOutCurve: const ReversedCurve(Curves.fastOutSlowIn),
+
                   child: _tabs[currentPage].screen,
                 ),
               ),
@@ -193,22 +196,26 @@ class _AppShellState extends State<AppShell> {
               : Container(
                   margin: const .symmetric(horizontal: 6),
                   padding: const .symmetric(horizontal: 6),
+
                   clipBehavior: .antiAlias,
+
                   decoration: BoxDecoration(
+                    color: context.c.surfaceContainer,
                     borderRadius: const .only(
                       topLeft: .circular(24),
                       topRight: .circular(24),
                     ),
-                    color: context.c.surfaceContainer,
                   ),
 
                   child: SafeArea(
                     left: false,
                     right: false,
+
                     child: NavigationBar(
                       destinations: _tabs
                           .map((e) => _buildDestination(e, notifications))
                           .toList(growable: false),
+
                       onDestinationSelected: (value) => setState(() {
                         currentPage = value;
                       }),
@@ -237,6 +244,7 @@ class _AppShellState extends State<AppShell> {
         isLabelVisible: notificationCount > 0,
         child: Icon(e.icon),
       ),
+
       label: e.label,
 
       selectedIcon: Badge.count(

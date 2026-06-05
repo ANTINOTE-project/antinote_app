@@ -1,5 +1,5 @@
 import "package:antinote/antinote.dart";
-import "package:antinote_app/frontend/widgets/customs/attachment_item_widget.dart";
+import "package:antinote_app/frontend/widgets/customs/attachment.dart";
 import "package:antinote_app/frontend/widgets/customs/list.dart";
 import "package:antinote_app/frontend/widgets/remote_html.dart";
 import "package:antinote_app/utils.dart";

@@ -1,7 +1,7 @@
 import "package:antinote_app/frontend/routing/routes.dart";
-import "package:antinote_app/frontend/widgets/animated/icon.dart";
 import "package:antinote_app/frontend/widgets/customs/app_bar.dart";
 import "package:antinote_app/frontend/widgets/customs/button.dart";
+import "package:antinote_app/frontend/widgets/customs/icon.dart";
 import "package:antinote_app/frontend/widgets/customs/list.dart";
 import "package:antinote_app/main.dart";
 import "package:antinote_app/protos/account.pb.dart";
