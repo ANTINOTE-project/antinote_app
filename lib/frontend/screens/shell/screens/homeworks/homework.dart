@@ -11,9 +11,14 @@ import "package:hugeicons_pro/hugeicons.dart";
 import "package:intl/intl.dart";
 
 class HomeworkScreen extends StatefulWidget {
+  final void Function(bool value) onHomeworkChange;
   final Homework homework;
 
-  const HomeworkScreen({super.key, required this.homework});
+  const HomeworkScreen({
+    super.key,
+    required this.homework,
+    required this.onHomeworkChange,
+  });
 
   @override
   State<HomeworkScreen> createState() => _HomeworkScreenState();
@@ -25,7 +30,6 @@ class _HomeworkScreenState extends State<HomeworkScreen> {
   @override
   void initState() {
     super.initState();
-
     _isDone = widget.homework.isDone;
   }
 
@@ -134,7 +138,7 @@ class _HomeworkScreenState extends State<HomeworkScreen> {
                         callback: (session) async {
                           final cachedHomework = session
                               .getCachedValue<Homework>(
-                                CacheType.HOMEWORK,
+                                .HOMEWORK,
                                 widget.homework.visualId,
                               );
 
@@ -145,6 +149,8 @@ class _HomeworkScreenState extends State<HomeworkScreen> {
                           );
                         },
                       );
+
+                      widget.onHomeworkChange.call(_isDone);
                     },
 
                     leading: IconWidget(
@@ -152,7 +158,7 @@ class _HomeworkScreenState extends State<HomeworkScreen> {
                       iconOff: HugeIconsStroke.tick03,
 
                       colorOn: scheme.onPrimaryContainer,
-                      colorOff: scheme.onPrimaryContainer,
+                      colorOff: scheme.outline,
 
                       size: 21,
                       value: _isDone,
@@ -195,7 +201,11 @@ class _HomeworkScreenState extends State<HomeworkScreen> {
                               : context.l10n.homeworkSetNotDone,
 
                           key: ValueKey(_isDone),
-                          style: TextStyle(color: scheme.onPrimaryContainer),
+                          style: TextStyle(
+                            color: _isDone
+                                ? scheme.onPrimaryContainer
+                                : scheme.outline,
+                          ),
                         ),
                       ),
                     ),
@@ -234,7 +244,7 @@ class _HomeworkScreenState extends State<HomeworkScreen> {
                   rawHtml: widget.homework.description,
                   style: TextStyle(
                     color: scheme.onSurface,
-                    fontWeight: FontWeight.normal,
+                    fontWeight: .w600,
                     fontSize: 15,
                   ),
                 ),

@@ -9,7 +9,6 @@ import "package:antinote_app/frontend/screens/auth/school.dart";
 import "package:antinote_app/frontend/screens/auth/url.dart";
 import "package:antinote_app/frontend/screens/auth/webview.dart";
 import "package:antinote_app/frontend/screens/auth/workspace.dart";
-import "package:antinote_app/frontend/screens/shell/screens/homeworks/homework.dart";
 import "package:antinote_app/frontend/screens/shell/shell.dart";
 import "package:go_router/go_router.dart";
 
@@ -79,14 +78,6 @@ GoRouter makeRouter({String initialLocation = Routes.appShell}) => GoRouter(
     GoRoute(
       path: Routes.auth.qrCode,
       builder: (context, state) => const LoginQrCodeScreen(),
-    ),
-
-    GoRoute(
-      path: Routes.homework,
-      builder: (context, state) {
-        final extra = state.extra as Map<String, dynamic>;
-        return HomeworkScreen(homework: extra["homework"] as Homework);
-      },
     ),
   ],
 );

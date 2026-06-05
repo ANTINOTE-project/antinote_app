@@ -3,8 +3,8 @@ import "dart:math";
 
 import "package:antinote/antinote.dart";
 import "package:antinote_app/backend/backend.dart";
-import "package:antinote_app/frontend/routing/routes.dart";
 import "package:antinote_app/frontend/screens/screen.dart";
+import "package:antinote_app/frontend/screens/shell/screens/homeworks/homework.dart";
 import "package:antinote_app/frontend/widgets/bottom_padding.dart";
 import "package:antinote_app/frontend/widgets/customs/loading.dart";
 import "package:antinote_app/frontend/widgets/pressable.dart";
@@ -12,7 +12,6 @@ import "package:antinote_app/frontend/widgets/remote_html.dart";
 import "package:antinote_app/utils.dart";
 import "package:collection/collection.dart";
 import "package:flutter/material.dart";
-import "package:go_router/go_router.dart";
 import "package:hugeicons_pro/hugeicons.dart";
 import "package:intl/intl.dart";
 
@@ -81,9 +80,15 @@ class _HomeworksScreenState extends State<HomeworksScreen>
               return AnimatedScale(
                 alignment: .topCenter,
                 scale: animation.value,
+
                 duration: const Duration(seconds: 4),
                 curve: Curves.fastOutSlowIn,
-                child: _HomeworkList(day: day, homeworks: const []),
+
+                child: _HomeworkList(
+                  day: day,
+                  homeworks: const [],
+                  onReturn: () {},
+                ),
               );
             },
           );
@@ -152,23 +157,34 @@ class _HomeworksScreenState extends State<HomeworksScreen>
 
               child: CustomScrollView(
                 slivers: [
-                  SliverAnimatedList(
-                    initialItemCount: displayableDays.length,
-                    key: _weeks[index],
+                  SliverPadding(
+                    padding: const .symmetric(horizontal: 4),
 
-                    itemBuilder: (context, index, animation) {
-                      final day = displayableDays[index];
+                    sliver: SliverAnimatedList(
+                      initialItemCount: displayableDays.length,
+                      key: _weeks[index],
 
-                      return ValueListenableBuilder(
-                        valueListenable: _homeworks[day]!,
-                        builder: (context, value, _) {
-                          return _HomeworkList(day: day, homeworks: value);
-                        },
-                      );
-                    },
+                      itemBuilder: (context, index, animation) {
+                        final day = displayableDays[index];
+
+                        return ValueListenableBuilder(
+                          valueListenable: _homeworks[day]!,
+
+                          builder: (context, value, _) {
+                            return _HomeworkList(
+                              day: day,
+                              homeworks: value,
+                              onReturn: () {
+                                reload(fromRefreshIndicator: true);
+                              },
+                            );
+                          },
+                        );
+                      },
+                    ),
                   ),
 
-                  const BottomPadding(),
+                  const BottomPadding(padding: 20),
                 ],
               ),
             ),
@@ -232,8 +248,13 @@ class _HomeworksScreenState extends State<HomeworksScreen>
 class _HomeworkList extends StatefulWidget {
   final DateTime day;
   final List<Homework>? homeworks;
+  final VoidCallback onReturn;
 
-  const _HomeworkList({required this.day, required this.homeworks});
+  const _HomeworkList({
+    required this.day,
+    required this.homeworks,
+    required this.onReturn,
+  });
 
   @override
   State<_HomeworkList> createState() => _HomeworkListState();
@@ -309,11 +330,17 @@ class _HomeworkListState extends State<_HomeworkList> {
       bodyBuilder: (BuildContext context, Animation<double> animation) {
         if (widget.homeworks == null) return const SizedBox.shrink();
 
-        return Column(
-          children: [
-            for (final homework in widget.homeworks!)
-              _HomeworkCard(homework: homework),
-          ],
+        return Padding(
+          padding: const .symmetric(horizontal: 8),
+
+          child: Column(
+            spacing: 8,
+
+            children: [
+              for (final homework in widget.homeworks!)
+                _HomeworkCard(homework: homework, onReturn: widget.onReturn),
+            ],
+          ),
         );
       },
     );
@@ -322,98 +349,118 @@ class _HomeworkListState extends State<_HomeworkList> {
 
 class _HomeworkCard extends StatelessWidget {
   final Homework homework;
+  final VoidCallback onReturn;
 
-  const _HomeworkCard({required this.homework});
+  const _HomeworkCard({required this.homework, required this.onReturn});
 
   @override
   Widget build(BuildContext context) {
     final scheme = Utils.buildColorScheme(context, homework.backgroundColor);
     final dateStr = DateFormat("dd/MM/yyyy").format(homework.deadlineDate);
 
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 10),
-      child: Pressable(
-        borderRadius: BorderRadius.circular(20),
-        onPressed: () async {
-          await context.push(Routes.homework, extra: {"homework": homework});
-        },
+    return Pressable(
+      borderRadius: .circular(20),
 
-        child: Ink(
-          decoration: BoxDecoration(
-            border: .all(color: scheme.outline),
-            borderRadius: const .all(.circular(20)),
-            color: scheme.primaryContainer,
+      onPressed: () async {
+        await Navigator.push(
+          context,
+
+          MaterialPageRoute(
+            builder: (context) {
+              return HomeworkScreen(
+                homework: homework,
+                onHomeworkChange: (_) => onReturn(),
+              );
+            },
           ),
+        );
+      },
 
-          padding: const .symmetric(horizontal: 12, vertical: 8),
+      child: Ink(
+        decoration: BoxDecoration(
+          border: .all(color: scheme.inversePrimary),
+          borderRadius: .circular(16),
+          color: scheme.primaryContainer,
+        ),
 
-          child: Column(
-            crossAxisAlignment: .start,
-            spacing: 6,
+        padding: const .symmetric(horizontal: 12, vertical: 8),
 
-            children: [
-              Row(
-                mainAxisAlignment: .spaceBetween,
-                spacing: 10,
+        child: Column(
+          crossAxisAlignment: .start,
+          spacing: 6,
 
-                children: [
-                  Expanded(
-                    child: Text(
-                      homework.subject.name ?? context.l10n.noSubject,
+          children: [
+            Row(
+              mainAxisAlignment: .spaceBetween,
+              spacing: 10,
 
-                      overflow: .ellipsis,
-                      maxLines: 1,
+              children: [
+                Expanded(
+                  child: Text(
+                    homework.subject.name ?? context.l10n.noSubject,
 
-                      style: TextStyle(
-                        color: scheme.primary,
-                        fontWeight: .w800,
-                        fontSize: 21,
-                      ),
-                    ),
-                  ),
+                    overflow: .ellipsis,
+                    maxLines: 1,
 
-                  Text(
-                    dateStr,
-                    style: TextStyle(fontWeight: .bold, color: scheme.outline),
-                  ),
-                ],
-              ),
-
-              RemoteHtml(
-                rawHtml: homework.description,
-                compact: true,
-                maxLines: 3,
-                style: TextStyle(color: scheme.onSurface, fontSize: 15),
-              ),
-
-              const SizedBox(height: 6),
-
-              Row(
-                spacing: 6,
-
-                children: [
-                  Icon(
-                    homework.isDone
-                        ? HugeIconsSolid.tick03
-                        : HugeIconsStroke.tick03,
-                    color: scheme.onPrimaryContainer,
-                    size: 21,
-                  ),
-
-                  Text(
-                    homework.isDone
-                        ? context.l10n.homeworkSetDone
-                        : context.l10n.homeworkSetNotDone,
                     style: TextStyle(
-                      color: scheme.onPrimaryContainer,
+                      color: scheme.primary,
                       fontWeight: .w800,
-                      fontSize: 15.5,
+                      fontSize: 21,
                     ),
                   ),
-                ],
+                ),
+
+                Text(
+                  dateStr,
+                  style: TextStyle(fontWeight: .bold, color: scheme.outline),
+                ),
+              ],
+            ),
+
+            RemoteHtml(
+              rawHtml: homework.description,
+              compact: true,
+              maxLines: 3,
+
+              style: TextStyle(
+                color: scheme.onSurface,
+                fontWeight: .w600,
+                fontSize: 15,
               ),
-            ],
-          ),
+            ),
+
+            const SizedBox(height: 6),
+
+            Row(
+              spacing: 6,
+
+              children: [
+                Icon(
+                  homework.isDone
+                      ? HugeIconsSolid.tick03
+                      : HugeIconsStroke.tick03,
+                  color: homework.isDone
+                      ? scheme.onPrimaryContainer
+                      : scheme.outline,
+                  size: 21,
+                ),
+
+                Text(
+                  homework.isDone
+                      ? context.l10n.homeworkSetDone
+                      : context.l10n.homeworkSetNotDone,
+
+                  style: TextStyle(
+                    color: homework.isDone
+                        ? scheme.onPrimaryContainer
+                        : scheme.outline,
+                    fontWeight: .w800,
+                    fontSize: 15.5,
+                  ),
+                ),
+              ],
+            ),
+          ],
         ),
       ),
     );
