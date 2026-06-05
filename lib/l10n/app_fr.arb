@@ -1,14 +1,22 @@
 {
   "@@locale": "fr",
 
+  "themeSeed": "Accent",
+  "themePreview": "Aperçu",
+
+  "themePrimary": "Primaire",
+  "themeSecondary": "Secondaire",
+  "themeTertiary": "Tertiaire",
+  "themeSurface": "Surface",
+  "themeError": "Erreur",
+
   "themeCoral": "Corail",
   "themeIndigo": "Indigo",
   "themeGreen": "Vert",
   "themeTeal": "Sarcelle",
   "themePurple": "Violet",
-  "themeOrange": "Orange",
-  "themePink": "Rose",
   "themeBlue": "Bleu",
+  "themeAmber": "Ambre",
 
   "today": "Aujourd'hui",
   "tomorrow": "Demain",

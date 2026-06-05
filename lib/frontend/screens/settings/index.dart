@@ -3,27 +3,26 @@ import "package:antinote_app/frontend/widgets/pressable.dart";
 import "package:antinote_app/l10n/app_localizations.dart";
 import "package:antinote_app/utils.dart";
 import "package:flutter/material.dart";
+import "package:hugeicons_pro/hugeicons.dart";
 
-enum _AppColor {
+enum AppColor {
   coral(Color(0xff904a40)),
-  indigo(Color(0xff3F51B5)),
-  green(Color(0xff2E7D32)),
-  teal(Color(0xff00695C)),
-  purple(Color(0xff6A1B9A)),
-  pink(Color(0xffAD1457)),
-  blue(Color(0xff1565C0));
+  blue(Color(0xFF1E88E5)),
+  green(Color(0xFF43A047)),
+  purple(Color(0xFF8E24AA)),
+  amber(Color(0xFFFFB300)),
+  teal(Color(0xFF00897B));
 
-  const _AppColor(this.color);
+  const AppColor(this.color);
   final Color color;
 
   String label(AppLocalizations l10n) => switch (this) {
-    _AppColor.coral => l10n.themeCoral,
-    _AppColor.indigo => l10n.themeIndigo,
-    _AppColor.green => l10n.themeGreen,
-    _AppColor.teal => l10n.themeTeal,
-    _AppColor.purple => l10n.themePurple,
-    _AppColor.pink => l10n.themePink,
-    _AppColor.blue => l10n.themeBlue,
+    AppColor.coral => l10n.themeCoral,
+    AppColor.blue => l10n.themeBlue,
+    AppColor.green => l10n.themeGreen,
+    AppColor.purple => l10n.themePurple,
+    AppColor.amber => l10n.themeAmber,
+    AppColor.teal => l10n.themeTeal,
   };
 }
 
@@ -32,9 +31,64 @@ class SettingsScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const Scaffold(
-      appBar: AppBarWidget(),
-      body: SingleChildScrollView(child: Column(children: [_ColorPicker()])),
+    return Scaffold(
+      appBar: const AppBarWidget(),
+
+      body: SingleChildScrollView(
+        padding: const .symmetric(horizontal: 12),
+
+        child: Column(
+          crossAxisAlignment: .start,
+          spacing: 12,
+
+          children: [
+            _TextIcon(
+              icon: HugeIconsSolid.paintBoard,
+              label: context.l10n.themeSeed,
+            ),
+
+            const _ColorPicker(),
+
+            _TextIcon(
+              icon: HugeIconsSolid.colors,
+              label: context.l10n.themePreview,
+            ),
+
+            const _PreviewColor(),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _TextIcon extends StatelessWidget {
+  final IconData icon;
+  final String label;
+
+  const _TextIcon({required this.icon, required this.label});
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const .only(left: 6, top: 12),
+
+      child: Row(
+        spacing: 8,
+
+        children: [
+          Icon(icon, color: context.c.outline, size: 22),
+
+          Text(
+            label,
+            style: TextStyle(
+              color: context.c.outline,
+              fontWeight: .bold,
+              fontSize: 18,
+            ),
+          ),
+        ],
+      ),
     );
   }
 }
@@ -57,63 +111,202 @@ class _ColorPickerState extends State<_ColorPicker> {
 
   @override
   Widget build(BuildContext context) {
-    return SizedBox(
-      height: 100,
+    return Container(
+      decoration: BoxDecoration(
+        border: .all(color: context.c.outlineVariant),
+        color: context.c.surfaceContainer,
+        borderRadius: .circular(20),
+      ),
 
-      child: ListView.builder(
-        itemCount: _AppColor.values.length,
-        scrollDirection: Axis.horizontal,
+      child: GridView.builder(
+        physics: const NeverScrollableScrollPhysics(),
+        shrinkWrap: true,
 
-        padding: const .symmetric(horizontal: 12),
+        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+          crossAxisCount: 3,
+        ),
+
+        itemCount: AppColor.values.length,
+        padding: const .all(8),
 
         itemBuilder: (context, index) {
-          final appColor = _AppColor.values[index];
-
+          final appColor = AppColor.values[index];
           final label = appColor.label(context.l10n);
           final color = appColor.color;
-
           final isSelected = color == _activeColor;
 
-          return Padding(
-            padding: const .only(right: 12),
+          return Column(
+            mainAxisAlignment: .center,
+            spacing: 4,
 
-            child: Column(
-              spacing: 4,
+            children: [
+              Pressable(
+                hasVisuals: false,
 
-              children: [
-                Pressable(
-                  borderRadius: .circular(999),
+                onPressed: () async {
+                  setState(() {
+                    _activeColor = color;
+                  });
 
-                  onPressed: () {
-                    setState(() {
-                      _activeColor = color;
-                    });
+                  await context.tn.setSeedColor(color);
+                },
 
-                    context.tn.setSeedColor(color);
+                child: AnimatedSwitcher(
+                  duration: const Duration(milliseconds: 500),
+
+                  switchInCurve: Curves.elasticOut,
+                  switchOutCurve: Curves.easeInBack,
+
+                  layoutBuilder: (currentChild, previousChildren) {
+                    return Stack(
+                      alignment: Alignment.center,
+                      children: [...previousChildren, ?currentChild],
+                    );
                   },
 
-                  child: Ink(
-                    height: 56,
-                    width: 56,
+                  transitionBuilder: (child, animation) {
+                    return ScaleTransition(
+                      scale: animation,
+                      child: FadeTransition(opacity: animation, child: child),
+                    );
+                  },
+
+                  child: Container(
+                    key: ValueKey(isSelected),
+
+                    height: 64,
+                    width: 64,
 
                     decoration: BoxDecoration(
-                      border: isSelected
-                          ? .all(color: context.c.primary, width: 2)
-                          : null,
-                      shape: BoxShape.circle,
+                      borderRadius: .circular(14),
                       color: color,
                     ),
+
+                    foregroundDecoration: isSelected
+                        ? BoxDecoration(
+                            borderRadius: .circular(14),
+
+                            border: Border.all(
+                              color: context.c.onSurface,
+                              width: 2,
+                            ),
+                          )
+                        : null,
+
+                    child: isSelected
+                        ? const Icon(HugeIconsSolid.tick03, size: 24)
+                        : null,
                   ),
                 ),
+              ),
 
-                Text(
-                  label,
-                  style: const TextStyle(fontWeight: .w800, fontSize: 15),
-                ),
-              ],
-            ),
+              Text(
+                label,
+                overflow: .ellipsis,
+                style: const TextStyle(fontWeight: .w800, fontSize: 15),
+              ),
+            ],
           );
         },
+      ),
+    );
+  }
+}
+
+class _PreviewColor extends StatelessWidget {
+  const _PreviewColor();
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const .all(16),
+      width: double.infinity,
+
+      decoration: BoxDecoration(
+        border: .all(color: context.c.outlineVariant),
+        color: context.c.surfaceContainer,
+        borderRadius: .circular(20),
+      ),
+
+      child: Wrap(
+        crossAxisAlignment: .center,
+        alignment: .center,
+
+        runSpacing: 12,
+        spacing: 12,
+
+        children: [
+          Container(
+            padding: const .symmetric(horizontal: 16, vertical: 8),
+
+            decoration: BoxDecoration(
+              color: context.c.primary,
+              borderRadius: .circular(12),
+            ),
+
+            child: Text(
+              context.l10n.themePrimary,
+              style: TextStyle(color: context.c.onPrimary, fontWeight: .bold),
+            ),
+          ),
+
+          Container(
+            padding: const .symmetric(horizontal: 16, vertical: 8),
+
+            decoration: BoxDecoration(
+              color: context.c.secondary,
+              borderRadius: .circular(12),
+            ),
+
+            child: Text(
+              context.l10n.themeSecondary,
+              style: TextStyle(color: context.c.onSecondary, fontWeight: .bold),
+            ),
+          ),
+
+          Container(
+            padding: const .symmetric(horizontal: 16, vertical: 8),
+
+            decoration: BoxDecoration(
+              color: context.c.tertiary,
+              borderRadius: .circular(12),
+            ),
+
+            child: Text(
+              context.l10n.themeTertiary,
+              style: TextStyle(color: context.c.onTertiary, fontWeight: .bold),
+            ),
+          ),
+
+          Container(
+            padding: const .symmetric(horizontal: 16, vertical: 8),
+
+            decoration: BoxDecoration(
+              color: context.c.surfaceContainerHigh,
+              borderRadius: .circular(12),
+              border: .all(color: context.c.outlineVariant),
+            ),
+
+            child: Text(
+              context.l10n.themeSurface,
+              style: TextStyle(color: context.c.onSurface, fontWeight: .bold),
+            ),
+          ),
+
+          Container(
+            padding: const .symmetric(horizontal: 16, vertical: 8),
+
+            decoration: BoxDecoration(
+              color: context.c.error,
+              borderRadius: .circular(12),
+            ),
+
+            child: Text(
+              context.l10n.themeError,
+              style: TextStyle(color: context.c.onError, fontWeight: .bold),
+            ),
+          ),
+        ],
       ),
     );
   }

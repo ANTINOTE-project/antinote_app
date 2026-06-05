@@ -94,6 +94,48 @@ abstract class AppLocalizations {
   /// A list of this localizations delegate's supported locales.
   static const List<Locale> supportedLocales = <Locale>[Locale('fr')];
 
+  /// No description provided for @themeSeed.
+  ///
+  /// In fr, this message translates to:
+  /// **'Accent'**
+  String get themeSeed;
+
+  /// No description provided for @themePreview.
+  ///
+  /// In fr, this message translates to:
+  /// **'Aperçu'**
+  String get themePreview;
+
+  /// No description provided for @themePrimary.
+  ///
+  /// In fr, this message translates to:
+  /// **'Primaire'**
+  String get themePrimary;
+
+  /// No description provided for @themeSecondary.
+  ///
+  /// In fr, this message translates to:
+  /// **'Secondaire'**
+  String get themeSecondary;
+
+  /// No description provided for @themeTertiary.
+  ///
+  /// In fr, this message translates to:
+  /// **'Tertiaire'**
+  String get themeTertiary;
+
+  /// No description provided for @themeSurface.
+  ///
+  /// In fr, this message translates to:
+  /// **'Surface'**
+  String get themeSurface;
+
+  /// No description provided for @themeError.
+  ///
+  /// In fr, this message translates to:
+  /// **'Erreur'**
+  String get themeError;
+
   /// No description provided for @themeCoral.
   ///
   /// In fr, this message translates to:
@@ -124,23 +166,17 @@ abstract class AppLocalizations {
   /// **'Violet'**
   String get themePurple;
 
-  /// No description provided for @themeOrange.
-  ///
-  /// In fr, this message translates to:
-  /// **'Orange'**
-  String get themeOrange;
-
-  /// No description provided for @themePink.
-  ///
-  /// In fr, this message translates to:
-  /// **'Rose'**
-  String get themePink;
-
   /// No description provided for @themeBlue.
   ///
   /// In fr, this message translates to:
   /// **'Bleu'**
   String get themeBlue;
+
+  /// No description provided for @themeAmber.
+  ///
+  /// In fr, this message translates to:
+  /// **'Ambre'**
+  String get themeAmber;
 
   /// No description provided for @today.
   ///

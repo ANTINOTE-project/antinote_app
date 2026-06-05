@@ -9,6 +9,27 @@ class AppLocalizationsFr extends AppLocalizations {
   AppLocalizationsFr([String locale = 'fr']) : super(locale);
 
   @override
+  String get themeSeed => 'Accent';
+
+  @override
+  String get themePreview => 'Aperçu';
+
+  @override
+  String get themePrimary => 'Primaire';
+
+  @override
+  String get themeSecondary => 'Secondaire';
+
+  @override
+  String get themeTertiary => 'Tertiaire';
+
+  @override
+  String get themeSurface => 'Surface';
+
+  @override
+  String get themeError => 'Erreur';
+
+  @override
   String get themeCoral => 'Corail';
 
   @override
@@ -24,13 +45,10 @@ class AppLocalizationsFr extends AppLocalizations {
   String get themePurple => 'Violet';
 
   @override
-  String get themeOrange => 'Orange';
-
-  @override
-  String get themePink => 'Rose';
-
-  @override
   String get themeBlue => 'Bleu';
+
+  @override
+  String get themeAmber => 'Ambre';
 
   @override
   String get today => 'Aujourd\'hui';
