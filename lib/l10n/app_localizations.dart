@@ -196,6 +196,60 @@ abstract class AppLocalizations {
   /// **'Hier'**
   String get yesterday;
 
+  /// No description provided for @anErrorOccurred.
+  ///
+  /// In fr, this message translates to:
+  /// **'Une erreur s\'est produite'**
+  String get anErrorOccurred;
+
+  /// No description provided for @cancel.
+  ///
+  /// In fr, this message translates to:
+  /// **'Annuler'**
+  String get cancel;
+
+  /// No description provided for @validate.
+  ///
+  /// In fr, this message translates to:
+  /// **'Valider'**
+  String get validate;
+
+  /// No description provided for @retry.
+  ///
+  /// In fr, this message translates to:
+  /// **'Réessayer'**
+  String get retry;
+
+  /// No description provided for @home.
+  ///
+  /// In fr, this message translates to:
+  /// **'Accueil'**
+  String get home;
+
+  /// No description provided for @timetable.
+  ///
+  /// In fr, this message translates to:
+  /// **'Cours'**
+  String get timetable;
+
+  /// No description provided for @grades.
+  ///
+  /// In fr, this message translates to:
+  /// **'Notes'**
+  String get grades;
+
+  /// No description provided for @homeworks.
+  ///
+  /// In fr, this message translates to:
+  /// **'Devoirs'**
+  String get homeworks;
+
+  /// No description provided for @communication.
+  ///
+  /// In fr, this message translates to:
+  /// **'Infos'**
+  String get communication;
+
   /// No description provided for @disableAutoLogin.
   ///
   /// In fr, this message translates to:
@@ -220,35 +274,11 @@ abstract class AppLocalizations {
   /// **'Ajouter un compte'**
   String get addAnAccount;
 
-  /// No description provided for @delete.
+  /// No description provided for @deleteAccount.
   ///
   /// In fr, this message translates to:
   /// **'Supprimer'**
-  String get delete;
-
-  /// No description provided for @anErrorOccurred.
-  ///
-  /// In fr, this message translates to:
-  /// **'Une erreur s\'est produite'**
-  String get anErrorOccurred;
-
-  /// No description provided for @cancel.
-  ///
-  /// In fr, this message translates to:
-  /// **'Annuler'**
-  String get cancel;
-
-  /// No description provided for @validate.
-  ///
-  /// In fr, this message translates to:
-  /// **'Valider'**
-  String get validate;
-
-  /// No description provided for @retry.
-  ///
-  /// In fr, this message translates to:
-  /// **'Réessayer'**
-  String get retry;
+  String get deleteAccount;
 
   /// No description provided for @loginQrCode.
   ///
@@ -346,35 +376,29 @@ abstract class AppLocalizations {
   /// **'Veuillez rentrer votre code PIN vous connecter à votre compte PRONOTE'**
   String get loginPinCodeSubtitle;
 
-  /// No description provided for @home.
+  /// No description provided for @homeAttendance.
   ///
   /// In fr, this message translates to:
-  /// **'Accueil'**
-  String get home;
+  /// **'Carnet de correspondance'**
+  String get homeAttendance;
 
-  /// No description provided for @timetable.
+  /// No description provided for @absenceNotJustified.
   ///
   /// In fr, this message translates to:
-  /// **'Cours'**
-  String get timetable;
+  /// **'Absence non justifiée'**
+  String get absenceNotJustified;
 
-  /// No description provided for @grades.
+  /// No description provided for @absenceJustified.
   ///
   /// In fr, this message translates to:
-  /// **'Notes'**
-  String get grades;
+  /// **'Absence justifiée'**
+  String get absenceJustified;
 
-  /// No description provided for @homeworks.
+  /// No description provided for @absenceDuration.
   ///
   /// In fr, this message translates to:
-  /// **'Devoirs'**
-  String get homeworks;
-
-  /// No description provided for @communication.
-  ///
-  /// In fr, this message translates to:
-  /// **'Infos'**
-  String get communication;
+  /// **'{date} de {startTime} à {endTime}'**
+  String absenceDuration(Object date, Object endTime, Object startTime);
 
   /// No description provided for @report.
   ///

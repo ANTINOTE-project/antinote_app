@@ -234,7 +234,7 @@ class _AccountsScreenState extends State<AccountsScreen>
 
                                       isDangerous: true,
                                       icon: HugeIconsSolid.delete02,
-                                      label: context.l10n.delete,
+                                      label: context.l10n.deleteAccount,
                                     ),
                                   ],
                                 ),

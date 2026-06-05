@@ -4,7 +4,7 @@ import "dart:ui";
 
 import "package:antinote/antinote.dart";
 import "package:antinote_app/backend/backend.dart";
-import "package:antinote_app/frontend/screens/tab.dart";
+import "package:antinote_app/frontend/screens/shell/tab.dart";
 import "package:antinote_app/frontend/widgets/bottom_padding.dart";
 import "package:antinote_app/frontend/widgets/customs/list.dart";
 import "package:antinote_app/frontend/widgets/pressable.dart";

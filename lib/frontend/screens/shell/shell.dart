@@ -2,7 +2,7 @@ import "package:antinote/antinote.dart";
 import "package:antinote_app/backend/src/session/manager.dart";
 import "package:antinote_app/frontend/screens/shell/tabs/communication/index.dart";
 import "package:antinote_app/frontend/screens/shell/tabs/grades/index.dart";
-import "package:antinote_app/frontend/screens/shell/tabs/home.dart";
+import "package:antinote_app/frontend/screens/shell/tabs/home/index.dart";
 import "package:antinote_app/frontend/screens/shell/tabs/homeworks/index.dart";
 import "package:antinote_app/frontend/screens/shell/tabs/timetable/index.dart";
 import "package:antinote_app/utils.dart";

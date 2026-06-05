@@ -3,13 +3,11 @@
 
   "themeSeed": "Accent",
   "themePreview": "Aperçu",
-
   "themePrimary": "Primaire",
   "themeSecondary": "Secondaire",
   "themeTertiary": "Tertiaire",
   "themeSurface": "Surface",
   "themeError": "Erreur",
-
   "themeCoral": "Corail",
   "themeIndigo": "Indigo",
   "themeGreen": "Vert",
@@ -22,18 +20,23 @@
   "tomorrow": "Demain",
   "yesterday": "Hier",
 
-  "disableAutoLogin": "Désactiver la connexion automatique",
-  "enableAutoLogin": "Activer la connexion automatique",
-  "choseAnAccount": "Choisir un compte",
-  "addAnAccount": "Ajouter un compte",
-  "delete": "Supprimer",
-
   "anErrorOccurred": "Une erreur s'est produite",
 
   "cancel": "Annuler",
   "validate": "Valider",
   "retry": "Réessayer",
 
+  "home": "Accueil",
+  "timetable": "Cours",
+  "grades": "Notes",
+  "homeworks": "Devoirs",
+  "communication": "Infos",
+
+  "disableAutoLogin": "Désactiver la connexion automatique",
+  "enableAutoLogin": "Activer la connexion automatique",
+  "choseAnAccount": "Choisir un compte",
+  "addAnAccount": "Ajouter un compte",
+  "deleteAccount": "Supprimer",
   "loginQrCode": "QR Code",
   "loginQrCodeSubtitle": "Scanne un QR code depuis un ordinateur déjà connecté à PRONOTE",
   "loginCity": "Recherche ta ville",
@@ -51,11 +54,10 @@
   "loginPinCode": "Code PIN",
   "loginPinCodeSubtitle": "Veuillez rentrer votre code PIN vous connecter à votre compte PRONOTE",
 
-  "home": "Accueil",
-  "timetable": "Cours",
-  "grades": "Notes",
-  "homeworks": "Devoirs",
-  "communication": "Infos",
+  "homeAttendance": "Carnet de correspondance",
+  "absenceNotJustified": "Absence non justifiée",
+  "absenceJustified": "Absence justifiée",
+  "absenceDuration": "{date} de {startTime} à {endTime}",
 
   "report": "Bulletin",
   "latestGrades": "Dernières notes",
@@ -92,19 +94,14 @@
 
   "recipient": "À {recipient}",
   "self": "moi",
-
   "nominativePoll": "sondage nominatif",
   "anonymousPoll": "sondage anonyme",
-
   "raMessage": "J'ai pris connaissance de cette information",
 
   "couldNotLoad": "L'instance m'a pas pu être chargée...",
-
   "instanceName": "Nom d'instance",
   "instanceNameValue": "{mainName} ({loginName} quand déconnecté)",
-
   "remoteVersion": "Version de l'instance",
-
   "remoteYear": "Année",
   "remoteYearSubtitle": "{start} ➔ {end}",
   "@remoteYearSubtitle": {

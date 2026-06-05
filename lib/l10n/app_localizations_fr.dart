@@ -60,6 +60,33 @@ class AppLocalizationsFr extends AppLocalizations {
   String get yesterday => 'Hier';
 
   @override
+  String get anErrorOccurred => 'Une erreur s\'est produite';
+
+  @override
+  String get cancel => 'Annuler';
+
+  @override
+  String get validate => 'Valider';
+
+  @override
+  String get retry => 'Réessayer';
+
+  @override
+  String get home => 'Accueil';
+
+  @override
+  String get timetable => 'Cours';
+
+  @override
+  String get grades => 'Notes';
+
+  @override
+  String get homeworks => 'Devoirs';
+
+  @override
+  String get communication => 'Infos';
+
+  @override
   String get disableAutoLogin => 'Désactiver la connexion automatique';
 
   @override
@@ -72,19 +99,7 @@ class AppLocalizationsFr extends AppLocalizations {
   String get addAnAccount => 'Ajouter un compte';
 
   @override
-  String get delete => 'Supprimer';
-
-  @override
-  String get anErrorOccurred => 'Une erreur s\'est produite';
-
-  @override
-  String get cancel => 'Annuler';
-
-  @override
-  String get validate => 'Valider';
-
-  @override
-  String get retry => 'Réessayer';
+  String get deleteAccount => 'Supprimer';
 
   @override
   String get loginQrCode => 'QR Code';
@@ -139,19 +154,18 @@ class AppLocalizationsFr extends AppLocalizations {
       'Veuillez rentrer votre code PIN vous connecter à votre compte PRONOTE';
 
   @override
-  String get home => 'Accueil';
+  String get homeAttendance => 'Carnet de correspondance';
 
   @override
-  String get timetable => 'Cours';
+  String get absenceNotJustified => 'Absence non justifiée';
 
   @override
-  String get grades => 'Notes';
+  String get absenceJustified => 'Absence justifiée';
 
   @override
-  String get homeworks => 'Devoirs';
-
-  @override
-  String get communication => 'Infos';
+  String absenceDuration(Object date, Object endTime, Object startTime) {
+    return '$date de $startTime à $endTime';
+  }
 
   @override
   String get report => 'Bulletin';
