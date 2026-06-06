@@ -9,6 +9,12 @@ class AppLocalizationsFr extends AppLocalizations {
   AppLocalizationsFr([String locale = 'fr']) : super(locale);
 
   @override
+  String get settingsChangeAccount => 'Changer de compte';
+
+  @override
+  String get settingsAccounts => 'Comptes';
+
+  @override
   String get themeSeed => 'Accent';
 
   @override
@@ -152,6 +158,9 @@ class AppLocalizationsFr extends AppLocalizations {
   @override
   String get loginPinCodeSubtitle =>
       'Veuillez rentrer votre code PIN vous connecter à votre compte PRONOTE';
+
+  @override
+  String get homeShowMore => 'Voir plus';
 
   @override
   String get homeAttendance => 'Carnet de correspondance';

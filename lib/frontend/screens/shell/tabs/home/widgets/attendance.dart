@@ -1,4 +1,5 @@
 import "package:antinote/antinote.dart";
+import "package:antinote_app/frontend/screens/shell/tabs/home/widgets/widget.dart";
 import "package:antinote_app/frontend/widgets/customs/list.dart";
 import "package:antinote_app/utils.dart";
 import "package:flutter/material.dart";
@@ -23,62 +24,44 @@ class AttendanceWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      padding: const .symmetric(horizontal: 10, vertical: 8),
-      width: double.infinity,
+    return HomeWidget(
+      onShowMorePressed: () {},
 
-      decoration: BoxDecoration(
-        border: .all(color: context.c.outlineVariant),
-        color: context.c.surfaceContainer,
-        borderRadius: .circular(20),
-      ),
+      label: context.l10n.homeAttendance,
 
-      child: Column(
-        spacing: 8,
+      content: ListWidget(
+        physics: const NeverScrollableScrollPhysics(),
+        shrinkWrap: true,
+        isSliver: false,
+        isColumn: true,
 
-        children: [
-          Text(
-            context.l10n.homeAttendance,
-            style: const TextStyle(fontWeight: .w800, fontSize: 19),
-          ),
+        items: data.absences,
 
-          ListWidget(
-            physics: const NeverScrollableScrollPhysics(),
-            shrinkWrap: true,
-            isSliver: false,
-            isColumn: true,
+        itemBuilder: (context, absence, borderRadius) {
+          final isJustified = absence.reasons.isNotEmpty;
+          final title = isJustified
+              ? absence.reasons.map((e) => e.name).join(", ")
+              : context.l10n.absenceNotJustified;
 
-            items: data.absences,
+          final date = _formatDate(absence.start);
+          final startTime = _formatTime(absence.start);
+          final endTime = _formatTime(absence.end);
 
-            itemBuilder: (context, absence, borderRadius) {
-              final isJustified = absence.reasons.isNotEmpty;
-              final title = isJustified
-                  ? absence.reasons.map((e) => e.name).join(", ")
-                  : context.l10n.absenceNotJustified;
+          return ItemWidget(
+            backgroundColor: context.c.surfaceContainerHigh,
+            borderRadius: borderRadius,
 
-              final date = _formatDate(absence.start);
-              final startTime = _formatTime(absence.start);
-              final endTime = _formatTime(absence.end);
+            leading: Icon(
+              isJustified ? HugeIconsSolid.tick03 : HugeIconsSolid.cancel02,
+              color: isJustified ? context.c.primary : context.c.errorContainer,
+            ),
 
-              return ItemWidget(
-                backgroundColor: context.c.surfaceContainerHigh,
-                borderRadius: borderRadius,
-
-                leading: Icon(
-                  isJustified ? HugeIconsSolid.tick03 : HugeIconsSolid.cancel02,
-                  color: isJustified
-                      ? context.c.primary
-                      : context.c.errorContainer,
-                ),
-
-                title: Text(title),
-                subtitle: Text(
-                  context.l10n.absenceDuration(date, endTime, startTime),
-                ),
-              );
-            },
-          ),
-        ],
+            title: Text(title),
+            subtitle: Text(
+              context.l10n.absenceDuration(date, endTime, startTime),
+            ),
+          );
+        },
       ),
     );
   }

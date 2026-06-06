@@ -94,6 +94,18 @@ abstract class AppLocalizations {
   /// A list of this localizations delegate's supported locales.
   static const List<Locale> supportedLocales = <Locale>[Locale('fr')];
 
+  /// No description provided for @settingsChangeAccount.
+  ///
+  /// In fr, this message translates to:
+  /// **'Changer de compte'**
+  String get settingsChangeAccount;
+
+  /// No description provided for @settingsAccounts.
+  ///
+  /// In fr, this message translates to:
+  /// **'Comptes'**
+  String get settingsAccounts;
+
   /// No description provided for @themeSeed.
   ///
   /// In fr, this message translates to:
@@ -375,6 +387,12 @@ abstract class AppLocalizations {
   /// In fr, this message translates to:
   /// **'Veuillez rentrer votre code PIN vous connecter à votre compte PRONOTE'**
   String get loginPinCodeSubtitle;
+
+  /// No description provided for @homeShowMore.
+  ///
+  /// In fr, this message translates to:
+  /// **'Voir plus'**
+  String get homeShowMore;
 
   /// No description provided for @homeAttendance.
   ///
