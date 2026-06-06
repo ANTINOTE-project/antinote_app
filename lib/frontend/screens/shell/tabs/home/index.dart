@@ -1,4 +1,5 @@
 import "dart:async";
+import "dart:typed_data";
 
 import "package:antinote/antinote.dart";
 import "package:antinote_app/frontend/routing/routes.dart";
@@ -19,6 +20,9 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> with TabMixin<HomeScreen> {
   List<HomePageWidget> _widgets = [];
+
+  Uint8List? _profilePicture;
+  late String _displayName;
 
   Widget _buildWidget(HomePageWidget widget) {
     return switch (widget.widgetId) {
@@ -47,7 +51,39 @@ class _HomeScreenState extends State<HomeScreen> with TabMixin<HomeScreen> {
     return buildRefreshIndicator(
       child: Scaffold(
         appBar: AppBarWidget(
-          backButton: false,
+          leading: Padding(
+            padding: const .only(left: 6),
+
+            child: Row(
+              spacing: 10,
+
+              children: [
+                Container(
+                  height: 46,
+                  width: 46,
+
+                  decoration: const BoxDecoration(shape: .circle),
+                  clipBehavior: .antiAlias,
+
+                  child: _profilePicture != null
+                      ? Image.memory(_profilePicture!, fit: .cover)
+                      : const CircleAvatar(),
+                ),
+
+                // TODO fix overflow
+                Expanded(
+                  child: Text(
+                    _displayName,
+
+                    overflow: .ellipsis,
+                    maxLines: 1,
+
+                    style: const TextStyle(fontWeight: .w800, fontSize: 20),
+                  ),
+                ),
+              ],
+            ),
+          ),
 
           actions: [
             IconButton(
@@ -58,7 +94,7 @@ class _HomeScreenState extends State<HomeScreen> with TabMixin<HomeScreen> {
         ),
 
         body: SingleChildScrollView(
-          padding: const .symmetric(horizontal: 12),
+          padding: const .only(top: 16, left: 12, right: 12),
 
           child: Column(
             children: [
@@ -86,5 +122,8 @@ class _HomeScreenState extends State<HomeScreen> with TabMixin<HomeScreen> {
     );
 
     _widgets = home.widgets;
+
+    _displayName = session.userResource.name;
+    _profilePicture = session.userResource.profilePicture;
   }
 }
