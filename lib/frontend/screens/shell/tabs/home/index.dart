@@ -7,7 +7,6 @@ import "package:antinote_app/frontend/screens/shell/tab.dart";
 import "package:antinote_app/frontend/screens/shell/tabs/home/widgets/attendance.dart";
 import "package:antinote_app/frontend/widgets/customs/app_bar.dart";
 import "package:antinote_app/utils.dart";
-import "package:collection/collection.dart";
 import "package:flutter/material.dart";
 import "package:go_router/go_router.dart";
 import "package:hugeicons_pro/hugeicons.dart";
@@ -50,82 +49,84 @@ class _HomeScreenState extends State<HomeScreen> with TabMixin<HomeScreen> {
     BuildContext context,
     RefreshIndicatorBuilder buildRefreshIndicator,
   ) {
-    return buildRefreshIndicator(
-      child: Scaffold(
-        appBar: AppBarWidget(
-          leading: Padding(
-            padding: const .only(left: 6),
+    return Scaffold(
+      appBar: AppBarWidget(
+        leading: Padding(
+          padding: const .only(left: 6),
 
-            child: Row(
-              spacing: 10,
+          child: Row(
+            spacing: 10,
 
-              children: [
-                Container(
-                  height: 46,
-                  width: 46,
+            children: [
+              Container(
+                height: 46,
+                width: 46,
 
-                  decoration: const BoxDecoration(shape: .circle),
-                  clipBehavior: .antiAlias,
+                decoration: const BoxDecoration(shape: .circle),
+                clipBehavior: .antiAlias,
 
-                  child: _profilePicture != null
-                      ? Image.memory(_profilePicture!, fit: .cover)
-                      : const CircleAvatar(),
-                ),
+                child: _profilePicture != null
+                    ? Image.memory(_profilePicture!, fit: .cover)
+                    : const CircleAvatar(),
+              ),
 
-                // TODO fix overflow
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: .start,
-                    mainAxisSize: .min,
+              // TODO fix overflow
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: .start,
+                  mainAxisSize: .min,
 
-                    children: [
+                  children: [
+                    Text(
+                      _displayName,
+
+                      overflow: .ellipsis,
+                      maxLines: 1,
+
+                      style: const TextStyle(fontWeight: .w800, fontSize: 20),
+                    ),
+
+                    if (_establishmentName != null)
                       Text(
-                        _displayName,
+                        _establishmentName!,
 
                         overflow: .ellipsis,
                         maxLines: 1,
 
-                        style: const TextStyle(fontWeight: .w800, fontSize: 20),
-                      ),
-
-                      if (_establishmentName != null)
-                        Text(
-                          _establishmentName!,
-
-                          overflow: .ellipsis,
-                          maxLines: 1,
-
-                          style: TextStyle(
-                            color: context.c.outline,
-                            fontWeight: .bold,
-                            fontSize: 14,
-                          ),
+                        style: TextStyle(
+                          color: context.c.outline,
+                          fontWeight: .bold,
+                          fontSize: 14,
                         ),
-                    ],
-                  ),
+                      ),
+                  ],
                 ),
-              ],
-            ),
-          ),
-
-          actions: [
-            IconButton(
-              onPressed: () => context.push(Routes.settings),
-              icon: const Icon(HugeIconsSolid.settings01),
-            ),
-          ],
-        ),
-
-        body: SingleChildScrollView(
-          padding: const .only(top: 16, left: 12, right: 12),
-
-          child: Column(
-            children: [
-              ..._widgets.mapIndexed((index, widget) {
-                return _buildWidget(widget);
-              }),
+              ),
             ],
           ),
+        ),
+
+        actions: [
+          IconButton(
+            onPressed: () => context.push(Routes.settings),
+            icon: const Icon(HugeIconsSolid.settings01),
+          ),
+        ],
+      ),
+
+      body: RefreshIndicator(
+        onRefresh: () => reload(fromRefreshIndicator: true),
+
+        child: ListView.builder(
+          padding: const .only(top: 16, left: 12, right: 12),
+          physics: const AlwaysScrollableScrollPhysics(),
+
+          itemCount: _widgets.length,
+
+          itemBuilder: (context, index) {
+            final widget = _widgets[index];
+            return _buildWidget(widget);
+          },
         ),
       ),
     );
