@@ -6,6 +6,7 @@ import "package:antinote_app/frontend/routing/routes.dart";
 import "package:antinote_app/frontend/screens/shell/tab.dart";
 import "package:antinote_app/frontend/screens/shell/tabs/home/widgets/attendance.dart";
 import "package:antinote_app/frontend/widgets/customs/app_bar.dart";
+import "package:antinote_app/utils.dart";
 import "package:collection/collection.dart";
 import "package:flutter/material.dart";
 import "package:go_router/go_router.dart";
@@ -23,6 +24,7 @@ class _HomeScreenState extends State<HomeScreen> with TabMixin<HomeScreen> {
 
   Uint8List? _profilePicture;
   late String _displayName;
+  late String? _establishmentName;
 
   Widget _buildWidget(HomePageWidget widget) {
     return switch (widget.widgetId) {
@@ -72,13 +74,34 @@ class _HomeScreenState extends State<HomeScreen> with TabMixin<HomeScreen> {
 
                 // TODO fix overflow
                 Expanded(
-                  child: Text(
-                    _displayName,
+                  child: Column(
+                    crossAxisAlignment: .start,
+                    mainAxisSize: .min,
 
-                    overflow: .ellipsis,
-                    maxLines: 1,
+                    children: [
+                      Text(
+                        _displayName,
 
-                    style: const TextStyle(fontWeight: .w800, fontSize: 20),
+                        overflow: .ellipsis,
+                        maxLines: 1,
+
+                        style: const TextStyle(fontWeight: .w800, fontSize: 20),
+                      ),
+
+                      if (_establishmentName != null)
+                        Text(
+                          _establishmentName!,
+
+                          overflow: .ellipsis,
+                          maxLines: 1,
+
+                          style: TextStyle(
+                            color: context.c.outline,
+                            fontWeight: .bold,
+                            fontSize: 14,
+                          ),
+                        ),
+                    ],
                   ),
                 ),
               ],
@@ -125,5 +148,6 @@ class _HomeScreenState extends State<HomeScreen> with TabMixin<HomeScreen> {
 
     _displayName = session.userResource.name;
     _profilePicture = session.userResource.profilePicture;
+    _establishmentName = session.userResource.establishmentName;
   }
 }
