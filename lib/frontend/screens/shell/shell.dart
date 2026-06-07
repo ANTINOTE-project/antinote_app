@@ -17,6 +17,27 @@ typedef _TabDestination = ({
   List<int> associatedTabIds,
 });
 
+class ShellController extends InheritedWidget {
+  final void Function(String category) goToTab;
+
+  const ShellController({
+    super.key,
+    required this.goToTab,
+    required super.child,
+  });
+
+  static ShellController of(BuildContext context) {
+    final result = context
+        .dependOnInheritedWidgetOfExactType<ShellController>();
+    assert(result != null, "No ShellController found in context");
+
+    return result!;
+  }
+
+  @override
+  bool updateShouldNotify(covariant InheritedWidget oldWidget) => false;
+}
+
 class AppShell extends StatefulWidget {
   const AppShell({super.key});
 
@@ -117,114 +138,120 @@ class _AppShellState extends State<AppShell> {
       builder: (context, snapshot) {
         final notifications = snapshot.data?.notifications ?? [];
 
-        return Scaffold(
-          extendBody: true,
+        return ShellController(
+          goToTab: (category) => setState(() {
+            currentPage = _tabs.indexWhere((t) => t.category == category);
+          }),
 
-          body: Row(
-            children: [
-              if (screenSize.width > screenSize.height)
-                SafeArea(
-                  right: false,
-                  left: false,
+          child: Scaffold(
+            extendBody: true,
 
-                  child: Padding(
-                    padding: const .only(right: 6),
+            body: Row(
+              children: [
+                if (screenSize.width > screenSize.height)
+                  SafeArea(
+                    right: false,
+                    left: false,
 
-                    child: ClipRRect(
-                      borderRadius: const .only(
-                        topRight: .circular(24),
-                        bottomRight: .circular(24),
+                    child: Padding(
+                      padding: const .only(right: 6),
+
+                      child: ClipRRect(
+                        borderRadius: const .only(
+                          topRight: .circular(24),
+                          bottomRight: .circular(24),
+                        ),
+
+                        child: NavigationRail(
+                          backgroundColor: context.c.surfaceContainerHigh,
+                          destinations: _tabs.mapL((e) {
+                            final notificationCount = notifications
+                                .where(
+                                  (element) =>
+                                      e.associatedTabIds.contains(element.tab),
+                                )
+                                .fold(
+                                  0,
+                                  (previousValue, element) =>
+                                      previousValue + element.count,
+                                );
+
+                            return NavigationRailDestination(
+                              icon: Badge.count(
+                                count: notificationCount,
+                                isLabelVisible: notificationCount > 0,
+                                child: Icon(e.icon),
+                              ),
+
+                              selectedIcon: Badge.count(
+                                count: notificationCount,
+                                isLabelVisible: notificationCount > 0,
+                                child: Icon(e.icon, fill: 1),
+                              ),
+                              label: Text(e.label),
+                            );
+                          }),
+
+                          selectedIndex: currentPage,
+                          onDestinationSelected: (value) => setState(() {
+                            currentPage = value;
+                          }),
+
+                          labelType: .all,
+                          scrollable: true,
+                        ),
                       ),
+                    ),
+                  ),
 
-                      child: NavigationRail(
-                        backgroundColor: context.c.surfaceContainerHigh,
-                        destinations: _tabs.mapL((e) {
-                          final notificationCount = notifications
-                              .where(
-                                (element) =>
-                                    e.associatedTabIds.contains(element.tab),
-                              )
-                              .fold(
-                                0,
-                                (previousValue, element) =>
-                                    previousValue + element.count,
-                              );
+                Expanded(
+                  child: AnimatedSwitcher(
+                    duration: const Duration(milliseconds: 300),
 
-                          return NavigationRailDestination(
-                            icon: Badge.count(
-                              count: notificationCount,
-                              isLabelVisible: notificationCount > 0,
-                              child: Icon(e.icon),
-                            ),
+                    switchInCurve: Curves.fastOutSlowIn,
+                    switchOutCurve: const ReversedCurve(Curves.fastOutSlowIn),
 
-                            selectedIcon: Badge.count(
-                              count: notificationCount,
-                              isLabelVisible: notificationCount > 0,
-                              child: Icon(e.icon, fill: 1),
-                            ),
-                            label: Text(e.label),
-                          );
-                        }),
+                    child: _tabs[currentPage].screen,
+                  ),
+                ),
+              ],
+            ),
 
-                        selectedIndex: currentPage,
+            bottomNavigationBar: screenSize.width > screenSize.height
+                ? null
+                : Container(
+                    margin: const .symmetric(horizontal: 6),
+                    padding: const .symmetric(horizontal: 6),
+
+                    clipBehavior: .antiAlias,
+
+                    decoration: BoxDecoration(
+                      color: context.c.surfaceContainer,
+                      borderRadius: const .only(
+                        topLeft: .circular(24),
+                        topRight: .circular(24),
+                      ),
+                    ),
+
+                    child: SafeArea(
+                      left: false,
+                      right: false,
+
+                      child: NavigationBar(
+                        destinations: _tabs
+                            .map((e) => _buildDestination(e, notifications))
+                            .toList(growable: false),
+
                         onDestinationSelected: (value) => setState(() {
                           currentPage = value;
                         }),
 
-                        labelType: .all,
-                        scrollable: true,
+                        selectedIndex: currentPage,
+                        height: 70,
                       ),
                     ),
                   ),
-                ),
-
-              Expanded(
-                child: AnimatedSwitcher(
-                  duration: const Duration(milliseconds: 300),
-
-                  switchInCurve: Curves.fastOutSlowIn,
-                  switchOutCurve: const ReversedCurve(Curves.fastOutSlowIn),
-
-                  child: _tabs[currentPage].screen,
-                ),
-              ),
-            ],
           ),
-
-          bottomNavigationBar: screenSize.width > screenSize.height
-              ? null
-              : Container(
-                  margin: const .symmetric(horizontal: 6),
-                  padding: const .symmetric(horizontal: 6),
-
-                  clipBehavior: .antiAlias,
-
-                  decoration: BoxDecoration(
-                    color: context.c.surfaceContainer,
-                    borderRadius: const .only(
-                      topLeft: .circular(24),
-                      topRight: .circular(24),
-                    ),
-                  ),
-
-                  child: SafeArea(
-                    left: false,
-                    right: false,
-
-                    child: NavigationBar(
-                      destinations: _tabs
-                          .map((e) => _buildDestination(e, notifications))
-                          .toList(growable: false),
-
-                      onDestinationSelected: (value) => setState(() {
-                        currentPage = value;
-                      }),
-
-                      selectedIndex: currentPage,
-                      height: 70,
-                    ),
-                  ),
-                ),
         );
       },
     );

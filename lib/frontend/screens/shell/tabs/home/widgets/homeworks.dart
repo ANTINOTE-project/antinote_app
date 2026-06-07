@@ -19,7 +19,10 @@ class HomeworksWidget extends StatelessWidget {
       label: homeworks.length > 5
           ? "${context.l10n.homeworks} (+${homeworks.length - 5})"
           : context.l10n.homeworks,
-      onShowMorePressed: () {},
+
+      onShowMorePressed: () {
+        context.sc.goToTab("homeworks");
+      },
 
       content: ListWidget(
         physics: const NeverScrollableScrollPhysics(),

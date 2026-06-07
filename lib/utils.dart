@@ -1,5 +1,6 @@
 import "package:antinote/antinote.dart";
 import "package:antinote_app/backend/backend.dart";
+import "package:antinote_app/frontend/screens/shell/shell.dart";
 import "package:antinote_app/frontend/theme.dart";
 import "package:antinote_app/l10n/app_localizations.dart";
 import "package:flutter/material.dart";
@@ -211,6 +212,10 @@ extension SessionManagerExtension on BuildContext {
 
 extension ThemeScopeExtension on BuildContext {
   ThemeNotifier get tn => ThemeScope.of(this);
+}
+
+extension ShellControllerExtension on BuildContext {
+  ShellController get sc => ShellController.of(this);
 }
 
 const fakeGrade = Grade.defaultUnknownGrade;

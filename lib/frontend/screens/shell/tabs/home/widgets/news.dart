@@ -12,7 +12,11 @@ class NewsWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return HomeWidget(
       label: context.l10n.homeNews,
-      onShowMorePressed: () {},
+
+      onShowMorePressed: () {
+        context.sc.goToTab("communication");
+      },
+
       content: const SizedBox.shrink(),
     );
   }

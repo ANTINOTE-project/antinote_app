@@ -12,7 +12,11 @@ class GradesWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return HomeWidget(
       label: context.l10n.grades,
-      onShowMorePressed: () {},
+
+      onShowMorePressed: () {
+        context.sc.goToTab("grades");
+      },
+
       content: const SizedBox.shrink(),
     );
   }

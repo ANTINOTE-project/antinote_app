@@ -12,7 +12,11 @@ class TimetableWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return HomeWidget(
       label: context.l10n.timetable,
-      onShowMorePressed: () {},
+
+      onShowMorePressed: () {
+        context.sc.goToTab("timetable");
+      },
+
       content: const SizedBox.shrink(),
     );
   }
