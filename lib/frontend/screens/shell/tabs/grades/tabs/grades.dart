@@ -7,6 +7,7 @@ import "package:antinote_app/backend/backend.dart";
 import "package:antinote_app/frontend/screens/shell/tab.dart";
 import "package:antinote_app/frontend/widgets/bottom_padding.dart";
 import "package:antinote_app/frontend/widgets/customs/list.dart";
+import "package:antinote_app/frontend/widgets/grade_text.dart";
 import "package:antinote_app/frontend/widgets/pressable.dart";
 import "package:antinote_app/utils.dart";
 import "package:flutter/material.dart";
@@ -124,7 +125,7 @@ Future<void> _showDetails({
                             )
                           : item.grade != null &&
                                 item.theoreticalMaxGrade != null
-                          ? _GradeText(
+                          ? GradeText(
                               selfGrade: item.grade!,
                               maxGrade: item.theoreticalMaxGrade!,
                               color: scheme.primary,
@@ -812,7 +813,7 @@ class _LatestGrades extends StatelessWidget {
 
                                       const Spacer(),
 
-                                      _GradeText(
+                                      GradeText(
                                         selfGrade: exam.selfGrade,
                                         maxGrade: exam.theoreticalMaxGrade,
                                         color: scheme.primary,
@@ -943,7 +944,7 @@ class _ServiceWidget extends StatelessWidget {
 
                       if (service.selfAverage != null &&
                           service.theoreticalMaxGrade != null)
-                        _GradeText(
+                        GradeText(
                           selfGrade: service.selfAverage!,
                           maxGrade: service.theoreticalMaxGrade!,
                           isMain: true,
@@ -982,7 +983,7 @@ class _ExamWidget extends StatelessWidget {
         style: TextStyle(color: scheme.onSurfaceVariant, fontWeight: .bold),
       ),
 
-      trailing: _GradeText(
+      trailing: GradeText(
         selfGrade: exam.selfGrade,
         maxGrade: exam.theoreticalMaxGrade,
         color: scheme.primary,
@@ -990,76 +991,6 @@ class _ExamWidget extends StatelessWidget {
       ),
 
       onPressed: () => showExamDetails(context, exam),
-    );
-  }
-}
-
-class _GradeText extends StatelessWidget {
-  final Grade selfGrade;
-  final Grade maxGrade;
-
-  final Color color;
-
-  final bool isMain;
-  final double size;
-
-  const _GradeText({
-    required this.selfGrade,
-    required this.maxGrade,
-
-    required this.color,
-
-    this.isMain = false,
-    this.size = 22,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    final showMaxGrade = (maxGrade.value - 20.0).abs() > 0.001;
-    String selfValue = Formatters.formatNumber(selfGrade.value);
-
-    selfValue = switch (selfGrade.type) {
-      .absent => context.l10n.gradeAbsent,
-      .notHandedZero => context.l10n.gradeNotHandedZero,
-      .exemption => context.l10n.gradeExemption,
-      .notGraded => context.l10n.gradeNotGraded,
-      .inapt => context.l10n.gradeInapt,
-      .notHanded => context.l10n.gradeNotHanded,
-      .absentZero => context.l10n.gradeAbsentZero,
-      .felicitations => context.l10n.gradeFelicitations,
-      _ => selfValue,
-    };
-
-    return Text.rich(
-      textAlign: .end,
-
-      TextSpan(
-        children: [
-          TextSpan(
-            text: selfValue,
-
-            style: TextStyle(
-              color: color,
-              fontSize: size,
-              fontWeight: isMain ? .w900 : .w800,
-            ),
-          ),
-
-          if (showMaxGrade) ...[
-            const WidgetSpan(child: SizedBox(width: 2)),
-
-            TextSpan(
-              text: "/${Formatters.formatNumber(maxGrade.value, digits: 0)}",
-
-              style: TextStyle(
-                color: context.c.onSurfaceVariant,
-                fontSize: size * 0.75,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-          ],
-        ],
-      ),
     );
   }
 }
