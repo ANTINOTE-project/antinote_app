@@ -35,6 +35,11 @@ class _AppShellState extends State<AppShell> {
   Stream<NotificationPreviewState>? notificationStream;
   NotificationPreviewState? defaultNotifications;
 
+  SessionManager? manager;
+
+  late List<TabDestination> _tabs;
+  int currentPage = 0;
+
   void loadNotificationStream() {
     SessionManager.execute(
       context: context,
@@ -51,14 +56,13 @@ class _AppShellState extends State<AppShell> {
     );
   }
 
-  SessionManager? manager;
-
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
 
     if (manager == null) {
       manager = SessionManager.of(context);
+      _tabs = buildTabs(context);
 
       manager!.subscribeSession(callback: loadNotificationStream);
       loadNotificationStream();
@@ -74,12 +78,9 @@ class _AppShellState extends State<AppShell> {
     super.dispose();
   }
 
-  int currentPage = 0;
-
   @override
   Widget build(BuildContext context) {
     final screenSize = MediaQuery.sizeOf(context);
-    final tabs = buildTabs(context);
 
     return StreamBuilder(
       initialData: defaultNotifications,
@@ -90,7 +91,7 @@ class _AppShellState extends State<AppShell> {
 
         return ShellController(
           goToTab: (category) => setState(() {
-            currentPage = tabs.indexWhere((t) => t.category == category);
+            currentPage = _tabs.indexWhere((t) => t.category == category);
           }),
 
           child: Scaffold(
@@ -114,7 +115,8 @@ class _AppShellState extends State<AppShell> {
 
                         child: NavigationRail(
                           backgroundColor: context.c.surfaceContainerHigh,
-                          destinations: tabs.mapL((e) {
+
+                          destinations: _tabs.mapL((e) {
                             final notificationCount = notifications
                                 .where(
                                   (element) => e.tabs.contains(element.tab),
@@ -161,7 +163,7 @@ class _AppShellState extends State<AppShell> {
                     switchInCurve: Curves.fastOutSlowIn,
                     switchOutCurve: const ReversedCurve(Curves.fastOutSlowIn),
 
-                    child: tabs[currentPage].screen,
+                    child: _tabs[currentPage].screen,
                   ),
                 ),
               ],
@@ -188,7 +190,7 @@ class _AppShellState extends State<AppShell> {
                       right: false,
 
                       child: NavigationBar(
-                        destinations: tabs
+                        destinations: _tabs
                             .map((e) => _buildDestination(e, notifications))
                             .toList(growable: false),
 
