@@ -400,6 +400,18 @@ abstract class AppLocalizations {
   /// **'Vie scolaire'**
   String get homeAttendance;
 
+  /// No description provided for @homeNews.
+  ///
+  /// In fr, this message translates to:
+  /// **'Actualités'**
+  String get homeNews;
+
+  /// No description provided for @homeExams.
+  ///
+  /// In fr, this message translates to:
+  /// **'Évaluations'**
+  String get homeExams;
+
   /// No description provided for @absenceNotJustified.
   ///
   /// In fr, this message translates to:

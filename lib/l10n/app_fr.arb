@@ -59,6 +59,8 @@
 
   "homeShowMore": "Voir plus",
   "homeAttendance": "Vie scolaire",
+  "homeNews": "Actualités",
+  "homeExams": "Évaluations",
   "absenceNotJustified": "Absence non justifiée",
   "absenceJustified": "Absence justifiée",
   "absenceDuration": "{date} de {startTime} à {endTime}",

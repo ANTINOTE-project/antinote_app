@@ -166,6 +166,12 @@ class AppLocalizationsFr extends AppLocalizations {
   String get homeAttendance => 'Vie scolaire';
 
   @override
+  String get homeNews => 'Actualités';
+
+  @override
+  String get homeExams => 'Évaluations';
+
+  @override
   String get absenceNotJustified => 'Absence non justifiée';
 
   @override

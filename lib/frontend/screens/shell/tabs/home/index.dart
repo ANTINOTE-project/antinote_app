@@ -5,7 +5,11 @@ import "package:antinote/antinote.dart";
 import "package:antinote_app/frontend/routing/routes.dart";
 import "package:antinote_app/frontend/screens/shell/tab.dart";
 import "package:antinote_app/frontend/screens/shell/tabs/home/widgets/attendance.dart";
+import "package:antinote_app/frontend/screens/shell/tabs/home/widgets/exams.dart";
+import "package:antinote_app/frontend/screens/shell/tabs/home/widgets/grades.dart";
 import "package:antinote_app/frontend/screens/shell/tabs/home/widgets/homeworks.dart";
+import "package:antinote_app/frontend/screens/shell/tabs/home/widgets/news.dart";
+import "package:antinote_app/frontend/screens/shell/tabs/home/widgets/timetable.dart";
 import "package:antinote_app/frontend/widgets/customs/app_bar.dart";
 import "package:antinote_app/utils.dart";
 import "package:flutter/material.dart";
@@ -31,16 +35,13 @@ class _HomeScreenState extends State<HomeScreen> with TabMixin<HomeScreen> {
       HomePageWidgetType.vieScolaire => AttendanceWidget(
         data: widget as VieScolaire,
       ),
-
       HomePageWidgetType.travailAFaire => HomeworksWidget(
         data: widget as TravailAFaire,
       ),
-
-      // TODO add others widgets
-      HomePageWidgetType.actualites => const SizedBox.shrink(),
-      HomePageWidgetType.notes => const SizedBox.shrink(),
-      HomePageWidgetType.edt => const SizedBox.shrink(),
-      HomePageWidgetType.ds => const SizedBox.shrink(),
+      HomePageWidgetType.actualites => NewsWidget(data: widget as Actualites),
+      HomePageWidgetType.notes => GradesWidget(data: widget as Notes),
+      HomePageWidgetType.edt => TimetableWidget(data: widget as EDT),
+      HomePageWidgetType.ds => ExamsWidget(data: widget as DS),
 
       _ => throw UnimplementedError(
         "Unknown home page widget for ${widget.widgetId}",
@@ -130,7 +131,6 @@ class _HomeScreenState extends State<HomeScreen> with TabMixin<HomeScreen> {
           ),
 
           physics: const AlwaysScrollableScrollPhysics(),
-
           itemCount: _widgets.length,
 
           itemBuilder: (context, index) {
