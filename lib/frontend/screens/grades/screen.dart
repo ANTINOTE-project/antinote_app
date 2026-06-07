@@ -1,15 +1,12 @@
 import "dart:async";
 
 import "package:antinote/antinote.dart" hide Tab;
-import "package:antinote_app/frontend/screens/grades/app_bar.dart";
 import "package:antinote_app/frontend/screens/grades/grades_tab.dart";
 import "package:antinote_app/frontend/screens/grades/report_tab.dart";
 import "package:antinote_app/frontend/screens/shell/tab.dart";
 import "package:antinote_app/utils/utils.dart";
 import "package:collection/collection.dart";
 import "package:flutter/material.dart";
-
-typedef GradesScreenTab = ({Widget widget, String category});
 
 class GradesScreen extends StatefulWidget {
   const GradesScreen({super.key});
@@ -40,12 +37,9 @@ class _GradesScreenState extends State<GradesScreen>
     BuildContext context,
     RefreshIndicatorBuilder buildRefreshIndicator,
   ) {
-    final List<GradesScreenTab> tabs = [
-      (
-        widget: GradesTab(periodId: _selectedPeriod.visualId),
-        category: "grades",
-      ),
-      (widget: const ReportTab(), category: "report"),
+    final List<Widget> tabs = [
+      GradesTab(periodId: _selectedPeriod.visualId),
+      const ReportTab(),
     ];
 
     return LayoutBuilder(
@@ -54,25 +48,66 @@ class _GradesScreenState extends State<GradesScreen>
           physics: const NeverScrollableScrollPhysics(),
 
           slivers: [
-            GradesAppBar(
-              maxWidth: constraints.maxWidth,
+            SliverSafeArea(
+              left: false,
+              right: false,
+              bottom: false,
 
-              tabsName: [context.l10n.grades, context.l10n.report],
-              controller: _controller,
+              sliver: SliverAppBar(
+                leadingWidth: constraints.maxWidth,
+                primary: false,
 
-              getSelectedPeriod: () => _selectedPeriod,
-              periods: _periods,
+                bottom: PreferredSize(
+                  preferredSize: const Size.fromHeight(kTextTabBarHeight),
 
-              setSelectedPeriod: (period) {
-                setState(() => _selectedPeriod = period);
-              },
+                  child: TabBar(
+                    controller: _controller,
+
+                    tabs: [context.l10n.grades, context.l10n.report].mapL(
+                      (name) => Tab(
+                        child: Text(
+                          name,
+                          style: const TextStyle(fontWeight: FontWeight.w700),
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+
+                leading: ListView.builder(
+                  padding: const EdgeInsets.symmetric(horizontal: 8),
+                  itemCount: _periods.length,
+
+                  scrollDirection: Axis.horizontal,
+                  shrinkWrap: true,
+
+                  itemBuilder: (context, index) {
+                    final period = _periods[index];
+
+                    return Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 3),
+
+                      child: ChoiceChip(
+                        selected: period == _selectedPeriod,
+                        label: Text(
+                          period.name,
+                          style: const TextStyle(fontWeight: FontWeight.w700),
+                        ),
+
+                        onSelected: (value) async {
+                          if (value) {
+                            setState(() => _selectedPeriod = period);
+                          }
+                        },
+                      ),
+                    );
+                  },
+                ),
+              ),
             ),
 
             SliverFillRemaining(
-              child: TabBarView(
-                controller: _controller,
-                children: tabs.mapL((e) => e.widget),
-              ),
+              child: TabBarView(controller: _controller, children: tabs),
             ),
           ],
         );

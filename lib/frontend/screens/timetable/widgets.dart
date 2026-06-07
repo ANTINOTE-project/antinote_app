@@ -1,5 +1,5 @@
 import "package:antinote/antinote.dart";
-import "package:antinote_app/frontend/screens/timetable/class_block.dart";
+import "package:antinote_app/frontend/screens/timetable/models.dart";
 import "package:antinote_app/frontend/widgets/overflow_row.dart";
 import "package:antinote_app/frontend/widgets/pressable.dart";
 import "package:antinote_app/main.dart";

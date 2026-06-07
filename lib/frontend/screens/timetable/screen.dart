@@ -3,7 +3,7 @@ import "dart:async";
 import "package:antinote/antinote.dart";
 import "package:antinote_app/backend/backend.dart";
 import "package:antinote_app/frontend/screens/shell/tab.dart";
-import "package:antinote_app/frontend/screens/timetable/class_block.dart";
+import "package:antinote_app/frontend/screens/timetable/models.dart";
 import "package:antinote_app/frontend/screens/timetable/widgets.dart";
 import "package:antinote_app/frontend/widgets/customs/loading.dart";
 import "package:antinote_app/main.dart";
