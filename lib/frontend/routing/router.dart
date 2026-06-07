@@ -9,7 +9,7 @@ import "package:antinote_app/frontend/screens/auth/school.dart";
 import "package:antinote_app/frontend/screens/auth/url.dart";
 import "package:antinote_app/frontend/screens/auth/webview.dart";
 import "package:antinote_app/frontend/screens/auth/workspace.dart";
-import "package:antinote_app/frontend/screens/settings/index.dart";
+import "package:antinote_app/frontend/screens/settings/screen.dart";
 import "package:antinote_app/frontend/screens/shell/shell.dart";
 import "package:go_router/go_router.dart";
 

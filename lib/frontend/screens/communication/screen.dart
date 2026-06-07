@@ -2,9 +2,9 @@ import "dart:async";
 
 import "package:antinote/antinote.dart";
 import "package:antinote_app/backend/backend.dart";
+import "package:antinote_app/frontend/screens/communication/models.dart";
+import "package:antinote_app/frontend/screens/communication/news.dart";
 import "package:antinote_app/frontend/screens/shell/tab.dart";
-import "package:antinote_app/frontend/screens/shell/tabs/communication/models/communication.dart";
-import "package:antinote_app/frontend/screens/shell/tabs/communication/news.dart";
 import "package:antinote_app/frontend/widgets/customs/list.dart";
 import "package:antinote_app/utils/utils.dart";
 import "package:flutter/material.dart";

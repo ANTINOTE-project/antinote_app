@@ -3,13 +3,8 @@ import "dart:typed_data";
 
 import "package:antinote/antinote.dart";
 import "package:antinote_app/frontend/routing/routes.dart";
+import "package:antinote_app/frontend/screens/home/widgets.dart";
 import "package:antinote_app/frontend/screens/shell/tab.dart";
-import "package:antinote_app/frontend/screens/shell/tabs/home/widgets/attendance.dart";
-import "package:antinote_app/frontend/screens/shell/tabs/home/widgets/exams.dart";
-import "package:antinote_app/frontend/screens/shell/tabs/home/widgets/grades.dart";
-import "package:antinote_app/frontend/screens/shell/tabs/home/widgets/homeworks.dart";
-import "package:antinote_app/frontend/screens/shell/tabs/home/widgets/news.dart";
-import "package:antinote_app/frontend/screens/shell/tabs/home/widgets/timetable.dart";
 import "package:antinote_app/frontend/widgets/customs/app_bar.dart";
 import "package:antinote_app/utils/utils.dart";
 import "package:flutter/material.dart";

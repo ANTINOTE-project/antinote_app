@@ -1,8 +1,8 @@
-import "package:antinote_app/frontend/screens/shell/tabs/communication/index.dart";
-import "package:antinote_app/frontend/screens/shell/tabs/grades/index.dart";
-import "package:antinote_app/frontend/screens/shell/tabs/home/index.dart";
-import "package:antinote_app/frontend/screens/shell/tabs/homeworks/index.dart";
-import "package:antinote_app/frontend/screens/shell/tabs/timetable/index.dart";
+import "package:antinote_app/frontend/screens/communication/screen.dart";
+import "package:antinote_app/frontend/screens/grades/screen.dart";
+import "package:antinote_app/frontend/screens/home/screen.dart";
+import "package:antinote_app/frontend/screens/homeworks/screen.dart";
+import "package:antinote_app/frontend/screens/timetable/screen.dart";
 import "package:antinote_app/utils/context.dart";
 import "package:flutter/material.dart";
 import "package:hugeicons_pro/hugeicons.dart";

@@ -3,8 +3,8 @@ import "dart:math";
 
 import "package:antinote/antinote.dart";
 import "package:antinote_app/backend/backend.dart";
+import "package:antinote_app/frontend/screens/homeworks/detail.dart";
 import "package:antinote_app/frontend/screens/shell/tab.dart";
-import "package:antinote_app/frontend/screens/shell/tabs/homeworks/homework.dart";
 import "package:antinote_app/frontend/widgets/bottom_padding.dart";
 import "package:antinote_app/frontend/widgets/customs/loading.dart";
 import "package:antinote_app/frontend/widgets/pressable.dart";
@@ -366,7 +366,7 @@ class _HomeworkCard extends StatelessWidget {
 
           MaterialPageRoute(
             builder: (context) {
-              return HomeworkScreen(
+              return HomeworkDetailScreen(
                 homework: homework,
                 onHomeworkChange: (_) => onReturn(),
               );

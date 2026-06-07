@@ -10,21 +10,21 @@ import "package:flutter/material.dart";
 import "package:hugeicons_pro/hugeicons.dart";
 import "package:intl/intl.dart";
 
-class HomeworkScreen extends StatefulWidget {
+class HomeworkDetailScreen extends StatefulWidget {
   final void Function(bool value) onHomeworkChange;
   final Homework homework;
 
-  const HomeworkScreen({
+  const HomeworkDetailScreen({
     super.key,
     required this.homework,
     required this.onHomeworkChange,
   });
 
   @override
-  State<HomeworkScreen> createState() => _HomeworkScreenState();
+  State<HomeworkDetailScreen> createState() => _HomeworkDetailScreenState();
 }
 
-class _HomeworkScreenState extends State<HomeworkScreen> {
+class _HomeworkDetailScreenState extends State<HomeworkDetailScreen> {
   late bool _isDone;
 
   @override
