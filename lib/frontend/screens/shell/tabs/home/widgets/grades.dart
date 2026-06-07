@@ -67,7 +67,7 @@ class _GradeCard extends StatelessWidget {
         selfGrade: exam.selfGrade,
         maxGrade: exam.theoreticalMaxGrade,
         color: scheme.primary,
-        size: 19,
+        size: 16,
       ),
     );
   }
