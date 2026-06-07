@@ -2,7 +2,8 @@ import "dart:async";
 
 import "package:antinote/antinote.dart" hide Tab;
 import "package:antinote_app/frontend/screens/grades/app_bar.dart";
-import "package:antinote_app/frontend/screens/grades/grades.dart";
+import "package:antinote_app/frontend/screens/grades/grades_tab.dart";
+import "package:antinote_app/frontend/screens/grades/report_tab.dart";
 import "package:antinote_app/frontend/screens/shell/tab.dart";
 import "package:antinote_app/utils/utils.dart";
 import "package:collection/collection.dart";
@@ -44,7 +45,7 @@ class _GradesScreenState extends State<GradesScreen>
         widget: GradesTab(periodId: _selectedPeriod.visualId),
         category: "grades",
       ),
-      (widget: const SizedBox.shrink(), category: "report"),
+      (widget: const ReportTab(), category: "report"),
     ];
 
     return LayoutBuilder(
