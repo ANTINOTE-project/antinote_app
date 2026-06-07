@@ -4,16 +4,14 @@ import "dart:math";
 import "package:antinote/antinote.dart";
 import "package:antinote_app/backend/backend.dart";
 import "package:antinote_app/frontend/screens/shell/tab.dart";
-import "package:antinote_app/frontend/screens/shell/tabs/homeworks/homework.dart";
+import "package:antinote_app/frontend/screens/shell/widgets/homework.dart";
 import "package:antinote_app/frontend/widgets/bottom_padding.dart";
 import "package:antinote_app/frontend/widgets/customs/loading.dart";
 import "package:antinote_app/frontend/widgets/pressable.dart";
-import "package:antinote_app/frontend/widgets/remote_html.dart";
 import "package:antinote_app/utils.dart";
 import "package:collection/collection.dart";
 import "package:flutter/material.dart";
 import "package:hugeicons_pro/hugeicons.dart";
-import "package:intl/intl.dart";
 
 typedef Homeworks = Map<DateTime, ValueNotifier<List<Homework>?>>;
 
@@ -338,131 +336,11 @@ class _HomeworkListState extends State<_HomeworkList> {
 
             children: [
               for (final homework in widget.homeworks!)
-                _HomeworkCard(homework: homework, onReturn: widget.onReturn),
+                HomeworkCard(homework: homework, onReturn: widget.onReturn),
             ],
           ),
         );
       },
-    );
-  }
-}
-
-class _HomeworkCard extends StatelessWidget {
-  final Homework homework;
-  final VoidCallback onReturn;
-
-  const _HomeworkCard({required this.homework, required this.onReturn});
-
-  @override
-  Widget build(BuildContext context) {
-    final scheme = Utils.buildColorScheme(context, homework.backgroundColor);
-    final dateStr = DateFormat("dd/MM/yyyy").format(homework.deadlineDate);
-
-    return Pressable(
-      borderRadius: .circular(20),
-
-      onPressed: () async {
-        await Navigator.push(
-          context,
-
-          MaterialPageRoute(
-            builder: (context) {
-              return HomeworkScreen(
-                homework: homework,
-                onHomeworkChange: (_) => onReturn(),
-              );
-            },
-          ),
-        );
-      },
-
-      child: Ink(
-        decoration: BoxDecoration(
-          border: .all(color: scheme.inversePrimary),
-          borderRadius: .circular(16),
-          color: scheme.primaryContainer,
-        ),
-
-        padding: const .symmetric(horizontal: 12, vertical: 8),
-
-        child: Column(
-          crossAxisAlignment: .start,
-          spacing: 6,
-
-          children: [
-            Row(
-              mainAxisAlignment: .spaceBetween,
-              spacing: 10,
-
-              children: [
-                Expanded(
-                  child: Text(
-                    homework.subject.name ?? context.l10n.noSubject,
-
-                    overflow: .ellipsis,
-                    maxLines: 1,
-
-                    style: TextStyle(
-                      color: scheme.primary,
-                      fontWeight: .w800,
-                      fontSize: 21,
-                    ),
-                  ),
-                ),
-
-                Text(
-                  dateStr,
-                  style: TextStyle(fontWeight: .bold, color: scheme.outline),
-                ),
-              ],
-            ),
-
-            RemoteHtml(
-              rawHtml: homework.description,
-              compact: true,
-              maxLines: 3,
-
-              style: TextStyle(
-                color: scheme.onSurface,
-                fontWeight: .w600,
-                fontSize: 15,
-              ),
-            ),
-
-            const SizedBox(height: 6),
-
-            Row(
-              spacing: 6,
-
-              children: [
-                Icon(
-                  homework.isDone
-                      ? HugeIconsSolid.tick03
-                      : HugeIconsStroke.tick03,
-                  color: homework.isDone
-                      ? scheme.onPrimaryContainer
-                      : scheme.outline,
-                  size: 21,
-                ),
-
-                Text(
-                  homework.isDone
-                      ? context.l10n.homeworkSetDone
-                      : context.l10n.homeworkSetNotDone,
-
-                  style: TextStyle(
-                    color: homework.isDone
-                        ? scheme.onPrimaryContainer
-                        : scheme.outline,
-                    fontWeight: .w800,
-                    fontSize: 15.5,
-                  ),
-                ),
-              ],
-            ),
-          ],
-        ),
-      ),
     );
   }
 }

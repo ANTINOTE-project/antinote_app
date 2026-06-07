@@ -5,6 +5,7 @@ import "package:antinote/antinote.dart";
 import "package:antinote_app/frontend/routing/routes.dart";
 import "package:antinote_app/frontend/screens/shell/tab.dart";
 import "package:antinote_app/frontend/screens/shell/tabs/home/widgets/attendance.dart";
+import "package:antinote_app/frontend/screens/shell/tabs/home/widgets/homeworks.dart";
 import "package:antinote_app/frontend/widgets/customs/app_bar.dart";
 import "package:antinote_app/utils.dart";
 import "package:flutter/material.dart";
@@ -31,8 +32,11 @@ class _HomeScreenState extends State<HomeScreen> with TabMixin<HomeScreen> {
         data: widget as VieScolaire,
       ),
 
+      HomePageWidgetType.travailAFaire => HomeworksWidget(
+        data: widget as TravailAFaire,
+      ),
+
       // TODO add others widgets
-      HomePageWidgetType.travailAFaire => const SizedBox.shrink(),
       HomePageWidgetType.actualites => const SizedBox.shrink(),
       HomePageWidgetType.notes => const SizedBox.shrink(),
       HomePageWidgetType.edt => const SizedBox.shrink(),
@@ -118,14 +122,24 @@ class _HomeScreenState extends State<HomeScreen> with TabMixin<HomeScreen> {
         onRefresh: () => reload(fromRefreshIndicator: true),
 
         child: ListView.builder(
-          padding: const .only(top: 16, left: 12, right: 12),
+          padding: .only(
+            bottom: MediaQuery.paddingOf(context).bottom,
+            right: 12,
+            left: 12,
+            top: 16,
+          ),
+
           physics: const AlwaysScrollableScrollPhysics(),
 
           itemCount: _widgets.length,
 
           itemBuilder: (context, index) {
             final widget = _widgets[index];
-            return _buildWidget(widget);
+
+            return Padding(
+              padding: const .only(bottom: 16),
+              child: _buildWidget(widget),
+            );
           },
         ),
       ),
@@ -145,7 +159,12 @@ class _HomeScreenState extends State<HomeScreen> with TabMixin<HomeScreen> {
       ),
     );
 
-    _widgets = home.widgets;
+    var sortedWidgets = home.widgets;
+
+    sortedWidgets.sort((a, b) => a.widgetId.id.compareTo(b.widgetId.id));
+    sortedWidgets = sortedWidgets.reversed.toList(growable: false);
+
+    _widgets = sortedWidgets;
 
     _displayName = session.userResource.name;
     _profilePicture = session.userResource.profilePicture;
