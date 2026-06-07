@@ -15,7 +15,7 @@ class HomeworksWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final homeworks = data.homeworks;
+    final homeworks = List<Homework>.from(data.homeworks);
     homeworks.sort((a, b) => a.deadlineDate.compareTo(b.deadlineDate));
 
     return HomeWidget(

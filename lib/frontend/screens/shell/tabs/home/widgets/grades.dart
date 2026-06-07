@@ -12,12 +12,15 @@ class GradesWidget extends StatelessWidget {
 
   const GradesWidget({super.key, required this.data});
 
-  List<Exam> get exams => data.page.exams;
-
   @override
   Widget build(BuildContext context) {
+    final exams = List<Exam>.from(data.page.exams);
+    exams.sort((a, b) => b.date.compareTo(a.date));
+
     return HomeWidget(
-      label: context.l10n.grades,
+      label: exams.length > 5
+          ? "${context.l10n.grades} (+${exams.length - 5})"
+          : context.l10n.grades,
 
       onShowMorePressed: () {
         context.sc.goToTab(.grades);
