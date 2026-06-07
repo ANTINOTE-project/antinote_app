@@ -6,7 +6,7 @@ import "package:antinote_app/frontend/screens/shell/tab.dart";
 import "package:antinote_app/frontend/screens/shell/tabs/communication/models/communication.dart";
 import "package:antinote_app/frontend/screens/shell/tabs/communication/news.dart";
 import "package:antinote_app/frontend/widgets/customs/list.dart";
-import "package:antinote_app/utils.dart";
+import "package:antinote_app/utils/utils.dart";
 import "package:flutter/material.dart";
 import "package:hugeicons_pro/hugeicons.dart";
 import "package:intl/intl.dart";
