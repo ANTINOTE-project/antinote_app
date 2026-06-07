@@ -178,10 +178,7 @@ class _ColorPickerState extends State<_ColorPicker> {
                   },
 
                   transitionBuilder: (child, animation) {
-                    return ScaleTransition(
-                      scale: animation,
-                      child: FadeTransition(opacity: animation, child: child),
-                    );
+                    return FadeTransition(opacity: animation, child: child);
                   },
 
                   child: Container(
