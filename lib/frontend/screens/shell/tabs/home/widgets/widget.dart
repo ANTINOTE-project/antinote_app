@@ -1,5 +1,5 @@
 import "package:antinote_app/frontend/widgets/pressable.dart";
-import "package:antinote_app/utils.dart";
+import "package:antinote_app/utils/utils.dart";
 import "package:flutter/material.dart";
 import "package:hugeicons_pro/hugeicons.dart";
 

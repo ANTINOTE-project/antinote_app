@@ -6,7 +6,7 @@ import "package:antinote_app/backend/src/helpers/antinote_account.dart";
 import "package:antinote_app/frontend/routing/routes.dart";
 import "package:antinote_app/frontend/widgets/customs/app_bar.dart";
 import "package:antinote_app/frontend/widgets/customs/list.dart";
-import "package:antinote_app/utils.dart";
+import "package:antinote_app/utils/utils.dart";
 import "package:flutter/foundation.dart";
 import "package:flutter/material.dart";
 import "package:go_router/go_router.dart";

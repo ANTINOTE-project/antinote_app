@@ -4,7 +4,7 @@ import "package:antinote/antinote.dart" hide Tab;
 import "package:antinote_app/frontend/screens/shell/tab.dart";
 import "package:antinote_app/frontend/screens/shell/tabs/grades/app_bar.dart";
 import "package:antinote_app/frontend/screens/shell/tabs/grades/tabs/grades.dart";
-import "package:antinote_app/utils.dart";
+import "package:antinote_app/utils/utils.dart";
 import "package:collection/collection.dart";
 import "package:flutter/material.dart";
 

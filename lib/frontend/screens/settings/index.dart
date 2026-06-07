@@ -3,7 +3,7 @@ import "package:antinote_app/frontend/widgets/customs/app_bar.dart";
 import "package:antinote_app/frontend/widgets/customs/button.dart";
 import "package:antinote_app/frontend/widgets/pressable.dart";
 import "package:antinote_app/l10n/app_localizations.dart";
-import "package:antinote_app/utils.dart";
+import "package:antinote_app/utils/utils.dart";
 import "package:flutter/material.dart";
 import "package:go_router/go_router.dart";
 import "package:hugeicons_pro/hugeicons.dart";

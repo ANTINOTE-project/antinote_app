@@ -4,7 +4,7 @@ import "package:antinote_app/frontend/screens/shell/tabs/home/widgets/widget.dar
 import "package:antinote_app/frontend/widgets/compact_card.dart";
 import "package:antinote_app/frontend/widgets/customs/list.dart";
 import "package:antinote_app/frontend/widgets/grade_text.dart";
-import "package:antinote_app/utils.dart";
+import "package:antinote_app/utils/utils.dart";
 import "package:flutter/material.dart";
 
 class GradesWidget extends StatelessWidget {

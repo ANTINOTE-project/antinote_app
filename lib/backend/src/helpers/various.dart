@@ -1,6 +1,6 @@
 // Credit: https://stackoverflow.com/a/68847631 (by Raul Mabe)
 import "package:antinote/antinote.dart";
-import "package:antinote_app/utils.dart";
+import "package:antinote_app/utils/utils.dart";
 import "package:flutter/material.dart";
 import "package:intl/intl.dart";
 

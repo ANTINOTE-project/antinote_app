@@ -1,6 +1,6 @@
 import "package:antinote/antinote.dart";
 import "package:antinote_app/frontend/screens/shell/tabs/home/widgets/widget.dart";
-import "package:antinote_app/utils.dart";
+import "package:antinote_app/utils/utils.dart";
 import "package:flutter/material.dart";
 
 class NewsWidget extends StatelessWidget {

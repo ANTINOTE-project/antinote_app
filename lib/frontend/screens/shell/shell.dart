@@ -1,6 +1,6 @@
 import "package:antinote/antinote.dart";
 import "package:antinote_app/backend/src/session/manager.dart";
-import "package:antinote_app/utils.dart";
+import "package:antinote_app/utils/utils.dart";
 import "package:flutter/material.dart";
 
 class ShellController extends InheritedWidget {
