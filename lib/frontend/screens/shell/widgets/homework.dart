@@ -1,11 +1,11 @@
 import "package:antinote/antinote.dart";
+import "package:antinote_app/backend/src/helpers/various.dart";
 import "package:antinote_app/frontend/screens/shell/tabs/homeworks/homework.dart";
 import "package:antinote_app/frontend/widgets/pressable.dart";
 import "package:antinote_app/frontend/widgets/remote_html.dart";
 import "package:antinote_app/utils.dart";
 import "package:flutter/material.dart";
 import "package:hugeicons_pro/hugeicons.dart";
-import "package:intl/intl.dart";
 
 class HomeworkCard extends StatelessWidget {
   final Homework homework;
@@ -25,7 +25,7 @@ class HomeworkCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final scheme = Utils.buildColorScheme(context, homework.backgroundColor);
-    final dateStr = DateFormat("dd/MM/yyyy").format(homework.deadlineDate);
+    final dateStr = homework.deadlineDate.asRelativeWeekday(context);
 
     return Pressable(
       borderRadius: .circular(16),
@@ -56,8 +56,8 @@ class HomeworkCard extends StatelessWidget {
         ),
 
         padding: EdgeInsets.symmetric(
-          horizontal: 12,
           vertical: isCompact ? 6 : 8,
+          horizontal: 12,
         ),
 
         child: Column(

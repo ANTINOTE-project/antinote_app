@@ -12,10 +12,14 @@ class HomeworksWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return HomeWidget(
-      onShowMorePressed: () {},
+    final homeworks = data.homeworks;
+    homeworks.sort((a, b) => a.deadlineDate.compareTo(b.deadlineDate));
 
-      label: context.l10n.homeworks,
+    return HomeWidget(
+      label: homeworks.length > 5
+          ? "${context.l10n.homeworks} (+${homeworks.length - 5})"
+          : context.l10n.homeworks,
+      onShowMorePressed: () {},
 
       content: ListWidget(
         physics: const NeverScrollableScrollPhysics(),
@@ -23,7 +27,7 @@ class HomeworksWidget extends StatelessWidget {
         isSliver: false,
         isColumn: true,
 
-        items: data.homeworks,
+        items: homeworks.take(5).toList(),
 
         itemBuilder: (context, homework, _) {
           return HomeworkCard(homework: homework, isCompact: true);

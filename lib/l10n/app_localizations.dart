@@ -397,7 +397,7 @@ abstract class AppLocalizations {
   /// No description provided for @homeAttendance.
   ///
   /// In fr, this message translates to:
-  /// **'Carnet de correspondance'**
+  /// **'Vie scolaire'**
   String get homeAttendance;
 
   /// No description provided for @absenceNotJustified.

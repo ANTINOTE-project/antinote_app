@@ -163,7 +163,7 @@ class AppLocalizationsFr extends AppLocalizations {
   String get homeShowMore => 'Voir plus';
 
   @override
-  String get homeAttendance => 'Carnet de correspondance';
+  String get homeAttendance => 'Vie scolaire';
 
   @override
   String get absenceNotJustified => 'Absence non justifiée';

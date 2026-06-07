@@ -27,7 +27,9 @@ class AttendanceWidget extends StatelessWidget {
     return HomeWidget(
       onShowMorePressed: () {},
 
-      label: context.l10n.homeAttendance,
+      label: data.absences.length > 5
+          ? "${context.l10n.homeAttendance} (+${data.absences.length - 5})"
+          : context.l10n.homeAttendance,
 
       content: ListWidget(
         physics: const NeverScrollableScrollPhysics(),
@@ -35,7 +37,7 @@ class AttendanceWidget extends StatelessWidget {
         isSliver: false,
         isColumn: true,
 
-        items: data.absences,
+        items: data.absences.take(5).toList(),
 
         itemBuilder: (context, absence, borderRadius) {
           final isJustified = absence.reasons.isNotEmpty;

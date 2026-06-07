@@ -19,8 +19,14 @@ extension IterableExt<T> on Iterable<T> {
   }
 }
 
+extension StringExt on String {
+  String capitalize() {
+    return isEmpty ? this : "${this[0].toUpperCase()}${substring(1)}";
+  }
+}
+
 extension AsRelativeDateString on DateTime {
-  static final DateFormat _shortDateFormatter = DateFormat("EEE, MMM dd");
+  static final DateFormat _shortDateFormatter = DateFormat("EEEE, MMMM dd");
   static final DateFormat _numericDateFormatter = DateFormat("dd MMM");
   static final DateFormat _shortTimeFormatter = DateFormat("HH:mm");
   static final DateFormat _longDateFormatter = DateFormat("dd/MM/yy");
@@ -54,10 +60,22 @@ extension AsRelativeDateString on DateTime {
     return dayTitle;
   }
 
-  static final DateFormat _shortWeekdayFormatter = DateFormat("EEE");
+  static final DateFormat _shortWeekdayFormatter = DateFormat("EEEE");
 
-  String asShortWeekday([bool dayOnly = true]) {
-    return _shortWeekdayFormatter.format(this);
+  String asRelativeWeekday(BuildContext context) {
+    final today = DateTime.now().toUtc().toDay();
+    final thisDay = toUtc().toDay();
+
+    if (today == thisDay) {
+      return context.l10n.today;
+    } else if (today.add(const Duration(days: 1)) == thisDay) {
+      return context.l10n.tomorrow;
+    } else if (today.subtract(const Duration(days: 1)) == thisDay) {
+      return context.l10n.yesterday;
+    }
+
+    final formatted = _shortWeekdayFormatter.format(this);
+    return formatted.capitalize();
   }
 }
 

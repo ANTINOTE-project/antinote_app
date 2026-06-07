@@ -58,7 +58,7 @@
   "loginPinCodeSubtitle": "Veuillez rentrer votre code PIN vous connecter à votre compte PRONOTE",
 
   "homeShowMore": "Voir plus",
-  "homeAttendance": "Carnet de correspondance",
+  "homeAttendance": "Vie scolaire",
   "absenceNotJustified": "Absence non justifiée",
   "absenceJustified": "Absence justifiée",
   "absenceDuration": "{date} de {startTime} à {endTime}",
