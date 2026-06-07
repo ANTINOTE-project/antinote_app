@@ -21,7 +21,7 @@ class HomeworksWidget extends StatelessWidget {
           : context.l10n.homeworks,
 
       onShowMorePressed: () {
-        context.sc.goToTab("homeworks");
+        context.sc.goToTab(.homeworks);
       },
 
       content: ListWidget(

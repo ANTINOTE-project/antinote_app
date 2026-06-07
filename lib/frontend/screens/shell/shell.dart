@@ -1,24 +1,10 @@
 import "package:antinote/antinote.dart";
 import "package:antinote_app/backend/src/session/manager.dart";
-import "package:antinote_app/frontend/screens/shell/tabs/communication/index.dart";
-import "package:antinote_app/frontend/screens/shell/tabs/grades/index.dart";
-import "package:antinote_app/frontend/screens/shell/tabs/home/index.dart";
-import "package:antinote_app/frontend/screens/shell/tabs/homeworks/index.dart";
-import "package:antinote_app/frontend/screens/shell/tabs/timetable/index.dart";
 import "package:antinote_app/utils.dart";
 import "package:flutter/material.dart";
-import "package:hugeicons_pro/hugeicons.dart";
-
-typedef _TabDestination = ({
-  IconData icon,
-  String label,
-  Widget screen,
-  String category,
-  List<int> associatedTabIds,
-});
 
 class ShellController extends InheritedWidget {
-  final void Function(String category) goToTab;
+  final void Function(TabCategory category) goToTab;
 
   const ShellController({
     super.key,
@@ -46,44 +32,6 @@ class AppShell extends StatefulWidget {
 }
 
 class _AppShellState extends State<AppShell> {
-  late final List<_TabDestination> _tabs = [
-    (
-      icon: HugeIconsSolid.home01,
-      label: context.l10n.home,
-      screen: const HomeScreen(),
-      category: "home",
-      associatedTabIds: [],
-    ),
-    (
-      icon: HugeIconsSolid.calendar01,
-      label: context.l10n.timetable,
-      screen: const TimetableScreen(),
-      category: "timetable",
-      associatedTabIds: [16, 88, 89],
-    ),
-    (
-      icon: HugeIconsSolid.graduateMale,
-      label: context.l10n.grades,
-      screen: const GradesScreen(),
-      category: "grades",
-      associatedTabIds: [13, 41, 198],
-    ),
-    (
-      icon: HugeIconsSolid.task01,
-      label: context.l10n.homeworks,
-      screen: const HomeworksScreen(),
-      category: "homeworks",
-      associatedTabIds: [88],
-    ),
-    (
-      icon: HugeIconsSolid.inbox,
-      label: context.l10n.communication,
-      screen: const CommunicationScreen(),
-      category: "communication",
-      associatedTabIds: [8, 131],
-    ),
-  ];
-
   Stream<NotificationPreviewState>? notificationStream;
   NotificationPreviewState? defaultNotifications;
 
@@ -91,6 +39,7 @@ class _AppShellState extends State<AppShell> {
     SessionManager.execute(
       context: context,
       channels: const [],
+
       callback: (session) {
         if (!mounted) return;
 
@@ -130,6 +79,7 @@ class _AppShellState extends State<AppShell> {
   @override
   Widget build(BuildContext context) {
     final screenSize = MediaQuery.sizeOf(context);
+    final tabs = buildTabs(context);
 
     return StreamBuilder(
       initialData: defaultNotifications,
@@ -140,7 +90,7 @@ class _AppShellState extends State<AppShell> {
 
         return ShellController(
           goToTab: (category) => setState(() {
-            currentPage = _tabs.indexWhere((t) => t.category == category);
+            currentPage = tabs.indexWhere((t) => t.category == category);
           }),
 
           child: Scaffold(
@@ -164,11 +114,10 @@ class _AppShellState extends State<AppShell> {
 
                         child: NavigationRail(
                           backgroundColor: context.c.surfaceContainerHigh,
-                          destinations: _tabs.mapL((e) {
+                          destinations: tabs.mapL((e) {
                             final notificationCount = notifications
                                 .where(
-                                  (element) =>
-                                      e.associatedTabIds.contains(element.tab),
+                                  (element) => e.tabs.contains(element.tab),
                                 )
                                 .fold(
                                   0,
@@ -177,6 +126,8 @@ class _AppShellState extends State<AppShell> {
                                 );
 
                             return NavigationRailDestination(
+                              label: Text(e.label),
+
                               icon: Badge.count(
                                 count: notificationCount,
                                 isLabelVisible: notificationCount > 0,
@@ -188,7 +139,6 @@ class _AppShellState extends State<AppShell> {
                                 isLabelVisible: notificationCount > 0,
                                 child: Icon(e.icon, fill: 1),
                               ),
-                              label: Text(e.label),
                             );
                           }),
 
@@ -211,7 +161,7 @@ class _AppShellState extends State<AppShell> {
                     switchInCurve: Curves.fastOutSlowIn,
                     switchOutCurve: const ReversedCurve(Curves.fastOutSlowIn),
 
-                    child: _tabs[currentPage].screen,
+                    child: tabs[currentPage].screen,
                   ),
                 ),
               ],
@@ -238,7 +188,7 @@ class _AppShellState extends State<AppShell> {
                       right: false,
 
                       child: NavigationBar(
-                        destinations: _tabs
+                        destinations: tabs
                             .map((e) => _buildDestination(e, notifications))
                             .toList(growable: false),
 
@@ -258,11 +208,11 @@ class _AppShellState extends State<AppShell> {
   }
 
   NavigationDestination _buildDestination(
-    _TabDestination e,
+    TabDestination e,
     List<NotificationPreview> notifications,
   ) {
     final notificationCount = notifications
-        .where((element) => e.associatedTabIds.contains(element.tab))
+        .where((element) => e.tabs.contains(element.tab))
         .fold(0, (prev, element) => prev + element.count);
 
     return NavigationDestination(

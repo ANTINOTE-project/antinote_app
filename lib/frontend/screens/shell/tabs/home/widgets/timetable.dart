@@ -14,7 +14,7 @@ class TimetableWidget extends StatelessWidget {
       label: context.l10n.timetable,
 
       onShowMorePressed: () {
-        context.sc.goToTab("timetable");
+        context.sc.goToTab(.timetable);
       },
 
       content: const SizedBox.shrink(),

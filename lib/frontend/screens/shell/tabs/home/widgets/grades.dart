@@ -14,7 +14,7 @@ class GradesWidget extends StatelessWidget {
       label: context.l10n.grades,
 
       onShowMorePressed: () {
-        context.sc.goToTab("grades");
+        context.sc.goToTab(.grades);
       },
 
       content: const SizedBox.shrink(),

@@ -7,6 +7,7 @@ export "utils/curves.dart";
 export "utils/date.dart";
 export "utils/fake_data.dart";
 export "utils/formatters.dart";
+export "utils/tabs.dart";
 export "utils/week_view.dart";
 
 class Utils {

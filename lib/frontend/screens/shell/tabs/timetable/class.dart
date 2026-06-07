@@ -317,7 +317,7 @@ class _ClassContent extends StatelessWidget {
   final ClassContent content;
   final Color color;
 
-  const _ClassContent({super.key, required this.content, required this.color});
+  const _ClassContent({required this.content, required this.color});
 
   @override
   Widget build(BuildContext context) {

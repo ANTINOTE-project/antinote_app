@@ -14,7 +14,7 @@ class NewsWidget extends StatelessWidget {
       label: context.l10n.homeNews,
 
       onShowMorePressed: () {
-        context.sc.goToTab("communication");
+        context.sc.goToTab(.communication);
       },
 
       content: const SizedBox.shrink(),
