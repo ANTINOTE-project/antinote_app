@@ -1,6 +1,6 @@
 import "package:flutter/material.dart";
 import "package:flutter_widget_from_html_core/flutter_widget_from_html_core.dart";
-import "package:html/dom.dart" as html;
+import "package:html/parser.dart" as html_parser;
 import "package:url_launcher/url_launcher_string.dart";
 
 class RemoteHtml extends StatelessWidget {
@@ -28,9 +28,10 @@ class RemoteHtml extends StatelessWidget {
   final int? maxLines;
 
   String get compactHtml {
-    final element = html.Element.html(rawHtml);
-
-    return element.text;
+    // Use parse() instead of Element.html() to handle strings
+    // with multiple top-level elements.
+    final document = html_parser.parse(rawHtml);
+    return document.body?.text ?? "";
   }
 
   @override
