@@ -39,7 +39,7 @@ class _GradesScreenState extends State<GradesScreen>
   ) {
     final List<Widget> tabs = [
       GradesTab(periodId: _selectedPeriod.visualId),
-      const ReportTab(),
+      ReportTab(periodId: _selectedPeriod.visualId),
     ];
 
     return LayoutBuilder(
@@ -63,7 +63,7 @@ class _GradesScreenState extends State<GradesScreen>
                   child: TabBar(
                     controller: _controller,
 
-                    tabs: [context.l10n.grades, context.l10n.report].mapL(
+                    tabs: [context.l10n.grades, context.l10n.gradesReport].mapL(
                       (name) => Tab(
                         child: Text(
                           name,

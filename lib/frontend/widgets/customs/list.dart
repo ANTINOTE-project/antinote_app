@@ -188,7 +188,7 @@ class ItemWidget extends StatelessWidget {
                 spacing: 2,
 
                 children: [
-                  DefaultTextStyle(
+                  DefaultTextStyle.merge(
                     style: TextStyle(
                       fontSize: 16,
                       fontWeight: .w800,
@@ -204,7 +204,7 @@ class ItemWidget extends StatelessWidget {
                   ),
 
                   if (subtitle != null)
-                    DefaultTextStyle(
+                    DefaultTextStyle.merge(
                       style: TextStyle(
                         fontSize: 12,
                         fontWeight: .bold,

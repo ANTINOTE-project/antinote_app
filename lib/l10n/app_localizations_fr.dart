@@ -183,9 +183,6 @@ class AppLocalizationsFr extends AppLocalizations {
   }
 
   @override
-  String get report => 'Bulletin';
-
-  @override
   String get latestGrades => 'Dernières notes';
 
   @override
@@ -246,6 +243,15 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get gradeFelicitations => 'Félicitations';
+
+  @override
+  String get gradesReport => 'Bulletin';
+
+  @override
+  String get reportUnpublished => 'Bulletin non publié';
+
+  @override
+  String get reportComment => 'Appréciations';
 
   @override
   String get noCourseToday => 'Tu n\'as pas de cours,\nprofite bien !';

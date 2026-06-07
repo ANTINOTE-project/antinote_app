@@ -65,7 +65,6 @@
   "absenceJustified": "Absence justifiée",
   "absenceDuration": "{date} de {startTime} à {endTime}",
 
-  "report": "Bulletin",
   "latestGrades": "Dernières notes",
   "services": "Matières",
   "gradeOf": "Note de {service}",
@@ -78,7 +77,6 @@
   "youGot": "Tu as eu",
   "bestGrade": "Meilleure note",
   "worstGrade": "Note la plus basse",
-
   "gradeAbsent": "Abs",
   "gradeAbsentZero": "Abs (0)",
   "gradeNotHanded": "NR",
@@ -87,6 +85,9 @@
   "gradeNotGraded": "Non noté",
   "gradeInapt": "Inapte",
   "gradeFelicitations": "Félicitations",
+  "gradesReport": "Bulletin",
+  "reportUnpublished": "Bulletin non publié",
+  "reportComment": "Appréciations",
 
   "noCourseToday": "Tu n'as pas de cours,\nprofite bien !",
   "holidayDay": "C'est les vacances,\n amuse toi bien !",

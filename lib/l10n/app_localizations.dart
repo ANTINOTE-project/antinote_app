@@ -430,12 +430,6 @@ abstract class AppLocalizations {
   /// **'{date} de {startTime} à {endTime}'**
   String absenceDuration(Object date, Object endTime, Object startTime);
 
-  /// No description provided for @report.
-  ///
-  /// In fr, this message translates to:
-  /// **'Bulletin'**
-  String get report;
-
   /// No description provided for @latestGrades.
   ///
   /// In fr, this message translates to:
@@ -555,6 +549,24 @@ abstract class AppLocalizations {
   /// In fr, this message translates to:
   /// **'Félicitations'**
   String get gradeFelicitations;
+
+  /// No description provided for @gradesReport.
+  ///
+  /// In fr, this message translates to:
+  /// **'Bulletin'**
+  String get gradesReport;
+
+  /// No description provided for @reportUnpublished.
+  ///
+  /// In fr, this message translates to:
+  /// **'Bulletin non publié'**
+  String get reportUnpublished;
+
+  /// No description provided for @reportComment.
+  ///
+  /// In fr, this message translates to:
+  /// **'Appréciations'**
+  String get reportComment;
 
   /// No description provided for @noCourseToday.
   ///
