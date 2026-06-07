@@ -265,7 +265,7 @@ class _HomeworkScreenState extends State<HomeworkScreen> {
                   children: [
                     if (widget.homework.duration > 0)
                       Text(
-                        Utils.formatDurationInMinutes(
+                        Formatters.formatDurationInMinutes(
                           Duration(minutes: widget.homework.duration.round()),
                         ),
                       ),

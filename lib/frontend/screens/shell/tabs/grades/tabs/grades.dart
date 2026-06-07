@@ -114,7 +114,7 @@ Future<void> _showDetails({
 
                       trailing: item.coefficient != null
                           ? Text(
-                              "x${Utils.formatNumber(item.coefficient)}",
+                              "x${Formatters.formatNumber(item.coefficient)}",
 
                               style: TextStyle(
                                 color: scheme.primary,
@@ -581,7 +581,7 @@ class _AverageText extends StatelessWidget {
 
                 builder: (context, value, _) {
                   return Text(
-                    Utils.formatNumber(value),
+                    Formatters.formatNumber(value),
 
                     style: TextStyle(
                       fontSize: 27,
@@ -1016,7 +1016,7 @@ class _GradeText extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final showMaxGrade = (maxGrade.value - 20.0).abs() > 0.001;
-    String selfValue = Utils.formatNumber(selfGrade.value);
+    String selfValue = Formatters.formatNumber(selfGrade.value);
 
     selfValue = switch (selfGrade.type) {
       .absent => context.l10n.gradeAbsent,
@@ -1049,7 +1049,7 @@ class _GradeText extends StatelessWidget {
             const WidgetSpan(child: SizedBox(width: 2)),
 
             TextSpan(
-              text: "/${Utils.formatNumber(maxGrade.value, digits: 0)}",
+              text: "/${Formatters.formatNumber(maxGrade.value, digits: 0)}",
 
               style: TextStyle(
                 color: context.c.onSurfaceVariant,

@@ -65,7 +65,7 @@ class ClassWidget extends StatelessWidget {
       }
     }
 
-    final duration = Utils.formatDuration(difference);
+    final duration = Formatters.formatDuration(difference);
 
     final statusBorder = BorderSide(
       color: clazz.canceled ? scheme.error : scheme.secondary,
