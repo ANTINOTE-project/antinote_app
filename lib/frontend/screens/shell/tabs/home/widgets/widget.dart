@@ -31,58 +31,62 @@ class HomeWidget extends StatelessWidget {
         spacing: 8,
 
         children: [
-          Row(
-            mainAxisAlignment: .spaceBetween,
-            spacing: 6,
+          Padding(
+            padding: const .only(left: 4),
 
-            children: [
-              Expanded(
-                child: Text(
-                  label,
+            child: Row(
+              mainAxisAlignment: .spaceBetween,
+              spacing: 6,
 
-                  overflow: .ellipsis,
-                  maxLines: 1,
+              children: [
+                Expanded(
+                  child: Text(
+                    label,
 
-                  style: const TextStyle(fontWeight: .w800, fontSize: 19),
-                ),
-              ),
+                    overflow: .ellipsis,
+                    maxLines: 1,
 
-              Pressable(
-                borderRadius: .circular(999),
-                onPressed: onShowMorePressed,
-
-                child: Ink(
-                  decoration: BoxDecoration(
-                    color: context.c.surfaceContainerLow,
-                    borderRadius: .circular(999),
+                    style: const TextStyle(fontWeight: .w800, fontSize: 19),
                   ),
+                ),
 
-                  padding: const .symmetric(horizontal: 12, vertical: 8),
+                Pressable(
+                  borderRadius: .circular(999),
+                  onPressed: onShowMorePressed,
 
-                  child: Row(
-                    spacing: 6,
+                  child: Ink(
+                    decoration: BoxDecoration(
+                      color: context.c.surfaceContainerLow,
+                      borderRadius: .circular(999),
+                    ),
 
-                    children: [
-                      Text(
-                        context.l10n.homeShowMore,
+                    padding: const .symmetric(horizontal: 12, vertical: 8),
 
-                        style: TextStyle(
-                          color: context.c.outline,
-                          fontWeight: .bold,
-                          fontSize: 14,
+                    child: Row(
+                      spacing: 6,
+
+                      children: [
+                        Text(
+                          context.l10n.homeShowMore,
+
+                          style: TextStyle(
+                            color: context.c.outline,
+                            fontWeight: .bold,
+                            fontSize: 14,
+                          ),
                         ),
-                      ),
 
-                      Icon(
-                        HugeIconsSolid.arrowUpRight02,
-                        color: context.c.outline,
-                        size: 21,
-                      ),
-                    ],
+                        Icon(
+                          HugeIconsSolid.arrowUpRight02,
+                          color: context.c.outline,
+                          size: 21,
+                        ),
+                      ],
+                    ),
                   ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
 
           content,
