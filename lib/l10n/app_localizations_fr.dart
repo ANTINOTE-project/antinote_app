@@ -254,6 +254,20 @@ class AppLocalizationsFr extends AppLocalizations {
   String get reportComment => 'Appréciations';
 
   @override
+  String get reportOtherSubjects => 'Autres matières';
+
+  @override
+  String reportCoefficient(Object value) {
+    return 'Coeff. $value';
+  }
+
+  @override
+  String get gradeMin => 'Min.';
+
+  @override
+  String get gradeMax => 'Max.';
+
+  @override
   String get noCourseToday => 'Tu n\'as pas de cours,\nprofite bien !';
 
   @override

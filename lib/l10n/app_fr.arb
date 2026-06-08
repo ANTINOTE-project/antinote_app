@@ -88,6 +88,10 @@
   "gradesReport": "Bulletin",
   "reportUnpublished": "Bulletin non publié",
   "reportComment": "Appréciations",
+  "reportOtherSubjects": "Autres matières",
+  "reportCoefficient": "Coeff. {value}",
+  "gradeMin": "Min.",
+  "gradeMax": "Max.",
 
   "noCourseToday": "Tu n'as pas de cours,\nprofite bien !",
   "holidayDay": "C'est les vacances,\n amuse toi bien !",

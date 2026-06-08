@@ -568,6 +568,30 @@ abstract class AppLocalizations {
   /// **'Appréciations'**
   String get reportComment;
 
+  /// No description provided for @reportOtherSubjects.
+  ///
+  /// In fr, this message translates to:
+  /// **'Autres matières'**
+  String get reportOtherSubjects;
+
+  /// No description provided for @reportCoefficient.
+  ///
+  /// In fr, this message translates to:
+  /// **'Coeff. {value}'**
+  String reportCoefficient(Object value);
+
+  /// No description provided for @gradeMin.
+  ///
+  /// In fr, this message translates to:
+  /// **'Min.'**
+  String get gradeMin;
+
+  /// No description provided for @gradeMax.
+  ///
+  /// In fr, this message translates to:
+  /// **'Max.'**
+  String get gradeMax;
+
   /// No description provided for @noCourseToday.
   ///
   /// In fr, this message translates to:

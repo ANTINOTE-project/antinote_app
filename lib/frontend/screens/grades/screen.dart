@@ -42,18 +42,18 @@ class _GradesScreenState extends State<GradesScreen>
       ReportTab(periodId: _selectedPeriod.visualId),
     ];
 
-    return LayoutBuilder(
-      builder: (context, constraints) {
-        return CustomScrollView(
-          physics: const NeverScrollableScrollPhysics(),
+    return SafeArea(
+      bottom: false,
+      right: false,
+      left: false,
 
-          slivers: [
-            SliverSafeArea(
-              left: false,
-              right: false,
-              bottom: false,
+      child: LayoutBuilder(
+        builder: (context, constraints) {
+          return CustomScrollView(
+            physics: const NeverScrollableScrollPhysics(),
 
-              sliver: SliverAppBar(
+            slivers: [
+              SliverAppBar(
                 leadingWidth: constraints.maxWidth,
                 primary: false,
 
@@ -104,14 +104,14 @@ class _GradesScreenState extends State<GradesScreen>
                   },
                 ),
               ),
-            ),
 
-            SliverFillRemaining(
-              child: TabBarView(controller: _controller, children: tabs),
-            ),
-          ],
-        );
-      },
+              SliverFillRemaining(
+                child: TabBarView(controller: _controller, children: tabs),
+              ),
+            ],
+          );
+        },
+      ),
     );
   }
 
