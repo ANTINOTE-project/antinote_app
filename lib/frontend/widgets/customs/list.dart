@@ -132,7 +132,7 @@ class ListWidget<T> extends StatelessWidget {
 }
 
 class ItemWidget extends StatelessWidget {
-  final Widget title;
+  final Widget? title;
   final Widget? subtitle;
 
   final Widget? leading;
@@ -147,7 +147,7 @@ class ItemWidget extends StatelessWidget {
   const ItemWidget({
     super.key,
 
-    required this.title,
+    this.title,
     this.subtitle,
 
     this.leading,
@@ -188,20 +188,21 @@ class ItemWidget extends StatelessWidget {
                 spacing: 2,
 
                 children: [
-                  DefaultTextStyle.merge(
-                    style: TextStyle(
-                      fontSize: 16,
-                      fontWeight: .w800,
-                      fontFamily: "SNPro",
+                  if (title != null)
+                    DefaultTextStyle.merge(
+                      style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: .w800,
+                        fontFamily: "SNPro",
 
-                      color: context.c.onSurface,
+                        color: context.c.onSurface,
+                      ),
+
+                      overflow: .ellipsis,
+                      maxLines: 1,
+
+                      child: title!,
                     ),
-
-                    overflow: .ellipsis,
-                    maxLines: 1,
-
-                    child: title,
-                  ),
 
                   if (subtitle != null)
                     DefaultTextStyle.merge(
