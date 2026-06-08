@@ -584,8 +584,8 @@ class _GeneralAppreciations extends StatelessWidget {
               isColumn: true,
 
               itemBuilder: (context, a, borderRadius) {
-                final name = a.name;
-                final title = a.title;
+                final name = a.name?.trim();
+                final title = a.title?.trim();
 
                 final hasName = name != null && name.isNotEmpty;
                 final hasTitle = title != null && title.isNotEmpty;
