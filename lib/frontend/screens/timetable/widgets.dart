@@ -187,10 +187,7 @@ class ClassWidget extends StatelessWidget {
 
     if (clazz is Lesson) {
       final accent = (clazz as Lesson).backgroundColor;
-
-      if (accent != null) {
-        scheme = Utils.buildColorScheme(context, accent);
-      }
+      scheme = Utils.buildColorScheme(context, accent);
     }
 
     final duration = Formatters.formatDuration(difference);
@@ -199,7 +196,7 @@ class ClassWidget extends StatelessWidget {
       color: clazz.canceled ? scheme.error : scheme.secondary,
     );
 
-    const double radius = 20;
+    const double radius = 16;
     const double reducedRadius = 6;
 
     final outerBorderRadius = connectRight
@@ -242,6 +239,9 @@ class ClassWidget extends StatelessWidget {
           )
         : BorderRadius.circular(radius);
 
+    final isCanceled = clazz.canceled;
+    final hasStatus = clazz.status != null;
+
     return Expanded(
       flex: clazz.endDate.difference(clazz.startDate).inMinutes,
 
@@ -260,12 +260,12 @@ class ClassWidget extends StatelessWidget {
 
           child: Column(
             children: [
-              if (clazz.status != null)
+              if (hasStatus)
                 Ink(
                   decoration: BoxDecoration(
                     borderRadius: headerBorderRadius,
                     border: .fromBorderSide(statusBorder),
-                    color: clazz.canceled
+                    color: isCanceled
                         ? scheme.errorContainer
                         : scheme.secondaryContainer,
                   ),
@@ -283,13 +283,11 @@ class ClassWidget extends StatelessWidget {
 
                         children: [
                           Icon(
-                            clazz.canceled
+                            isCanceled
                                 ? HugeIconsSolid.alertCircle
                                 : HugeIconsSolid.informationCircle,
 
-                            color: clazz.canceled
-                                ? scheme.error
-                                : scheme.secondary,
+                            color: isCanceled ? scheme.error : scheme.secondary,
                             size: 20,
                           ),
 
@@ -303,7 +301,7 @@ class ClassWidget extends StatelessWidget {
                               style: TextStyle(
                                 fontSize: 15,
                                 fontWeight: .w900,
-                                color: clazz.canceled
+                                color: isCanceled
                                     ? context.c.error
                                     : scheme.secondary,
                               ),
@@ -318,10 +316,10 @@ class ClassWidget extends StatelessWidget {
               Expanded(
                 child: Ink(
                   decoration: BoxDecoration(
-                    color: clazz.canceled
+                    color: isCanceled
                         ? scheme.surfaceContainerLow
                         : scheme.primaryContainer,
-                    border: clazz.status != null
+                    border: hasStatus
                         ? Border(
                             bottom: statusBorder,
                             left: statusBorder,
@@ -333,12 +331,12 @@ class ClassWidget extends StatelessWidget {
 
                   padding: .symmetric(
                     horizontal: 10,
-                    vertical: clazz.canceled ? 2 : 5,
+                    vertical: isCanceled ? 2 : 5,
                   ),
                   width: double.infinity,
 
                   child: Column(
-                    spacing: clazz.canceled ? 0 : 2,
+                    spacing: isCanceled || hasStatus ? 0 : 2,
                     crossAxisAlignment: .start,
 
                     children: [
@@ -349,25 +347,21 @@ class ClassWidget extends StatelessWidget {
                         maxLines: 1,
 
                         style: TextStyle(
-                          color: clazz.canceled
-                              ? scheme.outline
-                              : scheme.primary,
-                          fontWeight: clazz.canceled ? .bold : .w800,
-                          fontSize: clazz.canceled ? 20 : 22,
+                          color: isCanceled ? scheme.outline : scheme.primary,
+                          fontWeight: isCanceled ? .bold : .w800,
+                          fontSize: isCanceled ? 20 : 22,
                         ),
                       ),
 
                       _ContentOverflowRow(
                         contents: listContents(),
-                        color: clazz.canceled
+                        color: isCanceled
                             ? scheme.outline
                             : scheme.onPrimaryContainer,
-                        dividerColor: clazz.canceled
-                            ? scheme.outline
-                            : scheme.outline,
+                        dividerColor: scheme.outline,
                       ),
 
-                      if (!clazz.canceled)
+                      if (!isCanceled)
                         Text(
                           duration,
 
@@ -455,7 +449,7 @@ class _ClassContent extends StatelessWidget {
       // TODO: find better icon
       PersonalContent(value: final v) => (v.name, HugeIconsSolid.more),
 
-      ClassroomContent(value: final v) => (v.label, HugeIconsSolid.school),
+      ClassroomContent(value: final v) => (v.label, HugeIconsSolid.meetingRoom),
 
       VirtualClassroomContent() => (
         context.l10n.virtualClassroom,
