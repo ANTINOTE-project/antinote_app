@@ -148,80 +148,109 @@ class _TimetableScreenState extends State<TimetableScreen>
             body: RefreshIndicator(
               onRefresh: () => reload(fromRefreshIndicator: true),
 
-              child: SingleChildScrollView(
-                padding: .only(
-                  bottom: MediaQuery.paddingOf(context).bottom + 20,
-                  right: 12,
-                ),
+              child: ValueListenableBuilder(
+                valueListenable: _classes[days.first]!,
 
-                child: IntrinsicHeight(
-                  child: Row(
-                    crossAxisAlignment: .stretch,
-                    spacing: 8,
+                builder: (context, _, _) {
+                  final allEmpty = days.every(
+                    (day) => _classes[day]!.value?.isEmpty ?? false,
+                  );
 
-                    children: [
-                      Expanded(
-                        flex: days.length * 15,
-                        child: _buildTimeColumn(context, days),
-                      ),
+                  final anyLoading = days.any(
+                    (day) => _classes[day]!.value == null,
+                  );
 
-                      for (final day in days)
-                        Expanded(
-                          flex: 85,
+                  if (anyLoading) {
+                    return const CustomScrollView(
+                      slivers: [SliverFillRemaining(child: LoadingWidget())],
+                    );
+                  }
 
-                          child: ValueListenableBuilder(
-                            valueListenable: _classes[day]!,
+                  if (allEmpty) {
+                    final holiday = _getHolidayForDay(days.first);
 
-                            builder: (context, dayClasses, child) {
-                              if (dayClasses == null) {
-                                return const LoadingWidget();
-                              }
+                    return CustomScrollView(
+                      slivers: [
+                        SliverFillRemaining(
+                          child: Column(
+                            mainAxisAlignment: .center,
+                            spacing: 6,
 
-                              if (dayClasses.isEmpty) {
-                                final holiday = _getHolidayForDay(day);
+                            children: [
+                              Icon(
+                                holiday == null
+                                    ? HugeIconsSolid.calendar04
+                                    : HugeIconsSolid.beach,
+                                color: context.c.outline,
+                                size: 44,
+                              ),
 
-                                return Center(
-                                  child: Column(
-                                    mainAxisAlignment: .center,
-                                    spacing: 6,
-
-                                    children: [
-                                      Icon(
-                                        holiday == null
-                                            ? HugeIconsSolid.calendar04
-                                            : HugeIconsSolid.beach,
-
-                                        color: context.c.outline,
-                                        size: 44,
-                                      ),
-
-                                      Text(
-                                        holiday?.name ??
-                                            context.l10n.noCourseToday,
-
-                                        textAlign: .center,
-
-                                        style: TextStyle(
-                                          fontWeight: .bold,
-                                          color: context.c.outline,
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                );
-                              }
-
-                              return _buildClassesColumn(
-                                context,
-                                day,
-                                dayClasses,
-                              );
-                            },
+                              Text(
+                                holiday?.name ?? context.l10n.noCourseToday,
+                                textAlign: .center,
+                                style: TextStyle(
+                                  fontWeight: .bold,
+                                  color: context.c.outline,
+                                ),
+                              ),
+                            ],
                           ),
                         ),
-                    ],
-                  ),
-                ),
+                      ],
+                    );
+                  }
+
+                  return SingleChildScrollView(
+                    padding: .only(
+                      bottom: MediaQuery.paddingOf(context).bottom + 20,
+                      right: 12,
+                    ),
+
+                    child: IntrinsicHeight(
+                      child: Row(
+                        crossAxisAlignment: .stretch,
+                        spacing: 8,
+
+                        children: days.expand((day) {
+                          final hasClasses =
+                              _classes[day]!.value?.isNotEmpty ?? false;
+
+                          return [
+                            if (hasClasses)
+                              Expanded(
+                                flex: days.length * 15,
+                                child: _buildTimeColumn(context, days),
+                              ),
+
+                            Expanded(
+                              flex: 85,
+
+                              child: ValueListenableBuilder(
+                                valueListenable: _classes[day]!,
+
+                                builder: (context, dayClasses, child) {
+                                  if (dayClasses == null) {
+                                    return const LoadingWidget();
+                                  }
+
+                                  if (dayClasses.isEmpty) {
+                                    return const SizedBox.shrink();
+                                  }
+
+                                  return _buildClassesColumn(
+                                    context,
+                                    day,
+                                    dayClasses,
+                                  );
+                                },
+                              ),
+                            ),
+                          ];
+                        }).toList(),
+                      ),
+                    ),
+                  );
+                },
               ),
             ),
           );
@@ -266,8 +295,12 @@ class _TimetableScreenState extends State<TimetableScreen>
       }
     }
 
-    final relevantFirst = relevantSlots.firstOrNull ?? 0;
-    final relevantLast = relevantSlots.lastOrNull ?? 0;
+    final relevantFirst = relevantSlots.firstOrNull;
+    final relevantLast = relevantSlots.lastOrNull;
+
+    if (relevantLast == null || relevantFirst == null) {
+      return const SizedBox.shrink();
+    }
 
     final displays = <Widget>[];
     int? lastAppliedSlot;
