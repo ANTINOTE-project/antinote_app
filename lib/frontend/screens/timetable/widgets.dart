@@ -192,10 +192,6 @@ class ClassWidget extends StatelessWidget {
 
     final duration = Formatters.formatDuration(difference);
 
-    final statusBorder = BorderSide(
-      color: clazz.canceled ? scheme.error : scheme.secondary,
-    );
-
     const double radius = 16;
     const double reducedRadius = 6;
 
@@ -253,7 +249,9 @@ class ClassWidget extends StatelessWidget {
                         : scheme.primaryContainer,
                     border: Border.all(
                       color: hasStatus
-                          ? statusBorder.color
+                          ? isCanceled
+                                ? scheme.error
+                                : scheme.secondary
                           : scheme.inversePrimary,
                     ),
                     borderRadius: contentBorderRadius,
