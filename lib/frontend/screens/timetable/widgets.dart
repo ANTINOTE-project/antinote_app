@@ -208,34 +208,19 @@ class ClassWidget extends StatelessWidget {
           )
         : BorderRadius.circular(radius);
 
-    final headerBorderRadius = connectRight
-        ? const BorderRadius.only(
-            topLeft: .circular(radius),
-            topRight: .circular(reducedRadius),
-          )
-        : const BorderRadius.vertical(top: .circular(radius));
-
-    // War crime here
-    final bodyBorderRadius = connectRight
-        ? (clazz.status != null
-              ? const BorderRadius.only(
-                  bottomLeft: .circular(radius),
-                  bottomRight: .circular(reducedRadius),
-                )
-              : const BorderRadius.only(
-                  topLeft: .circular(radius),
-                  bottomLeft: .circular(radius),
-                  topRight: .circular(reducedRadius),
-                  bottomRight: .circular(reducedRadius),
-                ))
-        : (clazz.status != null
-              ? const BorderRadius.vertical(bottom: .circular(radius))
-              : BorderRadius.circular(radius));
-
     final containerBorderRadius = connectRight
         ? const BorderRadius.only(
             topLeft: .circular(radius),
             bottomLeft: .circular(radius),
+          )
+        : BorderRadius.circular(radius);
+
+    final contentBorderRadius = connectRight
+        ? const BorderRadius.only(
+            topLeft: .circular(radius),
+            bottomLeft: .circular(radius),
+            topRight: .circular(reducedRadius),
+            bottomRight: .circular(reducedRadius),
           )
         : BorderRadius.circular(radius);
 
@@ -260,117 +245,114 @@ class ClassWidget extends StatelessWidget {
 
           child: Column(
             children: [
-              if (hasStatus)
-                Ink(
-                  decoration: BoxDecoration(
-                    borderRadius: headerBorderRadius,
-                    border: .fromBorderSide(statusBorder),
-                    color: isCanceled
-                        ? scheme.errorContainer
-                        : scheme.secondaryContainer,
-                  ),
-
-                  padding: const .symmetric(horizontal: 12, vertical: 4),
-                  width: double.infinity,
-
-                  child: Column(
-                    mainAxisAlignment: .center,
-
-                    children: [
-                      Row(
-                        mainAxisSize: .min,
-                        spacing: 6,
-
-                        children: [
-                          Icon(
-                            isCanceled
-                                ? HugeIconsSolid.alertCircle
-                                : HugeIconsSolid.informationCircle,
-
-                            color: isCanceled ? scheme.error : scheme.secondary,
-                            size: 20,
-                          ),
-
-                          Expanded(
-                            child: Text(
-                              clazz.status ?? "",
-
-                              overflow: .ellipsis,
-                              maxLines: 1,
-
-                              style: TextStyle(
-                                fontSize: 15,
-                                fontWeight: .w900,
-                                color: isCanceled
-                                    ? context.c.error
-                                    : scheme.secondary,
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ],
-                  ),
-                ),
-
               Expanded(
                 child: Ink(
                   decoration: BoxDecoration(
                     color: isCanceled
                         ? scheme.surfaceContainerLow
                         : scheme.primaryContainer,
-                    border: hasStatus
-                        ? Border(
-                            bottom: statusBorder,
-                            left: statusBorder,
-                            right: statusBorder,
-                          )
-                        : Border.all(color: scheme.inversePrimary),
-                    borderRadius: bodyBorderRadius,
+                    border: Border.all(
+                      color: hasStatus
+                          ? statusBorder.color
+                          : scheme.inversePrimary,
+                    ),
+                    borderRadius: contentBorderRadius,
                   ),
 
-                  padding: .symmetric(
-                    horizontal: 10,
-                    vertical: isCanceled ? 2 : 5,
-                  ),
+                  padding: const .symmetric(horizontal: 10, vertical: 5),
                   width: double.infinity,
 
                   child: Column(
-                    spacing: isCanceled || hasStatus ? 0 : 2,
                     crossAxisAlignment: .start,
+                    spacing: 2,
 
                     children: [
-                      Text(
-                        classTitle(context),
+                      if (hasStatus)
+                        Ink(
+                          decoration: BoxDecoration(
+                            borderRadius: .circular(8),
+                            color: isCanceled
+                                ? scheme.errorContainer
+                                : scheme.surfaceContainer,
+                          ),
 
-                        overflow: .ellipsis,
-                        maxLines: 1,
+                          padding: const .symmetric(horizontal: 8, vertical: 4),
 
-                        style: TextStyle(
-                          color: isCanceled ? scheme.outline : scheme.primary,
-                          fontWeight: isCanceled ? .bold : .w800,
-                          fontSize: isCanceled ? 20 : 22,
-                        ),
-                      ),
+                          child: Row(
+                            mainAxisSize: .min,
+                            spacing: 6,
 
-                      _ContentOverflowRow(
-                        contents: listContents(),
-                        color: isCanceled
-                            ? scheme.outline
-                            : scheme.onPrimaryContainer,
-                        dividerColor: scheme.outline,
-                      ),
+                            children: [
+                              Icon(
+                                isCanceled
+                                    ? HugeIconsSolid.alertCircle
+                                    : HugeIconsSolid.informationCircle,
+                                color: isCanceled
+                                    ? scheme.error
+                                    : scheme.secondary,
+                                size: 18,
+                              ),
 
-                      if (!isCanceled)
-                        Text(
-                          duration,
+                              Flexible(
+                                child: Text(
+                                  clazz.status ?? "",
 
-                          style: TextStyle(
-                            color: scheme.onSurfaceVariant,
-                            fontWeight: .w800,
-                            fontSize: 14,
+                                  overflow: .ellipsis,
+                                  maxLines: 1,
+
+                                  style: TextStyle(
+                                    color: isCanceled
+                                        ? scheme.error
+                                        : scheme.secondary,
+                                    fontWeight: .w900,
+                                    fontSize: 14,
+                                  ),
+                                ),
+                              ),
+                            ],
                           ),
                         ),
+
+                      Column(
+                        crossAxisAlignment: .start,
+                        spacing: isCanceled ? 0 : 2,
+
+                        children: [
+                          Text(
+                            classTitle(context),
+
+                            overflow: .ellipsis,
+                            maxLines: 1,
+
+                            style: TextStyle(
+                              color: isCanceled
+                                  ? scheme.outline
+                                  : scheme.primary,
+                              fontWeight: isCanceled ? .bold : .w800,
+                              fontSize: isCanceled ? 21 : 22,
+                            ),
+                          ),
+
+                          _ContentOverflowRow(
+                            contents: listContents(),
+                            color: isCanceled
+                                ? scheme.outline
+                                : scheme.onPrimaryContainer,
+                            dividerColor: scheme.outline,
+                          ),
+
+                          if (!isCanceled)
+                            Text(
+                              duration,
+
+                              style: TextStyle(
+                                color: scheme.onSurfaceVariant,
+                                fontWeight: .w800,
+                                fontSize: 14,
+                              ),
+                            ),
+                        ],
+                      ),
                     ],
                   ),
                 ),
