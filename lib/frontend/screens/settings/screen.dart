@@ -1,4 +1,5 @@
 import "package:antinote_app/frontend/routing/routes.dart";
+import "package:antinote_app/frontend/theme.dart";
 import "package:antinote_app/frontend/widgets/customs/app_bar.dart";
 import "package:antinote_app/frontend/widgets/customs/button.dart";
 import "package:antinote_app/frontend/widgets/pressable.dart";
@@ -9,7 +10,7 @@ import "package:go_router/go_router.dart";
 import "package:hugeicons_pro/hugeicons.dart";
 
 enum AppColor {
-  coral(Color(0xff904a40)),
+  coral(ThemeNotifier.defaultSeed),
   blue(Color(0xFF1E88E5)),
   green(Color(0xFF43A047)),
   purple(Color(0xFF8E24AA)),
