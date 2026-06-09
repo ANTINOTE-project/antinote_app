@@ -117,8 +117,6 @@ class _GradesScreenState extends State<GradesScreen>
 
   @override
   FutureOr<void> loadActiveDataFromSession(PronoteSession session) async {
-    await session.ensurePage(198);
-
     final periodData = session.userResource.tabsForPeriods.firstWhereOrNull(
       (element) => element.location == 198,
     );
