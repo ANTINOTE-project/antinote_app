@@ -365,6 +365,8 @@ class _ServiceWidget extends StatelessWidget {
         service.lowestAverage != null ||
         service.highestAverage != null;
 
+    final hasSections = service.sections.length > 1;
+
     final scheme = Utils.buildColorScheme(context, service.color);
 
     return Pressable(
@@ -402,7 +404,9 @@ class _ServiceWidget extends StatelessWidget {
                 if (service.studentAverage != null)
                   GradeText(
                     selfGrade: service.studentAverage!,
-                    maxGrade: Grade.decodeDouble(20),
+                    maxGrade:
+                        report.defaultTheoreticalMaxGrade ??
+                        Grade.decodeDouble(20),
                     color: scheme.primary,
                     size: 20,
                   ),
@@ -505,6 +509,88 @@ class _ServiceWidget extends StatelessWidget {
                     ),
                   );
                 },
+              ),
+
+            if (hasSections)
+              ListView.builder(
+                padding: .zero,
+                itemBuilder: (context, index) {
+                  final section = service.sections[index];
+
+                  final hasTeachers = section.teachers?.isNotEmpty ?? false;
+                  final actualAppreciations = section.appreciations
+                      .where(
+                        (element) =>
+                            (element.name ?? element.title)?.isNotEmpty ??
+                            false,
+                      )
+                      .toList(growable: false);
+                  final hasAppreciations = actualAppreciations.isNotEmpty;
+
+                  return Column(
+                    crossAxisAlignment: .start,
+                    children: [
+                      Text(
+                        section.name,
+                        style: TextStyle(
+                          color: scheme.onPrimaryContainer,
+                          fontWeight: .bold,
+                          fontSize: 16,
+                        ),
+                      ),
+                      if (hasTeachers)
+                        Text(
+                          section.teachers!.map((t) => t.name).join(", "),
+
+                          overflow: .ellipsis,
+                          maxLines: 1,
+
+                          style: TextStyle(
+                            color: scheme.outline,
+                            fontWeight: .bold,
+                            fontSize: 13,
+                          ),
+                        ),
+
+                      if (hasAppreciations)
+                        ListWidget(
+                          items: actualAppreciations,
+                          isSliver: false,
+                          isColumn: true,
+
+                          itemBuilder: (context, a, borderRadius) {
+                            final trimmed = (a.name ?? a.title)?.trim() ?? "";
+
+                            return ItemWidget(
+                              backgroundColor: scheme.surfaceContainer,
+                              borderRadius: borderRadius,
+
+                              onPressed: () {
+                                Clipboard.setData(ClipboardData(text: trimmed));
+                              },
+
+                              title: Text(
+                                trimmed,
+                                maxLines: 999,
+                                style: TextStyle(
+                                  color: context.c.onSurface,
+                                  fontStyle: .italic,
+                                  fontWeight: .bold,
+                                  fontSize: 13,
+                                ),
+                              ),
+                            );
+                          },
+                        ),
+
+                      if (index != service.sections.length - 1)
+                        Divider(color: scheme.outline),
+                    ],
+                  );
+                },
+                itemCount: service.sections.length,
+                shrinkWrap: true,
+                physics: const NeverScrollableScrollPhysics(),
               ),
           ],
         ),
