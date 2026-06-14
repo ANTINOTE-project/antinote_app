@@ -75,7 +75,7 @@ class _ReportTabState extends State<ReportTab> with TabMixin<ReportTab> {
 
   @override
   FutureOr<void> loadActiveDataFromSession(PronoteSession session) async {
-    await session.ensurePage(198);
+    await session.ensurePage(13);
 
     final period = session.instance.periods.firstWhere(
       (e) => e.visualId == widget.periodId,
