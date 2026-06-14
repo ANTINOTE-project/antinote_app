@@ -2,6 +2,7 @@ import "package:antinote_app/frontend/routing/routes.dart";
 import "package:antinote_app/frontend/theme.dart";
 import "package:antinote_app/frontend/widgets/customs/app_bar.dart";
 import "package:antinote_app/frontend/widgets/customs/button.dart";
+import "package:antinote_app/frontend/widgets/customs/list.dart";
 import "package:antinote_app/frontend/widgets/pressable.dart";
 import "package:antinote_app/l10n/app_localizations.dart";
 import "package:antinote_app/utils/utils.dart";
@@ -36,7 +37,7 @@ class SettingsScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: const AppBarWidget(),
+      appBar: AppBarWidget(title: context.l10n.appSettings),
 
       body: SingleChildScrollView(
         padding: const .symmetric(horizontal: 12),
@@ -125,106 +126,155 @@ class _ColorPickerState extends State<_ColorPicker> {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      decoration: BoxDecoration(
-        border: .all(color: context.c.outlineVariant),
-        color: context.c.surfaceContainer,
-        borderRadius: .circular(20),
-      ),
+    final areColorsEnabled = !context.tn.isDynamic;
 
-      child: GridView.builder(
-        physics: const NeverScrollableScrollPhysics(),
-        shrinkWrap: true,
+    return Column(
+      spacing: 4,
+      children: [
+        Container(
+          decoration: BoxDecoration(
+            border: .all(color: context.c.outlineVariant),
+            color: context.c.surfaceContainer,
+            borderRadius: const .vertical(
+              top: ListWidget.radius,
+              bottom: ListWidget.defaultRadius,
+            ),
+          ),
 
-        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-          crossAxisCount: 3,
-        ),
+          child: GridView.builder(
+            physics: const NeverScrollableScrollPhysics(),
+            shrinkWrap: true,
 
-        itemCount: AppColor.values.length,
-        padding: const .all(8),
+            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+              crossAxisCount: 3,
+            ),
 
-        itemBuilder: (context, index) {
-          final appColor = AppColor.values[index];
-          final label = appColor.label(context.l10n);
-          final color = appColor.color;
-          final isSelected = color == _activeColor;
+            itemCount: AppColor.values.length,
+            padding: const .all(8),
 
-          return Column(
-            mainAxisAlignment: .center,
-            spacing: 4,
+            itemBuilder: (context, index) {
+              final appColor = AppColor.values[index];
+              final label = appColor.label(context.l10n);
+              final color = appColor.color;
+              final isSelected = color == _activeColor;
 
-            children: [
-              Pressable(
-                hasVisuals: false,
+              return Column(
+                mainAxisAlignment: .center,
+                spacing: 4,
 
-                onPressed: () async {
-                  setState(() {
-                    _activeColor = color;
-                  });
+                children: [
+                  Pressable(
+                    hasVisuals: false,
 
-                  await context.tn.setSeedColor(color);
-                },
+                    onPressed: areColorsEnabled
+                        ? () async {
+                            setState(() {
+                              _activeColor = color;
+                            });
 
-                child: AnimatedSwitcher(
-                  duration: const Duration(milliseconds: 500),
+                            await context.tn.setSeedColor(color);
+                          }
+                        : null,
 
-                  switchInCurve: Curves.elasticOut,
-                  switchOutCurve: Curves.easeInBack,
+                    child: AnimatedSwitcher(
+                      duration: const Duration(milliseconds: 500),
 
-                  layoutBuilder: (currentChild, previousChildren) {
-                    return Stack(
-                      alignment: Alignment.center,
-                      children: [...previousChildren, ?currentChild],
-                    );
-                  },
+                      switchInCurve: Curves.elasticOut,
+                      switchOutCurve: Curves.easeInBack,
 
-                  transitionBuilder: (child, animation) {
-                    return FadeTransition(opacity: animation, child: child);
-                  },
+                      layoutBuilder: (currentChild, previousChildren) {
+                        return Stack(
+                          alignment: Alignment.center,
+                          children: [...previousChildren, ?currentChild],
+                        );
+                      },
 
-                  child: Container(
-                    key: ValueKey(isSelected),
+                      transitionBuilder: (child, animation) {
+                        return FadeTransition(opacity: animation, child: child);
+                      },
 
-                    height: 64,
-                    width: 64,
+                      child: Container(
+                        key: ValueKey(isSelected),
 
-                    decoration: BoxDecoration(
-                      borderRadius: .circular(14),
-                      color: color,
-                    ),
+                        height: 64,
+                        width: 64,
 
-                    foregroundDecoration: BoxDecoration(
-                      borderRadius: .circular(14),
+                        decoration: BoxDecoration(
+                          borderRadius: .circular(14),
+                          color: areColorsEnabled
+                              ? color
+                              : color.withAlpha(128),
+                        ),
 
-                      border: Border.all(
-                        color: isSelected
-                            ? context.c.onPrimary
-                            : context.c.outline,
-                        width: isSelected ? 3 : 1,
-                        strokeAlign: 1,
+                        foregroundDecoration: BoxDecoration(
+                          borderRadius: .circular(14),
+
+                          border: Border.all(
+                            color: isSelected
+                                ? context.c.onPrimary
+                                : context.c.outline,
+                            width: isSelected ? 3 : 1,
+                            strokeAlign: 1,
+                          ),
+                        ),
+
+                        child: isSelected
+                            ? Icon(
+                                HugeIconsSolid.tick03,
+                                size: 24,
+                                color: context.c.onPrimary,
+                              )
+                            : null,
                       ),
                     ),
-
-                    child: isSelected
-                        ? Icon(
-                            HugeIconsSolid.tick03,
-                            size: 24,
-                            color: context.c.onPrimary,
-                          )
-                        : null,
                   ),
-                ),
-              ),
 
-              Text(
-                label,
-                overflow: .ellipsis,
-                style: const TextStyle(fontWeight: .w800, fontSize: 15),
-              ),
-            ],
-          );
-        },
-      ),
+                  Text(
+                    label,
+                    overflow: .ellipsis,
+                    style: TextStyle(
+                      fontWeight: .w800,
+                      fontSize: 15,
+                      color: areColorsEnabled
+                          ? null
+                          : context.c.onSurface.withAlpha(128),
+                    ),
+                  ),
+                ],
+              );
+            },
+          ),
+        ),
+        Container(
+          decoration: BoxDecoration(
+            border: .all(color: context.c.outlineVariant),
+            color: context.c.surfaceContainer,
+            borderRadius: const .vertical(
+              top: ListWidget.defaultRadius,
+              bottom: ListWidget.radius,
+            ),
+          ),
+
+          child: ItemWidget(
+            borderRadius: const .vertical(
+              top: ListWidget.defaultRadius,
+              bottom: ListWidget.radius,
+            ),
+            title: Text(context.l10n.deviceTheme),
+            subtitle: Text(context.l10n.deviceThemeDescription, maxLines: 3),
+            trailing: Switch(
+              value: context.tn.isDynamic,
+              onChanged: (value) async {
+                await context.tn.setIsDynamic(value);
+
+                if (context.mounted) {
+                  setState(() {});
+                }
+              },
+            ),
+          ),
+        ),
+      ],
     );
   }
 }

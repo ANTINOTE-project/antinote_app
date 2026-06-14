@@ -18,22 +18,28 @@ class ThemeScope extends InheritedWidget {
 
 class ThemeNotifier extends ChangeNotifier {
   static const _seedKey = "seed_color";
+  static const _isDynamicKey = "is_dynamic";
   static const defaultSeed = Color(0xff904a40);
 
   Color _seedColor = defaultSeed;
   Color get seedColor => _seedColor;
 
+  bool _isDynamic = false;
+  bool get isDynamic => _isDynamic;
+
   ThemeNotifier() {
     _loadFromPrefs();
   }
 
-  ColorScheme _scheme(Brightness brightness) {
-    return ColorScheme.fromSeed(seedColor: _seedColor, brightness: brightness);
+  ColorScheme _scheme(Brightness brightness, double contrastLevel) {
+    return ColorScheme.fromSeed(
+      seedColor: _seedColor,
+      brightness: brightness,
+      contrastLevel: contrastLevel,
+    );
   }
 
-  ThemeData _theme(Brightness brightness) {
-    final colorScheme = _scheme(brightness);
-
+  ThemeData theme(ColorScheme colorScheme) {
     return ThemeData(
       colorScheme: colorScheme,
       useMaterial3: true,
@@ -43,23 +49,40 @@ class ThemeNotifier extends ChangeNotifier {
     );
   }
 
-  ThemeData get light => _theme(.light);
-  ThemeData get dark => _theme(.dark);
+  ColorScheme get light => _scheme(.light, 0);
+  ColorScheme get lightMediumContrast => _scheme(.light, .5);
+  ColorScheme get lightHighContrast => _scheme(.light, 1);
+  ColorScheme get dark => _scheme(.dark, 0);
+  ColorScheme get darkMediumContrast => _scheme(.dark, .5);
+  ColorScheme get darkHighContrast => _scheme(.dark, 1);
 
   Future<void> setSeedColor(Color color) async {
-    final prefs = await SharedPreferences.getInstance();
-    prefs.setInt(_seedKey, color.toARGB32());
+    final prefs = SharedPreferencesAsync();
+    await prefs.setInt(_seedKey, color.toARGB32());
     _seedColor = color;
 
     notifyListeners();
   }
 
+  Future<void> setIsDynamic(bool value) async {
+    final prefs = SharedPreferencesAsync();
+    await prefs.setBool(_isDynamicKey, value);
+    _isDynamic = value;
+
+    notifyListeners();
+  }
+
   Future<void> _loadFromPrefs() async {
-    final prefs = await SharedPreferences.getInstance();
-    final seed = prefs.getInt(_seedKey);
+    final prefs = SharedPreferencesAsync();
+    final seed = await prefs.getInt(_seedKey);
+    final dynamic = await prefs.getBool(_isDynamicKey);
 
     if (seed != null) {
       _seedColor = Color(seed);
+    }
+
+    if (dynamic != null) {
+      _isDynamic = dynamic;
     }
 
     notifyListeners();

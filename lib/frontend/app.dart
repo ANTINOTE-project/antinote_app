@@ -1,6 +1,7 @@
 import "package:antinote_app/frontend/routing/router.dart";
 import "package:antinote_app/frontend/theme.dart";
 import "package:antinote_app/l10n/app_localizations.dart";
+import "package:dynamic_color/dynamic_color.dart";
 import "package:flutter/material.dart";
 import "package:flutter_localizations/flutter_localizations.dart";
 import "package:go_router/go_router.dart";
@@ -39,24 +40,51 @@ class _AppState extends State<App> {
         return ThemeScope(
           notifier: _themeNotifier,
 
-          child: MaterialApp.router(
-            debugShowCheckedModeBanner: false,
+          child: DynamicColorBuilder(
+            builder: (dynamicLight, dynamicDark) {
+              final dynamic = _themeNotifier.isDynamic;
 
-            title: "ANTINOTE",
+              final ThemeData light;
+              final ThemeData dark;
+              if (dynamic) {
+                light = _themeNotifier.theme(
+                  dynamicLight ?? _themeNotifier.light,
+                );
+                dark = _themeNotifier.theme(dynamicDark ?? _themeNotifier.dark);
+              } else {
+                light = _themeNotifier.theme(_themeNotifier.light);
+                dark = _themeNotifier.theme(_themeNotifier.dark);
+              }
 
-            theme: _themeNotifier.light,
-            darkTheme: _themeNotifier.dark,
+              final lightHighContrast = _themeNotifier.theme(
+                _themeNotifier.lightHighContrast,
+              );
+              final darkHighContrast = _themeNotifier.theme(
+                _themeNotifier.darkHighContrast,
+              );
 
-            routerConfig: _router,
+              return MaterialApp.router(
+                debugShowCheckedModeBanner: false,
 
-            localizationsDelegates: const [
-              AppLocalizations.delegate,
-              GlobalMaterialLocalizations.delegate,
-              GlobalWidgetsLocalizations.delegate,
-              GlobalCupertinoLocalizations.delegate,
-            ],
+                title: "ANTINOTE",
 
-            supportedLocales: AppLocalizations.supportedLocales,
+                theme: light,
+                highContrastTheme: lightHighContrast,
+                darkTheme: dark,
+                highContrastDarkTheme: darkHighContrast,
+
+                routerConfig: _router,
+
+                localizationsDelegates: const [
+                  AppLocalizations.delegate,
+                  GlobalMaterialLocalizations.delegate,
+                  GlobalWidgetsLocalizations.delegate,
+                  GlobalCupertinoLocalizations.delegate,
+                ],
+
+                supportedLocales: AppLocalizations.supportedLocales,
+              );
+            },
           ),
         );
       },

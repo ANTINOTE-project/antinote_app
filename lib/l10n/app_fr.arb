@@ -141,5 +141,9 @@
   "homeworkRenderNone": "Rien à rendre",
   "homeworkRenderPaper": "À rendre en main propre",
   "homeworkRenderKiosque": "À rendre au kiosque",
-  "homeworkRenderPronoteAudio": "Enregistrement audio à rendre en ligne"
+  "homeworkRenderPronoteAudio": "Enregistrement audio à rendre en ligne",
+
+  "appSettings": "Paramètres de l'application",
+  "deviceTheme": "Utiliser le thème de l'appareil",
+  "deviceThemeDescription": "Le thème utilisé dans l'application changera selon le fond d'écran."
 }

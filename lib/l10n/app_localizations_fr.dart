@@ -384,4 +384,14 @@ class AppLocalizationsFr extends AppLocalizations {
   @override
   String get homeworkRenderPronoteAudio =>
       'Enregistrement audio à rendre en ligne';
+
+  @override
+  String get appSettings => 'Paramètres de l\'application';
+
+  @override
+  String get deviceTheme => 'Utiliser le thème de l\'appareil';
+
+  @override
+  String get deviceThemeDescription =>
+      'Le thème utilisé dans l\'application changera selon le fond d\'écran.';
 }

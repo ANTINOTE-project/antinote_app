@@ -801,6 +801,24 @@ abstract class AppLocalizations {
   /// In fr, this message translates to:
   /// **'Enregistrement audio à rendre en ligne'**
   String get homeworkRenderPronoteAudio;
+
+  /// No description provided for @appSettings.
+  ///
+  /// In fr, this message translates to:
+  /// **'Paramètres de l\'application'**
+  String get appSettings;
+
+  /// No description provided for @deviceTheme.
+  ///
+  /// In fr, this message translates to:
+  /// **'Utiliser le thème de l\'appareil'**
+  String get deviceTheme;
+
+  /// No description provided for @deviceThemeDescription.
+  ///
+  /// In fr, this message translates to:
+  /// **'Le thème utilisé dans l\'application changera selon le fond d\'écran.'**
+  String get deviceThemeDescription;
 }
 
 class _AppLocalizationsDelegate
