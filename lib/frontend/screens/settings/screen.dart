@@ -53,22 +53,11 @@ class SettingsScreen extends StatelessWidget {
             ),
 
             const _ColorPicker(),
-
-            _TextIcon(
-              icon: HugeIconsSolid.colors,
-              label: context.l10n.themePreview,
-            ),
-
             const _PreviewColor(),
-
-            _TextIcon(
-              icon: HugeIconsSolid.userAccount,
-              label: context.l10n.settingsAccounts,
-            ),
 
             ButtonWidget(
               onPressed: () => context.push(Routes.auth.accounts),
-              label: context.l10n.settingsChangeAccount,
+              label: context.l10n.choseAnAccount,
             ),
           ],
         ),
