@@ -1,7 +1,6 @@
 import "package:antinote_app/frontend/routing/routes.dart";
 import "package:antinote_app/frontend/widgets/customs/app_bar.dart";
 import "package:antinote_app/frontend/widgets/customs/button.dart";
-import "package:antinote_app/frontend/widgets/customs/icon.dart";
 import "package:antinote_app/frontend/widgets/customs/list.dart";
 import "package:antinote_app/main.dart";
 import "package:antinote_app/protos/account.pb.dart";
@@ -245,16 +244,24 @@ class _AccountsScreenState extends State<AccountsScreen>
                       );
                     },
 
-                    leading: IconWidget(
-                      size: 28,
-                      iconOn: HugeIconsSolid.star,
-                      iconOff: HugeIconsSolid.userAccount,
-                      value: _defaultUid == account.uid,
-                    ),
+                    title: Row(
+                      spacing: 6,
 
-                    title: Text(
-                      account.name,
-                      style: const TextStyle(fontSize: 20),
+                      children: [
+                        Flexible(
+                          child: Text(
+                            account.name,
+                            style: const TextStyle(fontSize: 20),
+                          ),
+                        ),
+
+                        if (_defaultUid == account.uid)
+                          Icon(
+                            HugeIconsSolid.star,
+                            size: 18,
+                            color: context.c.primary,
+                          ),
+                      ],
                     ),
 
                     subtitle: Column(
