@@ -1,11 +1,7 @@
 {
   "@@locale": "fr",
 
-  "settingsChangeAccount": "Changer de compte",
-  "settingsAccounts": "Comptes",
-
-  "themeSeed": "Accent",
-  "themePreview": "Aperçu",
+  "theme": "Thème",
   "themePrimary": "Primaire",
   "themeSecondary": "Secondaire",
   "themeTertiary": "Tertiaire",

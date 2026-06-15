@@ -6,6 +6,7 @@ import "package:antinote_app/frontend/routing/routes.dart";
 import "package:antinote_app/frontend/screens/home/widgets.dart";
 import "package:antinote_app/frontend/screens/shell/tab.dart";
 import "package:antinote_app/frontend/widgets/customs/app_bar.dart";
+import "package:antinote_app/frontend/widgets/pressable.dart";
 import "package:antinote_app/utils/utils.dart";
 import "package:flutter/material.dart";
 import "package:go_router/go_router.dart";
@@ -23,7 +24,7 @@ class _HomeScreenState extends State<HomeScreen> with TabMixin<HomeScreen> {
 
   Uint8List? _profilePicture;
   late String _displayName;
-  late String? _establishmentName;
+  String? _establishmentName;
 
   Widget _buildWidget(HomePageWidget widget) {
     return switch (widget.widgetId) {
@@ -72,34 +73,40 @@ class _HomeScreenState extends State<HomeScreen> with TabMixin<HomeScreen> {
 
               // TODO fix overflow
               Expanded(
-                child: Column(
-                  crossAxisAlignment: .start,
-                  mainAxisSize: .min,
+                child: Pressable(
+                  onPressed: () {
+                    context.push(Routes.auth.accounts);
+                  },
 
-                  children: [
-                    Text(
-                      _displayName,
+                  child: Column(
+                    crossAxisAlignment: .start,
+                    mainAxisSize: .min,
 
-                      overflow: .ellipsis,
-                      maxLines: 1,
-
-                      style: const TextStyle(fontWeight: .w800, fontSize: 20),
-                    ),
-
-                    if (_establishmentName != null)
+                    children: [
                       Text(
-                        _establishmentName!,
+                        _displayName,
 
                         overflow: .ellipsis,
                         maxLines: 1,
 
-                        style: TextStyle(
-                          color: context.c.outline,
-                          fontWeight: .bold,
-                          fontSize: 14,
-                        ),
+                        style: const TextStyle(fontWeight: .w800, fontSize: 19),
                       ),
-                  ],
+
+                      if (_establishmentName != null)
+                        Text(
+                          _establishmentName!,
+
+                          overflow: .ellipsis,
+                          maxLines: 1,
+
+                          style: TextStyle(
+                            color: context.c.outline,
+                            fontWeight: .bold,
+                            fontSize: 13,
+                          ),
+                        ),
+                    ],
+                  ),
                 ),
               ),
             ],

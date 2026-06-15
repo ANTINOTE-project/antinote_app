@@ -9,16 +9,7 @@ class AppLocalizationsFr extends AppLocalizations {
   AppLocalizationsFr([String locale = 'fr']) : super(locale);
 
   @override
-  String get settingsChangeAccount => 'Changer de compte';
-
-  @override
-  String get settingsAccounts => 'Comptes';
-
-  @override
-  String get themeSeed => 'Accent';
-
-  @override
-  String get themePreview => 'Aperçu';
+  String get theme => 'Thème';
 
   @override
   String get themePrimary => 'Primaire';

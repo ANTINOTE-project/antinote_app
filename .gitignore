@@ -122,3 +122,4 @@ app.*.symbols
 !/dev/ci/**/Gemfile.lock
 # Widget Preview related
 .widget_preview/
+android/app/local.properties

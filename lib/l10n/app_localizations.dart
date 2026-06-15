@@ -94,29 +94,11 @@ abstract class AppLocalizations {
   /// A list of this localizations delegate's supported locales.
   static const List<Locale> supportedLocales = <Locale>[Locale('fr')];
 
-  /// No description provided for @settingsChangeAccount.
+  /// No description provided for @theme.
   ///
   /// In fr, this message translates to:
-  /// **'Changer de compte'**
-  String get settingsChangeAccount;
-
-  /// No description provided for @settingsAccounts.
-  ///
-  /// In fr, this message translates to:
-  /// **'Comptes'**
-  String get settingsAccounts;
-
-  /// No description provided for @themeSeed.
-  ///
-  /// In fr, this message translates to:
-  /// **'Accent'**
-  String get themeSeed;
-
-  /// No description provided for @themePreview.
-  ///
-  /// In fr, this message translates to:
-  /// **'Aperçu'**
-  String get themePreview;
+  /// **'Thème'**
+  String get theme;
 
   /// No description provided for @themePrimary.
   ///

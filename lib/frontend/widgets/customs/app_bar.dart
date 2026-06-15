@@ -41,28 +41,37 @@ class AppBarWidget extends StatelessWidget implements PreferredSizeWidget {
         height: preferredSize.height,
 
         child: Stack(
+          alignment: .center,
+
           children: [
-            if (leadingWidget != null)
-              Align(alignment: .centerLeft, child: leadingWidget),
+            Positioned.fill(
+              left: 48,
+              right: 48,
 
-            if (title != null)
-              Align(
-                child: Text(
-                  title!,
-                  textAlign: .center,
-                  style: const TextStyle(fontWeight: .bold, fontSize: 18),
-                ),
+              child: Center(
+                child: title != null
+                    ? Text(
+                        title!,
+                        textAlign: .center,
+                        overflow: .ellipsis,
+                        style: const TextStyle(fontWeight: .bold, fontSize: 18),
+                      )
+                    : const SizedBox.shrink(),
               ),
+            ),
 
-            if (actions.isNotEmpty)
-              Align(
-                alignment: .centerRight,
+            Row(
+              mainAxisAlignment: .spaceBetween,
 
-                child: Padding(
+              children: [
+                leadingWidget ?? const SizedBox.shrink(),
+
+                Padding(
                   padding: const EdgeInsets.only(right: 6),
                   child: Row(mainAxisSize: .min, children: actions),
                 ),
-              ),
+              ],
+            ),
           ],
         ),
       ),

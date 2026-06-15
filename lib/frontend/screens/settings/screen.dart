@@ -49,7 +49,7 @@ class SettingsScreen extends StatelessWidget {
           children: [
             _TextIcon(
               icon: HugeIconsSolid.paintBoard,
-              label: context.l10n.themeSeed,
+              label: context.l10n.theme,
             ),
 
             const _ColorPicker(),
