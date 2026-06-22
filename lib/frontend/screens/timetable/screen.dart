@@ -21,8 +21,61 @@ class TimetableScreen extends StatefulWidget {
   State<TimetableScreen> createState() => _TimetableScreenState();
 }
 
-class _TimetableScreenState extends State<TimetableScreen>
-    with TabMixin<TimetableScreen> {
+class _TimetableScreenState extends State<TimetableScreen> {
+  Future<Map<DateTime, List<ClassBlock>>> update(
+    PronoteSession session,
+    DateRange days,
+    List<DateTime> dayList,
+  ) async {
+    final loadedDays = {for (final day in dayList) day: <Class>[]};
+
+    await session.ensurePage(16);
+
+    for (final clazz in (await session.access(
+      TimetableAccessor.forRange(
+        resource: session.userResource,
+        from: days.start,
+        to: days.end,
+      ),
+    )).classes) {
+      loadedDays[clazz.startDate.toDay()]!.add(clazz);
+    }
+
+    return loadedDays.map(
+      (key, value) => MapEntry(key, constructClassBlocksForDay(value)),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return TimetableDisplay(updateBlocks: update);
+  }
+}
+
+class TimetableDisplay extends StatefulWidget {
+  const TimetableDisplay({
+    super.key,
+    required this.updateBlocks,
+    this.configurations = WeekMappedViewConfiguration.defaultConfigs,
+    this.scrollable = true,
+  });
+
+  final List<WeekMappedViewConfiguration> configurations;
+  final Future<Map<DateTime, List<ClassBlock>>> Function(
+    PronoteSession session,
+    DateRange days,
+    List<DateTime> businessDays,
+  )
+  updateBlocks;
+
+  final bool scrollable;
+
+  @override
+  State<TimetableDisplay> createState() => _TimetableDisplayState();
+}
+
+class _TimetableDisplayState extends State<TimetableDisplay>
+    with TabMixin<TimetableDisplay> {
   late SpecificInstanceParameters _scheduleDisplayData;
   late List<DateRange> _currentGroups;
   final Classes _classes = {};
@@ -75,32 +128,20 @@ class _TimetableScreenState extends State<TimetableScreen>
     if (dayList.isEmpty) return;
     if (_animating) return;
 
-    Future<void> update(PronoteSession session) async {
-      final loadedDays = {for (final day in dayList) day: <Class>[]};
-
-      await session.ensurePage(16);
-
-      for (final clazz in (await session.access(
-        TimetableAccessor.forRange(
-          resource: session.userResource,
-          from: days.start,
-          to: days.end,
-        ),
-      )).classes) {
-        loadedDays[clazz.startDate.toDay()]!.add(clazz);
-      }
-
-      for (final loadedDay in loadedDays.entries) {
-        _classes[loadedDay.key]!.value = constructClassBlocksForDay(
-          loadedDay.value,
-        );
-      }
-    }
+    final Map<DateTime, List<ClassBlock>> result;
 
     if (session != null) {
-      await update(session);
+      result = await widget.updateBlocks(session, days, dayList);
     } else {
-      await SessionManager.execute(context: context, callback: update);
+      result = await SessionManager.execute(
+        context: context,
+        callback: (session) async =>
+            await widget.updateBlocks(session, days, dayList),
+      );
+    }
+
+    for (final entry in result.entries) {
+      _classes[entry.key]?.value = entry.value;
     }
   }
 
@@ -161,95 +202,99 @@ class _TimetableScreenState extends State<TimetableScreen>
                   );
 
                   if (anyLoading) {
-                    return const CustomScrollView(
-                      slivers: [SliverFillRemaining(child: LoadingWidget())],
-                    );
+                    return const Center(child: LoadingWidget());
                   }
 
                   if (allEmpty) {
                     final holiday = _getHolidayForDay(days.first);
 
-                    return CustomScrollView(
-                      slivers: [
-                        SliverFillRemaining(
-                          child: Column(
-                            mainAxisAlignment: .center,
-                            spacing: 6,
+                    return Column(
+                      mainAxisAlignment: .center,
+                      spacing: 6,
 
-                            children: [
-                              Icon(
-                                holiday == null
-                                    ? HugeIconsSolid.calendar04
-                                    : HugeIconsSolid.beach,
-                                color: context.c.outline,
-                                size: 44,
-                              ),
+                      children: [
+                        Icon(
+                          holiday == null
+                              ? HugeIconsSolid.calendar04
+                              : HugeIconsSolid.beach,
+                          color: context.c.outline,
+                          size: 44,
+                        ),
 
-                              Text(
-                                holiday?.name ?? context.l10n.noCourseToday,
-                                textAlign: .center,
-                                style: TextStyle(
-                                  fontWeight: .bold,
-                                  color: context.c.outline,
-                                ),
-                              ),
-                            ],
+                        Text(
+                          holiday?.name ?? context.l10n.noCourseToday,
+                          textAlign: .center,
+                          style: TextStyle(
+                            fontWeight: .bold,
+                            color: context.c.outline,
                           ),
                         ),
                       ],
                     );
                   }
 
-                  return SingleChildScrollView(
-                    padding: .only(
-                      bottom: MediaQuery.paddingOf(context).bottom + 20,
-                      right: 12,
-                    ),
+                  final child = IntrinsicHeight(
+                    child: Row(
+                      crossAxisAlignment: .stretch,
+                      spacing: 8,
 
-                    child: IntrinsicHeight(
-                      child: Row(
-                        crossAxisAlignment: .stretch,
-                        spacing: 8,
+                      children: days.expand((day) {
+                        final hasClasses =
+                            _classes[day]!.value?.isNotEmpty ?? false;
 
-                        children: days.expand((day) {
-                          final hasClasses =
-                              _classes[day]!.value?.isNotEmpty ?? false;
-
-                          return [
-                            if (hasClasses)
-                              Expanded(
-                                flex: days.length * 15,
-                                child: _buildTimeColumn(context, days),
-                              ),
-
+                        return [
+                          if (hasClasses)
                             Expanded(
-                              flex: 85,
-
-                              child: ValueListenableBuilder(
-                                valueListenable: _classes[day]!,
-
-                                builder: (context, dayClasses, child) {
-                                  if (dayClasses == null) {
-                                    return const LoadingWidget();
-                                  }
-
-                                  if (dayClasses.isEmpty) {
-                                    return const SizedBox.shrink();
-                                  }
-
-                                  return _buildClassesColumn(
-                                    context,
-                                    day,
-                                    dayClasses,
-                                  );
-                                },
-                              ),
+                              flex: days.length * 15,
+                              child: _buildTimeColumn(context, days),
                             ),
-                          ];
-                        }).toList(),
-                      ),
+
+                          Expanded(
+                            flex: 85,
+
+                            child: ValueListenableBuilder(
+                              valueListenable: _classes[day]!,
+
+                              builder: (context, dayClasses, child) {
+                                if (dayClasses == null) {
+                                  return const LoadingWidget();
+                                }
+
+                                if (dayClasses.isEmpty) {
+                                  return const SizedBox.shrink();
+                                }
+
+                                return _buildClassesColumn(
+                                  context,
+                                  day,
+                                  dayClasses,
+                                );
+                              },
+                            ),
+                          ),
+                        ];
+                      }).toList(),
                     ),
                   );
+
+                  if (widget.scrollable) {
+                    return SingleChildScrollView(
+                      padding: .only(
+                        bottom: MediaQuery.paddingOf(context).bottom + 20,
+                        right: 12,
+                      ),
+
+                      child: child,
+                    );
+                  } else {
+                    return Padding(
+                      padding: .only(
+                        bottom: MediaQuery.paddingOf(context).bottom + 20,
+                        right: 12,
+                      ),
+                      child: child,
+                    );
+                  }
                 },
               ),
             ),

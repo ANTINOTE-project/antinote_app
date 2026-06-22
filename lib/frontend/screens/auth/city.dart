@@ -81,7 +81,7 @@ class _LoginFindCityScreenState extends State<LoginFindCityScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBarWidget(title: context.l10n.loginCity),
+      appBar: AppBarWidget(title: Text(context.l10n.loginCity)),
 
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.start,

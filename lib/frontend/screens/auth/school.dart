@@ -63,7 +63,7 @@ class _LoginSelectSchoolScreenState extends State<LoginSelectSchoolScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBarWidget(title: context.l10n.loginSchool),
+      appBar: AppBarWidget(title: Text(context.l10n.loginSchool)),
 
       body: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 12),

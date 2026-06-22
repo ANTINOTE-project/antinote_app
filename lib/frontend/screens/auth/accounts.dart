@@ -127,7 +127,7 @@ class _AccountsScreenState extends State<AccountsScreen>
 
       child: Scaffold(
         appBar: AppBarWidget(
-          title: context.l10n.choseAnAccount,
+          title: Text(context.l10n.choseAnAccount),
           backButton: false,
         ),
 

@@ -93,7 +93,7 @@ class _LoginUrlScreenState extends State<LoginUrlScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBarWidget(title: context.l10n.loginUrl),
+      appBar: AppBarWidget(title: Text(context.l10n.loginUrl)),
 
       body: CustomScrollView(
         slivers: [

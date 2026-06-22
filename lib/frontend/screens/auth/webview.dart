@@ -93,7 +93,7 @@ class _LoginWebviewScreenState extends State<LoginWebviewScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBarWidget(title: context.l10n.loginToAccount),
+      appBar: AppBarWidget(title: Text(context.l10n.loginToAccount)),
 
       body: Stack(
         children: [

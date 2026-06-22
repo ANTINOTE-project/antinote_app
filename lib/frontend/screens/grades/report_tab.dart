@@ -13,8 +13,13 @@ import "package:hugeicons_pro/hugeicons.dart";
 
 class ReportTab extends StatefulWidget {
   final VisualId periodId;
+  final bool classReport;
 
-  const ReportTab({super.key, required this.periodId});
+  const ReportTab({
+    super.key,
+    required this.periodId,
+    required this.classReport,
+  });
 
   @override
   State<ReportTab> createState() => _ReportTabState();
@@ -75,7 +80,11 @@ class _ReportTabState extends State<ReportTab> with TabMixin<ReportTab> {
 
   @override
   FutureOr<void> loadActiveDataFromSession(PronoteSession session) async {
-    await session.ensurePage(13);
+    if (widget.classReport) {
+      await session.ensurePage(41);
+    } else {
+      await session.ensurePage(13);
+    }
 
     final period = session.instance.periods.firstWhere(
       (e) => e.visualId == widget.periodId,

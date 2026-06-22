@@ -11,5 +11,6 @@ extension BuildContextExtensions on BuildContext {
   AppLocalizations get l10n => AppLocalizations.of(this)!;
   SessionManager get sm => SessionManager.of(this);
   ThemeNotifier get tn => ThemeScope.of(this);
+  TextTheme get tt => TextTheme.of(this);
   ShellController get sc => ShellController.of(this);
 }

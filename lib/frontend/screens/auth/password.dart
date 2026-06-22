@@ -31,7 +31,7 @@ class _LoginPasswordScreenState extends State<LoginPasswordScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBarWidget(title: context.l10n.loginToAccount),
+      appBar: AppBarWidget(title: Text(context.l10n.loginToAccount)),
 
       body: Center(
         child: SingleChildScrollView(

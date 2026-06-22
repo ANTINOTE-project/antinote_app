@@ -96,7 +96,7 @@ class MethodsScreen extends StatelessWidget with WidgetsBindingObserver {
 
     return Scaffold(
       appBar: AppBarWidget(
-        title: context.l10n.addAnAccount,
+        title: Text(context.l10n.addAnAccount),
 
         actions: [
           if (kDebugMode)

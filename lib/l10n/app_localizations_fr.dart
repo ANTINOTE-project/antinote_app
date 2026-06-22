@@ -99,6 +99,9 @@ class AppLocalizationsFr extends AppLocalizations {
   String get deleteAccount => 'Supprimer';
 
   @override
+  String get accounts => 'Comptes';
+
+  @override
   String get loginQrCode => 'QR Code';
 
   @override
@@ -237,6 +240,9 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get gradesReport => 'Bulletin';
+
+  @override
+  String get classGradesReport => 'Bulletin de classe';
 
   @override
   String get reportUnpublished => 'Bulletin non publié';

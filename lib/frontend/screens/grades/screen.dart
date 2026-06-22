@@ -29,7 +29,7 @@ class _GradesScreenState extends State<GradesScreen>
   void initState() {
     super.initState();
 
-    _controller = TabController(length: 2, vsync: this);
+    _controller = TabController(length: 3, vsync: this);
   }
 
   @override
@@ -39,7 +39,8 @@ class _GradesScreenState extends State<GradesScreen>
   ) {
     final List<Widget> tabs = [
       GradesTab(periodId: _selectedPeriod.visualId),
-      ReportTab(periodId: _selectedPeriod.visualId),
+      ReportTab(periodId: _selectedPeriod.visualId, classReport: true),
+      ReportTab(periodId: _selectedPeriod.visualId, classReport: false),
     ];
 
     return SafeArea(
@@ -63,14 +64,22 @@ class _GradesScreenState extends State<GradesScreen>
                   child: TabBar(
                     controller: _controller,
 
-                    tabs: [context.l10n.grades, context.l10n.gradesReport].mapL(
-                      (name) => Tab(
-                        child: Text(
-                          name,
-                          style: const TextStyle(fontWeight: FontWeight.w700),
+                    tabs:
+                        [
+                          context.l10n.grades,
+                          context.l10n.classGradesReport,
+                          context.l10n.gradesReport,
+                        ].mapL(
+                          (name) => Tab(
+                            child: Text(
+                              name,
+                              textAlign: .center,
+                              style: const TextStyle(
+                                fontWeight: FontWeight.w700,
+                              ),
+                            ),
+                          ),
                         ),
-                      ),
-                    ),
                   ),
                 ),
 

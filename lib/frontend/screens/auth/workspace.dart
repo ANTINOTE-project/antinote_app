@@ -68,7 +68,7 @@ class _LoginSelectWorkspaceScreenState
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBarWidget(title: context.l10n.loginSelect),
+      appBar: AppBarWidget(title: Text(context.l10n.loginSelect)),
 
       body: Padding(
         padding: const .symmetric(horizontal: 12, vertical: 6),

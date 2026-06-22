@@ -1,9 +1,11 @@
+import "package:antinote_app/utils/utils.dart";
 import "package:flutter/material.dart";
 import "package:go_router/go_router.dart";
 import "package:hugeicons_pro/hugeicons.dart";
 
 class AppBarWidget extends StatelessWidget implements PreferredSizeWidget {
-  final String? title;
+  final AlignmentGeometry titleAlign;
+  final Widget? title;
   final bool backButton;
   final List<Widget> actions;
   final Widget? leading;
@@ -11,6 +13,7 @@ class AppBarWidget extends StatelessWidget implements PreferredSizeWidget {
   const AppBarWidget({
     super.key,
     this.title,
+    this.titleAlign = .center,
     this.backButton = true,
     this.actions = const [],
     this.leading,
@@ -44,20 +47,20 @@ class AppBarWidget extends StatelessWidget implements PreferredSizeWidget {
           alignment: .center,
 
           children: [
-            Positioned.fill(
-              left: 48,
-              right: 48,
-
-              child: Center(
-                child: title != null
-                    ? Text(
-                        title!,
-                        textAlign: .center,
-                        overflow: .ellipsis,
-                        style: const TextStyle(fontWeight: .bold, fontSize: 18),
-                      )
-                    : const SizedBox.shrink(),
-              ),
+            Container(
+              alignment: titleAlign,
+              padding: const EdgeInsets.symmetric(horizontal: 48),
+              child: title != null
+                  ? DefaultTextStyle(
+                      overflow: .ellipsis,
+                      textAlign: .center,
+                      style: context.tt.titleLarge!.copyWith(
+                        fontWeight: .bold,
+                        fontFamily: "SNPro",
+                      ),
+                      child: title!,
+                    )
+                  : const SizedBox.shrink(),
             ),
 
             Row(

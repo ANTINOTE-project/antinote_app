@@ -274,6 +274,12 @@ abstract class AppLocalizations {
   /// **'Supprimer'**
   String get deleteAccount;
 
+  /// No description provided for @accounts.
+  ///
+  /// In fr, this message translates to:
+  /// **'Comptes'**
+  String get accounts;
+
   /// No description provided for @loginQrCode.
   ///
   /// In fr, this message translates to:
@@ -537,6 +543,12 @@ abstract class AppLocalizations {
   /// In fr, this message translates to:
   /// **'Bulletin'**
   String get gradesReport;
+
+  /// No description provided for @classGradesReport.
+  ///
+  /// In fr, this message translates to:
+  /// **'Bulletin de classe'**
+  String get classGradesReport;
 
   /// No description provided for @reportUnpublished.
   ///

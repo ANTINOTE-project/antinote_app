@@ -42,7 +42,7 @@ class _LoginQrCodeScreenState extends State<LoginQrCodeScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBarWidget(title: context.l10n.loginQrCode),
+      appBar: AppBarWidget(title: Text(context.l10n.loginQrCode)),
 
       body: Padding(
         padding: const EdgeInsets.all(16),
