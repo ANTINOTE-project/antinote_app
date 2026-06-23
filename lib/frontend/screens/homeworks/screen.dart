@@ -113,6 +113,7 @@ class _HomeworksScreenState extends State<HomeworksScreen>
   Widget buildLoaded(
     BuildContext context,
     RefreshIndicatorBuilder buildRefreshIndicator,
+    bool partial,
   ) {
     return buildRefreshIndicator(
       child: PageView.builder(
@@ -194,7 +195,7 @@ class _HomeworksScreenState extends State<HomeworksScreen>
   }
 
   @override
-  FutureOr<void> loadActiveDataFromSession(PronoteSession session) async {
+  Stream<double?> load(PronoteSession session) async* {
     _data = session.instance;
 
     final firstWeekNumber = session.instance.firstWeekNumber;

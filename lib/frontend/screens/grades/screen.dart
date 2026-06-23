@@ -36,6 +36,7 @@ class _GradesScreenState extends State<GradesScreen>
   Widget buildLoaded(
     BuildContext context,
     RefreshIndicatorBuilder buildRefreshIndicator,
+    bool partial,
   ) {
     final List<Widget> tabs = [
       GradesTab(periodId: _selectedPeriod.visualId),
@@ -125,7 +126,7 @@ class _GradesScreenState extends State<GradesScreen>
   }
 
   @override
-  FutureOr<void> loadActiveDataFromSession(PronoteSession session) async {
+  Stream<double?> load(PronoteSession session) async* {
     final periodData = session.userResource.tabsForPeriods.firstWhereOrNull(
       (element) => element.location == 198,
     );

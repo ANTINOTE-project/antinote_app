@@ -41,6 +41,7 @@ class _ReportTabState extends State<ReportTab> with TabMixin<ReportTab> {
   Widget buildLoaded(
     BuildContext context,
     RefreshIndicatorBuilder buildRefreshIndicator,
+    bool partial,
   ) {
     if (_data is PublishedReport) {
       final report = _data as PublishedReport;
@@ -79,7 +80,7 @@ class _ReportTabState extends State<ReportTab> with TabMixin<ReportTab> {
   }
 
   @override
-  FutureOr<void> loadActiveDataFromSession(PronoteSession session) async {
+  Stream<double?> load(PronoteSession session) async* {
     if (widget.classReport) {
       await session.ensurePage(41);
     } else {

@@ -311,6 +311,7 @@ class _GradesTabState extends State<GradesTab> with TabMixin<GradesTab> {
   Widget buildLoaded(
     BuildContext context,
     RefreshIndicatorBuilder buildRefreshIndicator,
+    bool partial,
   ) {
     final _ServiceGradeList organizedData = {
       for (final service in _data.services!) service: [],
@@ -359,6 +360,7 @@ class _GradesTabState extends State<GradesTab> with TabMixin<GradesTab> {
   Widget buildLoading(
     BuildContext context,
     RefreshIndicatorBuilder buildRefreshIndicator,
+    double? progress,
   ) {
     return buildRefreshIndicator(
       child: CustomScrollView(
@@ -384,7 +386,7 @@ class _GradesTabState extends State<GradesTab> with TabMixin<GradesTab> {
   }
 
   @override
-  FutureOr<void> loadActiveDataFromSession(PronoteSession session) async {
+  Stream<double?> load(PronoteSession session) async* {
     await session.ensurePage(198);
 
     final period = session.instance.periods.firstWhere(

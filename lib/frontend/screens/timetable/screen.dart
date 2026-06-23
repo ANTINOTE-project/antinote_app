@@ -161,6 +161,7 @@ class _TimetableDisplayState extends State<TimetableDisplay>
   Widget buildLoaded(
     BuildContext context,
     RefreshIndicatorBuilder buildRefreshIndicator,
+    bool partial,
   ) {
     final daysConfiguration = WeekMappedViewConfiguration.defaultConfigs
         .pickConfig(context);
@@ -495,7 +496,7 @@ class _TimetableDisplayState extends State<TimetableDisplay>
   List<String> get loadChannels => _animating ? [] : ["communication"];
 
   @override
-  FutureOr<void> loadActiveDataFromSession(PronoteSession session) async {
+  Stream<double?> load(PronoteSession session) async* {
     _scheduleDisplayData = session.instance;
 
     final days = DateRange(

@@ -2,8 +2,9 @@ import "package:flutter/material.dart";
 
 class LoadingWidget extends StatelessWidget {
   final double size;
+  final double? progress;
 
-  const LoadingWidget({super.key, this.size = 30});
+  const LoadingWidget({super.key, this.size = 30, this.progress});
 
   @override
   Widget build(BuildContext context) {
@@ -15,6 +16,7 @@ class LoadingWidget extends StatelessWidget {
         child: CircularProgressIndicator(
           strokeWidth: size / 7,
           strokeCap: .round,
+          value: progress,
         ),
       ),
     );

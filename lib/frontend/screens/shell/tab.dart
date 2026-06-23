@@ -11,10 +11,10 @@ typedef RefreshIndicatorBuilder =
 
 mixin TabMixin<T extends StatefulWidget> on State<T> {
   List<String> get loadChannels => ["communication"];
-  FutureOr<void> loadActiveDataFromSession(PronoteSession session);
+  Stream<double?> load(PronoteSession session);
 
   bool loaded = false;
-  Future<void>? _loader;
+  Stream<double?>? _loader;
 
   SessionManager? manager;
   void _sessionUpdateCallback() {
@@ -23,11 +23,18 @@ mixin TabMixin<T extends StatefulWidget> on State<T> {
     manager?.unsubscribeSession(callback: reload);
 
     try {
-      _loader = SessionManager.execute(
+      final controller = StreamController<double?>.broadcast();
+      _loader = controller.stream;
+
+      SessionManager.execute(
         context: context,
         channels: loadChannels,
         callback: (session) async {
-          await loadActiveDataFromSession(session);
+          await for (final event in load(session)) {
+            controller.add(event);
+          }
+
+          controller.close();
 
           if (mounted) {
             manager?.subscribeSession(callback: reload);
@@ -74,22 +81,26 @@ mixin TabMixin<T extends StatefulWidget> on State<T> {
   Widget buildLoaded(
     BuildContext context,
     RefreshIndicatorBuilder buildRefreshIndicator,
+    bool partial,
   );
 
   Widget buildLoading(
     BuildContext context,
     RefreshIndicatorBuilder buildRefreshIndicator,
-  ) => const LoadingWidget();
+    double? progress,
+  ) => LoadingWidget(progress: progress);
 
+  // TODO: Custom message when error occurs
   Widget buildErrored(
     BuildContext context,
     RefreshIndicatorBuilder buildRefreshIndicator,
     Object? error,
-  ) => buildLoading(context, buildRefreshIndicator);
+  ) => buildLoading(context, buildRefreshIndicator, .5);
 
   Future<void> reload({bool fromRefreshIndicator = false}) async {
     if (_loader != null) {
-      return _loader;
+      await _loader!.length;
+      return;
     }
 
     if (!fromRefreshIndicator) {
@@ -102,7 +113,7 @@ mixin TabMixin<T extends StatefulWidget> on State<T> {
 
     _sessionUpdateCallback();
 
-    return _loader;
+    await _loader?.length;
   }
 
   @override
@@ -121,25 +132,32 @@ mixin TabMixin<T extends StatefulWidget> on State<T> {
       child: child,
     );
 
-    return AnimatedSwitcher(
-      duration: const Duration(milliseconds: 300),
-      switchInCurve: Curves.fastOutSlowIn,
-      switchOutCurve: const ReversedCurve(Curves.fastOutSlowIn),
-      child: FutureBuilder(
-        future: _loader,
-        builder: (context, snapshot) {
-          if (snapshot.hasError) {
-            return buildErrored(context, buildRefreshIndicator, snapshot.error);
-          }
+    return StreamBuilder(
+      stream: _loader,
+      builder: (context, snapshot) {
+        late Widget child;
 
-          if (snapshot.connectionState == .done ||
-              (loaded && snapshot.connectionState == .none)) {
-            return buildLoaded(context, buildRefreshIndicator);
-          }
+        if (snapshot.hasError) {
+          child = buildErrored(context, buildRefreshIndicator, snapshot.error);
+        } else if (snapshot.connectionState == .done ||
+            (snapshot.connectionState == .active && snapshot.hasData) ||
+            (loaded && snapshot.connectionState == .none)) {
+          child = buildLoaded(
+            context,
+            buildRefreshIndicator,
+            snapshot.connectionState == .active,
+          );
+        } else {
+          child = buildLoading(context, buildRefreshIndicator, snapshot.data);
+        }
 
-          return buildLoading(context, buildRefreshIndicator);
-        },
-      ),
+        return AnimatedSwitcher(
+          duration: const Duration(milliseconds: 300),
+          switchInCurve: Curves.fastOutSlowIn,
+          switchOutCurve: const ReversedCurve(Curves.fastOutSlowIn),
+          child: child,
+        );
+      },
     );
   }
 }

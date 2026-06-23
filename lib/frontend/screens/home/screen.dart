@@ -160,6 +160,7 @@ class _HomeDisplayState extends State<HomeDisplay> with TabMixin<HomeDisplay> {
   Widget buildLoaded(
     BuildContext context,
     RefreshIndicatorBuilder buildRefreshIndicator,
+    bool partial,
   ) {
     return Scaffold(
       appBar: AppBarWidget(
@@ -245,7 +246,7 @@ class _HomeDisplayState extends State<HomeDisplay> with TabMixin<HomeDisplay> {
   }
 
   @override
-  FutureOr<void> loadActiveDataFromSession(PronoteSession session) async {
+  Stream<double?> load(PronoteSession session) async* {
     await session.ensurePage(7);
 
     if (!mounted) return;

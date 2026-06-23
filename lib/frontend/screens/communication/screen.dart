@@ -29,6 +29,7 @@ class _CommunicationScreenState extends State<CommunicationScreen>
   Widget buildLoaded(
     BuildContext context,
     RefreshIndicatorBuilder buildRefreshIndicator,
+    bool partial,
   ) {
     return buildRefreshIndicator(
       child: Padding(
@@ -114,16 +115,6 @@ class _CommunicationScreenState extends State<CommunicationScreen>
     );
   }
 
-  @override
-  Widget buildLoading(
-    BuildContext context,
-    RefreshIndicatorBuilder buildRefreshIndicator,
-  ) {
-    return buildRefreshIndicator(
-      child: const Center(child: CircularProgressIndicator()),
-    );
-  }
-
   Future<List<CommunicationThreadPreview>> _loadThreads(
     PronoteSession session,
     CommunicationType type,
@@ -174,11 +165,19 @@ class _CommunicationScreenState extends State<CommunicationScreen>
   }
 
   @override
-  FutureOr<void> loadActiveDataFromSession(PronoteSession session) async {
+  Stream<double?> load(PronoteSession session) async* {
     final threads = <CommunicationThreadPreview>[];
 
     final curPage = session.stack.clientSignature?.get("onglet");
     final toLoad = filter.allowedTypes.toSet();
+
+    if (!loaded) {
+      this.threads = [];
+    }
+
+    yield 0;
+
+    int loadedCount = 0;
 
     for (final commType in filter.allowedTypes.where(
       (element) => session.user.hasAccessToTab(element.pageId),
@@ -186,15 +185,31 @@ class _CommunicationScreenState extends State<CommunicationScreen>
       if (commType.pageId == curPage) {
         threads.addAll(await _loadThreads(session, commType));
         toLoad.remove(commType);
+
+        if (!loaded) {
+          this.threads = threads
+            ..sort((a, b) => b.publishDate.compareTo(a.publishDate));
+        }
+
+        loadedCount++;
+        yield loadedCount / toLoad.length;
         break;
       }
     }
 
     for (final commType in toLoad) {
       threads.addAll(await _loadThreads(session, commType));
+
+      if (!loaded) {
+        this.threads = threads
+          ..sort((a, b) => b.publishDate.compareTo(a.publishDate));
+      }
+
+      loadedCount++;
+      yield loadedCount / toLoad.length;
     }
 
-    this.threads = threads
-      ..sort((a, b) => b.publishDate.compareTo(a.publishDate));
+    // Supposed to be 1 anyways but just to be sure...
+    yield 1;
   }
 }
