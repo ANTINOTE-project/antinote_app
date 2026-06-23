@@ -202,100 +202,109 @@ class _TimetableDisplayState extends State<TimetableDisplay>
                     (day) => _classes[day]!.value == null,
                   );
 
-                  if (anyLoading) {
-                    return const Center(child: LoadingWidget());
-                  }
+                  final Widget partialChild;
 
-                  if (allEmpty) {
+                  if (anyLoading) {
+                    partialChild = const Center(child: LoadingWidget());
+                  } else if (allEmpty) {
                     final holiday = _getHolidayForDay(days.first);
 
-                    return Column(
-                      mainAxisAlignment: .center,
-                      spacing: 6,
+                    partialChild = Center(
+                      child: Column(
+                        mainAxisAlignment: .center,
+                        spacing: 6,
 
-                      children: [
-                        Icon(
-                          holiday == null
-                              ? HugeIconsSolid.calendar04
-                              : HugeIconsSolid.beach,
-                          color: context.c.outline,
-                          size: 44,
-                        ),
-
-                        Text(
-                          holiday?.name ?? context.l10n.noCourseToday,
-                          textAlign: .center,
-                          style: TextStyle(
-                            fontWeight: .bold,
+                        children: [
+                          Icon(
+                            holiday == null
+                                ? HugeIconsSolid.calendar04
+                                : HugeIconsSolid.beach,
                             color: context.c.outline,
+                            size: 44,
                           ),
-                        ),
-                      ],
-                    );
-                  }
 
-                  final child = IntrinsicHeight(
-                    child: Row(
-                      crossAxisAlignment: .stretch,
-                      spacing: 8,
-
-                      children: days.expand((day) {
-                        final hasClasses =
-                            _classes[day]!.value?.isNotEmpty ?? false;
-
-                        return [
-                          if (hasClasses)
-                            Expanded(
-                              flex: days.length * 15,
-                              child: _buildTimeColumn(context, days),
-                            ),
-
-                          Expanded(
-                            flex: 85,
-
-                            child: ValueListenableBuilder(
-                              valueListenable: _classes[day]!,
-
-                              builder: (context, dayClasses, child) {
-                                if (dayClasses == null) {
-                                  return const LoadingWidget();
-                                }
-
-                                if (dayClasses.isEmpty) {
-                                  return const SizedBox.shrink();
-                                }
-
-                                return _buildClassesColumn(
-                                  context,
-                                  day,
-                                  dayClasses,
-                                );
-                              },
+                          Text(
+                            holiday?.name ?? context.l10n.noCourseToday,
+                            textAlign: .center,
+                            style: TextStyle(
+                              fontWeight: .bold,
+                              color: context.c.outline,
                             ),
                           ),
-                        ];
-                      }).toList(),
-                    ),
-                  );
-
-                  if (widget.scrollable) {
-                    return SingleChildScrollView(
-                      padding: .only(
-                        bottom: MediaQuery.paddingOf(context).bottom + 20,
-                        right: 12,
+                        ],
                       ),
-
-                      child: child,
                     );
                   } else {
-                    return Padding(
-                      padding: .only(
-                        bottom: MediaQuery.paddingOf(context).bottom + 20,
-                        right: 12,
+                    final child = IntrinsicHeight(
+                      child: Row(
+                        crossAxisAlignment: .stretch,
+                        spacing: 8,
+
+                        children: days.expand((day) {
+                          final hasClasses =
+                              _classes[day]!.value?.isNotEmpty ?? false;
+
+                          return [
+                            if (hasClasses)
+                              Expanded(
+                                flex: days.length * 15,
+                                child: _buildTimeColumn(context, days),
+                              ),
+
+                            Expanded(
+                              flex: 85,
+
+                              child: ValueListenableBuilder(
+                                valueListenable: _classes[day]!,
+
+                                builder: (context, dayClasses, child) {
+                                  if (dayClasses == null) {
+                                    return const LoadingWidget();
+                                  }
+
+                                  if (dayClasses.isEmpty) {
+                                    return const SizedBox.shrink();
+                                  }
+
+                                  return _buildClassesColumn(
+                                    context,
+                                    day,
+                                    dayClasses,
+                                  );
+                                },
+                              ),
+                            ),
+                          ];
+                        }).toList(),
                       ),
-                      child: child,
                     );
+
+                    if (widget.scrollable) {
+                      partialChild = SingleChildScrollView(
+                        padding: .only(
+                          bottom: MediaQuery.paddingOf(context).bottom + 20,
+                          right: 12,
+                        ),
+
+                        child: child,
+                      );
+                    } else {
+                      partialChild = Padding(
+                        padding: .only(
+                          bottom: MediaQuery.paddingOf(context).bottom + 20,
+                          right: 12,
+                        ),
+                        child: child,
+                      );
+                    }
                   }
+
+                  return AnimatedSwitcher(
+                    duration: const Duration(milliseconds: 300),
+                    switchInCurve: Curves.fastOutSlowIn,
+                    switchOutCurve: const ReversedCurve(Curves.fastOutSlowIn),
+                    child: partialChild,
+                  );
                 },
               ),
             ),
