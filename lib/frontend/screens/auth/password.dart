@@ -94,11 +94,10 @@ class _LoginPasswordScreenState extends State<LoginPasswordScreen> {
                       deviceUuid: Credentials.generateDeviceUuid(),
                     );
 
-                    final result = credentials.login();
-
-                    if (mounted) {
-                      context.pop(result);
-                    }
+                    final result = credentials.login(
+                      options: context.s.networking.sessionOptions,
+                    );
+                    context.pop(result);
                   },
 
                   label: context.l10n.loginButton,

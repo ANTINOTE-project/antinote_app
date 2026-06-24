@@ -1,5 +1,5 @@
 import "package:antinote/antinote.dart";
-import "package:antinote_app/backend/src/helpers/various.dart";
+import "package:antinote_app/backend/backend.dart";
 import "package:antinote_app/backend/src/pigeon_posts/native_calendar.g.dart";
 import "package:flutter/material.dart";
 import "package:rrule/rrule.dart";
@@ -31,7 +31,11 @@ final class _ClassInstanceEvent {
     required this.attendees,
   });
 
-  factory _ClassInstanceEvent.fromClass(Class clazz, String instanceDomain, String address) {
+  factory _ClassInstanceEvent.fromClass(
+    Class clazz,
+    String instanceDomain,
+    String address,
+  ) {
     String className;
     final String? location;
 
@@ -105,7 +109,9 @@ final class _ClassInstanceEvent {
       if (clazz.virtualClassrooms.isNotEmpty) {
         descriptionBuilder.writeln("Classes virtuelles :");
         for (int i = 0; i < clazz.virtualClassrooms.length; i++) {
-          descriptionBuilder.write("- ${clazz.virtualClassrooms[i].toString()}");
+          descriptionBuilder.write(
+            "- ${clazz.virtualClassrooms[i].toString()}",
+          );
 
           if (i + 1 < clazz.virtualClassrooms.length) {
             descriptionBuilder.writeln();
@@ -149,7 +155,10 @@ final class _ClassInstanceEvent {
     }
 
     return _ClassInstanceEvent(
-      start: clazz.startDate.copyWith(isUtc: false).toUtc().millisecondsSinceEpoch,
+      start: clazz.startDate
+          .copyWith(isUtc: false)
+          .toUtc()
+          .millisecondsSinceEpoch,
       end: clazz.endDate.copyWith(isUtc: false).toUtc().millisecondsSinceEpoch,
       title: className,
       description: descriptionBuilder.toString(),
@@ -184,23 +193,37 @@ extension ToNewRecurringCalendarEventEntry on RecurringClass {
       }
     }
 
-    final mainInstance = _ClassInstanceEvent.fromClass(mockClass, instanceDomain, address);
+    final mainInstance = _ClassInstanceEvent.fromClass(
+      mockClass,
+      instanceDomain,
+      address,
+    );
     final exceptions = this.exceptions.values.map(
       (e) => _ClassInstanceEvent.fromClass(e, instanceDomain, address),
     );
 
     return NewRecurringCalendarEventEntry(
       accountUid: accountUid,
-      mockStart: occurrences.first.startTime.copyWith(isUtc: false).toUtc().millisecondsSinceEpoch,
-      duration: "P${mockClass.endDate.difference(mockClass.startDate).inSeconds}S",
+      mockStart: occurrences.first.startTime
+          .copyWith(isUtc: false)
+          .toUtc()
+          .millisecondsSinceEpoch,
+      duration:
+          "P${mockClass.endDate.difference(mockClass.startDate).inSeconds}S",
       rrule: recurrenceRule,
       rdate: recurrenceRule != null
           ? null
           : occurrences
-                .map((e) => icalUtcDateFormat.format(e.startTime.copyWith(isUtc: false).toUtc()))
+                .map(
+                  (e) => icalUtcDateFormat.format(
+                    e.startTime.copyWith(isUtc: false).toUtc(),
+                  ),
+                )
                 .join(","),
       exdate: [
-        ...calendarExceptions.map((e) => icalUtcDateFormat.format(e.copyWith(isUtc: false).toUtc())),
+        ...calendarExceptions.map(
+          (e) => icalUtcDateFormat.format(e.copyWith(isUtc: false).toUtc()),
+        ),
         // ...exceptions.map(
         //   (e) => IcalUtcDateFormat.format(
         //     e.startTime.copyWith(isUtc: false).toUtc(),

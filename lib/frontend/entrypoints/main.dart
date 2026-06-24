@@ -1,16 +1,23 @@
 import "package:antinote_app/backend/backend.dart";
 import "package:antinote_app/backend/src/accounts/storage/widget.dart";
+import "package:antinote_app/backend/src/settings/registry.dart";
 import "package:antinote_app/frontend/app.dart";
 import "package:antinote_app/frontend/routing/routes.dart";
 import "package:antinote_app/protos/account.pb.dart";
 import "package:flutter/material.dart";
 
-void mainEntrypoint() {
-  runApp(const MainApp());
+Future<void> mainEntrypoint() async {
+  WidgetsFlutterBinding.ensureInitialized();
+
+  final registry = SettingsRegistry();
+  await registry.initialize();
+  runApp(MainApp(settingsRegistry: registry));
 }
 
 class MainApp extends StatefulWidget {
-  const MainApp({super.key});
+  const MainApp({super.key, required this.settingsRegistry});
+
+  final SettingsRegistry settingsRegistry;
 
   @override
   State<MainApp> createState() => _MainAppState();
@@ -18,12 +25,14 @@ class MainApp extends StatefulWidget {
 
 class _MainAppState extends State<MainApp> {
   late final SessionDataHolder _state;
-  AccountRegistry? _registry;
+  final ValueNotifier<AccountRegistry?> _accountsRegistry = ValueNotifier(null);
 
   @override
   void initState() {
     super.initState();
-    _state = SessionDataHolder.create();
+    _state = SessionDataHolder.create(
+      settings: widget.settingsRegistry.networking,
+    );
 
     final polling = SessionPollingManager(state: _state);
     PollingManager.setUp(polling);
@@ -31,12 +40,14 @@ class _MainAppState extends State<MainApp> {
 
   @override
   Widget build(BuildContext context) {
-    return AccountStorageWidget(
-      storage: AccountStorage.getInstance(ValueNotifier(_registry)),
-
+    return AccountScope(
+      storage: AccountStorage.create(_accountsRegistry),
       child: SessionManager(
         state: _state,
-        child: const App(initialLocation: Routes.appShell),
+        child: App(
+          initialLocation: Routes.appShell,
+          registry: widget.settingsRegistry,
+        ),
       ),
     );
   }

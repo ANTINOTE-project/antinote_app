@@ -2,14 +2,11 @@ import "dart:async";
 import "dart:io";
 
 import "package:antinote/antinote.dart";
-import "package:antinote_app/backend/src/accounts/storage/base.dart";
-import "package:antinote_app/backend/src/pigeon_posts/native_session.g.dart";
-import "package:antinote_app/backend/src/session/manager.dart";
+import "package:antinote_app/backend/backend.dart";
+import "package:antinote_app/backend/src/settings/networking.dart";
 import "package:antinote_app/main.dart";
 import "package:antinote_app/protos/account.pb.dart";
 import "package:flutter/foundation.dart";
-
-import "../helpers/antinote_account.dart";
 
 final NativeSessionManager _sessionManager = NativeSessionManager();
 final _nativeSessionManagerSupported = Platform.isAndroid;
@@ -35,20 +32,26 @@ class SessionDataHolder extends ChangeNotifier {
   String? lastSeenAccountUid;
   Completer<void>? stateLock;
 
+  NetworkingSettings _settings;
+
   SessionDataHolder._({
     required this._curSession,
     required this.lastSeenSessionVersion,
     required this.lastSeenAccountUid,
     required this.stateLock,
+    required this._settings,
   });
 
-  SessionDataHolder.create([AntinoteAccount? account])
-    : this._(
-        curSession: null,
-        lastSeenSessionVersion: null,
-        lastSeenAccountUid: account?.uid,
-        stateLock: null,
-      );
+  SessionDataHolder.create({
+    required NetworkingSettings settings,
+    AntinoteAccount? account,
+  }) : this._(
+         curSession: null,
+         lastSeenSessionVersion: null,
+         lastSeenAccountUid: account?.uid,
+         stateLock: null,
+         settings: settings,
+       );
 
   Future<PronoteSession> relogin({required AccountStorage storage}) async {
     var account = (await storage.borrowAccountWithCredentials(
@@ -61,7 +64,7 @@ class SessionDataHolder extends ChangeNotifier {
     }
 
     final (refreshCredentials: newCreds, session: session) = await credentials
-        .login();
+        .login(options: _settings.sessionOptions);
 
     account = account.setCredentials(newCreds);
     await storage.updateAccount(account, lastSeenAccountUid!);
@@ -128,7 +131,10 @@ class SessionDataHolder extends ChangeNotifier {
         lastSeenSessionVersion = task.sessionVersion;
 
         try {
-          lastSeenSession = await PronoteSession.restoreBinary(task.session!);
+          lastSeenSession = await PronoteSession.restoreBinary(
+            task.session!,
+            options: _settings.sessionOptions,
+          );
           await _sessionManager.setCurrentAccountsListener([
             lastSeenAccountUid!,
           ]);

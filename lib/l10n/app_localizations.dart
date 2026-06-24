@@ -813,6 +813,30 @@ abstract class AppLocalizations {
   /// In fr, this message translates to:
   /// **'Le thème utilisé dans l\'application changera selon le fond d\'écran.'**
   String get deviceThemeDescription;
+
+  /// No description provided for @network.
+  ///
+  /// In fr, this message translates to:
+  /// **'Réseau'**
+  String get network;
+
+  /// No description provided for @reconnectAccount.
+  ///
+  /// In fr, this message translates to:
+  /// **'Reconnecter le compte'**
+  String get reconnectAccount;
+
+  /// No description provided for @sendNavigationRequests.
+  ///
+  /// In fr, this message translates to:
+  /// **'Envoyer les requêtes de navigation'**
+  String get sendNavigationRequests;
+
+  /// No description provided for @sendNavigationRequestsSubtitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Quand cette option est désactivée, des gains en latence et en données transférées peuvent être observés. Cependant, cela fait diverger le fonctionnement de l\'application de celle de PRONOTE.'**
+  String get sendNavigationRequestsSubtitle;
 }
 
 class _AppLocalizationsDelegate

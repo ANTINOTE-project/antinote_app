@@ -7,6 +7,7 @@ import "package:antinote_app/backend/src/pigeon_posts/native_calendar.g.dart";
 import "package:antinote_app/backend/src/pigeon_posts/native_session.g.dart";
 import "package:antinote_app/backend/src/pigeon_posts/native_sync.g.dart";
 import "package:antinote_app/backend/src/session/holder.dart";
+import "package:antinote_app/backend/src/settings/networking.dart";
 import "package:antinote_app/backend/src/sync/polling_manager.dart";
 import "package:flutter/foundation.dart";
 import "package:flutter/material.dart";
@@ -26,7 +27,25 @@ Future<SyncResult> syncTask(String accountUid) async {
     accountUid,
   );
 
-  final state = SessionDataHolder.create(account);
+  var settings = NetworkingSettings();
+  if (!(await settings.initialize())) {
+    await settings.clear();
+    settings = NetworkingSettings();
+
+    final result = await settings.initialize();
+    if (!result) {
+      return SyncResult(
+        result: .availability,
+        totalEntries: 0,
+        addedEntries: 0,
+        removedEntries: 0,
+        updatedEntries: 0,
+        dbIssue: true,
+      );
+    }
+  }
+
+  final state = SessionDataHolder.create(account: account, settings: settings);
 
   PollingManager.setUp(SyncPollingManager(state: state));
 

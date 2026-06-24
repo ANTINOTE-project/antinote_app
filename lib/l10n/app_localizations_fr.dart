@@ -391,4 +391,17 @@ class AppLocalizationsFr extends AppLocalizations {
   @override
   String get deviceThemeDescription =>
       'Le thème utilisé dans l\'application changera selon le fond d\'écran.';
+
+  @override
+  String get network => 'Réseau';
+
+  @override
+  String get reconnectAccount => 'Reconnecter le compte';
+
+  @override
+  String get sendNavigationRequests => 'Envoyer les requêtes de navigation';
+
+  @override
+  String get sendNavigationRequestsSubtitle =>
+      'Quand cette option est désactivée, des gains en latence et en données transférées peuvent être observés. Cependant, cela fait diverger le fonctionnement de l\'application de celle de PRONOTE.';
 }

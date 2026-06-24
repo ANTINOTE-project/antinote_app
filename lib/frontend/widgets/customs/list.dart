@@ -33,6 +33,32 @@ class ListWidget<T> extends StatelessWidget {
     this.gotAfter = false,
   });
 
+  static ListWidget<ItemWidgetData> list({
+    required List<ItemWidgetData> items,
+    bool isLoading = false,
+    bool isSliver = true,
+    bool isColumn = false,
+    bool shrinkWrap = false,
+    ScrollPhysics? physics,
+
+    bool gotBefore = false,
+    bool gotAfter = false,
+  }) {
+    return ListWidget<ItemWidgetData>(
+      items: items,
+      itemBuilder: (context, item, borderRadius) {
+        return ItemWidget.fromData(data: item, borderRadius: borderRadius);
+      },
+      shrinkWrap: shrinkWrap,
+      physics: physics,
+      isSliver: isSliver,
+      isColumn: isColumn,
+      gotAfter: gotAfter,
+      gotBefore: gotBefore,
+      isLoading: isLoading,
+    );
+  }
+
   static const radius = Radius.circular(16);
   static const defaultRadius = Radius.circular(6);
 
@@ -131,6 +157,30 @@ class ListWidget<T> extends StatelessWidget {
   }
 }
 
+@immutable
+class ItemWidgetData {
+  final Widget? title;
+  final Widget? subtitle;
+
+  final Widget? leading;
+  final Widget? trailing;
+
+  final VoidCallback? onPressed;
+  final VoidCallback? onLongPressed;
+
+  final Color? backgroundColor;
+
+  const ItemWidgetData({
+    this.title,
+    this.subtitle,
+    this.leading,
+    this.trailing,
+    this.onPressed,
+    this.onLongPressed,
+    this.backgroundColor,
+  });
+}
+
 class ItemWidget extends StatelessWidget {
   final Widget? title;
   final Widget? subtitle;
@@ -159,6 +209,22 @@ class ItemWidget extends StatelessWidget {
     this.backgroundColor,
     required this.borderRadius,
   });
+
+  factory ItemWidget.fromData({
+    required ItemWidgetData data,
+    required BorderRadius borderRadius,
+  }) {
+    return ItemWidget(
+      title: data.title,
+      subtitle: data.subtitle,
+      leading: data.leading,
+      trailing: data.trailing,
+      onPressed: data.onPressed,
+      onLongPress: data.onLongPressed,
+      backgroundColor: data.backgroundColor,
+      borderRadius: borderRadius,
+    );
+  }
 
   @override
   Widget build(BuildContext context) {

@@ -1,5 +1,5 @@
 import "package:antinote/antinote.dart";
-import "package:antinote_app/backend/src/helpers/various.dart";
+import "package:antinote_app/backend/backend.dart";
 import "package:antinote_app/frontend/widgets/compact_card.dart";
 import "package:antinote_app/frontend/widgets/customs/list.dart";
 import "package:antinote_app/frontend/widgets/grade_text.dart";

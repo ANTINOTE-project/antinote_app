@@ -16,17 +16,20 @@ class SessionPollingManager extends PollingManager {
   SessionPollingManager({required this.state});
 
   final SessionDataHolder state;
+  final Random jitterRandom = Random();
 
   @override
   bool askToTakePolling(String accountUid) {
-    final answer = state.lastSeenAccountUid == accountUid && state.lastSeenSession != null;
+    final answer =
+        state.lastSeenAccountUid == accountUid && state.lastSeenSession != null;
     talker.info("Got asked whether to take polling job... Answered $answer");
     return answer;
   }
 
-  static const _baseDelay = Duration(milliseconds: 500);
+  static const _baseDelay = Duration(milliseconds: 400);
   static const maxJitterMilliseconds = 100;
-  static const _maxRetries = 8; // This is the max as the session closes after 2 minutes.
+  static const _maxRetries =
+      11; // This is the max as the session closes after 2 minutes.
 
   @override
   void startPolling(String accountUid) {
@@ -42,10 +45,24 @@ class SessionPollingManager extends PollingManager {
           var restartCount = 0;
           while (true) {
             try {
-              await Future.delayed(_baseDelay * (2 ^ restartCount));
+              if (restartCount > 0) {
+                final backoffTime = _baseDelay * (1 << (restartCount - 1));
+
+                await Future.pause(
+                  Duration(
+                    milliseconds: jitterRandom.nextInt(
+                      backoffTime.inMilliseconds,
+                    ),
+                  ),
+                );
+              }
 
               if (restartCount > 0) {
-                await Future.delayed(Duration(milliseconds: Random().nextInt(maxJitterMilliseconds)));
+                await Future.delayed(
+                  Duration(
+                    milliseconds: Random().nextInt(maxJitterMilliseconds),
+                  ),
+                );
               }
 
               final newPoll = await session.access(const PollingAccessor());
@@ -56,7 +73,11 @@ class SessionPollingManager extends PollingManager {
 
               lastPoll = newPoll;
 
-              await _sessionManager.updatePollingState(accountUid, .alive, jsonEncode(newPoll));
+              await _sessionManager.updatePollingState(
+                accountUid,
+                .alive,
+                jsonEncode(newPoll),
+              );
             } on SessionException {
               await _sessionManager.updatePollingState(accountUid, .dead, null);
               break;
@@ -65,10 +86,18 @@ class SessionPollingManager extends PollingManager {
               talker.info("Polling just failed for the ${restartCount}th time");
 
               if (restartCount >= _maxRetries) {
-                await _sessionManager.updatePollingState(accountUid, .dead, null);
+                await _sessionManager.updatePollingState(
+                  accountUid,
+                  .dead,
+                  null,
+                );
                 break;
               } else {
-                await _sessionManager.updatePollingState(accountUid, .paused, null);
+                await _sessionManager.updatePollingState(
+                  accountUid,
+                  .paused,
+                  null,
+                );
               }
             }
           }
@@ -80,6 +109,8 @@ class SessionPollingManager extends PollingManager {
 
   @override
   void serverSignatureChanged(String accountUid, String newServerSignature) {
-    state.lastSeenSession?.stack.updateServerSignature(jsonDecode(newServerSignature));
+    state.lastSeenSession?.stack.updateServerSignature(
+      jsonDecode(newServerSignature),
+    );
   }
 }

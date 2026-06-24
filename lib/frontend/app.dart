@@ -1,5 +1,5 @@
+import "package:antinote_app/backend/src/settings/registry.dart";
 import "package:antinote_app/frontend/routing/router.dart";
-import "package:antinote_app/frontend/theme.dart";
 import "package:antinote_app/l10n/app_localizations.dart";
 import "package:dynamic_color/dynamic_color.dart";
 import "package:flutter/material.dart";
@@ -8,15 +8,15 @@ import "package:go_router/go_router.dart";
 
 class App extends StatefulWidget {
   final String initialLocation;
+  final SettingsRegistry registry;
 
-  const App({super.key, required this.initialLocation});
+  const App({super.key, required this.initialLocation, required this.registry});
 
   @override
   State<App> createState() => _AppState();
 }
 
 class _AppState extends State<App> {
-  final _themeNotifier = ThemeNotifier();
   late final GoRouter _router;
 
   @override
@@ -27,40 +27,44 @@ class _AppState extends State<App> {
 
   @override
   void dispose() {
-    _themeNotifier.dispose();
+    widget.registry.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     return ListenableBuilder(
-      listenable: _themeNotifier,
+      listenable: widget.registry,
 
       builder: (context, child) {
-        return ThemeScope(
-          notifier: _themeNotifier,
+        return SettingsScope(
+          registry: widget.registry,
 
           child: DynamicColorBuilder(
             builder: (dynamicLight, dynamicDark) {
-              final dynamic = _themeNotifier.isDynamic;
+              final dynamic = widget.registry.theme.isDynamic;
 
               final ThemeData light;
               final ThemeData dark;
               if (dynamic) {
-                light = _themeNotifier.theme(
-                  dynamicLight ?? _themeNotifier.light,
+                light = widget.registry.theme.create(
+                  dynamicLight ?? widget.registry.theme.light,
                 );
-                dark = _themeNotifier.theme(dynamicDark ?? _themeNotifier.dark);
+                dark = widget.registry.theme.create(
+                  dynamicDark ?? widget.registry.theme.dark,
+                );
               } else {
-                light = _themeNotifier.theme(_themeNotifier.light);
-                dark = _themeNotifier.theme(_themeNotifier.dark);
+                light = widget.registry.theme.create(
+                  widget.registry.theme.light,
+                );
+                dark = widget.registry.theme.create(widget.registry.theme.dark);
               }
 
-              final lightHighContrast = _themeNotifier.theme(
-                _themeNotifier.lightHighContrast,
+              final lightHighContrast = widget.registry.theme.create(
+                widget.registry.theme.lightHighContrast,
               );
-              final darkHighContrast = _themeNotifier.theme(
-                _themeNotifier.darkHighContrast,
+              final darkHighContrast = widget.registry.theme.create(
+                widget.registry.theme.darkHighContrast,
               );
 
               return MaterialApp.router(

@@ -2,7 +2,6 @@ import "dart:async";
 
 import "package:antinote/antinote.dart";
 import "package:antinote_app/backend/backend.dart";
-import "package:antinote_app/backend/src/helpers/antinote_account.dart";
 import "package:antinote_app/frontend/routing/routes.dart";
 import "package:antinote_app/frontend/widgets/customs/app_bar.dart";
 import "package:antinote_app/frontend/widgets/customs/list.dart";
@@ -118,7 +117,7 @@ class MethodsScreen extends StatelessWidget with WidgetsBindingObserver {
                     pronoteBaseUrl: Uri.parse(
                       "https://demo.index-education.net/pronote",
                     ),
-                  ).login(),
+                  ).login(options: context.s.networking.sessionOptions),
                 );
               },
 

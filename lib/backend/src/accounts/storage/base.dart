@@ -7,22 +7,25 @@ import "package:flutter/material.dart";
 abstract class AccountStorage {
   const AccountStorage();
 
-  static AccountStorage of(BuildContext context) {
-    final result = context.dependOnInheritedWidgetOfExactType<AccountStorageWidget>();
-    assert(result != null, "No AccountStorage found in context.");
-
-    return result!.storage;
-  }
-
-  static AccountStorage getInstance(ValueNotifier<AccountRegistry?> registryNotifier) {
+  factory AccountStorage.create(
+    ValueNotifier<AccountRegistry?> registryNotifier,
+  ) {
     return PreferencesAccountStorage.isActive
         ? PreferencesAccountStorage(
             getRegistry: () async {
-              registryNotifier.value ??= await PreferencesAccountStorage.readOrCreateRegistry();
+              registryNotifier.value ??=
+                  await PreferencesAccountStorage.readOrCreateRegistry();
               return registryNotifier.value!;
             },
           )
         : const NativeAccountStorage();
+  }
+
+  static AccountStorage of(BuildContext context) {
+    final result = context.dependOnInheritedWidgetOfExactType<AccountScope>();
+    assert(result != null, "No AccountStorage found in context.");
+
+    return result!.storage;
   }
 
   Future<List<AntinoteAccount>> listAccounts();
