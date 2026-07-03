@@ -5,11 +5,11 @@ import "dart:ui";
 import "package:antinote/antinote.dart";
 import "package:antinote_app/backend/backend.dart";
 import "package:antinote_app/frontend/screens/shell/tab.dart";
+import "package:antinote_app/frontend/utils/utils.dart";
 import "package:antinote_app/frontend/widgets/bottom_padding.dart";
 import "package:antinote_app/frontend/widgets/customs/list.dart";
 import "package:antinote_app/frontend/widgets/grade_text.dart";
 import "package:antinote_app/frontend/widgets/pressable.dart";
-import "package:antinote_app/utils/utils.dart";
 import "package:flutter/material.dart";
 import "package:hugeicons_pro/hugeicons.dart";
 import "package:intl/intl.dart";
@@ -22,6 +22,7 @@ typedef _DetailsItem = ({
   String label,
   Grade? grade,
   Grade? theoreticalMaxGrade,
+  Grade? defaultMaxGrade,
   double? coefficient,
   String? rawValue,
 });
@@ -128,6 +129,7 @@ Future<void> _showDetails({
                           ? GradeText(
                               selfGrade: item.grade!,
                               maxGrade: item.theoreticalMaxGrade!,
+                              defaultMaxGrade: item.defaultMaxGrade!,
                               color: scheme.primary,
                               size: 20,
                             )
@@ -169,6 +171,7 @@ Future<void> showExamDetails(BuildContext context, Exam exam) async {
       icon: HugeIconsSolid.male02,
       grade: exam.selfGrade,
       theoreticalMaxGrade: exam.theoreticalMaxGrade,
+      defaultMaxGrade: exam.defaultMaxGrade,
       coefficient: null,
       rawValue: null,
     ),
@@ -179,6 +182,7 @@ Future<void> showExamDetails(BuildContext context, Exam exam) async {
         icon: HugeIconsSolid.calculate,
         coefficient: exam.coefficient,
         theoreticalMaxGrade: null,
+        defaultMaxGrade: null,
         grade: null,
         rawValue: null,
       ),
@@ -189,6 +193,7 @@ Future<void> showExamDetails(BuildContext context, Exam exam) async {
         icon: HugeIconsSolid.chartAverage,
         grade: exam.classAverage,
         theoreticalMaxGrade: exam.theoreticalMaxGrade,
+        defaultMaxGrade: exam.defaultMaxGrade,
         coefficient: null,
         rawValue: null,
       ),
@@ -199,6 +204,7 @@ Future<void> showExamDetails(BuildContext context, Exam exam) async {
         icon: HugeIconsSolid.plusSign,
         grade: exam.maxGrade,
         theoreticalMaxGrade: exam.theoreticalMaxGrade,
+        defaultMaxGrade: exam.defaultMaxGrade,
         coefficient: null,
         rawValue: null,
       ),
@@ -209,6 +215,7 @@ Future<void> showExamDetails(BuildContext context, Exam exam) async {
         icon: HugeIconsSolid.minusSign,
         grade: exam.minGrade,
         theoreticalMaxGrade: exam.theoreticalMaxGrade,
+        defaultMaxGrade: exam.defaultMaxGrade,
         coefficient: null,
         rawValue: null,
       ),
@@ -235,6 +242,7 @@ Future<void> showServiceDetails(
       icon: HugeIconsSolid.textNumberSign,
       grade: null,
       theoreticalMaxGrade: null,
+      defaultMaxGrade: null,
       coefficient: null,
       rawValue: exams.length.toString(),
     ),
@@ -243,6 +251,7 @@ Future<void> showServiceDetails(
       icon: HugeIconsSolid.male02,
       grade: service.selfAverage,
       theoreticalMaxGrade: service.theoreticalMaxGrade,
+      defaultMaxGrade: service.defaultTheoreticalMaxGrade,
       coefficient: null,
       rawValue: null,
     ),
@@ -253,6 +262,7 @@ Future<void> showServiceDetails(
         icon: HugeIconsSolid.chartAverage,
         grade: service.classAverage,
         theoreticalMaxGrade: service.theoreticalMaxGrade,
+        defaultMaxGrade: service.defaultTheoreticalMaxGrade,
         coefficient: null,
         rawValue: null,
       ),
@@ -263,6 +273,7 @@ Future<void> showServiceDetails(
         icon: HugeIconsSolid.crown03,
         grade: service.maxGrade,
         theoreticalMaxGrade: service.theoreticalMaxGrade,
+        defaultMaxGrade: service.defaultTheoreticalMaxGrade,
         coefficient: null,
         rawValue: null,
       ),
@@ -273,6 +284,7 @@ Future<void> showServiceDetails(
         icon: HugeIconsStroke.crying,
         grade: service.minGrade,
         theoreticalMaxGrade: service.theoreticalMaxGrade,
+        defaultMaxGrade: service.defaultTheoreticalMaxGrade,
         coefficient: null,
         rawValue: null,
       ),
@@ -676,160 +688,130 @@ class _LatestGrades extends StatelessWidget {
   Widget build(BuildContext context) {
     // rebuild when theme mode changes
     final _ = Theme.of(context);
+    final totalWidth = MediaQuery.sizeOf(context).width;
+    final maxItemWidth = totalWidth / 10 * 6;
 
     return SliverToBoxAdapter(
-      child: Skeletonizer.zone(
-        enabled: exams == null,
+      child: Container(
+        height: 170,
+        padding: const .symmetric(horizontal: 16, vertical: 8),
+        child: CarouselView.weightedBuilder(
+          flexWeights: const [6, 3, 1],
+          itemSnapping: true,
+          infinite: exams == null,
+          padding: const .only(left: 8),
+          itemBuilder: (context, index) {
+            final exam = exams == null
+                ? fakeExams[index % fakeExams.length]
+                : exams![index];
 
-        child: SizedBox(
-          height: 170,
+            return ClipPath(
+              clipper: ShapeBorderClipper(
+                shape: RoundedRectangleBorder(borderRadius: .circular(28)),
+              ),
+              child: GradeCard(exam: exam, width: maxItemWidth),
+            );
+          },
+          itemCount: exams?.length ?? fakeExams.length,
+        ),
+      ),
+    );
+  }
+}
 
-          child: ListView.builder(
-            padding: const .all(12),
+class GradeCard extends StatelessWidget {
+  const GradeCard({super.key, required this.exam, required this.width});
 
-            scrollDirection: .horizontal,
-            itemCount: exams == null ? fakeExams.length : exams!.length,
+  final Exam exam;
+  final double width;
 
-            itemBuilder: (context, index) {
-              final exam = exams == null ? fakeExams[index] : exams![index];
+  @override
+  Widget build(BuildContext context) {
+    final scheme = Utils.buildColorScheme(context, exam.service.color);
 
-              final scheme = Utils.buildColorScheme(
-                context,
-                exam.service.color,
-              );
+    final date = DateFormat("dd/MM/yyyy").format(exam.date);
+    final title = Utils.getExamComment(context, exam);
+    final subject = exam.service.name;
 
-              final date = DateFormat("dd/MM/yyyy").format(exam.date);
-              final title = Utils.getExamComment(context, exam);
-              final subject = exam.service.name;
+    return Pressable(
+      onPressed: () async => await showExamDetails(context, exam),
+      child: Ink(
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(28),
 
-              return Padding(
-                padding: const EdgeInsets.only(right: 8),
+          border: Border.all(color: scheme.inversePrimary),
 
-                child: Pressable(
-                  onPressed: () => showExamDetails(context, exam),
-                  borderRadius: BorderRadius.circular(16),
+          color: scheme.primaryContainer,
+        ),
+        child: OverflowBox(
+          minWidth: width,
+          maxWidth: width,
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+            child: Stack(
+              children: [
+                Column(
+                  crossAxisAlignment: .start,
+                  mainAxisSize: .min,
+                  children: [
+                    Text(
+                      subject,
 
-                  child: IntrinsicWidth(
-                    child: ConstrainedBox(
-                      constraints: const BoxConstraints(
-                        minWidth: 200,
-                        maxWidth: 250,
-                      ),
+                      overflow: .ellipsis,
+                      maxLines: 1,
 
-                      child: Ink(
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(16),
-
-                          border: Border.all(
-                            color: exams == null
-                                ? context.c.outlineVariant
-                                : scheme.inversePrimary,
-                          ),
-
-                          color: exams == null
-                              ? context.c.surfaceContainerHigh
-                              : scheme.primaryContainer,
-                        ),
-
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 10,
-                          vertical: 6,
-                        ),
-
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          spacing: 12,
-
-                          children: exams == null
-                              ? [
-                                  const Bone.text(
-                                    width: 200,
-
-                                    style: TextStyle(
-                                      fontSize: 20,
-                                      fontWeight: .w800,
-                                    ),
-                                  ),
-
-                                  const Bone.text(
-                                    width: 100,
-
-                                    style: TextStyle(
-                                      fontSize: 16,
-                                      fontWeight: .w600,
-                                    ),
-                                  ),
-
-                                  const Spacer(),
-
-                                  const Row(
-                                    children: [
-                                      Bone.text(
-                                        width: 75,
-                                        style: TextStyle(fontWeight: .bold),
-                                      ),
-
-                                      Spacer(),
-
-                                      Bone.text(width: 75, fontSize: 22),
-                                    ],
-                                  ),
-                                ]
-                              : [
-                                  Text(
-                                    subject,
-
-                                    overflow: TextOverflow.ellipsis,
-                                    maxLines: 1,
-
-                                    style: TextStyle(
-                                      fontSize: 20,
-                                      fontWeight: .w800,
-                                      color: scheme.primary,
-                                    ),
-                                  ),
-
-                                  Expanded(
-                                    child: Text(
-                                      title,
-
-                                      overflow: TextOverflow.ellipsis,
-                                      maxLines: 2,
-
-                                      style: const TextStyle(
-                                        fontSize: 16,
-                                        fontWeight: .w600,
-                                      ),
-                                    ),
-                                  ),
-
-                                  Row(
-                                    children: [
-                                      Text(
-                                        date,
-                                        style: TextStyle(
-                                          fontWeight: FontWeight.bold,
-                                          color: scheme.onSurfaceVariant,
-                                        ),
-                                      ),
-
-                                      const Spacer(),
-
-                                      GradeText(
-                                        selfGrade: exam.selfGrade,
-                                        maxGrade: exam.theoreticalMaxGrade,
-                                        color: scheme.primary,
-                                      ),
-                                    ],
-                                  ),
-                                ],
-                        ),
+                      style: TextStyle(
+                        fontSize: 20,
+                        fontWeight: .w800,
+                        color: scheme.primary,
                       ),
                     ),
+
+                    Text(
+                      title,
+
+                      overflow: .ellipsis,
+                      maxLines: 2,
+
+                      style: const TextStyle(fontSize: 16, fontWeight: .w600),
+                    ),
+                  ],
+                ),
+
+                Positioned(
+                  bottom: 0,
+                  left: 0,
+                  right: 0,
+                  child: Column(
+                    mainAxisSize: .min,
+                    children: [
+                      Divider(color: scheme.outlineVariant),
+
+                      Row(
+                        children: [
+                          Text(
+                            date,
+                            style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              color: scheme.onSurfaceVariant,
+                            ),
+                          ),
+
+                          const Spacer(),
+
+                          GradeText(
+                            selfGrade: exam.selfGrade,
+                            maxGrade: exam.theoreticalMaxGrade,
+                            defaultMaxGrade: exam.defaultMaxGrade,
+                            color: scheme.primary,
+                          ),
+                        ],
+                      ),
+                    ],
                   ),
                 ),
-              );
-            },
+              ],
+            ),
           ),
         ),
       ),
@@ -949,6 +931,7 @@ class _ServiceWidget extends StatelessWidget {
                         GradeText(
                           selfGrade: service.selfAverage!,
                           maxGrade: service.theoreticalMaxGrade!,
+                          defaultMaxGrade: service.defaultTheoreticalMaxGrade!,
                           isMain: true,
                           color: scheme.primary,
                           size: 23,
@@ -988,6 +971,7 @@ class _ExamWidget extends StatelessWidget {
       trailing: GradeText(
         selfGrade: exam.selfGrade,
         maxGrade: exam.theoreticalMaxGrade,
+        defaultMaxGrade: exam.defaultMaxGrade,
         color: scheme.primary,
         size: 19,
       ),

@@ -2,11 +2,11 @@ import "dart:async";
 
 import "package:antinote/antinote.dart";
 import "package:antinote_app/frontend/screens/shell/tab.dart";
+import "package:antinote_app/frontend/utils/utils.dart";
 import "package:antinote_app/frontend/widgets/bottom_padding.dart";
 import "package:antinote_app/frontend/widgets/customs/list.dart";
 import "package:antinote_app/frontend/widgets/grade_text.dart";
 import "package:antinote_app/frontend/widgets/pressable.dart";
-import "package:antinote_app/utils/utils.dart";
 import "package:flutter/material.dart";
 import "package:flutter/services.dart";
 import "package:hugeicons_pro/hugeicons.dart";
@@ -339,6 +339,7 @@ class _MiniAverage extends StatelessWidget {
         GradeText(
           selfGrade: grade,
           maxGrade: .decodeDouble(20),
+          defaultMaxGrade: .decodeDouble(20),
           color: gradeColor,
           size: 15,
         ),
@@ -415,6 +416,9 @@ class _ServiceWidget extends StatelessWidget {
                   GradeText(
                     selfGrade: service.studentAverage!,
                     maxGrade:
+                        report.defaultTheoreticalMaxGrade ??
+                        Grade.decodeDouble(20),
+                    defaultMaxGrade:
                         report.defaultTheoreticalMaxGrade ??
                         Grade.decodeDouble(20),
                     color: scheme.primary,

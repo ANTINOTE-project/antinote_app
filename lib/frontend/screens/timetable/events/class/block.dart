@@ -1,10 +1,14 @@
-import "package:antinote/antinote.dart";
+part of "../block.dart";
 
-final class ClassBlock {
+final class ClassBlock extends Block {
   final List<List<Class>> configurations;
+  @override
   final int startSlot;
+  @override
   final DateTime startTime;
+  @override
   final int endSlot;
+  @override
   final DateTime endTime;
 
   const ClassBlock({
@@ -81,7 +85,7 @@ final class ClassBlock {
   }
 }
 
-List<ClassBlock> constructClassBlocksForDay(List<Class> classes) {
+List<ClassBlock> classBlocksForDay(List<Class> classes) {
   classes.sort((a, b) => a.blockSlot.compareTo(b.blockSlot));
 
   List<ClassBlock> blocks = [];

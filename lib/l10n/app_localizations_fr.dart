@@ -1,5 +1,6 @@
 // ignore: unused_import
 import 'package:intl/intl.dart' as intl;
+
 import 'app_localizations.dart';
 
 // ignore_for_file: type=lint
@@ -288,10 +289,34 @@ class AppLocalizationsFr extends AppLocalizations {
   String get detention => 'Retenue';
 
   @override
+  String get pedagogicalActivity => 'Activité pédagogique';
+
+  @override
   String get noSubject => 'Matière inconnue';
 
   @override
   String get noRoom => 'Salle non définie';
+
+  @override
+  String get contentTeachers => 'Enseignants';
+
+  @override
+  String get contentPersonal => 'Personnels';
+
+  @override
+  String get contentClassrooms => 'Salles de classe';
+
+  @override
+  String get contentVirtualClassrooms => 'Classes virtuelles';
+
+  @override
+  String get contentClassGroups => 'Groupes';
+
+  @override
+  String get contentClasses => 'Classes';
+
+  @override
+  String get contentUnknowns => 'Inconnus';
 
   @override
   String recipient(Object recipient) {

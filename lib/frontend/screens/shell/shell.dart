@@ -1,6 +1,6 @@
 import "package:antinote/antinote.dart";
 import "package:antinote_app/backend/src/session/manager.dart";
-import "package:antinote_app/utils/utils.dart";
+import "package:antinote_app/frontend/utils/utils.dart";
 import "package:flutter/material.dart";
 
 class ShellController extends InheritedWidget {
@@ -32,8 +32,8 @@ class AppShell extends StatefulWidget {
 }
 
 class _AppShellState extends State<AppShell> {
-  Stream<NotificationPreviewState>? notificationStream;
-  NotificationPreviewState? defaultNotifications;
+  Stream<ServerSignature>? signatureStream;
+  ServerSignature? defaultSignature;
 
   SessionManager? manager;
 
@@ -49,8 +49,8 @@ class _AppShellState extends State<AppShell> {
         if (!mounted) return;
 
         setState(() {
-          notificationStream = session.notifications;
-          defaultNotifications = session.currentNotificationState;
+          signatureStream = session.stack.serverSignatureStream;
+          defaultSignature = session.stack.serverSignature;
         });
       },
     );
@@ -83,11 +83,12 @@ class _AppShellState extends State<AppShell> {
     final screenSize = MediaQuery.sizeOf(context);
 
     return StreamBuilder(
-      initialData: defaultNotifications,
-      stream: notificationStream,
+      initialData: defaultSignature,
+      stream: signatureStream,
 
       builder: (context, snapshot) {
-        final notifications = snapshot.data?.notifications ?? [];
+        final notifications =
+            snapshot.data?.tabNotificationCounts ?? <int, int>{};
 
         return ShellController(
           goToTab: (category) => setState(() {
@@ -117,14 +118,12 @@ class _AppShellState extends State<AppShell> {
                           backgroundColor: context.c.surfaceContainerHigh,
 
                           destinations: _tabs.mapL((e) {
-                            final notificationCount = notifications
-                                .where(
-                                  (element) => e.tabs.contains(element.tab),
-                                )
+                            final notificationCount = e.tabs
+                                .map((e) => notifications[e] ?? 0)
                                 .fold(
                                   0,
                                   (previousValue, element) =>
-                                      previousValue + element.count,
+                                      previousValue + element,
                                 );
 
                             return NavigationRailDestination(
@@ -191,7 +190,17 @@ class _AppShellState extends State<AppShell> {
 
                       child: NavigationBar(
                         destinations: _tabs
-                            .map((e) => _buildDestination(e, notifications))
+                            .map((e) {
+                              final notificationCount = e.tabs
+                                  .map((e) => notifications[e] ?? 0)
+                                  .fold(
+                                    0,
+                                    (previousValue, element) =>
+                                        previousValue + element,
+                                  );
+
+                              return _buildDestination(e, notificationCount);
+                            })
                             .toList(growable: false),
 
                         onDestinationSelected: (value) => setState(() {
@@ -211,12 +220,8 @@ class _AppShellState extends State<AppShell> {
 
   NavigationDestination _buildDestination(
     TabDestination e,
-    List<NotificationPreview> notifications,
+    int notificationCount,
   ) {
-    final notificationCount = notifications
-        .where((element) => e.tabs.contains(element.tab))
-        .fold(0, (prev, element) => prev + element.count);
-
     return NavigationDestination(
       icon: Badge.count(
         count: notificationCount,

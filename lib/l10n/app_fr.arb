@@ -98,8 +98,17 @@
   "gap": "{duration} de libre",
   "cancelled": "ANNULÉ",
   "detention": "Retenue",
+  "pedagogicalActivity": "Activité pédagogique",
   "noSubject": "Matière inconnue",
   "noRoom": "Salle non définie",
+
+  "contentTeachers": "Enseignants",
+  "contentPersonal": "Personnels",
+  "contentClassrooms": "Salles de classe",
+  "contentVirtualClassrooms": "Classes virtuelles",
+  "contentClassGroups": "Groupes",
+  "contentClasses": "Classes",
+  "contentUnknowns": "Inconnus",
 
   "recipient": "À {recipient}",
   "self": "moi",

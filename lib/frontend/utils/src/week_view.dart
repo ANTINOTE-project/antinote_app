@@ -1,5 +1,5 @@
 import "package:antinote/antinote.dart";
-import "package:antinote_app/utils/date.dart";
+import "package:antinote_app/frontend/utils/src/date.dart";
 import "package:flutter/material.dart";
 
 typedef Arrangement<T> = Map<DateTime, T>;

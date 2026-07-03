@@ -3,16 +3,18 @@ import "dart:async";
 import "package:antinote/antinote.dart";
 import "package:antinote_app/backend/backend.dart";
 import "package:antinote_app/frontend/screens/shell/tab.dart";
-import "package:antinote_app/frontend/screens/timetable/models.dart";
-import "package:antinote_app/frontend/screens/timetable/widgets.dart";
+import "package:antinote_app/frontend/screens/timetable/events/block.dart";
+import "package:antinote_app/frontend/screens/timetable/events/pause/widget.dart";
+import "package:antinote_app/frontend/utils/utils.dart";
 import "package:antinote_app/frontend/widgets/customs/loading.dart";
 import "package:antinote_app/main.dart";
-import "package:antinote_app/utils/utils.dart";
 import "package:collection/collection.dart";
 import "package:flutter/material.dart";
 import "package:hugeicons_pro/hugeicons.dart";
 
-typedef Classes = Map<DateTime, ValueNotifier<List<ClassBlock>?>>;
+import "events/class/widget.dart";
+
+typedef Classes = Map<DateTime, ValueNotifier<DayBlocks?>>;
 
 class TimetableScreen extends StatefulWidget {
   const TimetableScreen({super.key});
@@ -22,7 +24,7 @@ class TimetableScreen extends StatefulWidget {
 }
 
 class _TimetableScreenState extends State<TimetableScreen> {
-  Future<Map<DateTime, List<ClassBlock>>> update(
+  Future<Map<DateTime, DayBlocks>> update(
     PronoteSession session,
     DateRange days,
     List<DateTime> dayList,
@@ -42,7 +44,7 @@ class _TimetableScreenState extends State<TimetableScreen> {
     }
 
     return loadedDays.map(
-      (key, value) => MapEntry(key, constructClassBlocksForDay(value)),
+      (key, value) => MapEntry(key, blocksForDay(value, session.instance)),
     );
   }
 
@@ -61,7 +63,7 @@ class TimetableDisplay extends StatefulWidget {
   });
 
   final List<WeekMappedViewConfiguration> configurations;
-  final Future<Map<DateTime, List<ClassBlock>>> Function(
+  final Future<Map<DateTime, DayBlocks>> Function(
     PronoteSession session,
     DateRange days,
     List<DateTime> businessDays,
@@ -128,7 +130,7 @@ class _TimetableDisplayState extends State<TimetableDisplay>
     if (dayList.isEmpty) return;
     if (_animating) return;
 
-    final Map<DateTime, List<ClassBlock>> result;
+    final Map<DateTime, DayBlocks> result;
 
     if (session != null) {
       result = await widget.updateBlocks(session, days, dayList);
@@ -388,7 +390,7 @@ class _TimetableDisplayState extends State<TimetableDisplay>
             curSlot.timing.minute -
             previous.timing.minute;
 
-        if (transitionValue > 0) {
+        if (transitionValue > 0 && displays.isNotEmpty) {
           displays.add(
             Expanded(flex: transitionValue, child: const SizedBox.expand()),
           );
@@ -468,7 +470,7 @@ class _TimetableDisplayState extends State<TimetableDisplay>
   Widget _buildClassesColumn(
     BuildContext context,
     DateTime day,
-    List<ClassBlock> blocks,
+    DayBlocks blocks,
   ) {
     final displays = <Widget>[];
     DateTime? curTime;
@@ -486,12 +488,14 @@ class _TimetableDisplayState extends State<TimetableDisplay>
       displays.add(
         Expanded(
           flex: block.endTime.difference(block.startTime).inMinutes,
-
-          child: TimetableBlockWidget(
-            displayParameters: _scheduleDisplayData,
-            block: block,
-            day: day,
-          ),
+          child: switch (block) {
+            ClassBlock classBlock => ClassBlockWidget(
+              displayParameters: _scheduleDisplayData,
+              block: classBlock,
+              day: day,
+            ),
+            PauseBlock() => PauseBlockWidget(block: block),
+          },
         ),
       );
 

@@ -628,6 +628,12 @@ abstract class AppLocalizations {
   /// **'Retenue'**
   String get detention;
 
+  /// No description provided for @pedagogicalActivity.
+  ///
+  /// In fr, this message translates to:
+  /// **'Activité pédagogique'**
+  String get pedagogicalActivity;
+
   /// No description provided for @noSubject.
   ///
   /// In fr, this message translates to:
@@ -639,6 +645,48 @@ abstract class AppLocalizations {
   /// In fr, this message translates to:
   /// **'Salle non définie'**
   String get noRoom;
+
+  /// No description provided for @contentTeachers.
+  ///
+  /// In fr, this message translates to:
+  /// **'Enseignants'**
+  String get contentTeachers;
+
+  /// No description provided for @contentPersonal.
+  ///
+  /// In fr, this message translates to:
+  /// **'Personnels'**
+  String get contentPersonal;
+
+  /// No description provided for @contentClassrooms.
+  ///
+  /// In fr, this message translates to:
+  /// **'Salles de classe'**
+  String get contentClassrooms;
+
+  /// No description provided for @contentVirtualClassrooms.
+  ///
+  /// In fr, this message translates to:
+  /// **'Classes virtuelles'**
+  String get contentVirtualClassrooms;
+
+  /// No description provided for @contentClassGroups.
+  ///
+  /// In fr, this message translates to:
+  /// **'Groupes'**
+  String get contentClassGroups;
+
+  /// No description provided for @contentClasses.
+  ///
+  /// In fr, this message translates to:
+  /// **'Classes'**
+  String get contentClasses;
+
+  /// No description provided for @contentUnknowns.
+  ///
+  /// In fr, this message translates to:
+  /// **'Inconnus'**
+  String get contentUnknowns;
 
   /// No description provided for @recipient.
   ///

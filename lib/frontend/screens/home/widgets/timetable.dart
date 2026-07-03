@@ -1,9 +1,9 @@
 import "package:antinote/antinote.dart";
 import "package:antinote_app/frontend/screens/home/screen.dart";
 import "package:antinote_app/frontend/screens/home/widgets.dart";
-import "package:antinote_app/frontend/screens/timetable/models.dart";
+import "package:antinote_app/frontend/screens/timetable/events/block.dart";
 import "package:antinote_app/frontend/screens/timetable/screen.dart";
-import "package:antinote_app/utils/utils.dart";
+import "package:antinote_app/frontend/utils/utils.dart";
 import "package:flutter/material.dart";
 
 class TimetableWidget extends StatelessWidget {
@@ -43,7 +43,8 @@ class TimetableWidget extends StatelessWidget {
           }
 
           return intermediate.map(
-            (key, value) => MapEntry(key, constructClassBlocksForDay(value)),
+            (key, value) =>
+                MapEntry(key, blocksForDay(value, session.instance)),
           );
         },
       ),

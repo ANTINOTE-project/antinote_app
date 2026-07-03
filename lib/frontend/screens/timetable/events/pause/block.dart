@@ -1,0 +1,59 @@
+part of "../block.dart";
+
+final class PauseBlock extends Block {
+  final String title;
+
+  @override
+  final int startSlot;
+  @override
+  final DateTime startTime;
+  @override
+  final int endSlot;
+  @override
+  final DateTime endTime;
+
+  const new({
+    required this.title,
+
+    required this.startSlot,
+    required this.startTime,
+    required this.endSlot,
+    required this.endTime,
+  });
+}
+
+List<PauseBlock> pauseBlocksForDay(
+  List<Class> classes,
+  SpecificInstanceParameters parameters,
+) {
+  if (classes.isEmpty) return [];
+
+  final date = classes.first.startDate.toDay();
+  final blocks = <PauseBlock>[];
+
+  for (final classBreak in parameters.pauses) {
+    final startTime = parameters.timeForSlot(
+      parameters.endings[classBreak.slot - 1],
+      date,
+    );
+    final endTime = parameters.timeForSlot(
+      parameters.starts[classBreak.slot],
+      date,
+    );
+
+    if (!parameters.isBusinessHalfDay(startTime, classBreak.slot)) continue;
+    if (!classes.last.endDate.isAfter(startTime)) continue;
+
+    blocks.add(
+      PauseBlock(
+        title: classBreak.label,
+        startSlot: classBreak.slot,
+        startTime: startTime,
+        endSlot: classBreak.slot + 1,
+        endTime: endTime,
+      ),
+    );
+  }
+
+  return blocks;
+}

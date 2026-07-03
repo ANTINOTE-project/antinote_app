@@ -3,7 +3,7 @@ import "package:antinote_app/frontend/screens/grades/screen.dart";
 import "package:antinote_app/frontend/screens/home/screen.dart";
 import "package:antinote_app/frontend/screens/homeworks/screen.dart";
 import "package:antinote_app/frontend/screens/timetable/screen.dart";
-import "package:antinote_app/utils/context.dart";
+import "package:antinote_app/frontend/utils/src/context.dart";
 import "package:flutter/material.dart";
 import "package:hugeicons_pro/hugeicons.dart";
 

@@ -1,8 +1,8 @@
 import "package:antinote/antinote.dart";
+import "package:antinote_app/frontend/utils/utils.dart";
 import "package:antinote_app/frontend/widgets/customs/attachment.dart";
 import "package:antinote_app/frontend/widgets/customs/list.dart";
 import "package:antinote_app/frontend/widgets/remote_html.dart";
-import "package:antinote_app/utils/utils.dart";
 import "package:flutter/material.dart";
 import "package:go_router/go_router.dart";
 import "package:hugeicons_pro/hugeicons.dart";

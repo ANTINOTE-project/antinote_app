@@ -1,6 +1,6 @@
 // Credit: https://stackoverflow.com/a/68847631 (by Raul Mabe)
 import "package:antinote/antinote.dart";
-import "package:antinote_app/utils/utils.dart";
+import "package:antinote_app/frontend/utils/utils.dart";
 import "package:flutter/material.dart";
 import "package:intl/intl.dart";
 
@@ -37,6 +37,10 @@ extension AsRelativeDateString on DateTime {
 
   String asNumericDate() {
     return _numericDateFormatter.format(this);
+  }
+
+  String asNumericTime() {
+    return _shortTimeFormatter.format(this);
   }
 
   String asRelativeDate(BuildContext context, [bool dayOnly = true]) {

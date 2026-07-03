@@ -85,7 +85,7 @@ const fakePeriod = Period(
 );
 
 final fakeExams = List.filled(
-  20,
+  3,
   Exam(
     id: "",
     type: 0,

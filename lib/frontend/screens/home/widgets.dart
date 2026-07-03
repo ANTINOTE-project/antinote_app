@@ -1,11 +1,11 @@
 import "package:antinote/antinote.dart";
 import "package:antinote_app/backend/backend.dart";
+import "package:antinote_app/frontend/utils/utils.dart";
 import "package:antinote_app/frontend/widgets/compact_card.dart";
 import "package:antinote_app/frontend/widgets/customs/list.dart";
 import "package:antinote_app/frontend/widgets/grade_text.dart";
 import "package:antinote_app/frontend/widgets/pressable.dart";
 import "package:antinote_app/frontend/widgets/remote_html.dart";
-import "package:antinote_app/utils/utils.dart";
 import "package:flutter/material.dart";
 import "package:hugeicons_pro/hugeicons.dart";
 import "package:intl/intl.dart";
@@ -240,6 +240,7 @@ class _GradeCard extends StatelessWidget {
       trailing: GradeText(
         selfGrade: exam.selfGrade,
         maxGrade: exam.theoreticalMaxGrade,
+        defaultMaxGrade: exam.defaultMaxGrade,
         color: scheme.primary,
         size: 16,
       ),

@@ -2,12 +2,14 @@ import "dart:async";
 
 import "package:antinote/antinote.dart";
 import "package:antinote_app/backend/backend.dart";
+import "package:antinote_app/frontend/utils/utils.dart";
 import "package:antinote_app/frontend/widgets/customs/loading.dart";
-import "package:antinote_app/utils/utils.dart";
 import "package:flutter/material.dart";
 
-typedef RefreshIndicatorBuilder =
-    Widget Function({required Widget child, bool pullable});
+typedef RefreshIndicatorBuilder = Widget Function({
+  required Widget child,
+  bool pullable,
+});
 
 mixin TabMixin<T extends StatefulWidget> on State<T> {
   List<String> get loadChannels => ["communication"];

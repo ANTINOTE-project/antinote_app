@@ -1,4 +1,4 @@
-import "package:antinote_app/utils/utils.dart";
+import "package:antinote_app/frontend/utils/utils.dart";
 import "package:flutter/material.dart";
 
 class FieldWidget extends StatelessWidget {

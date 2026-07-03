@@ -1,6 +1,7 @@
 import "package:antinote/antinote.dart";
 import "package:antinote_app/backend/backend.dart";
 import "package:antinote_app/backend/src/pigeon_posts/native_calendar.g.dart";
+import "package:antinote_app/frontend/utils/src/class.dart";
 import "package:flutter/material.dart";
 import "package:rrule/rrule.dart";
 
@@ -163,7 +164,7 @@ final class _ClassInstanceEvent {
       title: className,
       description: descriptionBuilder.toString(),
       location: location,
-      color: clazz.backgroundColor ?? Colors.white.toARGB32(),
+      color: clazz.accentColor ?? Colors.white.toARGB32(),
       startTime: clazz.startDate,
       endTime: clazz.endDate,
       visualId: clazz.visualId,

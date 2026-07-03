@@ -5,8 +5,8 @@ import "package:antinote_app/backend/backend.dart";
 import "package:antinote_app/frontend/screens/communication/models.dart";
 import "package:antinote_app/frontend/screens/communication/news.dart";
 import "package:antinote_app/frontend/screens/shell/tab.dart";
+import "package:antinote_app/frontend/utils/utils.dart";
 import "package:antinote_app/frontend/widgets/customs/list.dart";
-import "package:antinote_app/utils/utils.dart";
 import "package:flutter/material.dart";
 import "package:hugeicons_pro/hugeicons.dart";
 import "package:intl/intl.dart";
@@ -168,7 +168,7 @@ class _CommunicationScreenState extends State<CommunicationScreen>
   Stream<double?> load(PronoteSession session) async* {
     final threads = <CommunicationThreadPreview>[];
 
-    final curPage = session.stack.clientSignature?.get("onglet");
+    final curPage = session.stack.clientSignature?.tab;
     final toLoad = filter.allowedTypes.toSet();
 
     if (!loaded) {

@@ -1,31 +1,37 @@
 import "package:antinote/antinote.dart";
-import "package:antinote_app/utils/utils.dart";
+import "package:antinote_app/frontend/utils/utils.dart";
 import "package:flutter/material.dart";
 
 class GradeText extends StatelessWidget {
   final Grade selfGrade;
   final Grade maxGrade;
+  final Grade defaultMaxGrade;
 
   final Color color;
 
   final bool isMain;
   final double size;
 
+  final TextOverflow overflow;
+
   const GradeText({
     super.key,
 
     required this.selfGrade,
     required this.maxGrade,
+    required this.defaultMaxGrade,
 
     required this.color,
 
     this.isMain = false,
     this.size = 22,
+
+    this.overflow = TextOverflow.visible,
   });
 
   @override
   Widget build(BuildContext context) {
-    final showMaxGrade = (maxGrade.value - 20.0).abs() > 0.001;
+    final showMaxGrade = maxGrade.value != defaultMaxGrade.value;
     String selfValue = Formatters.formatNumber(selfGrade.value);
 
     selfValue = switch (selfGrade.type) {
@@ -42,6 +48,7 @@ class GradeText extends StatelessWidget {
 
     return Text.rich(
       textAlign: .end,
+      overflow: overflow,
 
       TextSpan(
         children: [

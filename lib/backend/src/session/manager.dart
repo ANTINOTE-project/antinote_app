@@ -3,7 +3,7 @@ import "dart:async";
 import "package:antinote/antinote.dart";
 import "package:antinote_app/backend/src/session/holder.dart";
 import "package:antinote_app/frontend/routing/routes.dart";
-import "package:antinote_app/utils/utils.dart";
+import "package:antinote_app/frontend/utils/utils.dart";
 import "package:flutter/material.dart";
 import "package:go_router/go_router.dart";
 

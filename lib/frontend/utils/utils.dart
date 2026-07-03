@@ -1,14 +1,15 @@
 import "package:antinote/antinote.dart";
-import "package:antinote_app/utils/context.dart";
+import "package:antinote_app/frontend/utils/src/context.dart";
 import "package:flutter/material.dart";
 
-export "context.dart";
-export "curves.dart";
-export "date.dart";
-export "fake_data.dart";
-export "formatters.dart";
-export "tabs.dart";
-export "week_view.dart";
+export "src/class.dart";
+export "src/context.dart";
+export "src/curves.dart";
+export "src/date.dart";
+export "src/fake_data.dart";
+export "src/formatters.dart";
+export "src/tabs.dart";
+export "src/week_view.dart";
 
 class Utils {
   Utils._();
