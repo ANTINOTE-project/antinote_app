@@ -44,8 +44,9 @@ List<PauseBlock> pauseBlocksForDay(
     if (!parameters.isBusinessHalfDay(
       startTime,
       classBreak.slot % parameters.slotsPerDay,
-    ))
+    )) {
       continue;
+    }
     if (!classes.last.endDate.isAfter(startTime)) continue;
 
     blocks.add(

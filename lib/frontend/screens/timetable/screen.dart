@@ -348,9 +348,9 @@ class _TimetableDisplayState extends State<TimetableDisplay>
 
     // TODO: Simplify to track better with different block types.
     for (final day in days) {
-      for (final clazz in _classes[day]!.value ?? <Block>[]) {
-        relevantSlots.add(clazz.startSlot % _scheduleDisplayData.slotsPerDay);
-        relevantSlots.add(clazz.endSlot % _scheduleDisplayData.slotsPerDay - 1);
+      for (final block in _classes[day]!.value ?? <Block>[]) {
+        relevantSlots.add(block.startSlot % _scheduleDisplayData.slotsPerDay);
+        relevantSlots.add(block.endSlot % _scheduleDisplayData.slotsPerDay - 1);
       }
     }
 

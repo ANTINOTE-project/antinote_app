@@ -88,7 +88,7 @@ List<MealBlock> mealBlocksForDay(
         startTime: startTime,
         startSlot: blockStart,
         endTime: endTime,
-        endSlot: blockEnd,
+        endSlot: blockEnd + 1,
       ),
     );
   }

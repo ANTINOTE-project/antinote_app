@@ -885,6 +885,24 @@ abstract class AppLocalizations {
   /// In fr, this message translates to:
   /// **'Quand cette option est désactivée, des gains en latence et en données transférées peuvent être observés. Cependant, cela fait diverger le fonctionnement de l\'application de celle de PRONOTE.'**
   String get sendNavigationRequestsSubtitle;
+
+  /// No description provided for @noMenuForToday.
+  ///
+  /// In fr, this message translates to:
+  /// **'Pas de menu pour aujourd\'hui !'**
+  String get noMenuForToday;
+
+  /// No description provided for @lunchFor.
+  ///
+  /// In fr, this message translates to:
+  /// **'Déjeuner du {day}'**
+  String lunchFor(Object day);
+
+  /// No description provided for @dinnerFor.
+  ///
+  /// In fr, this message translates to:
+  /// **'Dinner du {day}'**
+  String dinnerFor(Object day);
 }
 
 class _AppLocalizationsDelegate

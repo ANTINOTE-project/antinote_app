@@ -1,6 +1,5 @@
 import "package:antinote/antinote.dart";
 import "package:antinote_app/backend/backend.dart";
-import "package:antinote_app/frontend/utils/src/class.dart";
 import "package:antinote_app/frontend/utils/utils.dart";
 import "package:antinote_app/frontend/widgets/customs/list.dart";
 import "package:collection/collection.dart";
@@ -38,7 +37,7 @@ Future<void> showClassModal(BuildContext context, Class defaultClass) async {
             duration: const Duration(milliseconds: 300),
             switchInCurve: Curves.fastOutSlowIn,
             child: ClassModalContents(
-              key: ValueKey(snapshot.data == null),
+              key: ValueKey(snapshot.connectionState == .done),
               clazz: snapshot.data ?? defaultClass,
             ),
           );

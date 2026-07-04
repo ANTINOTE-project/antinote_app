@@ -183,7 +183,9 @@ class ItemWidgetData {
 
 class ItemWidget extends StatelessWidget {
   final Widget? title;
+  final int? titleMaxLines;
   final Widget? subtitle;
+  final int? subtitleMaxLines;
 
   final Widget? leading;
   final Widget? trailing;
@@ -198,7 +200,9 @@ class ItemWidget extends StatelessWidget {
     super.key,
 
     this.title,
+    this.titleMaxLines = 1,
     this.subtitle,
+    this.subtitleMaxLines = 1,
 
     this.leading,
     this.trailing,
@@ -265,7 +269,7 @@ class ItemWidget extends StatelessWidget {
                       ),
 
                       overflow: .ellipsis,
-                      maxLines: 1,
+                      maxLines: titleMaxLines,
 
                       child: title!,
                     ),
@@ -281,7 +285,7 @@ class ItemWidget extends StatelessWidget {
                       ),
 
                       overflow: .ellipsis,
-                      maxLines: 1,
+                      maxLines: subtitleMaxLines,
 
                       child: subtitle!,
                     ),

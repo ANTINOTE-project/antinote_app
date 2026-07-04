@@ -156,5 +156,21 @@
   "network": "Réseau",
   "reconnectAccount": "Reconnecter le compte",
   "sendNavigationRequests": "Envoyer les requêtes de navigation",
-  "sendNavigationRequestsSubtitle": "Quand cette option est désactivée, des gains en latence et en données transférées peuvent être observés. Cependant, cela fait diverger le fonctionnement de l'application de celle de PRONOTE."
+  "sendNavigationRequestsSubtitle": "Quand cette option est désactivée, des gains en latence et en données transférées peuvent être observés. Cependant, cela fait diverger le fonctionnement de l'application de celle de PRONOTE.",
+
+  "noMenuForToday": "Pas de menu pour aujourd'hui !",
+  "lunchFor": "Déjeuner du {day}",
+  "@lunchFor": {
+    "day": {
+      "isCustomDateFormat": "true",
+      "format": "dd/MM"
+    }
+  },
+  "dinnerFor": "Dinner du {day}",
+  "@dinnerFor": {
+    "day": {
+      "isCustomDateFormat": "true",
+      "format": "dd/MM"
+    }
+  }
 }

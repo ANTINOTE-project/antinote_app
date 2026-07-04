@@ -429,4 +429,17 @@ class AppLocalizationsFr extends AppLocalizations {
   @override
   String get sendNavigationRequestsSubtitle =>
       'Quand cette option est désactivée, des gains en latence et en données transférées peuvent être observés. Cependant, cela fait diverger le fonctionnement de l\'application de celle de PRONOTE.';
+
+  @override
+  String get noMenuForToday => 'Pas de menu pour aujourd\'hui !';
+
+  @override
+  String lunchFor(Object day) {
+    return 'Déjeuner du $day';
+  }
+
+  @override
+  String dinnerFor(Object day) {
+    return 'Dinner du $day';
+  }
 }

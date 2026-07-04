@@ -4,6 +4,7 @@ import "package:antinote_app/frontend/screens/settings/theme.dart";
 import "package:antinote_app/frontend/utils/utils.dart";
 import "package:antinote_app/frontend/widgets/customs/app_bar.dart";
 import "package:antinote_app/frontend/widgets/customs/button.dart";
+import "package:antinote_app/frontend/widgets/text_icon.dart";
 import "package:antinote_app/l10n/app_localizations.dart";
 import "package:flutter/material.dart";
 import "package:go_router/go_router.dart";
@@ -42,7 +43,7 @@ class SettingsScreen extends StatelessWidget {
         padding: const .symmetric(horizontal: 12),
         child: CustomScrollView(
           slivers: [
-            _TextIcon(
+            SliverTextIcon(
               icon: HugeIconsSolid.paintBoard,
               label: context.l10n.theme,
             ),
@@ -51,14 +52,14 @@ class SettingsScreen extends StatelessWidget {
             const SliverPadding(padding: .only(top: 12)),
             const PreviewColor(),
 
-            _TextIcon(
+            SliverTextIcon(
               icon: HugeIconsSolid.securedNetwork,
               label: context.l10n.network,
             ),
 
             const Networking(),
 
-            _TextIcon(
+            SliverTextIcon(
               icon: HugeIconsSolid.userAccount,
               label: context.l10n.accounts,
             ),
@@ -66,38 +67,6 @@ class SettingsScreen extends StatelessWidget {
               child: ButtonWidget(
                 onPressed: () => context.push(Routes.auth.accounts),
                 label: context.l10n.choseAnAccount,
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-}
-
-class _TextIcon extends StatelessWidget {
-  final IconData icon;
-  final String label;
-
-  const _TextIcon({required this.icon, required this.label});
-
-  @override
-  Widget build(BuildContext context) {
-    return SliverPadding(
-      padding: const .only(left: 6, top: 16, bottom: 4),
-      sliver: SliverToBoxAdapter(
-        child: Row(
-          spacing: 8,
-
-          children: [
-            Icon(icon, color: context.c.outline, size: 22),
-
-            Text(
-              label,
-              style: TextStyle(
-                color: context.c.outline,
-                fontWeight: .bold,
-                fontSize: 18,
               ),
             ),
           ],
