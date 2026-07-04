@@ -15,6 +15,7 @@ import "package:hugeicons_pro/hugeicons.dart";
 
 import "events/class/widget.dart";
 
+typedef RelevantSlots = ({int firstSlot, int lastSlot});
 typedef Classes = Map<DateTime, ValueNotifier<DayBlocks?>>;
 
 class TimetableScreen extends StatefulWidget {
@@ -80,6 +81,7 @@ class TimetableDisplay extends StatefulWidget {
 class _TimetableDisplayState extends State<TimetableDisplay>
     with TabMixin<TimetableDisplay> {
   late SpecificInstanceParameters _scheduleDisplayData;
+  late WeekMappedViewConfiguration _currentConfiguration;
   late List<DateRange> _currentGroups;
   final Classes _classes = {};
 
@@ -166,17 +168,7 @@ class _TimetableDisplayState extends State<TimetableDisplay>
     RefreshIndicatorBuilder buildRefreshIndicator,
     bool partial,
   ) {
-    final daysConfiguration = WeekMappedViewConfiguration.defaultConfigs
-        .pickConfig(context);
-
-    final days = DateRange(
-      start: _scheduleDisplayData.firstDate,
-      end: _scheduleDisplayData.lastDate,
-    ).listDays();
-    _currentGroups = daysConfiguration.daysToRangeList(
-      days,
-      _scheduleDisplayData,
-    );
+    ensureCorrectConfiguration();
 
     return buildRefreshIndicator(
       child: PageView.builder(
@@ -186,6 +178,8 @@ class _TimetableDisplayState extends State<TimetableDisplay>
         itemBuilder: (context, index) {
           final dayGroup = _currentGroups[index];
           final days = dayGroup.listDays();
+
+          final slots = findRelevantSlots(days);
 
           return Scaffold(
             appBar: _buildAppBar(dayGroup, context),
@@ -216,7 +210,6 @@ class _TimetableDisplayState extends State<TimetableDisplay>
                       child: Column(
                         mainAxisAlignment: .center,
                         spacing: 6,
-
                         children: [
                           Icon(
                             holiday == null
@@ -225,7 +218,6 @@ class _TimetableDisplayState extends State<TimetableDisplay>
                             color: context.c.outline,
                             size: 44,
                           ),
-
                           Text(
                             holiday?.name ?? context.l10n.noCourseToday,
                             textAlign: .center,
@@ -242,29 +234,22 @@ class _TimetableDisplayState extends State<TimetableDisplay>
                       child: Row(
                         crossAxisAlignment: .stretch,
                         spacing: 8,
+                        children: [
+                          if (slots != null)
+                            Expanded(
+                              flex: days.length * 15,
+                              child: _buildTimeColumn(context, slots, days),
+                            ),
 
-                        children: days.expand((day) {
-                          final hasClasses =
-                              _classes[day]!.value?.isNotEmpty ?? false;
-
-                          return [
-                            if (hasClasses)
-                              Expanded(
-                                flex: days.length * 15,
-                                child: _buildTimeColumn(context, days),
-                              ),
-
+                          for (final day in days)
                             Expanded(
                               flex: 85,
-
                               child: ValueListenableBuilder(
                                 valueListenable: _classes[day]!,
-
                                 builder: (context, dayClasses, child) {
                                   if (dayClasses == null) {
                                     return const LoadingWidget();
                                   }
-
                                   if (dayClasses.isEmpty) {
                                     return const SizedBox.shrink();
                                   }
@@ -272,13 +257,13 @@ class _TimetableDisplayState extends State<TimetableDisplay>
                                   return _buildClassesColumn(
                                     context,
                                     day,
+                                    slots!, // TODO: Find if this is a safe cast.
                                     dayClasses,
                                   );
                                 },
                               ),
                             ),
-                          ];
-                        }).toList(),
+                        ],
                       ),
                     );
 
@@ -343,10 +328,9 @@ class _TimetableDisplayState extends State<TimetableDisplay>
     );
   }
 
-  Widget _buildTimeColumn(BuildContext context, List<DateTime> days) {
+  RelevantSlots? findRelevantSlots(List<DateTime> days) {
     final relevantSlots = <int>{};
 
-    // TODO: Simplify to track better with different block types.
     for (final day in days) {
       for (final block in _classes[day]!.value ?? <Block>[]) {
         relevantSlots.add(block.startSlot % _scheduleDisplayData.slotsPerDay);
@@ -354,12 +338,19 @@ class _TimetableDisplayState extends State<TimetableDisplay>
       }
     }
 
-    final relevantFirst = relevantSlots.firstOrNull;
-    final relevantLast = relevantSlots.lastOrNull;
+    if (relevantSlots.isEmpty) return null;
 
-    if (relevantLast == null || relevantFirst == null) {
-      return const SizedBox.shrink();
-    }
+    final sortedSlots = relevantSlots.sorted((a, b) => a.compareTo(b));
+    return (firstSlot: sortedSlots.first, lastSlot: sortedSlots.last);
+  }
+
+  Widget _buildTimeColumn(
+    BuildContext context,
+    RelevantSlots slots,
+    List<DateTime> days,
+  ) {
+    final relevantFirst = slots.firstSlot;
+    final relevantLast = slots.lastSlot;
 
     final displays = <Widget>[];
     int? lastAppliedSlot;
@@ -408,25 +399,19 @@ class _TimetableDisplayState extends State<TimetableDisplay>
       displays.add(
         Expanded(
           flex: value,
-
           child: Stack(
             fit: .expand,
-
             children: [
               if (curSlot.active)
                 Align(
                   alignment: .topCenter,
-
                   child: Column(
                     mainAxisSize: .min,
                     spacing: 2,
-
                     children: [
                       const Divider(height: 0),
-
                       Text(
                         curSlot.label,
-
                         style: TextStyle(
                           color: context.c.outline,
                           fontWeight: .w800,
@@ -439,21 +424,17 @@ class _TimetableDisplayState extends State<TimetableDisplay>
               if (curEndSlot.active)
                 Align(
                   alignment: .bottomCenter,
-
                   child: Column(
                     mainAxisSize: .min,
                     spacing: 2,
-
                     children: [
                       Text(
                         curEndSlot.label,
-
                         style: TextStyle(
                           color: context.c.outline,
                           fontWeight: .w800,
                         ),
                       ),
-
                       const Divider(height: 0),
                     ],
                   ),
@@ -472,14 +453,17 @@ class _TimetableDisplayState extends State<TimetableDisplay>
   Widget _buildClassesColumn(
     BuildContext context,
     DateTime day,
+    RelevantSlots slots,
     DayBlocks blocks,
   ) {
     final displays = <Widget>[];
-    DateTime? curTime;
+    DateTime curTime = _scheduleDisplayData.timeForSlot(
+      _scheduleDisplayData.starts[slots.firstSlot],
+      day,
+    );
 
     for (final block in blocks) {
-      if (curTime != null && !curTime.isAtSameMomentAs(block.startTime)) {
-        talker.info("${block.startTime.difference(curTime).inMinutes}");
+      if (!curTime.isAtSameMomentAs(block.startTime)) {
         displays.add(
           Expanded(
             flex: block.startTime.difference(curTime).inMinutes,
@@ -492,9 +476,9 @@ class _TimetableDisplayState extends State<TimetableDisplay>
         Expanded(
           flex: block.endTime.difference(block.startTime).inMinutes,
           child: switch (block) {
-            ClassBlock classBlock => ClassBlockWidget(
+            ClassBlock() => ClassBlockWidget(
               displayParameters: _scheduleDisplayData,
-              block: classBlock,
+              block: block,
               day: day,
             ),
             PauseBlock() => PauseBlockWidget(block: block),
@@ -506,39 +490,108 @@ class _TimetableDisplayState extends State<TimetableDisplay>
       curTime = block.endTime;
     }
 
+    final endTime = _scheduleDisplayData.timeForSlot(
+      _scheduleDisplayData.endings[slots.lastSlot],
+      day,
+    );
+
+    if (!endTime.isAtSameMomentAs(curTime)) {
+      displays.add(
+        Expanded(
+          flex: endTime.difference(curTime).inMinutes,
+          child: const SizedBox.expand(),
+        ),
+      );
+    }
+
     return Column(children: displays);
   }
 
   @override
   List<String> get loadChannels => _animating ? [] : ["communication"];
 
-  @override
-  Stream<double?> load(PronoteSession session) async* {
-    _scheduleDisplayData = session.instance;
-
+  int ensureCorrectConfiguration() {
     final days = DateRange(
       start: _scheduleDisplayData.firstDate,
       end: _scheduleDisplayData.lastDate,
     ).listDays();
 
-    final daysConfiguration = WeekMappedViewConfiguration.defaultConfigs
-        .pickConfig(context);
-    _currentGroups = daysConfiguration.daysToRangeList(
+    final daysConfiguration = widget.configurations.pickConfig(context);
+    final newGroups = daysConfiguration.daysToRangeList(
       days,
       _scheduleDisplayData,
     );
 
-    final int currentGroupIndex;
+    int currentGroupIndex;
 
     if (_pageController == null ||
         !_pageController!.hasClients ||
         _pageController?.page == null) {
+      _currentConfiguration = daysConfiguration;
+      _currentGroups = newGroups;
+
       currentGroupIndex = _currentGroups.indexWhere((element) {
         return element.contains(_scheduleDisplayData.nextBusinessDay);
       });
+
+      if (currentGroupIndex == -1) {
+        if (DateTime.now()
+            .copyWith(isUtc: true)
+            .isBefore(_scheduleDisplayData.firstDate)) {
+          currentGroupIndex = 0;
+        } else {
+          currentGroupIndex = _currentGroups.length - 1;
+        }
+      }
     } else {
       currentGroupIndex = _pageController!.page!.round();
     }
+
+    if (daysConfiguration != _currentConfiguration) {
+      final oldFocusedDays = _currentGroups[currentGroupIndex].listDays();
+      final votes = <int, int>{};
+      int? bestIndex;
+      int bestVoteCount = 1;
+      for (final oldDay in oldFocusedDays) {
+        // Binary search is kinda redundant.
+        // TODO Change it to a 2-phase binary search then a nudge for every other day.
+        var min = 0;
+        var max = newGroups.length;
+        while (min < max) {
+          var mid = min + ((max - min) >> 1);
+          var element = newGroups[mid];
+          if (element.contains(oldDay)) {
+            if (votes.isEmpty) {
+              bestIndex = mid;
+            }
+
+            votes[mid] = (votes[mid] ?? 0) + 1;
+
+            break;
+          } else if (oldDay.isAfter(element.end)) {
+            min = mid + 1;
+          } else {
+            max = mid;
+          }
+        }
+      }
+
+      for (final MapEntry(key: index, value: voteCount) in votes.entries) {
+        if (bestIndex == null || bestVoteCount < voteCount) {
+          bestIndex = index;
+          bestVoteCount = voteCount;
+        }
+      }
+
+      currentGroupIndex = bestIndex ?? newGroups.length - 1;
+
+      if (_pageController != null && _pageController!.hasClients) {
+        _pageController!.jumpToPage(currentGroupIndex);
+      }
+    }
+
+    _currentConfiguration = daysConfiguration;
+    _currentGroups = newGroups;
 
     if (_pageController == null) {
       for (final day in days) {
@@ -548,6 +601,15 @@ class _TimetableDisplayState extends State<TimetableDisplay>
       _pageController = PageController(initialPage: currentGroupIndex);
       _pageController?.addListener(_onPageDrag);
     }
+
+    return currentGroupIndex;
+  }
+
+  @override
+  Stream<double?> load(PronoteSession session) async* {
+    _scheduleDisplayData = session.instance;
+
+    final currentGroupIndex = ensureCorrectConfiguration();
 
     await _updateClasses(_currentGroups[currentGroupIndex], session: session);
   }

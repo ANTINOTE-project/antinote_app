@@ -29,6 +29,7 @@ Future<void> showClassModal(BuildContext context, Class defaultClass) async {
 
   await showModalBottomSheet(
     context: context,
+    showDragHandle: true,
     builder: (context) {
       return FutureBuilder(
         future: clazzCallback,
@@ -36,9 +37,11 @@ Future<void> showClassModal(BuildContext context, Class defaultClass) async {
           return AnimatedSwitcher(
             duration: const Duration(milliseconds: 300),
             switchInCurve: Curves.fastOutSlowIn,
-            child: ClassModalContents(
-              key: ValueKey(snapshot.connectionState == .done),
-              clazz: snapshot.data ?? defaultClass,
+            child: SingleChildScrollView(
+              child: ClassModalContents(
+                key: ValueKey(snapshot.connectionState == .done),
+                clazz: snapshot.data ?? defaultClass,
+              ),
             ),
           );
         },
