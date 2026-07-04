@@ -48,7 +48,7 @@ class SettingsScreen extends StatelessWidget {
               label: context.l10n.theme,
             ),
 
-            const ColorPicker(),
+            const AppearancePicker(),
             const SliverPadding(padding: .only(top: 12)),
             const PreviewColor(),
 

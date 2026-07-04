@@ -5,14 +5,14 @@ import "package:antinote_app/frontend/widgets/pressable.dart";
 import "package:flutter/material.dart";
 import "package:hugeicons_pro/hugeicons.dart";
 
-class ColorPicker extends StatefulWidget {
-  const ColorPicker();
+class AppearancePicker extends StatefulWidget {
+  const AppearancePicker({super.key});
 
   @override
-  State<ColorPicker> createState() => _ColorPickerState();
+  State<AppearancePicker> createState() => _AppearancePickerState();
 }
 
-class _ColorPickerState extends State<ColorPicker> {
+class _AppearancePickerState extends State<AppearancePicker> {
   late Color _activeColor;
 
   @override
@@ -146,13 +146,26 @@ class _ColorPickerState extends State<ColorPicker> {
             },
           ),
         ),
+        ItemWidgetData(
+          title: Text(context.l10n.displayProfilePicture),
+          trailing: Switch(
+            value: context.s.theme.showProfilePicture,
+            onChanged: (value) async {
+              await context.s.theme.setShowProfilePicture(value);
+
+              if (context.mounted) {
+                setState(() {});
+              }
+            },
+          ),
+        ),
       ],
     );
   }
 }
 
 class PreviewColor extends StatelessWidget {
-  const PreviewColor();
+  const PreviewColor({super.key});
 
   @override
   Widget build(BuildContext context) {

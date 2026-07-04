@@ -418,6 +418,9 @@ class AppLocalizationsFr extends AppLocalizations {
       'Le thème utilisé dans l\'application changera selon le fond d\'écran.';
 
   @override
+  String get displayProfilePicture => 'Afficher la photo de profile';
+
+  @override
   String get network => 'Réseau';
 
   @override

@@ -862,6 +862,12 @@ abstract class AppLocalizations {
   /// **'Le thème utilisé dans l\'application changera selon le fond d\'écran.'**
   String get deviceThemeDescription;
 
+  /// No description provided for @displayProfilePicture.
+  ///
+  /// In fr, this message translates to:
+  /// **'Afficher la photo de profile'**
+  String get displayProfilePicture;
+
   /// No description provided for @network.
   ///
   /// In fr, this message translates to:

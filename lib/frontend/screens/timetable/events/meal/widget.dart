@@ -15,19 +15,18 @@ class MealBlockWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final decoration = BoxDecoration(
-      borderRadius: .circular(radius),
-      border: Border.all(color: context.c.outline),
-    );
-
     return Pressable(
+      borderRadius: .circular(radius),
       onPressed: () async {
         await showMealModal(context, block.startTime.toDay());
       },
       child: Ink(
-        decoration: decoration,
+        decoration: BoxDecoration(borderRadius: .circular(radius)),
         child: Container(
-          decoration: decoration,
+          decoration: BoxDecoration(
+            borderRadius: .circular(radius),
+            border: Border.all(color: context.c.outline),
+          ),
           width: double.infinity,
           height: double.infinity,
           child: const Icon(HugeIconsSolid.spoonAndKnife),

@@ -171,7 +171,7 @@ class _HomeDisplayState extends State<HomeDisplay> with TabMixin<HomeDisplay> {
           decoration: const BoxDecoration(shape: .circle),
           clipBehavior: .antiAlias,
 
-          child: _profilePicture != null
+          child: _profilePicture != null && context.s.theme.showProfilePicture
               ? Image.memory(_profilePicture!, fit: .cover)
               : const CircleAvatar(),
         ),

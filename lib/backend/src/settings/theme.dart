@@ -13,7 +13,11 @@ class ThemeSettings extends SettingsCategory {
   Map<int, UpgradeTask> get upgradeTasks => {};
 
   @override
-  List<dynamic> get registeredFields => [seedColor, isDynamic];
+  List<dynamic> get registeredFields => [
+    seedColor,
+    isDynamic,
+    showProfilePicture,
+  ];
 
   Color get seedColor =>
       Color(get("seed_color") ?? AppColor.coral.color.toARGB32());
@@ -21,6 +25,10 @@ class ThemeSettings extends SettingsCategory {
 
   bool get isDynamic => get("is_dynamic") ?? false;
   Future<void> setIsDynamic(bool value) => set("is_dynamic", value);
+
+  bool get showProfilePicture => get("show_profile_picture") ?? true;
+  Future<void> setShowProfilePicture(bool value) =>
+      set("show_profile_picture", value);
 
   ColorScheme _scheme(Brightness brightness, double contrastLevel) {
     return ColorScheme.fromSeed(
