@@ -1,6 +1,7 @@
 import "package:antinote/antinote.dart";
 
 part "class/block.dart";
+part "meal/block.dart";
 part "pause/block.dart";
 
 typedef DayBlocks = List<Block>;
@@ -21,5 +22,6 @@ List<Block> blocksForDay(
   return [
     ...classBlocksForDay(classes),
     ...pauseBlocksForDay(classes, parameters),
+    ...mealBlocksForDay(classes, parameters),
   ]..sort((a, b) => a.startTime.compareTo(b.startTime));
 }

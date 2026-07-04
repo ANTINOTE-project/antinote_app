@@ -4,6 +4,7 @@ import "package:antinote/antinote.dart";
 import "package:antinote_app/backend/backend.dart";
 import "package:antinote_app/frontend/screens/shell/tab.dart";
 import "package:antinote_app/frontend/screens/timetable/events/block.dart";
+import "package:antinote_app/frontend/screens/timetable/events/meal/widget.dart";
 import "package:antinote_app/frontend/screens/timetable/events/pause/widget.dart";
 import "package:antinote_app/frontend/utils/utils.dart";
 import "package:antinote_app/frontend/widgets/customs/loading.dart";
@@ -345,8 +346,9 @@ class _TimetableDisplayState extends State<TimetableDisplay>
   Widget _buildTimeColumn(BuildContext context, List<DateTime> days) {
     final relevantSlots = <int>{};
 
+    // TODO: Simplify to track better with different block types.
     for (final day in days) {
-      for (final clazz in _classes[day]!.value ?? <ClassBlock>[]) {
+      for (final clazz in _classes[day]!.value ?? <Block>[]) {
         relevantSlots.add(clazz.startSlot % _scheduleDisplayData.slotsPerDay);
         relevantSlots.add(clazz.endSlot % _scheduleDisplayData.slotsPerDay - 1);
       }
@@ -477,6 +479,7 @@ class _TimetableDisplayState extends State<TimetableDisplay>
 
     for (final block in blocks) {
       if (curTime != null && !curTime.isAtSameMomentAs(block.startTime)) {
+        talker.info("${block.startTime.difference(curTime).inMinutes}");
         displays.add(
           Expanded(
             flex: block.startTime.difference(curTime).inMinutes,
@@ -495,6 +498,7 @@ class _TimetableDisplayState extends State<TimetableDisplay>
               day: day,
             ),
             PauseBlock() => PauseBlockWidget(block: block),
+            MealBlock() => MealBlockWidget(block: block),
           },
         ),
       );

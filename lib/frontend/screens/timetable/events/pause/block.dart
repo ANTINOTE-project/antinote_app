@@ -33,23 +33,27 @@ List<PauseBlock> pauseBlocksForDay(
 
   for (final classBreak in parameters.pauses) {
     final startTime = parameters.timeForSlot(
-      parameters.endings[classBreak.slot - 1],
+      parameters.endings[(classBreak.slot - 1) % parameters.slotsPerDay],
       date,
     );
     final endTime = parameters.timeForSlot(
-      parameters.starts[classBreak.slot],
+      parameters.starts[classBreak.slot % parameters.slotsPerDay],
       date,
     );
 
-    if (!parameters.isBusinessHalfDay(startTime, classBreak.slot)) continue;
+    if (!parameters.isBusinessHalfDay(
+      startTime,
+      classBreak.slot % parameters.slotsPerDay,
+    ))
+      continue;
     if (!classes.last.endDate.isAfter(startTime)) continue;
 
     blocks.add(
       PauseBlock(
         title: classBreak.label,
-        startSlot: classBreak.slot,
+        startSlot: classBreak.slot % parameters.slotsPerDay,
         startTime: startTime,
-        endSlot: classBreak.slot + 1,
+        endSlot: (classBreak.slot + 1) % parameters.slotsPerDay,
         endTime: endTime,
       ),
     );
