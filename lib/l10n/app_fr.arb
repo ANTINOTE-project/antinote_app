@@ -61,6 +61,24 @@
   "absenceNotJustified": "Absence non justifiée",
   "absenceJustified": "Absence justifiée",
   "absenceDuration": "{date} de {startTime} à {endTime}",
+  "@absenceDuration": {
+    "placeholders": {
+      "date": {
+        "type": "DateTime",
+        "format": "MMMMEEEEd"
+      },
+      "startTime": {
+        "type": "DateTime",
+        "isCustomDateFormat": true,
+        "format": "HH'h'mm"
+      },
+      "endTime": {
+        "type": "DateTime",
+        "isCustomDateFormat": true,
+        "format": "HH'h'mm"
+      }
+    }
+  },
 
   "latestGrades": "Dernières notes",
   "services": "Matières",
@@ -123,13 +141,17 @@
   "remoteYear": "Année",
   "remoteYearSubtitle": "{start} ➔ {end}",
   "@remoteYearSubtitle": {
-    "start": {
-      "isCustomDateFormat": "true",
-      "format": "dd/MM/yy"
-    },
-    "end": {
-      "isCustomDateFormat": "true",
-      "format": "dd/MM/yy"
+    "placeholders": {
+      "start": {
+        "type": "DateTime",
+        "isCustomDateFormat": true,
+        "format": "dd/MM/yy"
+      },
+      "end": {
+        "type": "DateTime",
+        "isCustomDateFormat": true,
+        "format": "dd/MM/yy"
+      }
     }
   },
 
@@ -142,6 +164,20 @@
   "homeworkDescription": "Description",
   "homeworkAttachments": "Pièces jointes",
   "givenTheForThe": "Donné le {given} pour le {deadline}",
+  "@givenTheForThe": {
+    "placeholders": {
+      "given": {
+        "type": "DateTime",
+        "isCustomDateFormat": true,
+        "format": "dd/MM"
+      },
+      "deadline": {
+        "type": "DateTime",
+        "isCustomDateFormat": true,
+        "format": "dd/MM"
+      }
+    }
+  },
   "homeworkDifficulty": "Difficulté",
   "homeworkState": "État",
   "homeworkRenderPronote": "À rendre en ligne",
@@ -162,16 +198,22 @@
   "noMenuForToday": "Pas de menu pour aujourd'hui !",
   "lunchFor": "Déjeuner du {day}",
   "@lunchFor": {
-    "day": {
-      "isCustomDateFormat": "true",
-      "format": "dd/MM"
+    "placeholders": {
+      "day": {
+        "type": "DateTime",
+        "isCustomDateFormat": true,
+        "format": "dd/MM"
+      }
     }
   },
   "dinnerFor": "Dinner du {day}",
   "@dinnerFor": {
-    "day": {
-      "isCustomDateFormat": "true",
-      "format": "dd/MM"
+    "placeholders": {
+      "day": {
+        "type": "DateTime",
+        "isCustomDateFormat": true,
+        "format": "dd/MM"
+      }
     }
   }
 }

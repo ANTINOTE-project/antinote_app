@@ -416,7 +416,7 @@ abstract class AppLocalizations {
   ///
   /// In fr, this message translates to:
   /// **'{date} de {startTime} à {endTime}'**
-  String absenceDuration(Object date, Object endTime, Object startTime);
+  String absenceDuration(DateTime date, DateTime startTime, DateTime endTime);
 
   /// No description provided for @latestGrades.
   ///
@@ -752,7 +752,7 @@ abstract class AppLocalizations {
   ///
   /// In fr, this message translates to:
   /// **'{start} ➔ {end}'**
-  String remoteYearSubtitle(Object end, Object start);
+  String remoteYearSubtitle(DateTime start, DateTime end);
 
   /// No description provided for @remotePeriods.
   ///
@@ -800,7 +800,7 @@ abstract class AppLocalizations {
   ///
   /// In fr, this message translates to:
   /// **'Donné le {given} pour le {deadline}'**
-  String givenTheForThe(Object deadline, Object given);
+  String givenTheForThe(DateTime given, DateTime deadline);
 
   /// No description provided for @homeworkDifficulty.
   ///
@@ -902,13 +902,13 @@ abstract class AppLocalizations {
   ///
   /// In fr, this message translates to:
   /// **'Déjeuner du {day}'**
-  String lunchFor(Object day);
+  String lunchFor(DateTime day);
 
   /// No description provided for @dinnerFor.
   ///
   /// In fr, this message translates to:
   /// **'Dinner du {day}'**
-  String dinnerFor(Object day);
+  String dinnerFor(DateTime day);
 }
 
 class _AppLocalizationsDelegate

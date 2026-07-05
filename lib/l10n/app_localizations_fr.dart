@@ -173,8 +173,23 @@ class AppLocalizationsFr extends AppLocalizations {
   String get absenceJustified => 'Absence justifiée';
 
   @override
-  String absenceDuration(Object date, Object endTime, Object startTime) {
-    return '$date de $startTime à $endTime';
+  String absenceDuration(DateTime date, DateTime startTime, DateTime endTime) {
+    final intl.DateFormat dateDateFormat = intl.DateFormat.MMMMEEEEd(
+      localeName,
+    );
+    final String dateString = dateDateFormat.format(date);
+    final intl.DateFormat startTimeDateFormat = intl.DateFormat(
+      'HH\'h\'mm',
+      localeName,
+    );
+    final String startTimeString = startTimeDateFormat.format(startTime);
+    final intl.DateFormat endTimeDateFormat = intl.DateFormat(
+      'HH\'h\'mm',
+      localeName,
+    );
+    final String endTimeString = endTimeDateFormat.format(endTime);
+
+    return '$dateString de $startTimeString à $endTimeString';
   }
 
   @override
@@ -353,8 +368,19 @@ class AppLocalizationsFr extends AppLocalizations {
   String get remoteYear => 'Année';
 
   @override
-  String remoteYearSubtitle(Object end, Object start) {
-    return '$start ➔ $end';
+  String remoteYearSubtitle(DateTime start, DateTime end) {
+    final intl.DateFormat startDateFormat = intl.DateFormat(
+      'dd/MM/yy',
+      localeName,
+    );
+    final String startString = startDateFormat.format(start);
+    final intl.DateFormat endDateFormat = intl.DateFormat(
+      'dd/MM/yy',
+      localeName,
+    );
+    final String endString = endDateFormat.format(end);
+
+    return '$startString ➔ $endString';
   }
 
   @override
@@ -381,8 +407,19 @@ class AppLocalizationsFr extends AppLocalizations {
   String get homeworkAttachments => 'Pièces jointes';
 
   @override
-  String givenTheForThe(Object deadline, Object given) {
-    return 'Donné le $given pour le $deadline';
+  String givenTheForThe(DateTime given, DateTime deadline) {
+    final intl.DateFormat givenDateFormat = intl.DateFormat(
+      'dd/MM',
+      localeName,
+    );
+    final String givenString = givenDateFormat.format(given);
+    final intl.DateFormat deadlineDateFormat = intl.DateFormat(
+      'dd/MM',
+      localeName,
+    );
+    final String deadlineString = deadlineDateFormat.format(deadline);
+
+    return 'Donné le $givenString pour le $deadlineString';
   }
 
   @override
@@ -437,12 +474,18 @@ class AppLocalizationsFr extends AppLocalizations {
   String get noMenuForToday => 'Pas de menu pour aujourd\'hui !';
 
   @override
-  String lunchFor(Object day) {
-    return 'Déjeuner du $day';
+  String lunchFor(DateTime day) {
+    final intl.DateFormat dayDateFormat = intl.DateFormat('dd/MM', localeName);
+    final String dayString = dayDateFormat.format(day);
+
+    return 'Déjeuner du $dayString';
   }
 
   @override
-  String dinnerFor(Object day) {
-    return 'Dinner du $day';
+  String dinnerFor(DateTime day) {
+    final intl.DateFormat dayDateFormat = intl.DateFormat('dd/MM', localeName);
+    final String dayString = dayDateFormat.format(day);
+
+    return 'Dinner du $dayString';
   }
 }

@@ -21,7 +21,9 @@ class LoginUrlScreen extends StatefulWidget {
 }
 
 class _LoginUrlScreenState extends State<LoginUrlScreen> {
-  final _controller = TextEditingController();
+  final _controller = TextEditingController(
+    text: kDebugMode ? "https://demo.index-education.net/pronote" : null,
+  );
   Timer? _debounce;
 
   Completer<SpecificInstanceParameters?>? lastApplicableParameters;
@@ -163,20 +165,23 @@ class _LoginUrlScreenState extends State<LoginUrlScreen> {
                             ),
                           ),
                           (
-                            title: context.l10n.remoteYear,
-                            subtitle: context.l10n.remoteYearSubtitle(
-                              instance.firstDate,
-                              instance.lastDate,
-                            ),
+                            title: context.l10n.remotePeriods,
+                            subtitle: instance.periods
+                                .map(
+                                  (e) =>
+                                      "- ${e.name} (${e.startDate} → ${e.endDate})",
+                                )
+                                .join("\n"),
                           ),
-                          (title: context.l10n.remotePeriods, subtitle: ""),
                         ],
 
                         itemBuilder: (context, item, borderRadius) {
                           return ItemWidget(
                             borderRadius: borderRadius,
 
+                            titleMaxLines: null,
                             title: Text(item.title),
+                            subtitleMaxLines: null,
                             subtitle: Text(item.subtitle),
                           );
                         },

@@ -1,14 +1,13 @@
 import "package:antinote/antinote.dart";
 import "package:antinote_app/backend/src/session/manager.dart";
+import "package:antinote_app/frontend/utils/utils.dart";
 import "package:antinote_app/frontend/widgets/customs/app_bar.dart";
 import "package:antinote_app/frontend/widgets/customs/attachment.dart";
 import "package:antinote_app/frontend/widgets/customs/icon.dart";
 import "package:antinote_app/frontend/widgets/customs/list.dart";
 import "package:antinote_app/frontend/widgets/remote_html.dart";
-import "package:antinote_app/frontend/utils/utils.dart";
 import "package:flutter/material.dart";
 import "package:hugeicons_pro/hugeicons.dart";
-import "package:intl/intl.dart";
 
 class HomeworkDetailScreen extends StatefulWidget {
   final void Function(bool value) onHomeworkChange;
@@ -39,11 +38,6 @@ class _HomeworkDetailScreenState extends State<HomeworkDetailScreen> {
       context,
       widget.homework.backgroundColor,
     );
-
-    final deadlineDate = DateFormat(
-      "dd/MM",
-    ).format(widget.homework.deadlineDate);
-    final givenDate = DateFormat("dd/MM").format(widget.homework.givenDate);
 
     final renderLabel = switch (widget.homework.assignmentToRenderType) {
       .pronoteRender => context.l10n.homeworkRenderPronote,
@@ -91,7 +85,10 @@ class _HomeworkDetailScreenState extends State<HomeworkDetailScreen> {
                   ),
 
                   Text(
-                    context.l10n.givenTheForThe(deadlineDate, givenDate),
+                    context.l10n.givenTheForThe(
+                      widget.homework.givenDate,
+                      widget.homework.deadlineDate,
+                    ),
 
                     textAlign: .center,
 

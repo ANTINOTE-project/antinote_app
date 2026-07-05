@@ -8,7 +8,6 @@ import "package:antinote_app/frontend/widgets/pressable.dart";
 import "package:antinote_app/frontend/widgets/remote_html.dart";
 import "package:flutter/material.dart";
 import "package:hugeicons_pro/hugeicons.dart";
-import "package:intl/intl.dart";
 
 class HomeWidget extends StatelessWidget {
   final String label;
@@ -108,17 +107,6 @@ class AttendanceWidget extends StatelessWidget {
 
   const AttendanceWidget({super.key, required this.data});
 
-  static final _dateFormat = DateFormat(DateFormat.MONTH_WEEKDAY_DAY);
-  static final _timeFormat = DateFormat("HH'h'mm");
-
-  String _formatDate(DateTime? date) {
-    return date != null ? _dateFormat.format(date) : "—";
-  }
-
-  String _formatTime(DateTime? date) {
-    return date != null ? _timeFormat.format(date) : "—";
-  }
-
   @override
   Widget build(BuildContext context) {
     return HomeWidget(
@@ -142,10 +130,6 @@ class AttendanceWidget extends StatelessWidget {
               ? absence.reasons.map((e) => e.name).join(", ")
               : context.l10n.absenceNotJustified;
 
-          final date = _formatDate(absence.start);
-          final startTime = _formatTime(absence.start);
-          final endTime = _formatTime(absence.end);
-
           return ItemWidget(
             backgroundColor: context.c.surfaceContainerHigh,
             borderRadius: borderRadius,
@@ -156,9 +140,15 @@ class AttendanceWidget extends StatelessWidget {
             ),
 
             title: Text(title),
-            subtitle: Text(
-              context.l10n.absenceDuration(date, endTime, startTime),
-            ),
+            subtitle: absence.start == null || absence.end == null
+                ? null
+                : Text(
+                    context.l10n.absenceDuration(
+                      absence.start!,
+                      absence.start!,
+                      absence.end!,
+                    ),
+                  ),
           );
         },
       ),
