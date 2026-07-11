@@ -52,7 +52,7 @@ class _LoginUrlScreenState extends State<LoginUrlScreen> {
       }
 
       try {
-        final workspacesSession = await PronoteSession.init(
+        final workspacesSession = await RemoteSession.init(
           instanceUrl!,
           workspace: Workspace.common,
         );
@@ -62,7 +62,7 @@ class _LoginUrlScreenState extends State<LoginUrlScreen> {
 
         for (final workspace in workspacesSession.broadInstance.workspaces) {
           try {
-            final session = await PronoteSession.init(
+            final session = await RemoteSession.init(
               instanceUrl!,
               workspace: workspace,
             );

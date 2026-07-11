@@ -185,6 +185,7 @@
   "homeworkRenderPaper": "À rendre en main propre",
   "homeworkRenderKiosque": "À rendre au kiosque",
   "homeworkRenderPronoteAudio": "Enregistrement audio à rendre en ligne",
+  "noHomeworkForWeek": "Pas de travaux à faire pour cette semaine !",
 
   "appSettings": "Paramètres de l'application",
   "deviceTheme": "Utiliser le thème de l'appareil",

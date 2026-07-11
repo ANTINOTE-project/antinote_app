@@ -6,6 +6,7 @@ plugins {
 dependencies {
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.11.0")
     implementation("com.google.protobuf:protobuf-kotlin:4.35.0")
+    implementation("androidx.work:work-runtime-ktx:2.11.2")
 }
 
 android {

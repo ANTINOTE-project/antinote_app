@@ -116,7 +116,7 @@ class _CommunicationScreenState extends State<CommunicationScreen>
   }
 
   Future<List<CommunicationThreadPreview>> _loadThreads(
-    PronoteSession session,
+    RemoteSession session,
     CommunicationType type,
   ) async {
     await session.ensurePage(type.pageId);
@@ -165,7 +165,7 @@ class _CommunicationScreenState extends State<CommunicationScreen>
   }
 
   @override
-  Stream<double?> load(PronoteSession session) async* {
+  Stream<double?> load(RemoteSession session) async* {
     final threads = <CommunicationThreadPreview>[];
 
     final curPage = session.stack.clientSignature?.tab;

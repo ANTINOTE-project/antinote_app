@@ -45,8 +45,8 @@ class _HomeworksScreenState extends State<HomeworksScreen>
     }
   }
 
-  Future<void> _updateHomeworks(int week, {PronoteSession? session}) async {
-    Future<void> update(PronoteSession session) async {
+  Future<void> _updateHomeworks(int week, {RemoteSession? session}) async {
+    Future<void> update(RemoteSession session) async {
       await session.ensurePage(88);
 
       final weekStart = session.instance.getDateForWeekNumber(week);
@@ -137,11 +137,54 @@ class _HomeworksScreenState extends State<HomeworksScreen>
             ),
           ).listDays();
 
+          final bool loaded = days.every(
+            (element) => _homeworks[element]!.value != null,
+          );
+
           final displayableDays = days
               .where(
                 (element) => _homeworks[element]!.value?.isNotEmpty ?? true,
               )
               .toList(growable: false);
+
+          final Widget child;
+
+          if (!loaded) {
+            child = Center(key: ValueKey(false), child: LoadingWidget());
+          } else if (displayableDays.isEmpty) {
+            child = Center(
+              key: ValueKey(true),
+              child: Text(context.l10n.noHomeworkForWeek),
+            );
+          } else {
+            child = CustomScrollView(
+              slivers: [
+                SliverPadding(
+                  padding: const .symmetric(horizontal: 4),
+                  sliver: SliverList.builder(
+                    itemBuilder: (context, index) {
+                      final day = displayableDays[index];
+                      final value = _homeworks[day]!.value;
+
+                      if (value == null) {
+                        return const SizedBox.shrink();
+                      }
+
+                      return _HomeworkList(
+                        day: day,
+                        homeworks: value,
+                        onReturn: () {
+                          reload(fromRefreshIndicator: true);
+                        },
+                      );
+                    },
+                    itemCount: displayableDays.length,
+                  ),
+                ),
+                const BottomPadding(padding: 20),
+              ],
+            );
+          }
 
           return Scaffold(
             appBar: AppBar(
@@ -155,37 +198,10 @@ class _HomeworksScreenState extends State<HomeworksScreen>
             body: RefreshIndicator(
               onRefresh: () => reload(fromRefreshIndicator: true),
 
-              child: CustomScrollView(
-                slivers: [
-                  SliverPadding(
-                    padding: const .symmetric(horizontal: 4),
-
-                    sliver: SliverAnimatedList(
-                      initialItemCount: displayableDays.length,
-                      key: _weeks[index],
-
-                      itemBuilder: (context, index, animation) {
-                        final day = displayableDays[index];
-
-                        return ValueListenableBuilder(
-                          valueListenable: _homeworks[day]!,
-
-                          builder: (context, value, _) {
-                            return _HomeworkList(
-                              day: day,
-                              homeworks: value,
-                              onReturn: () {
-                                reload(fromRefreshIndicator: true);
-                              },
-                            );
-                          },
-                        );
-                      },
-                    ),
-                  ),
-
-                  const BottomPadding(padding: 20),
-                ],
+              child: AnimatedSwitcher(
+                switchInCurve: Curves.fastOutSlowIn,
+                duration: const Duration(milliseconds: 300),
+                child: child,
               ),
             ),
           );
@@ -195,7 +211,7 @@ class _HomeworksScreenState extends State<HomeworksScreen>
   }
 
   @override
-  Stream<double?> load(PronoteSession session) async* {
+  Stream<double?> load(RemoteSession session) async* {
     _data = session.instance;
 
     final firstWeekNumber = session.instance.firstWeekNumber;
@@ -221,7 +237,7 @@ class _HomeworksScreenState extends State<HomeworksScreen>
         _pageController?.page == null) {
       final curWeekNumber = session.instance.getWeekNumberForDate(.now());
 
-      currentWeekIndex = curWeekNumber - firstWeekNumber;
+      currentWeekIndex = min(curWeekNumber, lastWeekNumber) - firstWeekNumber;
     } else {
       currentWeekIndex = _pageController!.page!.round();
     }
@@ -247,7 +263,7 @@ class _HomeworksScreenState extends State<HomeworksScreen>
 
 class _HomeworkList extends StatefulWidget {
   final DateTime day;
-  final List<Homework>? homeworks;
+  final List<Homework> homeworks;
   final VoidCallback onReturn;
 
   const _HomeworkList({
@@ -265,7 +281,7 @@ class _HomeworkListState extends State<_HomeworkList> {
 
   void _displayIfNeeded() {
     if (!DateTime.now().copyWith(isUtc: true).toDay().isAfter(widget.day) ||
-        (widget.homeworks?.any((element) => !element.isDone) ?? false)) {
+        (widget.homeworks.any((element) => !element.isDone))) {
       controller.expand();
     }
   }
@@ -295,7 +311,7 @@ class _HomeworkListState extends State<_HomeworkList> {
           padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
 
           child: Pressable(
-            onPressed: widget.homeworks == null ? null : controller.toggle,
+            onPressed: controller.toggle,
             hasVisuals: false,
 
             child: Row(
@@ -311,16 +327,14 @@ class _HomeworkListState extends State<_HomeworkList> {
                   ),
                 ),
 
-                widget.homeworks == null
-                    ? const LoadingWidget(size: 12)
-                    : Transform.rotate(
-                        angle: animation.value * pi,
-                        child: Icon(
-                          HugeIconsSolid.arrowDown01,
-                          color: context.c.outline,
-                          size: 22,
-                        ),
-                      ),
+                Transform.rotate(
+                  angle: animation.value * pi,
+                  child: Icon(
+                    HugeIconsSolid.arrowDown01,
+                    color: context.c.outline,
+                    size: 22,
+                  ),
+                ),
               ],
             ),
           ),
@@ -328,8 +342,6 @@ class _HomeworkListState extends State<_HomeworkList> {
       },
 
       bodyBuilder: (BuildContext context, Animation<double> animation) {
-        if (widget.homeworks == null) return const SizedBox.shrink();
-
         return Padding(
           padding: const .symmetric(horizontal: 8),
 
@@ -337,7 +349,7 @@ class _HomeworkListState extends State<_HomeworkList> {
             spacing: 8,
 
             children: [
-              for (final homework in widget.homeworks!)
+              for (final homework in widget.homeworks)
                 _HomeworkCard(homework: homework, onReturn: widget.onReturn),
             ],
           ),

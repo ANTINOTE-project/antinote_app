@@ -116,11 +116,7 @@ class _GradesScreenState extends State<GradesScreen>
               ),
 
               SliverFillRemaining(
-                child: TabBarView(
-                  controller: _controller,
-                  children: tabs,
-                  physics: NeverScrollableScrollPhysics(),
-                ),
+                child: TabBarView(controller: _controller, children: tabs),
               ),
             ],
           );
@@ -130,7 +126,7 @@ class _GradesScreenState extends State<GradesScreen>
   }
 
   @override
-  Stream<double?> load(PronoteSession session) async* {
+  Stream<double?> load(RemoteSession session) async* {
     final periodData = session.userResource.tabsForPeriods.firstWhereOrNull(
       (element) => element.location == 198,
     );

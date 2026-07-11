@@ -1,7 +1,7 @@
 import "package:antinote/antinote.dart";
+import "package:antinote_app/frontend/utils/utils.dart";
 import "package:antinote_app/frontend/widgets/customs/app_bar.dart";
 import "package:antinote_app/main.dart";
-import "package:antinote_app/frontend/utils/utils.dart";
 import "package:flutter/material.dart";
 import "package:go_router/go_router.dart";
 import "package:webview_flutter/webview_flutter.dart";
@@ -28,7 +28,7 @@ class _LoginWebviewScreenState extends State<LoginWebviewScreen> {
   Uri get _loginUrl {
     return widget.workspace
         .toSpecificAccountKind(widget.parameters.baseUrl)
-        .replace(queryParameters: {...PronoteSession.redirectBypassParameters});
+        .replace(queryParameters: {...RemoteSession.redirectBypassParameters});
   }
 
   bool _matchesCriteria(Uri? url) {

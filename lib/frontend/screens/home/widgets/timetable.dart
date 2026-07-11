@@ -26,7 +26,7 @@ class TimetableWidget extends StatelessWidget {
           final newData = await HomeDisplayDataAccessor.of(context).data
               .updateWidget<EDT>(session, {
                 "EDT": {
-                  "date": {"_T": 7, "V": days.start.asPronoteDate()},
+                  "date": {"_T": 7, "V": days.start.asRemoteDate()},
                 },
               }, data.widgetId);
 

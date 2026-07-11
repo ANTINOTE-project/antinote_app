@@ -61,7 +61,7 @@ class HomeDisplayData extends ChangeNotifier
   bool get pageLoaded => value != null;
 
   Future<T?> updateWidget<T extends HomePageWidget>(
-    PronoteSession session,
+    RemoteSession session,
     Map<String, dynamic> update,
     HomePageWidgetType? widgetId,
   ) async {
@@ -214,6 +214,7 @@ class _HomeDisplayState extends State<HomeDisplay> with TabMixin<HomeDisplay> {
           IconButton(
             onPressed: () => context.push(Routes.settings),
             icon: const Icon(HugeIconsSolid.settings01),
+            tooltip: context.l10n.appSettings,
           ),
         ],
       ),
@@ -246,7 +247,7 @@ class _HomeDisplayState extends State<HomeDisplay> with TabMixin<HomeDisplay> {
   }
 
   @override
-  Stream<double?> load(PronoteSession session) async* {
+  Stream<double?> load(RemoteSession session) async* {
     await session.ensurePage(7);
 
     if (!mounted) return;

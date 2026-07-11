@@ -89,7 +89,7 @@ class _LoginPasswordScreenState extends State<LoginPasswordScreen> {
                       password: _passwordController.text.trim(),
 
                       workspace: widget.workspace,
-                      pronoteBaseUrl: widget.baseUrl,
+                      baseUrl: widget.baseUrl,
 
                       deviceUuid: Credentials.generateDeviceUuid(),
                     );

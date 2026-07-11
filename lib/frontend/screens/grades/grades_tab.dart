@@ -398,7 +398,7 @@ class _GradesTabState extends State<GradesTab> with TabMixin<GradesTab> {
   }
 
   @override
-  Stream<double?> load(PronoteSession session) async* {
+  Stream<double?> load(RemoteSession session) async* {
     await session.ensurePage(198);
 
     final period = session.instance.periods.firstWhere(
@@ -686,7 +686,7 @@ class _LatestGrades extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // rebuild when theme mode changes
+    // rebuild when theme mode changes TODO: Get rid of that
     final _ = Theme.of(context);
     final totalWidth = MediaQuery.sizeOf(context).width;
     final maxItemWidth = totalWidth / 10 * 6;
@@ -709,7 +709,11 @@ class _LatestGrades extends StatelessWidget {
               clipper: ShapeBorderClipper(
                 shape: RoundedRectangleBorder(borderRadius: .circular(28)),
               ),
-              child: GradeCard(exam: exam, width: maxItemWidth),
+              child: GradeCard(
+                exam: exam,
+                isLoading: exams == null,
+                width: maxItemWidth,
+              ),
             );
           },
           itemCount: exams?.length ?? fakeExams.length,
@@ -720,9 +724,15 @@ class _LatestGrades extends StatelessWidget {
 }
 
 class GradeCard extends StatelessWidget {
-  const GradeCard({super.key, required this.exam, required this.width});
+  const GradeCard({
+    super.key,
+    required this.exam,
+    required this.isLoading,
+    required this.width,
+  });
 
   final Exam exam;
+  final bool isLoading;
   final double width;
 
   @override
@@ -733,84 +743,87 @@ class GradeCard extends StatelessWidget {
     final title = Utils.getExamComment(context, exam);
     final subject = exam.service.name;
 
-    return Pressable(
-      onPressed: () async => await showExamDetails(context, exam),
-      child: Ink(
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(28),
+    return Skeletonizer(
+      enabled: isLoading,
+      child: Pressable(
+        onPressed: () async => await showExamDetails(context, exam),
+        child: Ink(
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(28),
 
-          border: Border.all(color: scheme.inversePrimary),
+            border: Border.all(color: scheme.inversePrimary),
 
-          color: scheme.primaryContainer,
-        ),
-        child: OverflowBox(
-          minWidth: width,
-          maxWidth: width,
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
-            child: Stack(
-              children: [
-                Column(
-                  crossAxisAlignment: .start,
-                  mainAxisSize: .min,
-                  children: [
-                    Text(
-                      subject,
-
-                      overflow: .ellipsis,
-                      maxLines: 1,
-
-                      style: TextStyle(
-                        fontSize: 20,
-                        fontWeight: .w800,
-                        color: scheme.primary,
-                      ),
-                    ),
-
-                    Text(
-                      title,
-
-                      overflow: .ellipsis,
-                      maxLines: 2,
-
-                      style: const TextStyle(fontSize: 16, fontWeight: .w600),
-                    ),
-                  ],
-                ),
-
-                Positioned(
-                  bottom: 0,
-                  left: 0,
-                  right: 0,
-                  child: Column(
+            color: scheme.primaryContainer,
+          ),
+          child: OverflowBox(
+            minWidth: width,
+            maxWidth: width,
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+              child: Stack(
+                children: [
+                  Column(
+                    crossAxisAlignment: .start,
                     mainAxisSize: .min,
                     children: [
-                      Divider(color: scheme.outlineVariant),
+                      Text(
+                        subject,
 
-                      Row(
-                        children: [
-                          Text(
-                            date,
-                            style: TextStyle(
-                              fontWeight: FontWeight.bold,
-                              color: scheme.onSurfaceVariant,
-                            ),
-                          ),
+                        overflow: .ellipsis,
+                        maxLines: 1,
 
-                          const Spacer(),
+                        style: TextStyle(
+                          fontSize: 20,
+                          fontWeight: .w800,
+                          color: scheme.primary,
+                        ),
+                      ),
 
-                          GradeText(
-                            selfGrade: exam.selfGrade,
-                            maxGrade: exam.theoreticalMaxGrade,
-                            defaultMaxGrade: exam.defaultMaxGrade,
-                            color: scheme.primary,
-                          ),
-                        ],
+                      Text(
+                        title,
+
+                        overflow: .ellipsis,
+                        maxLines: 2,
+
+                        style: const TextStyle(fontSize: 16, fontWeight: .w600),
                       ),
                     ],
                   ),
-                ),
-              ],
+
+                  Positioned(
+                    bottom: 0,
+                    left: 0,
+                    right: 0,
+                    child: Column(
+                      mainAxisSize: .min,
+                      children: [
+                        Divider(color: scheme.outlineVariant),
+
+                        Row(
+                          children: [
+                            Text(
+                              date,
+                              style: TextStyle(
+                                fontWeight: FontWeight.bold,
+                                color: scheme.onSurfaceVariant,
+                              ),
+                            ),
+
+                            const Spacer(),
+
+                            GradeText(
+                              selfGrade: exam.selfGrade,
+                              maxGrade: exam.theoreticalMaxGrade,
+                              defaultMaxGrade: exam.defaultMaxGrade,
+                              color: scheme.primary,
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
             ),
           ),
         ),

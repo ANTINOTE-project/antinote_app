@@ -844,6 +844,12 @@ abstract class AppLocalizations {
   /// **'Enregistrement audio à rendre en ligne'**
   String get homeworkRenderPronoteAudio;
 
+  /// No description provided for @noHomeworkForWeek.
+  ///
+  /// In fr, this message translates to:
+  /// **'Pas de travaux à faire pour cette semaine !'**
+  String get noHomeworkForWeek;
+
   /// No description provided for @appSettings.
   ///
   /// In fr, this message translates to:

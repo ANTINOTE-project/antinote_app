@@ -13,7 +13,7 @@ typedef RefreshIndicatorBuilder = Widget Function({
 
 mixin TabMixin<T extends StatefulWidget> on State<T> {
   List<String> get loadChannels => ["communication"];
-  Stream<double?> load(PronoteSession session);
+  Stream<double?> load(RemoteSession session);
 
   bool loaded = false;
   Stream<double?>? _loader;

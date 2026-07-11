@@ -27,7 +27,7 @@ class TimetableScreen extends StatefulWidget {
 
 class _TimetableScreenState extends State<TimetableScreen> {
   Future<Map<DateTime, DayBlocks>> update(
-    PronoteSession session,
+    RemoteSession session,
     DateRange days,
     List<DateTime> dayList,
   ) async {
@@ -66,7 +66,7 @@ class TimetableDisplay extends StatefulWidget {
 
   final List<WeekMappedViewConfiguration> configurations;
   final Future<Map<DateTime, DayBlocks>> Function(
-    PronoteSession session,
+    RemoteSession session,
     DateRange days,
     List<DateTime> businessDays,
   )
@@ -119,7 +119,7 @@ class _TimetableDisplayState extends State<TimetableDisplay>
     }
   }
 
-  Future<void> _updateClasses(DateRange days, {PronoteSession? session}) async {
+  Future<void> _updateClasses(DateRange days, {RemoteSession? session}) async {
     final dayList = days.listDays();
 
     for (final day in days.listDays()) {
@@ -606,7 +606,7 @@ class _TimetableDisplayState extends State<TimetableDisplay>
   }
 
   @override
-  Stream<double?> load(PronoteSession session) async* {
+  Stream<double?> load(RemoteSession session) async* {
     _scheduleDisplayData = session.instance;
 
     final currentGroupIndex = ensureCorrectConfiguration();

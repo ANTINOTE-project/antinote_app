@@ -114,7 +114,7 @@ class MethodsScreen extends StatelessWidget with WidgetsBindingObserver {
                     ),
 
                     deviceUuid: Credentials.generateDeviceUuid(),
-                    pronoteBaseUrl: Uri.parse(
+                    baseUrl: Uri.parse(
                       "https://demo.index-education.net/pronote",
                     ),
                   ).login(options: context.s.networking.sessionOptions),

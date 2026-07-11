@@ -80,7 +80,7 @@ class _ReportTabState extends State<ReportTab> with TabMixin<ReportTab> {
   }
 
   @override
-  Stream<double?> load(PronoteSession session) async* {
+  Stream<double?> load(RemoteSession session) async* {
     if (widget.classReport) {
       await session.ensurePage(41);
     } else {

@@ -7,7 +7,7 @@ import "package:antinote_app/frontend/utils/utils.dart";
 import "package:flutter/material.dart";
 import "package:go_router/go_router.dart";
 
-typedef RunCallback<T> = FutureOr<T> Function(PronoteSession session);
+typedef RunCallback<T> = FutureOr<T> Function(RemoteSession session);
 
 class SessionManager extends InheritedWidget {
   final SessionDataHolder state;
@@ -43,7 +43,7 @@ class SessionManager extends InheritedWidget {
     return state.lastSeenAccountUid!;
   }
 
-  Future<PronoteSession> ensureSession({
+  Future<RemoteSession> ensureSession({
     required BuildContext context,
     String? accountUid,
   }) {

@@ -40,19 +40,19 @@ class _HomeworkDetailScreenState extends State<HomeworkDetailScreen> {
     );
 
     final renderLabel = switch (widget.homework.assignmentToRenderType) {
-      .pronoteRender => context.l10n.homeworkRenderPronote,
+      .remoteRender => context.l10n.homeworkRenderPronote,
       .noRender => context.l10n.homeworkRenderNone,
       .paperRender => context.l10n.homeworkRenderPaper,
       .kiosqueRender => context.l10n.homeworkRenderKiosque, // unknown
-      .pronoteAudioRecordingRender => context.l10n.homeworkRenderPronoteAudio,
+      .remoteAudioRecordingRender => context.l10n.homeworkRenderPronoteAudio,
     };
 
     final renderIcon = switch (widget.homework.assignmentToRenderType) {
-      .pronoteRender => HugeIconsSolid.fileUpload,
+      .remoteRender => HugeIconsSolid.fileUpload,
       .noRender => null,
       .paperRender => HugeIconsSolid.course,
       .kiosqueRender => HugeIconsSolid.note01, // unknown
-      .pronoteAudioRecordingRender => HugeIconsSolid.mic01,
+      .remoteAudioRecordingRender => HugeIconsSolid.mic01,
     };
 
     return Scaffold(

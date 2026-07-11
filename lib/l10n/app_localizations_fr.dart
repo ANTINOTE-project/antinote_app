@@ -445,6 +445,9 @@ class AppLocalizationsFr extends AppLocalizations {
       'Enregistrement audio à rendre en ligne';
 
   @override
+  String get noHomeworkForWeek => 'Pas de travaux à faire pour cette semaine !';
+
+  @override
   String get appSettings => 'Paramètres de l\'application';
 
   @override

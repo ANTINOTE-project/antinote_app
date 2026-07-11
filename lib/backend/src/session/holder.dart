@@ -12,10 +12,10 @@ final NativeSessionManager _sessionManager = NativeSessionManager();
 final _nativeSessionManagerSupported = Platform.isAndroid;
 
 class SessionDataHolder extends ChangeNotifier {
-  PronoteSession? _curSession;
+  RemoteSession? _curSession;
 
-  PronoteSession? get lastSeenSession => _curSession;
-  set lastSeenSession(PronoteSession? newValue) {
+  RemoteSession? get lastSeenSession => _curSession;
+  set lastSeenSession(RemoteSession? newValue) {
     if (_curSession == newValue) return;
 
     final shouldNotify =
@@ -53,7 +53,7 @@ class SessionDataHolder extends ChangeNotifier {
          settings: settings,
        );
 
-  Future<PronoteSession> relogin({required AccountStorage storage}) async {
+  Future<RemoteSession> relogin({required AccountStorage storage}) async {
     var account = (await storage.borrowAccountWithCredentials(
       lastSeenAccountUid!,
     ))!;
@@ -82,7 +82,7 @@ class SessionDataHolder extends ChangeNotifier {
     return lastSeenSession!;
   }
 
-  Future<PronoteSession> ensureSession({
+  Future<RemoteSession> ensureSession({
     required AccountStorage storage,
     String? accountUid,
   }) async {
@@ -107,7 +107,7 @@ class SessionDataHolder extends ChangeNotifier {
   }
 
   Future<T> runTask<T>({
-    required FutureOr<PronoteSession> Function() sessionEnsurer,
+    required FutureOr<RemoteSession> Function() sessionEnsurer,
     List<String> channels = const ["communication"],
     required RunCallback<T> callback,
   }) async {
@@ -131,7 +131,7 @@ class SessionDataHolder extends ChangeNotifier {
         lastSeenSessionVersion = task.sessionVersion;
 
         try {
-          lastSeenSession = await PronoteSession.restoreBinary(
+          lastSeenSession = await RemoteSession.restoreBinary(
             task.session!,
             options: _settings.sessionOptions,
           );
@@ -147,7 +147,7 @@ class SessionDataHolder extends ChangeNotifier {
     }
 
     bool needToApply = false;
-    PronoteSession? currentlyAppliedSession = lastSeenSession;
+    RemoteSession? currentlyAppliedSession = lastSeenSession;
 
     if (currentlyAppliedSession == null) {
       if (_nativeSessionManagerSupported) {

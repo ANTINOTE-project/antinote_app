@@ -6,7 +6,9 @@ import "package:uuid/v4.dart";
 extension LoadCredentials on AntinoteAccount {
   TokenCredentials? get credentials => !hasTokenCredentials()
       ? null
-      : TokenCredentials.restore(tokenCredentials.unpackInto(SerializedTokenCredentials.create()));
+      : TokenCredentials.restore(
+          tokenCredentials.unpackInto(SerializedTokenCredentials.create()),
+        );
 }
 
 extension SetCredentials on AntinoteAccount {
@@ -18,19 +20,22 @@ extension SetCredentials on AntinoteAccount {
       establishmentName: establishmentName,
       baseUrl: baseUrl,
       workspaceName: workspaceName,
-      tokenCredentials: Any.pack(credentials.serialize(), typeUrlPrefix: "antinote"),
+      tokenCredentials: Any.pack(
+        credentials.serialize(),
+        typeUrlPrefix: "antinote",
+      ),
     );
   }
 }
 
 extension CredentialsAsAntinoteAccount on TokenCredentials {
-  AntinoteAccount asAntinoteAccount(PronoteSession session) {
+  AntinoteAccount asAntinoteAccount(RemoteSession session) {
     return AntinoteAccount(
       uid: const UuidV4().generate(),
       name: session.user.name,
       username: username,
       establishmentName: session.anyInstance.establishmentName.trim(),
-      baseUrl: pronoteBaseUrl.toString(),
+      baseUrl: baseUrl.toString(),
       workspaceName: workspace.label,
       tokenCredentials: Any.pack(serialize(), typeUrlPrefix: "antinote"),
     );
