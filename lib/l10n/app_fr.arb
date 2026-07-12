@@ -80,6 +80,41 @@
     }
   },
 
+  "classTiming": "{startTime} - {endTime}",
+  "@classTiming": {
+    "placeholders": {
+      "startTime": {
+        "type": "DateTime",
+        "isCustomDateFormat": true,
+        "format": "HH'h'mm"
+      },
+      "endTime": {
+        "type": "DateTime",
+        "isCustomDateFormat": true,
+        "format": "HH'h'mm"
+      }
+    }
+  },
+
+  "classTimingDuration": "{startTime} - {endTime} ({duration})",
+  "@classTimingDuration": {
+    "placeholders": {
+      "startTime": {
+        "type": "DateTime",
+        "isCustomDateFormat": true,
+        "format": "HH'h'mm"
+      },
+      "endTime": {
+        "type": "DateTime",
+        "isCustomDateFormat": true,
+        "format": "HH'h'mm"
+      },
+      "duration": {
+        "type": "String"
+      }
+    }
+  },
+
   "latestGrades": "Dernières notes",
   "services": "Matières",
   "gradeOf": "Note de {service}",

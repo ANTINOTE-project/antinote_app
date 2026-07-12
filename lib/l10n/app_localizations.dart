@@ -418,6 +418,22 @@ abstract class AppLocalizations {
   /// **'{date} de {startTime} à {endTime}'**
   String absenceDuration(DateTime date, DateTime startTime, DateTime endTime);
 
+  /// No description provided for @classTiming.
+  ///
+  /// In fr, this message translates to:
+  /// **'{startTime} - {endTime}'**
+  String classTiming(DateTime startTime, DateTime endTime);
+
+  /// No description provided for @classTimingDuration.
+  ///
+  /// In fr, this message translates to:
+  /// **'{startTime} - {endTime} ({duration})'**
+  String classTimingDuration(
+    DateTime startTime,
+    DateTime endTime,
+    String duration,
+  );
+
   /// No description provided for @latestGrades.
   ///
   /// In fr, this message translates to:

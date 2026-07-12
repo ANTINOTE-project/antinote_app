@@ -60,5 +60,17 @@ List<PauseBlock> pauseBlocksForDay(
     );
   }
 
+  for (final clazz in classes) {
+    final slot = clazz.blockSlot % parameters.slotsPerDay;
+    final duration = clazz.blockLength;
+
+    blocks.removeWhere(
+      (element) =>
+          slot < element.startSlot && element.startSlot < slot + duration,
+    );
+
+    if (blocks.isEmpty) break;
+  }
+
   return blocks;
 }

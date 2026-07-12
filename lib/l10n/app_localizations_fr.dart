@@ -193,6 +193,42 @@ class AppLocalizationsFr extends AppLocalizations {
   }
 
   @override
+  String classTiming(DateTime startTime, DateTime endTime) {
+    final intl.DateFormat startTimeDateFormat = intl.DateFormat(
+      'HH\'h\'mm',
+      localeName,
+    );
+    final String startTimeString = startTimeDateFormat.format(startTime);
+    final intl.DateFormat endTimeDateFormat = intl.DateFormat(
+      'HH\'h\'mm',
+      localeName,
+    );
+    final String endTimeString = endTimeDateFormat.format(endTime);
+
+    return '$startTimeString - $endTimeString';
+  }
+
+  @override
+  String classTimingDuration(
+    DateTime startTime,
+    DateTime endTime,
+    String duration,
+  ) {
+    final intl.DateFormat startTimeDateFormat = intl.DateFormat(
+      'HH\'h\'mm',
+      localeName,
+    );
+    final String startTimeString = startTimeDateFormat.format(startTime);
+    final intl.DateFormat endTimeDateFormat = intl.DateFormat(
+      'HH\'h\'mm',
+      localeName,
+    );
+    final String endTimeString = endTimeDateFormat.format(endTime);
+
+    return '$startTimeString - $endTimeString ($duration)';
+  }
+
+  @override
   String get latestGrades => 'Dernières notes';
 
   @override

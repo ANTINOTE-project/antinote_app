@@ -160,11 +160,13 @@ class _ClassBlockWidgetState extends State<ClassBlockWidget> {
 class ClassWidget extends StatelessWidget {
   final Class clazz;
   final bool connectRight;
+  final bool showTiming;
 
   const ClassWidget({
     super.key,
     required this.clazz,
     required this.connectRight,
+    this.showTiming = false,
   });
 
   static const double radius = 16;
@@ -173,6 +175,7 @@ class ClassWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final difference = clazz.endDate.difference(clazz.startDate);
+    final canceled = clazz.canceled;
     ColorScheme scheme = context.c;
 
     if (clazz is Lesson) {
@@ -180,7 +183,21 @@ class ClassWidget extends StatelessWidget {
       scheme = Utils.buildColorScheme(context, accent);
     }
 
-    final duration = Formatters.formatDuration(difference);
+    final timing = Formatters.formatDuration(difference);
+    final timingMessage = switch (showTiming) {
+      true when canceled => context.l10n.classTiming(
+        clazz.startDate,
+        clazz.endDate,
+      ),
+      true when !canceled => context.l10n.classTimingDuration(
+        clazz.startDate,
+        clazz.endDate,
+        timing,
+      ),
+      false when canceled => null,
+      false when !canceled => timing,
+      _ => throw UnimplementedError(),
+    };
 
     final outerBorderRadius = connectRight
         ? const BorderRadius.only(
@@ -200,7 +217,6 @@ class ClassWidget extends StatelessWidget {
           )
         : BorderRadius.circular(radius);
 
-    final isCanceled = clazz.canceled;
     final hasStatus = clazz.status != null;
 
     return Pressable(
@@ -212,12 +228,12 @@ class ClassWidget extends StatelessWidget {
 
       child: Ink(
         decoration: BoxDecoration(
-          color: isCanceled
+          color: canceled
               ? scheme.surfaceContainerLow
               : scheme.primaryContainer,
           border: Border.all(
             color: hasStatus
-                ? isCanceled
+                ? canceled
                       ? scheme.error
                       : scheme.secondary
                 : scheme.inversePrimary,
@@ -237,7 +253,7 @@ class ClassWidget extends StatelessWidget {
               Ink(
                 decoration: BoxDecoration(
                   borderRadius: .circular(8),
-                  color: isCanceled
+                  color: canceled
                       ? scheme.errorContainer
                       : scheme.surfaceContainer,
                 ),
@@ -250,10 +266,10 @@ class ClassWidget extends StatelessWidget {
 
                   children: [
                     Icon(
-                      isCanceled
+                      canceled
                           ? HugeIconsSolid.alertCircle
                           : HugeIconsSolid.informationCircle,
-                      color: isCanceled ? scheme.error : scheme.secondary,
+                      color: canceled ? scheme.error : scheme.secondary,
                       size: 18,
                     ),
 
@@ -265,7 +281,7 @@ class ClassWidget extends StatelessWidget {
                         maxLines: 1,
 
                         style: TextStyle(
-                          color: isCanceled ? scheme.error : scheme.secondary,
+                          color: canceled ? scheme.error : scheme.secondary,
                           fontWeight: .w900,
                           fontSize: 14,
                         ),
@@ -277,7 +293,7 @@ class ClassWidget extends StatelessWidget {
 
             Column(
               crossAxisAlignment: .start,
-              spacing: isCanceled ? 0 : 2,
+              spacing: canceled ? 0 : 2,
 
               children: [
                 Text(
@@ -287,23 +303,21 @@ class ClassWidget extends StatelessWidget {
                   maxLines: 1,
 
                   style: TextStyle(
-                    color: isCanceled ? scheme.outline : scheme.primary,
-                    fontWeight: isCanceled ? .bold : .w800,
-                    fontSize: isCanceled ? 21 : 22,
+                    color: canceled ? scheme.outline : scheme.primary,
+                    fontWeight: canceled ? .bold : .w800,
+                    fontSize: canceled ? 21 : 22,
                   ),
                 ),
 
                 _ContentOverflowRow(
                   contents: clazz.listContents(),
-                  color: isCanceled
-                      ? scheme.outline
-                      : scheme.onPrimaryContainer,
+                  color: canceled ? scheme.outline : scheme.onPrimaryContainer,
                   dividerColor: scheme.outline,
                 ),
 
-                if (!isCanceled)
+                if (timingMessage != null)
                   Text(
-                    duration,
+                    timingMessage,
 
                     style: TextStyle(
                       color: scheme.onSurfaceVariant,
@@ -333,6 +347,8 @@ class _ContentOverflowRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    if (contents.isEmpty) return const SizedBox.shrink();
+
     return OverflowRow(
       spacing: 6,
       badgeStyle: TextStyle(color: color, fontWeight: .w800, fontSize: 12),
