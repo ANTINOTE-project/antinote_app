@@ -1,171 +1,22 @@
 import "package:antinote/antinote.dart";
-import "package:antinote_app/frontend/screens/timetable/events/block.dart";
 import "package:antinote_app/frontend/screens/timetable/events/class/modal.dart";
 import "package:antinote_app/frontend/utils/utils.dart";
 import "package:antinote_app/frontend/widgets/overflow_row.dart";
 import "package:antinote_app/frontend/widgets/pressable.dart";
-import "package:collection/collection.dart";
 import "package:flutter/material.dart";
 import "package:hugeicons_pro/hugeicons.dart";
 
-class ClassBlockWidget extends StatefulWidget {
-  final SpecificInstanceParameters displayParameters;
-  final DateTime day;
-  final ClassBlock block;
-
-  const ClassBlockWidget({
-    super.key,
-    required this.displayParameters,
-    required this.day,
-    required this.block,
-  });
-
-  @override
-  State<ClassBlockWidget> createState() => _ClassBlockWidgetState();
-}
-
-class _ClassBlockWidgetState extends State<ClassBlockWidget> {
-  int configurationIndex = 0;
-
-  Widget _buildWidgetConfiguration(
-    BuildContext context,
-    List<Class> configuration,
-  ) {
-    configuration.sort((a, b) => a.startDate.compareTo(b.startDate));
-
-    final display = <Widget>[];
-
-    var curTime = widget.block.startTime;
-    for (final clazz in configuration) {
-      final diff = clazz.startDate.difference(curTime);
-      if (diff > Duration.zero) {
-        display.add(
-          Expanded(flex: diff.inMinutes, child: const SizedBox.expand()),
-        );
-      }
-
-      display.add(
-        Expanded(
-          flex: clazz.endDate.difference(clazz.startDate).inMinutes,
-          child: ClassWidget(
-            clazz: clazz,
-            connectRight: widget.block.configurations.length > 1,
-          ),
-        ),
-      );
-
-      curTime = clazz.endDate;
-    }
-
-    final lastDiff = widget.block.endTime.difference(curTime);
-    if (lastDiff > Duration.zero) {
-      display.add(
-        Expanded(flex: lastDiff.inMinutes, child: const SizedBox.expand()),
-      );
-    }
-
-    return Column(key: ValueKey(configurationIndex), children: display);
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    if (widget.block.configurations.length == 1) {
-      return _buildWidgetConfiguration(
-        context,
-        widget.block.configurations.single,
-      );
-    }
-
-    return Row(
-      crossAxisAlignment: .stretch,
-      children: [
-        Expanded(
-          flex: 89,
-          child: AnimatedSwitcher(
-            duration: const Duration(milliseconds: 300),
-            reverseDuration: const Duration(milliseconds: 50),
-            switchInCurve: Curves.fastOutSlowIn,
-            switchOutCurve: const ReversedCurve(Curves.fastOutSlowIn),
-            transitionBuilder: (child, animation) {
-              return FadeTransition(opacity: animation, child: child);
-            },
-            child: IndexedStack(
-              key: ValueKey(configurationIndex),
-              index: configurationIndex,
-              children: [
-                for (final configuration in widget.block.configurations)
-                  _buildWidgetConfiguration(context, configuration),
-              ],
-            ),
-          ),
-        ),
-        Expanded(
-          flex: 11,
-          child: Container(
-            padding: const .only(left: 4),
-            decoration: BoxDecoration(
-              borderRadius: .horizontal(right: const .circular(20)),
-              color: context.c.surfaceContainerLow,
-            ),
-            clipBehavior: .antiAlias,
-            child: Column(
-              children: [
-                ...widget.block.configurations.mapIndexed((i, _) {
-                  final borderRadius = BorderRadius.only(
-                    bottomRight: i == 0 ? .zero : const .circular(16),
-                    topLeft: i == 0 ? const .circular(4) : .zero,
-                    topRight: i == widget.block.configurations.length - 1
-                        ? .zero
-                        : const .circular(16),
-                    bottomLeft: i == widget.block.configurations.length - 1
-                        ? const .circular(4)
-                        : .zero,
-                  );
-
-                  return Expanded(
-                    child: Pressable(
-                      borderRadius: borderRadius,
-                      onPressed: () {
-                        if (i == configurationIndex) return;
-
-                        setState(() => configurationIndex = i);
-                      },
-                      child: Ink(
-                        decoration: BoxDecoration(
-                          borderRadius: borderRadius,
-                          color: i == configurationIndex
-                              ? context.c.secondaryContainer
-                              : null,
-                        ),
-                        child: Container(
-                          alignment: .center,
-                          child: Text(
-                            (i + 1).toString(),
-                            style: const TextStyle(fontWeight: .w800),
-                          ),
-                        ),
-                      ),
-                    ),
-                  );
-                }),
-              ],
-            ),
-          ),
-        ),
-      ],
-    );
-  }
-}
+import "../block.dart";
 
 class ClassWidget extends StatelessWidget {
   final Class clazz;
-  final bool connectRight;
+  final BorderRadius borderRadius;
   final bool showTiming;
 
   const ClassWidget({
     super.key,
     required this.clazz,
-    required this.connectRight,
+    this.borderRadius = BlockWidget.baseBorderRadius,
     this.showTiming = false,
   });
 
@@ -199,28 +50,10 @@ class ClassWidget extends StatelessWidget {
       _ => throw UnimplementedError(),
     };
 
-    final outerBorderRadius = connectRight
-        ? const BorderRadius.only(
-            topLeft: .circular(radius),
-            bottomLeft: .circular(radius),
-            topRight: .circular(reducedRadius),
-            bottomRight: .circular(reducedRadius),
-          )
-        : BorderRadius.circular(radius);
-
-    final contentBorderRadius = connectRight
-        ? const BorderRadius.only(
-            topLeft: .circular(radius),
-            bottomLeft: .circular(radius),
-            topRight: .circular(reducedRadius),
-            bottomRight: .circular(reducedRadius),
-          )
-        : BorderRadius.circular(radius);
-
     final hasStatus = clazz.status != null;
 
     return Pressable(
-      borderRadius: outerBorderRadius,
+      borderRadius: borderRadius,
 
       onPressed: () async {
         await showClassModal(context, clazz);
@@ -238,7 +71,7 @@ class ClassWidget extends StatelessWidget {
                       : scheme.secondary
                 : scheme.inversePrimary,
           ),
-          borderRadius: contentBorderRadius,
+          borderRadius: borderRadius,
         ),
 
         padding: const .symmetric(horizontal: 10, vertical: 5),

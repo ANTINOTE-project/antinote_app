@@ -1,6 +1,6 @@
 part of "../block.dart";
 
-class MealBlock extends Block {
+class MealEvent extends Event {
   @override
   final DateTime startTime;
   @override
@@ -10,7 +10,10 @@ class MealBlock extends Block {
   @override
   final int endSlot;
 
-  new({
+  @override
+  int get priority => 3;
+
+  const new({
     required this.startTime,
     required this.startSlot,
     required this.endTime,
@@ -18,7 +21,7 @@ class MealBlock extends Block {
   });
 }
 
-List<MealBlock> mealBlocksForDay(
+List<MealEvent> mealBlocksForDay(
   List<Class> classes,
   SpecificInstanceParameters parameters,
 ) {
@@ -37,6 +40,10 @@ List<MealBlock> mealBlocksForDay(
   );
 
   for (final clazz in classes) {
+    if (clazz.canceled || (clazz is Lesson && clazz.exemptedLabel != null)) {
+      continue;
+    }
+
     for (
       int slot = clazz.blockSlot % parameters.slotsPerDay;
       slot < (clazz.blockSlot + clazz.blockLength) % parameters.slotsPerDay;
@@ -47,7 +54,7 @@ List<MealBlock> mealBlocksForDay(
     }
   }
 
-  final blocks = <MealBlock>[];
+  final blocks = <MealEvent>[];
 
   var blockStart = mealTimeSlots.removeAt(0);
   var blockEnd = blockStart;
@@ -63,7 +70,7 @@ List<MealBlock> mealBlocksForDay(
 
       if (!startTime.isAtSameMomentAs(endTime)) {
         blocks.add(
-          MealBlock(
+          MealEvent(
             startTime: startTime,
             startSlot: blockStart,
             endTime: endTime,
@@ -84,7 +91,7 @@ List<MealBlock> mealBlocksForDay(
 
   if (!startTime.isAtSameMomentAs(endTime)) {
     blocks.add(
-      MealBlock(
+      MealEvent(
         startTime: startTime,
         startSlot: blockStart,
         endTime: endTime,

@@ -7,24 +7,29 @@ import "package:flutter/material.dart";
 import "package:hugeicons_pro/hugeicons.dart";
 
 class MealBlockWidget extends StatelessWidget {
-  const MealBlockWidget({super.key, required this.block});
+  const MealBlockWidget({
+    super.key,
+    required this.block,
+    this.borderRadius = BlockWidget.baseBorderRadius,
+  });
 
-  final MealBlock block;
+  final MealEvent block;
+  final BorderRadius borderRadius;
 
   static const double radius = 16;
 
   @override
   Widget build(BuildContext context) {
     return Pressable(
-      borderRadius: .circular(radius),
+      borderRadius: borderRadius,
       onPressed: () async {
         await showMealModal(context, block.startTime.toDay());
       },
       child: Ink(
-        decoration: BoxDecoration(borderRadius: .circular(radius)),
+        decoration: BoxDecoration(borderRadius: borderRadius),
         child: Container(
           decoration: BoxDecoration(
-            borderRadius: .circular(radius),
+            borderRadius: borderRadius,
             border: Border.all(color: context.c.outline),
           ),
           width: double.infinity,

@@ -232,6 +232,7 @@
   "sendNavigationRequestsSubtitle": "Quand cette option est désactivée, des gains en latence et en données transférées peuvent être observés. Cependant, cela fait diverger le fonctionnement de l'application de celle de PRONOTE.",
 
   "noMenuForToday": "Pas de menu pour aujourd'hui !",
+  "menu": "Menu",
   "lunchFor": "Déjeuner du {day}",
   "@lunchFor": {
     "placeholders": {

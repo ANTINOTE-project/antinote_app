@@ -4,16 +4,12 @@ import "package:antinote/antinote.dart";
 import "package:antinote_app/backend/backend.dart";
 import "package:antinote_app/frontend/screens/shell/tab.dart";
 import "package:antinote_app/frontend/screens/timetable/events/block.dart";
-import "package:antinote_app/frontend/screens/timetable/events/meal/widget.dart";
-import "package:antinote_app/frontend/screens/timetable/events/pause/widget.dart";
 import "package:antinote_app/frontend/utils/utils.dart";
 import "package:antinote_app/frontend/widgets/customs/loading.dart";
 import "package:antinote_app/main.dart";
 import "package:collection/collection.dart";
 import "package:flutter/material.dart";
 import "package:hugeicons_pro/hugeicons.dart";
-
-import "events/class/widget.dart";
 
 typedef RelevantSlots = ({int firstSlot, int lastSlot});
 typedef Classes = Map<DateTime, ValueNotifier<DayBlocks?>>;
@@ -83,7 +79,7 @@ class _TimetableDisplayState extends State<TimetableDisplay>
   late SpecificInstanceParameters _scheduleDisplayData;
   late WeekMappedViewConfiguration _currentConfiguration;
   late List<DateRange> _currentGroups;
-  final Classes _classes = {};
+  final Classes _blocks = {};
 
   PageController? _pageController;
 
@@ -124,7 +120,7 @@ class _TimetableDisplayState extends State<TimetableDisplay>
 
     for (final day in days.listDays()) {
       if (!_scheduleDisplayData.isBusinessDay(day)) {
-        _classes[day]!.value = [];
+        _blocks[day]!.value = [];
 
         dayList.removeWhere((element) => element.isAtSameMomentAs(day));
       }
@@ -146,7 +142,7 @@ class _TimetableDisplayState extends State<TimetableDisplay>
     }
 
     for (final entry in result.entries) {
-      _classes[entry.key]?.value = entry.value;
+      _blocks[entry.key]?.value = entry.value;
     }
   }
 
@@ -188,15 +184,15 @@ class _TimetableDisplayState extends State<TimetableDisplay>
               onRefresh: () => reload(fromRefreshIndicator: true),
 
               child: ValueListenableBuilder(
-                valueListenable: _classes[days.first]!,
+                valueListenable: _blocks[days.first]!,
 
                 builder: (context, _, _) {
                   final allEmpty = days.every(
-                    (day) => _classes[day]!.value?.isEmpty ?? false,
+                    (day) => _blocks[day]!.value?.isEmpty ?? false,
                   );
 
                   final anyLoading = days.any(
-                    (day) => _classes[day]!.value == null,
+                    (day) => _blocks[day]!.value == null,
                   );
 
                   final Widget partialChild;
@@ -245,7 +241,7 @@ class _TimetableDisplayState extends State<TimetableDisplay>
                             Expanded(
                               flex: 85,
                               child: ValueListenableBuilder(
-                                valueListenable: _classes[day]!,
+                                valueListenable: _blocks[day]!,
                                 builder: (context, dayClasses, child) {
                                   if (dayClasses == null) {
                                     return const LoadingWidget();
@@ -254,7 +250,7 @@ class _TimetableDisplayState extends State<TimetableDisplay>
                                     return const SizedBox.shrink();
                                   }
 
-                                  return _buildClassesColumn(
+                                  return _buildEventsColumn(
                                     context,
                                     day,
                                     slots!, // TODO: Find if this is a safe cast.
@@ -332,7 +328,7 @@ class _TimetableDisplayState extends State<TimetableDisplay>
     final relevantSlots = <int>{};
 
     for (final day in days) {
-      for (final block in _classes[day]!.value ?? <Block>[]) {
+      for (final block in _blocks[day]!.value ?? <Block>[]) {
         relevantSlots.add(block.startSlot % _scheduleDisplayData.slotsPerDay);
         relevantSlots.add(block.endSlot % _scheduleDisplayData.slotsPerDay - 1);
       }
@@ -450,7 +446,7 @@ class _TimetableDisplayState extends State<TimetableDisplay>
     return Column(children: displays);
   }
 
-  Widget _buildClassesColumn(
+  Widget _buildEventsColumn(
     BuildContext context,
     DateTime day,
     RelevantSlots slots,
@@ -475,15 +471,7 @@ class _TimetableDisplayState extends State<TimetableDisplay>
       displays.add(
         Expanded(
           flex: block.endTime.difference(block.startTime).inMinutes,
-          child: switch (block) {
-            ClassBlock() => ClassBlockWidget(
-              displayParameters: _scheduleDisplayData,
-              block: block,
-              day: day,
-            ),
-            PauseBlock() => PauseBlockWidget(block: block),
-            MealBlock() => MealBlockWidget(block: block),
-          },
+          child: BlockWidget(block: block),
         ),
       );
 
@@ -595,7 +583,7 @@ class _TimetableDisplayState extends State<TimetableDisplay>
 
     if (_pageController == null) {
       for (final day in days) {
-        _classes[day] = ValueNotifier(null);
+        _blocks[day] = ValueNotifier(null);
       }
 
       _pageController = PageController(initialPage: currentGroupIndex);

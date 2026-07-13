@@ -3,9 +3,14 @@ import "package:antinote_app/frontend/utils/utils.dart";
 import "package:flutter/material.dart";
 
 class PauseBlockWidget extends StatelessWidget {
-  const PauseBlockWidget({super.key, required this.block});
+  const PauseBlockWidget({
+    super.key,
+    required this.block,
+    this.borderRadius = BlockWidget.baseBorderRadius,
+  });
 
   final PauseBlock block;
+  final BorderRadius borderRadius;
 
   static const double radius = 16;
 
@@ -14,7 +19,7 @@ class PauseBlockWidget extends StatelessWidget {
     return Container(
       decoration: BoxDecoration(
         border: Border.all(color: context.c.outlineVariant),
-        borderRadius: .circular(radius),
+        borderRadius: borderRadius,
       ),
       width: double.infinity,
       height: double.infinity,

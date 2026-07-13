@@ -920,6 +920,12 @@ abstract class AppLocalizations {
   /// **'Pas de menu pour aujourd\'hui !'**
   String get noMenuForToday;
 
+  /// No description provided for @menu.
+  ///
+  /// In fr, this message translates to:
+  /// **'Menu'**
+  String get menu;
+
   /// No description provided for @lunchFor.
   ///
   /// In fr, this message translates to:

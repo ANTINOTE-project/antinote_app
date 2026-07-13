@@ -4,7 +4,9 @@ import "package:antinote_app/main.dart";
 import "package:flutter/foundation.dart";
 import "package:shared_preferences/shared_preferences.dart";
 
-typedef UpgradeTask = FutureOr<void> Function(SharedPreferencesWithCache prefs);
+typedef SettingsUpgradeTask = FutureOr<void> Function(
+  SharedPreferencesWithCache prefs,
+);
 
 enum _SettingsMode { none, registering, filling }
 
@@ -18,7 +20,7 @@ abstract class SettingsCategory extends ChangeNotifier {
   ///   n: upgradeToN
   /// }
   /// ```
-  Map<int, UpgradeTask> get upgradeTasks;
+  Map<int, SettingsUpgradeTask> get upgradeTasks;
 
   late final SharedPreferencesWithCache _prefs;
 

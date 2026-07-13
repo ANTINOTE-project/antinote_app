@@ -10,7 +10,7 @@ class ThemeSettings extends SettingsCategory {
   int get latestVersion => 1;
 
   @override
-  Map<int, UpgradeTask> get upgradeTasks => {};
+  Map<int, SettingsUpgradeTask> get upgradeTasks => {};
 
   @override
   List<dynamic> get registeredFields => [

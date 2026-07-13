@@ -513,6 +513,9 @@ class AppLocalizationsFr extends AppLocalizations {
   String get noMenuForToday => 'Pas de menu pour aujourd\'hui !';
 
   @override
+  String get menu => 'Menu';
+
+  @override
   String lunchFor(DateTime day) {
     final intl.DateFormat dayDateFormat = intl.DateFormat('dd/MM', localeName);
     final String dayString = dayDateFormat.format(day);

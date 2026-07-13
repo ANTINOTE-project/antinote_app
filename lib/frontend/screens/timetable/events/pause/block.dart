@@ -1,6 +1,6 @@
 part of "../block.dart";
 
-final class PauseBlock extends Block {
+final class PauseBlock extends Event {
   final String title;
 
   @override
@@ -11,6 +11,9 @@ final class PauseBlock extends Block {
   final int endSlot;
   @override
   final DateTime endTime;
+
+  @override
+  int get priority => 0;
 
   const new({
     required this.title,
@@ -61,6 +64,10 @@ List<PauseBlock> pauseBlocksForDay(
   }
 
   for (final clazz in classes) {
+    if (clazz.canceled || (clazz is Lesson && clazz.exemptedLabel != null)) {
+      continue;
+    }
+
     final slot = clazz.blockSlot % parameters.slotsPerDay;
     final duration = clazz.blockLength;
 
