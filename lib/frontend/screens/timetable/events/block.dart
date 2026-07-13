@@ -6,6 +6,7 @@ import "package:antinote_app/frontend/screens/timetable/events/meal/widget.dart"
 import "package:antinote_app/frontend/screens/timetable/events/pause/widget.dart";
 import "package:antinote_app/frontend/widgets/pressable.dart";
 import "package:collection/collection.dart";
+import "package:flutter/foundation.dart";
 import "package:flutter/material.dart";
 
 import "../../../utils/utils.dart";

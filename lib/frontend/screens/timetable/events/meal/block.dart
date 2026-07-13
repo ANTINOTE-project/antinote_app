@@ -34,70 +34,89 @@ List<MealEvent> mealBlocksForDay(
     return [];
   }
 
-  final mealTimeSlots = List<int>.generate(
+  final totalMealTimeSlots = List<int>.generate(
     parameters.lunchEndSlot - parameters.lunchStartSlot,
     (index) => parameters.lunchStartSlot + index,
   );
 
+  final partialMealTimeSlots = totalMealTimeSlots.toList();
+
   for (final clazz in classes) {
-    if (clazz.canceled || (clazz is Lesson && clazz.exemptedLabel != null)) {
-      continue;
-    }
+    final partialOnly =
+        clazz.canceled || (clazz is Lesson && clazz.exemptedLabel != null);
 
     for (
       int slot = clazz.blockSlot % parameters.slotsPerDay;
       slot < (clazz.blockSlot + clazz.blockLength) % parameters.slotsPerDay;
       slot++
     ) {
-      mealTimeSlots.remove(slot);
-      if (mealTimeSlots.isEmpty) return const [];
+      if (!partialOnly) {
+        totalMealTimeSlots.remove(slot);
+        if (totalMealTimeSlots.isEmpty) return const [];
+      }
+
+      partialMealTimeSlots.remove(slot);
     }
   }
 
   final blocks = <MealEvent>[];
 
-  var blockStart = mealTimeSlots.removeAt(0);
-  var blockEnd = blockStart;
-  while (mealTimeSlots.isNotEmpty) {
-    var curSlot = mealTimeSlots.removeAt(0);
+  for (final slotList in [
+    totalMealTimeSlots,
+    if (!listEquals(totalMealTimeSlots, partialMealTimeSlots))
+      partialMealTimeSlots,
+  ]) {
+    if(slotList.isEmpty) continue;
 
-    if (blockEnd + 1 < curSlot) {
-      final startTime = parameters.timeForSlot(
-        parameters.starts[blockStart],
-        day,
-      );
-      final endTime = parameters.timeForSlot(parameters.endings[blockEnd], day);
+    var blockStart = slotList.removeAt(0);
+    var blockEnd = blockStart;
+    while (slotList.isNotEmpty) {
+      var curSlot = slotList.removeAt(0);
 
-      if (!startTime.isAtSameMomentAs(endTime)) {
-        blocks.add(
-          MealEvent(
-            startTime: startTime,
-            startSlot: blockStart,
-            endTime: endTime,
-            endSlot: blockEnd,
-          ),
+      if (blockEnd + 1 < curSlot) {
+        final startTime = parameters.timeForSlot(
+          parameters.starts[blockStart],
+          day,
         );
+        final endTime = parameters.timeForSlot(
+          parameters.endings[blockEnd],
+          day,
+        );
+
+        if (!startTime.isAtSameMomentAs(endTime)) {
+          blocks.add(
+            MealEvent(
+              startTime: startTime,
+              startSlot: blockStart,
+              endTime: endTime,
+              endSlot: blockEnd,
+            ),
+          );
+        }
+
+        blockStart = curSlot;
+        blockEnd = curSlot;
+      } else {
+        blockEnd = curSlot;
       }
-
-      blockStart = curSlot;
-      blockEnd = curSlot;
-    } else {
-      blockEnd = curSlot;
     }
-  }
 
-  final startTime = parameters.timeForSlot(parameters.starts[blockStart], day);
-  final endTime = parameters.timeForSlot(parameters.endings[blockEnd], day);
-
-  if (!startTime.isAtSameMomentAs(endTime)) {
-    blocks.add(
-      MealEvent(
-        startTime: startTime,
-        startSlot: blockStart,
-        endTime: endTime,
-        endSlot: blockEnd + 1,
-      ),
+    final startTime = parameters.timeForSlot(
+      parameters.starts[blockStart],
+      day,
     );
+    final endTime = parameters.timeForSlot(parameters.endings[blockEnd], day);
+
+    if (!startTime.isAtSameMomentAs(endTime)) {
+      blocks.add(
+        MealEvent(
+          startTime: startTime,
+          startSlot: blockStart,
+          endTime: endTime,
+          endSlot: blockEnd + 1,
+        ),
+      );
+    }
   }
 
   return blocks;
