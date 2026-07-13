@@ -21,7 +21,7 @@ class MealEvent extends Event {
   });
 }
 
-List<MealEvent> mealBlocksForDay(
+List<MealEvent> mealEventsForDay(
   List<Class> classes,
   SpecificInstanceParameters parameters,
 ) {
@@ -59,65 +59,65 @@ List<MealEvent> mealBlocksForDay(
     }
   }
 
-  final blocks = <MealEvent>[];
+  final events = <MealEvent>[];
 
   for (final slotList in [
     totalMealTimeSlots,
     if (!listEquals(totalMealTimeSlots, partialMealTimeSlots))
       partialMealTimeSlots,
   ]) {
-    if(slotList.isEmpty) continue;
+    if (slotList.isEmpty) continue;
 
-    var blockStart = slotList.removeAt(0);
-    var blockEnd = blockStart;
+    var eventStart = slotList.removeAt(0);
+    var eventEnd = eventStart;
     while (slotList.isNotEmpty) {
       var curSlot = slotList.removeAt(0);
 
-      if (blockEnd + 1 < curSlot) {
+      if (eventEnd + 1 < curSlot) {
         final startTime = parameters.timeForSlot(
-          parameters.starts[blockStart],
+          parameters.starts[eventStart],
           day,
         );
         final endTime = parameters.timeForSlot(
-          parameters.endings[blockEnd],
+          parameters.endings[eventEnd],
           day,
         );
 
         if (!startTime.isAtSameMomentAs(endTime)) {
-          blocks.add(
+          events.add(
             MealEvent(
               startTime: startTime,
-              startSlot: blockStart,
+              startSlot: eventStart,
               endTime: endTime,
-              endSlot: blockEnd,
+              endSlot: eventEnd,
             ),
           );
         }
 
-        blockStart = curSlot;
-        blockEnd = curSlot;
+        eventStart = curSlot;
+        eventEnd = curSlot;
       } else {
-        blockEnd = curSlot;
+        eventEnd = curSlot;
       }
     }
 
     final startTime = parameters.timeForSlot(
-      parameters.starts[blockStart],
+      parameters.starts[eventStart],
       day,
     );
-    final endTime = parameters.timeForSlot(parameters.endings[blockEnd], day);
+    final endTime = parameters.timeForSlot(parameters.endings[eventEnd], day);
 
     if (!startTime.isAtSameMomentAs(endTime)) {
-      blocks.add(
+      events.add(
         MealEvent(
           startTime: startTime,
-          startSlot: blockStart,
+          startSlot: eventStart,
           endTime: endTime,
-          endSlot: blockEnd + 1,
+          endSlot: eventEnd + 1,
         ),
       );
     }
   }
 
-  return blocks;
+  return events;
 }

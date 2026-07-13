@@ -1,6 +1,6 @@
 part of "../block.dart";
 
-final class PauseBlock extends Event {
+final class PauseEvent extends Event {
   final String title;
 
   @override
@@ -25,14 +25,14 @@ final class PauseBlock extends Event {
   });
 }
 
-List<PauseBlock> pauseBlocksForDay(
+List<PauseEvent> pauseEventsForDay(
   List<Class> classes,
   SpecificInstanceParameters parameters,
 ) {
   if (classes.isEmpty) return [];
 
   final date = classes.first.startDate.toDay();
-  final blocks = <PauseBlock>[];
+  final events = <PauseEvent>[];
 
   for (final classBreak in parameters.pauses) {
     final startTime = parameters.timeForSlot(
@@ -52,8 +52,8 @@ List<PauseBlock> pauseBlocksForDay(
     }
     if (!classes.last.endDate.isAfter(startTime)) continue;
 
-    blocks.add(
-      PauseBlock(
+    events.add(
+      PauseEvent(
         title: classBreak.label,
         startSlot: classBreak.slot % parameters.slotsPerDay,
         startTime: startTime,
@@ -71,13 +71,13 @@ List<PauseBlock> pauseBlocksForDay(
     final slot = clazz.blockSlot % parameters.slotsPerDay;
     final duration = clazz.blockLength;
 
-    blocks.removeWhere(
+    events.removeWhere(
       (element) =>
           slot < element.startSlot && element.startSlot < slot + duration,
     );
 
-    if (blocks.isEmpty) break;
+    if (events.isEmpty) break;
   }
 
-  return blocks;
+  return events;
 }

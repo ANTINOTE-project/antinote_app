@@ -9,7 +9,7 @@ class PauseBlockWidget extends StatelessWidget {
     this.borderRadius = BlockWidget.baseBorderRadius,
   });
 
-  final PauseBlock block;
+  final PauseEvent block;
   final BorderRadius borderRadius;
 
   static const double radius = 16;

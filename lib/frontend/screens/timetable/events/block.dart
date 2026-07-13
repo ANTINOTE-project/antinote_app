@@ -1,6 +1,7 @@
 import "dart:math";
 
 import "package:antinote/antinote.dart";
+import "package:antinote_app/backend/src/state.dart";
 import "package:antinote_app/frontend/screens/timetable/events/class/widget.dart";
 import "package:antinote_app/frontend/screens/timetable/events/meal/widget.dart";
 import "package:antinote_app/frontend/screens/timetable/events/pause/widget.dart";
@@ -11,9 +12,9 @@ import "package:flutter/material.dart";
 
 import "../../../utils/utils.dart";
 
-part "class/block.dart";
-part "meal/block.dart";
-part "pause/block.dart";
+part "class/event.dart";
+part "meal/event.dart";
+part "pause/event.dart";
 
 typedef DayBlocks = List<Block>;
 
@@ -33,9 +34,9 @@ List<Event> _eventsForDay(
   SpecificInstanceParameters parameters,
 ) {
   return [
-    ...classBlocksForDay(classes, parameters),
-    ...pauseBlocksForDay(classes, parameters),
-    ...mealBlocksForDay(classes, parameters),
+    ...classEventsForDay(classes, parameters),
+    ...pauseEventsForDay(classes, parameters),
+    ...mealEventsForDay(classes, parameters),
   ]..sort((a, b) => a.startTime.compareTo(b.startTime));
 }
 
@@ -123,6 +124,14 @@ List<Block> blocksForDay(
   SpecificInstanceParameters parameters,
 ) {
   final events = _eventsForDay(classes, parameters);
+
+  if (events.isEmpty) return const [];
+
+  AppStateScheduler.scheduleForDay(
+    events.first.startTime.toDay(),
+    events: events,
+    params: parameters,
+  );
 
   final blocks = <Block>[];
 
@@ -241,7 +250,7 @@ class _BlockWidgetState extends State<BlockWidget> {
               block: event,
               borderRadius: borderRadius,
             ),
-            PauseBlock() => PauseBlockWidget(
+            PauseEvent() => PauseBlockWidget(
               block: event,
               borderRadius: borderRadius,
             ),
