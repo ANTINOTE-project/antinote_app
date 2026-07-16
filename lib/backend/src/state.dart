@@ -3,7 +3,7 @@ import "package:antinote_app/frontend/screens/timetable/events/block.dart";
 import "package:flutter/material.dart";
 
 enum AppState(final int priority) {
-  /// During transfer or longer breaks (excluding pauses).
+  /// Any kind of break during classday (excluding pauses).
   classBreak(1),
 
   /// A break during which lunch can be eaten.
@@ -27,32 +27,35 @@ class AppStateScheduler {
     required List<Event> events,
     required SpecificInstanceParameters params,
   }) {
-    DateTime? firstEventStart;
-    DateTime? lastEventEnd;
-
+    DateTime? classEnd;
     for (final event in events) {
-      if (firstEventStart == null ||
-          event.startTime.isBefore(firstEventStart)) {
-        firstEventStart = event.startTime;
-      }
-      if (lastEventEnd == null || event.endTime.isAfter(lastEventEnd)) {
-        lastEventEnd = event.endTime;
+      if (event is! ClassEvent) continue;
+      if (!event.selfPresent) continue;
+
+      if (classEnd == null || classEnd.isBefore(event.endTime)) {
+        classEnd = event.endTime;
       }
     }
 
+    final nextDay = day.add(const Duration(days: 1));
+
     final ends = [
+      (time: day, event: null, start: true),
       for (final event in events) ...[
         (time: event.startTime, event: event, start: true),
         (time: event.endTime, event: event, start: false),
       ],
+      (time: nextDay, event: null, start: false),
     ]..sort((a, b) => a.time.compareTo(b.time));
 
     final List<AppStateEntry> entries = [];
 
-    final Set<Event> activeEvents = {};
+    final Set<Event?> activeEvents = {};
 
     DateTime lastTime = day.copyWith();
     AppState lastState = .defaultState;
+
+    bool startedClass = false;
 
     int i = 0;
     while (i < ends.length) {
@@ -68,29 +71,32 @@ class AppStateScheduler {
         i++;
       }
 
-      AppState newState = .defaultState;
+      AppState? newState;
 
       if (activeEvents.isEmpty) {
-        if (firstEventStart != null &&
-            !curTime.isBefore(firstEventStart) &&
-            lastEventEnd != null &&
-            curTime.isBefore(lastEventEnd)) {
-          newState = .classBreak;
-        }
+        newState = startedClass ? .classBreak : .defaultState;
       } else {
+        final duringActiveTime =
+            startedClass && classEnd != null && !curTime.isAfter(classEnd);
+
         for (final event in activeEvents) {
           final AppState eventState = switch (event) {
             ClassEvent(selfPresent: final selfPresent) when selfPresent =>
               .clazz,
-            ClassEvent() => .classBreak,
+            ClassEvent() ||
+            null => duringActiveTime ? .classBreak : .defaultState,
             MealEvent() => .lunch,
-            PauseEvent() => .pause,
+            PauseEvent() => duringActiveTime ? .pause : .defaultState,
           };
 
-          if (eventState.priority > newState.priority) {
+          if (newState == null || eventState.priority > newState.priority) {
             newState = eventState;
           }
         }
+      }
+
+      if (newState == .clazz) {
+        startedClass = true;
       }
 
       if (newState != lastState) {
@@ -101,14 +107,40 @@ class AppStateScheduler {
           ));
         }
         lastTime = curTime;
-        lastState = newState;
+        lastState = newState!;
       }
     }
 
-    entries.add((
-      range: DateTimeRange(start: lastTime, end: day.add(Duration(days: 1))),
-      state: lastState,
-    ));
+    if (!lastTime.isAtSameMomentAs(nextDay)) {
+      entries.add((
+        range: DateTimeRange(start: lastTime, end: nextDay),
+        state: .defaultState,
+      ));
+    }
+
+    print("Class ends: $classEnd, $lastTime");
+    for (final entry in entries) {
+      print(
+        "- ${entry.range.start.hour.toString().padLeft(2, "0")}:${entry.range.start.minute.toString().padLeft(2, "0")} to ${entry.range.end.hour.toString().padLeft(2, "0")}:${entry.range.end.minute.toString().padLeft(2, "0")} : ${entry.state}",
+      );
+    }
+    print(entries);
+
+    assert(
+      () {
+        AppState? lastState;
+        for (final entry in entries) {
+          if (lastState == entry.state) {
+            return false;
+          }
+
+          lastState = entry.state;
+        }
+
+        return true;
+      }(),
+      "Found two same app states in a row, those should be squashed into one entry",
+    );
 
     return entries;
   }
