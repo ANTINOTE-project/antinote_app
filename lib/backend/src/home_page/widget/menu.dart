@@ -12,11 +12,22 @@ final class Menu extends WidgetDescriptor<MenuParameter> {
       parameters: [
         WidgetParameterEntry(
           descriptor: const DurationWidgetParameter(id: "dayDelta"),
-          displayName: (context) => context.l10n.menu,
+          displayName: (context) => .new(name: context.l10n.menu),
+          shown: true,
+        ),
+        WidgetParameterEntry(
+          descriptor: const BooleanWidgetParameter(id: "nextDayAfterMeal"),
+          displayName: (context) => .new(/* TODO: Add values */),
           shown: true,
         ),
       ],
-      computeValue: () {},
+      computeValue: (context, params) {
+        final today = DateTime.now().toDay(true);
+
+        context.dayBlocks(today);
+
+        return today;
+      },
     ),
   ];
 

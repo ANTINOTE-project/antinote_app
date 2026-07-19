@@ -42,7 +42,10 @@ class _TimetableScreenState extends State<TimetableScreen> {
     }
 
     return loadedDays.map(
-      (key, value) => MapEntry(key, blocksForDay(value, session.instance)),
+      (key, value) => MapEntry(
+        key,
+        blocksForDay(eventsForDay(value, session.instance), session.instance),
+      ),
     );
   }
 
@@ -129,16 +132,21 @@ class _TimetableDisplayState extends State<TimetableDisplay>
     if (dayList.isEmpty) return;
     if (_animating) return;
 
-    final Map<DateTime, DayBlocks> result;
+    late final Map<DateTime, DayBlocks> result;
 
-    if (session != null) {
-      result = await widget.updateBlocks(session, days, dayList);
-    } else {
-      result = await SessionManager.execute(
-        context: context,
-        callback: (session) async =>
-            await widget.updateBlocks(session, days, dayList),
-      );
+    try {
+      if (session != null) {
+        result = await widget.updateBlocks(session, days, dayList);
+      } else {
+        result = await SessionManager.execute(
+          context: context,
+          callback: (session) async =>
+              await widget.updateBlocks(session, days, dayList),
+        );
+      }
+    } catch (e, st) {
+      result = {};
+      debugPrintStack(label: e.toString(), stackTrace: st);
     }
 
     for (final entry in result.entries) {
@@ -232,7 +240,7 @@ class _TimetableDisplayState extends State<TimetableDisplay>
                         spacing: 8,
                         children: [
                           if (slots != null)
-                            Expanded(
+                            Flexible(
                               flex: days.length * 15,
                               child: _buildTimeColumn(context, slots, days),
                             ),
@@ -351,6 +359,8 @@ class _TimetableDisplayState extends State<TimetableDisplay>
     final displays = <Widget>[];
     int? lastAppliedSlot;
 
+    final borderSide = BorderSide(color: context.c.outlineVariant);
+
     for (int i = relevantFirst; i <= relevantLast; i++) {
       final curSlot = _scheduleDisplayData.starts[i];
       final curEndSlot = _scheduleDisplayData.endings[i];
@@ -365,7 +375,7 @@ class _TimetableDisplayState extends State<TimetableDisplay>
             from.timing.minute;
 
         talker.info("${from.timing} -> ${to.timing} : $value");
-        displays.add(Expanded(flex: value, child: const SizedBox.expand()));
+        displays.add(Expanded(flex: value, child: const SizedBox.shrink()));
       }
 
       if (curEndSlot.timing == curSlot.timing) continue;
@@ -381,7 +391,7 @@ class _TimetableDisplayState extends State<TimetableDisplay>
 
         if (transitionValue > 0 && displays.isNotEmpty) {
           displays.add(
-            Expanded(flex: transitionValue, child: const SizedBox.expand()),
+            Expanded(flex: transitionValue, child: const SizedBox.shrink()),
           );
         }
       }
@@ -395,47 +405,43 @@ class _TimetableDisplayState extends State<TimetableDisplay>
       displays.add(
         Expanded(
           flex: value,
-          child: Stack(
-            fit: .expand,
-            children: [
-              if (curSlot.active)
-                Align(
-                  alignment: .topCenter,
-                  child: Column(
-                    mainAxisSize: .min,
-                    spacing: 2,
-                    children: [
-                      const Divider(height: 0),
-                      Text(
-                        curSlot.label,
-                        style: TextStyle(
-                          color: context.c.outline,
-                          fontWeight: .w800,
-                        ),
-                      ),
-                    ],
+          child: Container(
+            decoration: BoxDecoration(
+              border: Border(
+                top: curSlot.active ? borderSide : .none,
+                bottom: curEndSlot.active ? borderSide : .none,
+              ),
+            ),
+            padding: const .symmetric(horizontal: 5),
+            child: Column(
+              children: [
+                if (curSlot.active)
+                  Text(
+                    curSlot.label,
+                    maxLines: 1,
+                    textAlign: .center,
+                    style: TextStyle(
+                      color: context.c.outline,
+                      fontWeight: .w800,
+                      overflow: .visible,
+                    ),
                   ),
-                ),
 
-              if (curEndSlot.active)
-                Align(
-                  alignment: .bottomCenter,
-                  child: Column(
-                    mainAxisSize: .min,
-                    spacing: 2,
-                    children: [
-                      Text(
-                        curEndSlot.label,
-                        style: TextStyle(
-                          color: context.c.outline,
-                          fontWeight: .w800,
-                        ),
-                      ),
-                      const Divider(height: 0),
-                    ],
+                const Spacer(),
+
+                if (curEndSlot.active)
+                  Text(
+                    curEndSlot.label,
+                    maxLines: 1,
+                    textAlign: .center,
+                    style: TextStyle(
+                      color: context.c.outline,
+                      fontWeight: .w800,
+                      overflow: .visible,
+                    ),
                   ),
-                ),
-            ],
+              ],
+            ),
           ),
         ),
       );

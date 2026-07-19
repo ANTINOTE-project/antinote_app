@@ -1,6 +1,5 @@
 import "package:antinote_app/frontend/screens/communication/screen.dart";
 import "package:antinote_app/frontend/screens/grades/screen.dart";
-import "package:antinote_app/frontend/screens/home/screen.dart";
 import "package:antinote_app/frontend/screens/homeworks/screen.dart";
 import "package:antinote_app/frontend/screens/timetable/screen.dart";
 import "package:antinote_app/frontend/utils/src/context.dart";
@@ -22,7 +21,7 @@ List<TabDestination> buildTabs(BuildContext context) {
     (
       icon: HugeIconsSolid.home01,
       label: context.l10n.home,
-      screen: const HomeScreen(),
+      screen: const Placeholder(), // TODO
       category: .home,
       tabs: [],
     ),

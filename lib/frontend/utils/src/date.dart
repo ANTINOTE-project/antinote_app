@@ -27,8 +27,8 @@ extension DateTimeInDateRange on DateRange {
     return days;
   }
 
-  bool contains(DateTime day) {
-    return !day.isBefore(start) && !day.isAfter(end);
+  bool contains(DateTime time) {
+    return !time.isBefore(start) && !time.isAfter(end);
   }
 
   bool containsRange(DateRange range) {

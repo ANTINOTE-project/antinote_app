@@ -29,7 +29,7 @@ sealed class Event {
   const Event();
 }
 
-List<Event> _eventsForDay(
+List<Event> eventsForDay(
   List<Class> classes,
   SpecificInstanceParameters parameters,
 ) {
@@ -120,11 +120,9 @@ final class Block {
 }
 
 List<Block> blocksForDay(
-  List<Class> classes,
+  List<Event> events,
   SpecificInstanceParameters parameters,
 ) {
-  final events = _eventsForDay(classes, parameters);
-
   if (events.isEmpty) return const [];
 
   AppStateScheduler.scheduleForDay(
