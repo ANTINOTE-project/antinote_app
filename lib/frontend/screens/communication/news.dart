@@ -304,7 +304,7 @@ class _Answer extends StatelessWidget {
     final answer = question.answer;
 
     return switch (answer) {
-      RANewsQuestionAnswer(answered: final answered) => ItemWidget(
+      RANewsQuestionAnswer(withAnswer: final answered) => ItemWidget(
         backgroundColor: context.c.surfaceContainerHigh,
         borderRadius: borderRadius,
 

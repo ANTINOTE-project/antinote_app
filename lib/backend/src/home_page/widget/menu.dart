@@ -1,32 +1,63 @@
 part of "widget.dart";
 
-enum MenuParameter<T> implements WidgetParameter<T> { dayDelta<Duration>() }
+enum MenuParameter<T>(@override final String code)
+    implements WidgetParameter<T> {
+  decayAfterMeal<bool>("decay_after_meal");
+}
 
-final class Menu extends WidgetDescriptor<MenuParameter> {
+enum MenuArgument<T>() implements WidgetArgument<T> {
+  day<Date>();
+}
+
+final class MenuWidget
+    extends WidgetDescriptor<Menu, MenuArgument, MenuParameter> {
   @override
   String get id => "menu";
 
   @override
-  List<WidgetArgumentEntry<dynamic, MenuParameter>> get parameters => [
+  get arguments => [
     WidgetArgumentEntry(
+      id: .day,
+
       parameters: [
         WidgetParameterEntry(
-          descriptor: const DurationWidgetParameter(id: "dayDelta"),
-          displayName: (context) => .new(name: context.l10n.menu),
-          shown: true,
-        ),
-        WidgetParameterEntry(
-          descriptor: const BooleanWidgetParameter(id: "nextDayAfterMeal"),
-          displayName: (context) => .new(/* TODO: Add values */),
+          descriptor: const BooleanWidgetParameter(
+            id: MenuParameter.decayAfterMeal,
+          ),
+          displayData: (context) => .new(/* TODO: Add values */),
           shown: true,
         ),
       ],
-      computeValue: (context, params) {
-        final today = DateTime.now().toDay(true);
+      requiredUntilCompute: (session, cache) => [],
+      computeValue: (session, cache, params) {
+        final baseTime = DateTime.now().copyWith(isUtc: true);
+        Date base = baseTime.toDay();
 
-        context.dayBlocks(today);
+        if (params.get(MenuParameter.decayAfterMeal)) {
+          final mealEnd = session.instance.timeForSlot(
+            session.instance.endings[session.instance.lunchEndSlot],
+            base,
+          );
 
-        return today;
+          if (!mealEnd.isAfter(baseTime)) base.add(const .new(days: 1));
+        }
+
+        while (true) {
+          if (!session.instance.lastDate.isAfter(base)) {
+            return null;
+          }
+
+          final businessDay = session.instance.isBusinessDay(base);
+          final lunchDay = session.instance.lunchDays.contains(base.weekday);
+
+          if (businessDay && lunchDay) {
+            break;
+          }
+
+          base = base.add(const .new(days: 1)).toDay();
+        }
+
+        return base;
       },
     ),
   ];
@@ -36,8 +67,31 @@ final class Menu extends WidgetDescriptor<MenuParameter> {
 
   @override
   int get version => 1;
-}
 
-// final menu = WidgetDescriptor<MenuParameters>(
-//
-// );
+  @override
+  List<HomePageRequest> requiredUntilCompute(
+    RemoteSession session,
+    HomePageCache cache,
+    WidgetArguments<MenuArgument<dynamic>> args,
+  ) {
+    final day = args.get(MenuArgument.day);
+    if (cache.hasMenuForDay(day)) return [];
+
+    return [.menu(day)];
+  }
+
+  @override
+  FutureOr<Menu?> computeValue(
+    RemoteSession session,
+    HomePageCache cache,
+    WidgetArguments<MenuArgument<dynamic>> args,
+  ) {
+    return cache.dayMenu(args.get(MenuArgument.day));
+  }
+
+  @override
+  Widget build(BuildContext context, Menu value) {
+    // TODO: implement build
+    throw UnimplementedError();
+  }
+}

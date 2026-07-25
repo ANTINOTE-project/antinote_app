@@ -1,7 +1,13 @@
-abstract class WidgetParameter<T> extends Enum {}
+abstract class WidgetParameter<T>({required final String code}) extends Enum;
 
-sealed class WidgetParameterDescriptor<R, P> {
-  final String id;
+final class const WidgetParameters<T extends WidgetParameter>({
+  required final Map<T, dynamic> _params,
+}) {
+  P get<P>(WidgetParameter<P> key) => _params[key] as P;
+}
+
+sealed class WidgetParameterDescriptor<T extends WidgetParameter, R, P> {
+  final T id;
   final P? defaultValue;
 
   P read(R raw);
@@ -10,7 +16,8 @@ sealed class WidgetParameterDescriptor<R, P> {
   const WidgetParameterDescriptor({required this.id, this.defaultValue});
 }
 
-final class IntWidgetParameter extends WidgetParameterDescriptor<int, int> {
+final class IntWidgetParameter<T extends WidgetParameter>
+    extends WidgetParameterDescriptor<T, int, int> {
   const new({
     required super.id,
     super.defaultValue,
@@ -27,8 +34,8 @@ final class IntWidgetParameter extends WidgetParameterDescriptor<int, int> {
   int write(int parsed) => parsed;
 }
 
-final class BooleanWidgetParameter
-    extends WidgetParameterDescriptor<bool, bool> {
+final class BooleanWidgetParameter<T extends WidgetParameter>
+    extends WidgetParameterDescriptor<T, bool, bool> {
   const new({required super.id, super.defaultValue});
 
   @override
@@ -37,8 +44,8 @@ final class BooleanWidgetParameter
   bool write(bool parsed) => parsed;
 }
 
-final class DateTimeWidgetParameter
-    extends WidgetParameterDescriptor<int, DateTime> {
+final class DateTimeWidgetParameter<T extends WidgetParameter>
+    extends WidgetParameterDescriptor<T, int, DateTime> {
   const DateTimeWidgetParameter.dateTime({
     required super.id,
     super.defaultValue,
@@ -57,8 +64,8 @@ final class DateTimeWidgetParameter
   int write(DateTime parsed) => parsed.millisecondsSinceEpoch;
 }
 
-final class DurationWidgetParameter
-    extends WidgetParameterDescriptor<int, Duration> {
+final class DurationWidgetParameter<T extends WidgetParameter>
+    extends WidgetParameterDescriptor<T, int, Duration> {
   const new({required super.id, super.defaultValue});
 
   @override
