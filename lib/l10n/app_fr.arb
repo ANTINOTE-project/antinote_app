@@ -252,5 +252,14 @@
         "format": "dd/MM"
       }
     }
-  }
+  },
+
+  "defaultConfig": "Configuration par défaut",
+  "breakConfig": "Récréation",
+  "transferConfig": "Interclasse",
+  "afterClassConfig": "Après les cours",
+  "beforeClassConfig": "Avant les cours",
+  "lunchConfig": "Demi-pension",
+  "pauseConfig": "Étude",
+  "classConfig": "Cours"
 }

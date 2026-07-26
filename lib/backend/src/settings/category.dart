@@ -94,8 +94,8 @@ abstract class SettingsCategory extends ChangeNotifier {
     }
 
     _prefs = await SharedPreferencesWithCache.create(
-      cacheOptions: SharedPreferencesWithCacheOptions(allowList: fieldNames),
-      cache: Map.fromEntries(
+      cacheOptions: .new(allowList: fieldNames),
+      cache: .fromEntries(
         _registered.entries.where((element) => element.value != null),
       ),
     );

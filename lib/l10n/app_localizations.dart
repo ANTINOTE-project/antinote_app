@@ -937,6 +937,54 @@ abstract class AppLocalizations {
   /// In fr, this message translates to:
   /// **'Dinner du {day}'**
   String dinnerFor(DateTime day);
+
+  /// No description provided for @defaultConfig.
+  ///
+  /// In fr, this message translates to:
+  /// **'Configuration par défaut'**
+  String get defaultConfig;
+
+  /// No description provided for @breakConfig.
+  ///
+  /// In fr, this message translates to:
+  /// **'Récréation'**
+  String get breakConfig;
+
+  /// No description provided for @transferConfig.
+  ///
+  /// In fr, this message translates to:
+  /// **'Interclasse'**
+  String get transferConfig;
+
+  /// No description provided for @afterClassConfig.
+  ///
+  /// In fr, this message translates to:
+  /// **'Après les cours'**
+  String get afterClassConfig;
+
+  /// No description provided for @beforeClassConfig.
+  ///
+  /// In fr, this message translates to:
+  /// **'Avant les cours'**
+  String get beforeClassConfig;
+
+  /// No description provided for @lunchConfig.
+  ///
+  /// In fr, this message translates to:
+  /// **'Demi-pension'**
+  String get lunchConfig;
+
+  /// No description provided for @pauseConfig.
+  ///
+  /// In fr, this message translates to:
+  /// **'Étude'**
+  String get pauseConfig;
+
+  /// No description provided for @classConfig.
+  ///
+  /// In fr, this message translates to:
+  /// **'Cours'**
+  String get classConfig;
 }
 
 class _AppLocalizationsDelegate

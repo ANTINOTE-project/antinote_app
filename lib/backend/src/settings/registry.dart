@@ -1,4 +1,5 @@
 import "package:antinote_app/backend/src/settings/category.dart";
+import "package:antinote_app/backend/src/settings/home_page.dart";
 import "package:antinote_app/backend/src/settings/networking.dart";
 import "package:antinote_app/backend/src/settings/theme.dart";
 import "package:flutter/material.dart";
@@ -36,8 +37,13 @@ class SettingsRegistry extends SettingsCategory {
   @override
   List<dynamic> get registeredFields => [version];
   @override
-  List<SettingsCategory> get registeredChildren => [theme, networking];
+  List<SettingsCategory> get registeredChildren => [
+    theme,
+    networking,
+    homePage,
+  ];
 
   final theme = ThemeSettings();
   final networking = NetworkingSettings();
+  final homePage = HomePageSettings();
 }

@@ -530,4 +530,28 @@ class AppLocalizationsFr extends AppLocalizations {
 
     return 'Dinner du $dayString';
   }
+
+  @override
+  String get defaultConfig => 'Configuration par défaut';
+
+  @override
+  String get breakConfig => 'Récréation';
+
+  @override
+  String get transferConfig => 'Interclasse';
+
+  @override
+  String get afterClassConfig => 'Après les cours';
+
+  @override
+  String get beforeClassConfig => 'Avant les cours';
+
+  @override
+  String get lunchConfig => 'Demi-pension';
+
+  @override
+  String get pauseConfig => 'Étude';
+
+  @override
+  String get classConfig => 'Cours';
 }

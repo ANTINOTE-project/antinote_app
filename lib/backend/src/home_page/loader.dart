@@ -50,6 +50,11 @@ typedef _SchedulesEntry = ({
 });
 
 final class HomePageCache {
+  /// This should be used instead of [Datetime.now], it is in UTC format.
+  final DateTime anchorTime = DateTime.now().copyWith(isUtc: true);
+
+  Date get anchorDate => anchorTime.toDay();
+
   final Map<Date, _SchedulesEntry> _daySchedules = {};
   final Map<Date, Menu?> _dayMenus = {};
 
