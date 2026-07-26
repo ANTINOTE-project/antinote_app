@@ -2,6 +2,7 @@ import "dart:async";
 
 import "package:antinote/antinote.dart";
 import "package:antinote_app/backend/src/home_page/loader.dart";
+import "package:antinote_app/backend/src/home_page/widget_configuration.dart";
 import "package:antinote_app/backend/src/state.dart";
 import "package:antinote_app/frontend/utils/utils.dart";
 import "package:flutter/material.dart";
@@ -13,7 +14,7 @@ final class const HomePageConfiguration({
 
   required final HomePageConfigurationCriterion criterion,
 
-  required final List<String> priorityWidgetIds,
+  required final List<HomePageWidgetConfiguration> priorityWidgets,
 }) {
   static const _uuidGenerator = UuidV4();
 
@@ -21,19 +22,26 @@ final class const HomePageConfiguration({
     : this(
         name: name,
         uid: _uuidGenerator.generate(),
-        priorityWidgetIds: const [],
+        priorityWidgets: [],
         criterion: const RelativeHomePageConfigurationCriterion(
           margin: .zero,
           state: .defaultState,
         ),
       );
 
+  factory fromJson(Map<String, dynamic> json) => .new(
+    name: json.get("name"),
+    uid: json.get("id"),
+    priorityWidgets: json.getLM("widgets").mapL((e) => .fromJson(e)),
+    criterion: .fromJson(json.get("criterion")),
+  );
+
   Map<String, dynamic> toJson() => {
     "name": name,
     // UUIDs shouldn't be stored as strings ideally, but since this is a very
     // low volume object, it's not that important.
     "id": uid,
-    "priority": priorityWidgetIds,
+    "widgets": priorityWidgets.mapL((e) => e.toJson()),
     "criterion": criterion.toJson(),
   };
 }

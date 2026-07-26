@@ -9,7 +9,7 @@ enum MenuArgument<T>() implements WidgetArgument<T> {
   day<Date>();
 }
 
-final class MenuWidget
+final class const MenuWidget()
     extends WidgetDescriptor<Menu, MenuArgument, MenuParameter> {
   @override
   String get id => "menu";

@@ -15,11 +15,11 @@ final class WidgetParameterEntryDisplayData({
 });
 
 @immutable
-sealed class WidgetDescriptor<
+sealed class const WidgetDescriptor<
   V,
   A extends WidgetArgument,
   P extends WidgetParameter
-> {
+>() {
   abstract final String id;
   abstract final int version;
   abstract final Map<int, WidgetUpgradeTask> upgradeTasks;

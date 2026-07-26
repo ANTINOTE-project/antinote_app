@@ -57,8 +57,7 @@ final class DateTimeWidgetParameter<T extends WidgetParameter>
   final bool dateOnly;
 
   @override
-  DateTime read(int raw) =>
-      DateTime.fromMillisecondsSinceEpoch(raw, isUtc: true);
+  DateTime read(int raw) => .fromMillisecondsSinceEpoch(raw, isUtc: true);
 
   @override
   int write(DateTime parsed) => parsed.millisecondsSinceEpoch;
@@ -69,7 +68,7 @@ final class DurationWidgetParameter<T extends WidgetParameter>
   const new({required super.id, super.defaultValue});
 
   @override
-  Duration read(int raw) => Duration(milliseconds: raw);
+  Duration read(int raw) => .new(milliseconds: raw);
 
   @override
   int write(Duration parsed) => parsed.inMilliseconds;
