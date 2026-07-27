@@ -1,7 +1,6 @@
 import "dart:async";
 
 import "package:antinote/antinote.dart";
-import "package:antinote_app/backend/backend.dart";
 import "package:antinote_app/frontend/screens/communication/models.dart";
 import "package:antinote_app/frontend/screens/communication/news.dart";
 import "package:antinote_app/frontend/screens/shell/tab.dart";
@@ -68,7 +67,7 @@ class _CommunicationScreenState extends State<CommunicationScreen>
               ),
 
               onPressed: () async {
-                await SessionManager.execute(
+                await context.sm.runTask(
                   context: context,
                   channels: const [],
 

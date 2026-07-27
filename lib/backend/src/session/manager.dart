@@ -68,6 +68,7 @@ class SessionManager extends InheritedWidget {
     List<String> channels = const ["communication"],
     required RunCallback<T> callback,
     bool bypassStateLock = false,
+    bool retry = false,
   }) async {
     if (state.stateLock != null && !bypassStateLock) {
       await state.stateLock!.future;
@@ -110,6 +111,7 @@ class SessionManager extends InheritedWidget {
         },
         callback: callback,
         channels: channels,
+        retry: retry,
       );
     } finally {
       if (!bypassStateLock) {
@@ -120,21 +122,6 @@ class SessionManager extends InheritedWidget {
         }
       }
     }
-  }
-
-  static Future<T> execute<T>({
-    required BuildContext context,
-    List<String> channels = const ["communication"],
-    required RunCallback<T> callback,
-  }) async {
-    final result = context.dependOnInheritedWidgetOfExactType<SessionManager>();
-    assert(result != null, 'No "SessionManager" in tree...');
-
-    return result!.runTask(
-      context: context,
-      channels: channels,
-      callback: callback,
-    );
   }
 
   void subscribeSession({required VoidCallback callback}) {

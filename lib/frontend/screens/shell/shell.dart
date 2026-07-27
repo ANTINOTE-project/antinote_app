@@ -41,7 +41,7 @@ class _AppShellState extends State<AppShell> {
   int currentPage = 0;
 
   void loadNotificationStream() {
-    SessionManager.execute(
+    context.sm.runTask(
       context: context,
       channels: const [],
 

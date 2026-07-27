@@ -1,5 +1,4 @@
 import "package:antinote/antinote.dart";
-import "package:antinote_app/backend/src/session/manager.dart";
 import "package:antinote_app/frontend/utils/utils.dart";
 import "package:antinote_app/frontend/widgets/customs/app_bar.dart";
 import "package:antinote_app/frontend/widgets/customs/attachment.dart";
@@ -129,7 +128,7 @@ class _HomeworkDetailScreenState extends State<HomeworkDetailScreen> {
                         _isDone = !_isDone;
                       });
 
-                      await SessionManager.execute(
+                      await context.sm.runTask(
                         context: context,
 
                         callback: (session) async {

@@ -1,5 +1,6 @@
 import "package:antinote/antinote.dart";
 import "package:antinote_app/backend/src/home_page/configuration.dart";
+import "package:antinote_app/backend/src/home_page/widget/parameters.dart";
 import "package:antinote_app/backend/src/home_page/widget/widget.dart";
 import "package:antinote_app/l10n/app_localizations.dart";
 
@@ -17,7 +18,7 @@ List<HomePageConfiguration> createDefaultConfigurations(
     ),
     widgets: [
       // TimetableNextBlockWidget(),
-      .new(descriptor: const MenuWidget(), entries: {}),
+      .new(descriptor: const MenuWidget(), rawParameters: {}),
       // GradesWidget(),
       // CommunicationsWidget(),
     ],
@@ -80,7 +81,7 @@ List<HomePageConfiguration> createDefaultConfigurations(
       endAnchor: true,
     ),
     widgets: [
-      .new(descriptor: const MenuWidget(), entries: {}),
+      .new(descriptor: const MenuWidget(), rawParameters: {}),
       // TimetableWidget(),
     ],
   ),
@@ -93,7 +94,7 @@ List<HomePageConfiguration> createDefaultConfigurations(
       // HomeworkWidget(),
       // SchoolLifeWidget(),
       // TODO: Add parameter to hide menu widget when after lunch.
-      .new(descriptor: const MenuWidget(), entries: {}),
+      .new(descriptor: const MenuWidget(), rawParameters: {}),
     ],
   ),
   .create(name: l10n.classConfig).copyWith(
@@ -109,21 +110,26 @@ List<HomePageConfiguration> createDefaultConfigurations(
   ),
 ];
 
-final class HomePageWidgetConfiguration({
-  required final WidgetDescriptor descriptor,
-  required final Map<String, dynamic> entries,
+final class HomePageWidgetConfiguration<
+  V,
+  A extends WidgetArgument,
+  P extends WidgetParameter
+>({
+  required final WidgetDescriptor<V, A, P> descriptor,
+  required final Map<P, dynamic> rawParameters,
 }) {
   factory fromJson(Map<String, dynamic> json) {
-    final descriptor = descriptors.firstWhere((e) => e.id == json.get("id"));
+    final descriptor = descriptors.firstWhere(
+      (e) => e.id == json.get("id"),
+    ) as WidgetDescriptor<V, A, P>;
     final params = json.getM("params");
 
     return .new(
       descriptor: descriptor,
-      entries: {
+      rawParameters: {
         for (final argument in descriptor.arguments)
           for (final parameter in argument.parameters)
-            parameter.descriptor.id.code:
-                params.has(parameter.descriptor.id.code)
+            parameter.descriptor.id: params.has(parameter.descriptor.id.code)
                 ? parameter.descriptor.read(
                     params.get(parameter.descriptor.id.code),
                   )
@@ -132,13 +138,15 @@ final class HomePageWidgetConfiguration({
     );
   }
 
+  WidgetParameters<P> get parameters => .new(params: rawParameters);
+
   Map<String, dynamic> toJson() => {
     "id": descriptor.id,
     "params": {
       for (final argument in descriptor.arguments)
         for (final parameter in argument.parameters)
           parameter.descriptor.id.code: parameter.descriptor.write(
-            entries.get(parameter.descriptor.id.code) ??
+            rawParameters[parameter.descriptor.id] ??
                 parameter.descriptor.defaultValue,
           ),
     },

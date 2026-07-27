@@ -3,7 +3,7 @@ import "dart:convert";
 
 import "package:antinote/antinote.dart";
 import "package:antinote_app/backend/src/home_page/configuration.dart";
-import "package:antinote_app/backend/src/home_page/widget_configuration.dart";
+import "package:antinote_app/backend/src/home_page/widget/configuration.dart";
 import "package:antinote_app/backend/src/settings/category.dart";
 import "package:antinote_app/l10n/app_localizations.dart";
 
@@ -35,7 +35,7 @@ class HomePageSettings extends SettingsCategory {
 
     final created = HomePageConfiguration.create(name: l10n.defaultConfig);
     for (final descriptor in defaultDescriptors) {
-      created.widgets.add(.new(descriptor: descriptor, entries: {}));
+      created.widgets.add(.new(descriptor: descriptor, rawParameters: {}));
     }
 
     await set("base_config", created.toJson());
@@ -61,4 +61,9 @@ class HomePageSettings extends SettingsCategory {
 
     return created;
   }
+
+  Future<void> setConditionalConfigurations(
+    List<HomePageConfiguration> newValues,
+  ) =>
+      set("conditional_configs", newValues.mapL((e) => jsonEncode(e.toJson())));
 }

@@ -1,5 +1,5 @@
 import "package:antinote/antinote.dart";
-import "package:antinote_app/backend/backend.dart";
+import "package:antinote_app/frontend/utils/utils.dart";
 import "package:antinote_app/frontend/widgets/customs/list.dart";
 import "package:flutter/material.dart";
 import "package:hugeicons_pro/hugeicons.dart";
@@ -42,7 +42,7 @@ class AttachmentItemWidget extends StatelessWidget {
       onPressed: () async {
         final url = switch (attachment) {
           LinkAttachment(url: final url) => Uri.parse(url),
-          FileAttachment() => await SessionManager.execute(
+          FileAttachment() => await context.sm.runTask(
             context: context,
             callback: (session) async {
               final cachedAttachment = session.getCachedValue(

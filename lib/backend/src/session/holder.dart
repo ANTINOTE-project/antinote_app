@@ -109,6 +109,7 @@ class SessionDataHolder extends ChangeNotifier {
   Future<T> runTask<T>({
     required FutureOr<RemoteSession> Function() sessionEnsurer,
     List<String> channels = const ["communication"],
+    bool retry = false,
     required RunCallback<T> callback,
   }) async {
     assert(
@@ -161,7 +162,7 @@ class SessionDataHolder extends ChangeNotifier {
 
     late T callbackResult;
     try {
-      for (var curTry = 1; curTry <= 2; curTry++) {
+      for (var curTry = retry ? 1 : 2; curTry <= 2; curTry++) {
         try {
           callbackResult = await callback.call(currentlyAppliedSession!);
 

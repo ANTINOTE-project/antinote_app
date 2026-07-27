@@ -28,7 +28,7 @@ mixin TabMixin<T extends StatefulWidget> on State<T> {
       final controller = StreamController<double?>.broadcast();
       _loader = controller.stream;
 
-      SessionManager.execute(
+      context.sm.runTask(
         context: context,
         channels: loadChannels,
         callback: (session) async {

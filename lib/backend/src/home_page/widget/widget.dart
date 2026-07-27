@@ -1,7 +1,7 @@
 import "dart:async";
 
 import "package:antinote/antinote.dart";
-import "package:antinote_app/backend/src/home_page/loader.dart";
+import "package:antinote_app/backend/src/home_page/manager.dart";
 import "package:antinote_app/backend/src/home_page/widget/parameters.dart";
 import "package:flutter/widgets.dart";
 

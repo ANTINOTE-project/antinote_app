@@ -98,7 +98,7 @@ class _HomeworksScreenState extends State<HomeworksScreen>
     if (session != null) {
       await update(session);
     } else {
-      await SessionManager.execute(context: context, callback: update);
+      await context.sm.runTask(context: context, callback: update);
     }
   }
 

@@ -1,8 +1,8 @@
 import "dart:async";
 
 import "package:antinote/antinote.dart";
-import "package:antinote_app/backend/src/home_page/loader.dart";
-import "package:antinote_app/backend/src/home_page/widget_configuration.dart";
+import "package:antinote_app/backend/src/home_page/manager.dart";
+import "package:antinote_app/backend/src/home_page/widget/configuration.dart";
 import "package:antinote_app/backend/src/state.dart";
 import "package:antinote_app/frontend/utils/utils.dart";
 import "package:collection/collection.dart";
@@ -15,7 +15,7 @@ final class const HomePageConfiguration({
 
   required final List<HomePageWidgetConfiguration> widgets,
 
-  required final HomePageConfigurationCriterion criterion,
+  required final HomePageConfigurationCriterion? criterion,
   final bool exclusive = true,
 }) {
   static const _uuidGenerator = UuidV4();
@@ -25,10 +25,7 @@ final class const HomePageConfiguration({
         name: name,
         uid: _uuidGenerator.generate(),
         widgets: [],
-        criterion: const RelativeHomePageConfigurationCriterion(
-          margin: .zero,
-          state: .defaultState,
-        ),
+        criterion: null,
       );
 
   factory fromJson(Map<String, dynamic> json) => .new(
@@ -37,7 +34,9 @@ final class const HomePageConfiguration({
 
     widgets: json.getLM("widgets").mapL((e) => .fromJson(e)),
 
-    criterion: .fromJson(json.get("criterion")),
+    criterion: json.get("criterion") == null
+        ? null
+        : .fromJson(json.get("criterion")),
     exclusive: json.get<bool?>("exclusive") ?? true,
   );
 
@@ -49,7 +48,7 @@ final class const HomePageConfiguration({
 
     "widgets": widgets.mapL((e) => e.toJson()),
 
-    "criterion": criterion.toJson(),
+    "criterion": criterion?.toJson(),
     "exclusive": exclusive,
   };
 

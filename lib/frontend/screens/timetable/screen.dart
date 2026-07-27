@@ -1,7 +1,6 @@
 import "dart:async";
 
 import "package:antinote/antinote.dart";
-import "package:antinote_app/backend/backend.dart";
 import "package:antinote_app/frontend/screens/shell/tab.dart";
 import "package:antinote_app/frontend/screens/timetable/events/block.dart";
 import "package:antinote_app/frontend/utils/utils.dart";
@@ -138,7 +137,7 @@ class _TimetableDisplayState extends State<TimetableDisplay>
       if (session != null) {
         result = await widget.updateBlocks(session, days, dayList);
       } else {
-        result = await SessionManager.execute(
+        result = await context.sm.runTask(
           context: context,
           callback: (session) async =>
               await widget.updateBlocks(session, days, dayList),
