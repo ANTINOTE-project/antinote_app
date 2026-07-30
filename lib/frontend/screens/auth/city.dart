@@ -1,16 +1,16 @@
-import "dart:async";
-import "dart:math";
+import 'dart:async';
+import 'dart:math';
 
-import "package:antinote/antinote.dart";
-import "package:antinote_app/backend/src/accounts/place.dart";
-import "package:antinote_app/frontend/routing/routes.dart";
-import "package:antinote_app/frontend/utils/utils.dart";
-import "package:antinote_app/frontend/widgets/customs/app_bar.dart";
-import "package:antinote_app/frontend/widgets/customs/field.dart";
-import "package:antinote_app/frontend/widgets/customs/list.dart";
-import "package:flutter/material.dart";
-import "package:go_router/go_router.dart";
-import "package:hugeicons_pro/hugeicons.dart";
+import 'package:antinote/antinote.dart';
+import 'package:antinote_app/backend/src/accounts/place.dart';
+import 'package:antinote_app/frontend/routing/routes.dart';
+import 'package:antinote_app/frontend/utils/utils.dart';
+import 'package:antinote_app/frontend/widgets/customs/app_bar.dart';
+import 'package:antinote_app/frontend/widgets/customs/field.dart';
+import 'package:antinote_app/frontend/widgets/customs/list.dart';
+import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
+import 'package:hugeicons_pro/hugeicons.dart';
 
 class LoginFindCityScreen extends StatefulWidget {
   const LoginFindCityScreen({super.key});
@@ -35,7 +35,7 @@ class _LoginFindCityScreenState extends State<LoginFindCityScreen> {
       latitude: 0,
       longitude: 0,
 
-      region: "",
+      region: '',
     );
   });
 
@@ -151,8 +151,8 @@ class _LoginFindCityScreenState extends State<LoginFindCityScreen> {
                                 Routes.auth.school,
 
                                 extra: {
-                                  "lat": city.latitude,
-                                  "long": city.longitude,
+                                  'lat': city.latitude,
+                                  'long': city.longitude,
                                 },
                               );
 

@@ -1,14 +1,15 @@
-import "dart:async";
+import 'dart:async';
 
-import "package:antinote/antinote.dart";
-import "package:antinote_app/backend/src/home_page/configuration.dart";
-import "package:antinote_app/backend/src/home_page/widget/configuration.dart";
-import "package:antinote_app/backend/src/home_page/widget/widget.dart";
-import "package:antinote_app/backend/src/state.dart";
-import "package:antinote_app/frontend/screens/timetable/events/block.dart";
-import "package:antinote_app/frontend/utils/utils.dart";
-import "package:collection/collection.dart";
-import "package:flutter/widgets.dart";
+import 'package:antinote/antinote.dart';
+import 'package:antinote_app/backend/src/home_page/configuration.dart';
+import 'package:antinote_app/backend/src/home_page/widget/configuration.dart';
+import 'package:antinote_app/backend/src/home_page/widget/parameters.dart';
+import 'package:antinote_app/backend/src/home_page/widget/widget.dart';
+import 'package:antinote_app/backend/src/state.dart';
+import 'package:antinote_app/frontend/screens/timetable/events/block.dart';
+import 'package:antinote_app/frontend/utils/utils.dart';
+import 'package:collection/collection.dart';
+import 'package:flutter/widgets.dart';
 
 enum HomePageRequestType { schedules, menu, grades, schoolLife, news, homework }
 
@@ -185,17 +186,25 @@ final class HomePageCache {
   }
 }
 
-final class const LoadedHomePageWidget<V>({
-  required final WidgetDescriptor<V, dynamic, dynamic> descriptor,
-  required final V value,
+final class HomePageWidgetState<
+  V,
+  A extends WidgetArgument,
+  P extends WidgetParameter
+>({
+  required final HomePageWidgetConfiguration<V, A, P> configuration,
+  required final Map<A, dynamic> rawArguments,
   required final int index,
-});
+}) extends ValueNotifier<V?> {
+  this : super(null);
 
-final class const _LoadingHomePageWidget<A extends WidgetArgument>({
-  required final HomePageWidgetConfiguration<dynamic, A, dynamic> configuration,
-  required final Map<A, dynamic> arguments,
-  required final int index,
-});
+  bool get loaded => value != null;
+
+  WidgetDescriptor<V, A, dynamic> get descriptor => configuration.descriptor;
+
+  WidgetParameters<P> get parameters =>
+      .new(params: configuration.rawParameters);
+  WidgetArguments<A> get arguments => .new(args: rawArguments);
+}
 
 /// This manager is "short-lived". A new one should be created on each reload.
 /// It may be kept from the start of the reload until the start of the next
@@ -206,19 +215,33 @@ final class HomePageManager() {
   late HomePageCache _cache;
 
   late final List<HomePageWidgetConfiguration> _loadedWidgetConfigurations;
-  late final List<LoadedHomePageWidget> _loadedWidgets;
+  late final List<HomePageWidgetState> loadedWidgets;
 
-  Future<LoadedHomePageWidget?> reloadWidget(
+  /// If a loaded home page widget is returned it is [identical] as the one
+  /// provided. If [null] is returned, this means the widget got destroyed.
+  ///
+  /// When [force] is [false], the widget will update only if the session is
+  /// different. Else, the widget will always update.
+  Future<HomePageWidgetState?> reloadWidget(
     BuildContext context,
-    LoadedHomePageWidget widget,
-  ) async {
-    assert(_loadedWidgets.contains(widget));
+    HomePageWidgetState widget, {
+    required bool force,
+  }) async {
+    assert(
+      context.mounted,
+      'Tried to reload a widget with an unmounted context.',
+    );
+    assert(loadedWidgets.contains(widget));
 
     final config = _loadedWidgetConfigurations[widget.index];
 
     return await context.sm.runTask(
       context: context,
       callback: (session) async {
+        if (!force && _cache.sessionId != session.stack.sessionId) {
+          return widget;
+        }
+
         final tempCache = HomePageCache(sessionId: session.stack.sessionId);
 
         final loaded = (await _loadWidgetConfigurations(
@@ -231,63 +254,55 @@ final class HomePageManager() {
 
         if (loaded == null) return null;
 
-        return .new(
-          descriptor: loaded.descriptor,
-          value: loaded.value,
-          index: widget.index,
-        );
+        widget.value = loaded.value;
+
+        return widget;
       },
     );
   }
 
-  Future<void> initialize(BuildContext context) async {
+  Future<void> initialize(BuildContext context, RemoteSession session) async {
     if (initialized) return;
     initialized = true;
 
     assert(
       context.mounted,
-      "Initializing home page with an unmounted context.",
+      'Initializing home page with an unmounted context.',
     );
 
     final l10n = context.l10n;
     final settings = context.s;
 
-    _loadedWidgets = await context.sm.runTask(
-      context: context,
-      callback: (session) async {
-        _cache = HomePageCache(sessionId: session.stack.sessionId);
+    _cache = HomePageCache(sessionId: session.stack.sessionId);
 
-        final config =
-            (await _findConfiguration(
-              session,
-              (await settings.homePage.getConditionalConfigurations(l10n))
-                  .toList(),
-            )) ??
-            await settings.homePage.getBaseConfiguration(l10n);
+    final config =
+        (await _findConfiguration(
+          session,
+          (await settings.homePage.getConditionalConfigurations(l10n)).toList(),
+        )) ??
+        await settings.homePage.getBaseConfiguration(l10n);
 
-        _loadedWidgetConfigurations = config.widgets.toList();
-        if (!config.exclusive) {
-          final baseWidgets = (await settings.homePage.getBaseConfiguration(
-            l10n,
-          )).widgets.toList();
-          for (final widget in _loadedWidgetConfigurations) {
-            final duplicate = baseWidgets.firstWhereOrNull(
-              (element) => element.descriptor.id == widget.descriptor.id,
-            );
-            if (duplicate != null) {
-              baseWidgets.remove(duplicate);
-            }
-          }
-
-          _loadedWidgetConfigurations.addAll(baseWidgets);
-        }
-
-        return await _loadWidgetConfigurations(
-          session: session,
-          widgets: _loadedWidgetConfigurations,
-          cache: _cache,
+    _loadedWidgetConfigurations = config.widgets.toList();
+    if (!config.exclusive) {
+      final baseWidgets = (await settings.homePage.getBaseConfiguration(l10n))
+          .widgets
+          .toList();
+      for (final widget in _loadedWidgetConfigurations) {
+        final duplicate = baseWidgets.firstWhereOrNull(
+          (element) => element.descriptor.id == widget.descriptor.id,
         );
-      },
+        if (duplicate != null) {
+          baseWidgets.remove(duplicate);
+        }
+      }
+
+      _loadedWidgetConfigurations.addAll(baseWidgets);
+    }
+
+    loadedWidgets = await _loadWidgetConfigurations(
+      session: session,
+      widgets: _loadedWidgetConfigurations,
+      cache: _cache,
     );
   }
 
@@ -331,44 +346,48 @@ final class HomePageManager() {
     return null;
   }
 
-  Future<List<LoadedHomePageWidget>> _loadWidgetConfigurations({
+  Future<List<HomePageWidgetState>> _loadWidgetConfigurations({
     required RemoteSession session,
     required List<HomePageWidgetConfiguration> widgets,
     required HomePageCache cache,
   }) async {
-    final Map<int, LoadedHomePageWidget> loaded = {};
+    final Map<int, HomePageWidgetState> loaded = {};
 
-    final List<_LoadingHomePageWidget> entries = widgets
+    final List<HomePageWidgetState> entries = widgets
         .mapIndexed(
-          (index, element) => _LoadingHomePageWidget(
+          (index, element) => HomePageWidgetState(
             configuration: element,
-            arguments: <WidgetArgument, dynamic>{},
+            rawArguments: <WidgetArgument, dynamic>{},
             index: index,
           ),
         )
         .toList();
     while (entries.isNotEmpty) {
       final requests = <HomePageRequest>[];
-      final newEntries = <_LoadingHomePageWidget>[];
+      final newEntries = <HomePageWidgetState>[];
 
       entryLoop:
       for (final entry in entries) {
         final curRequests = <HomePageRequest>[];
 
-        for (final argument in entry.configuration.descriptor.arguments) {
-          if (entry.arguments.containsKey(argument.id)) continue;
+        for (final argument in entry.descriptor.arguments) {
+          if (entry.rawArguments.containsKey(argument.id)) continue;
 
-          final required = argument.requiredUntilCompute(session, cache);
+          final required = argument.requiredUntilCompute(
+            session,
+            cache,
+            entry.parameters,
+          );
           if (required.isEmpty) {
             final value = await argument.computeValue(
               session,
               cache,
-              entry.configuration.parameters,
+              entry.parameters,
             );
 
             if (value == null) continue entryLoop;
 
-            entry.arguments[argument.id] = value;
+            entry.rawArguments[argument.id] = value;
           } else {
             curRequests.addAll(required);
           }
@@ -380,7 +399,7 @@ final class HomePageManager() {
           continue;
         }
 
-        final arguments = WidgetArguments(args: entry.arguments);
+        final arguments = WidgetArguments(args: entry.rawArguments);
 
         final widgetRequests = entry.configuration.descriptor
             .requiredUntilCompute(session, cache, arguments);
@@ -391,15 +410,12 @@ final class HomePageManager() {
           continue;
         }
 
-        loaded[entry.index] = .new(
-          descriptor: entry.configuration.descriptor,
-          value: await entry.configuration.descriptor.computeValue(
+        loaded[entry.index] = entry
+          ..value = await entry.configuration.descriptor.computeValue(
             session,
             cache,
             arguments,
-          ),
-          index: entry.index,
-        );
+          );
       }
     }
 

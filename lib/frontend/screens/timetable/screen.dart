@@ -1,14 +1,14 @@
-import "dart:async";
+import 'dart:async';
 
-import "package:antinote/antinote.dart";
-import "package:antinote_app/frontend/screens/shell/tab.dart";
-import "package:antinote_app/frontend/screens/timetable/events/block.dart";
-import "package:antinote_app/frontend/utils/utils.dart";
-import "package:antinote_app/frontend/widgets/customs/loading.dart";
-import "package:antinote_app/main.dart";
-import "package:collection/collection.dart";
-import "package:flutter/material.dart";
-import "package:hugeicons_pro/hugeicons.dart";
+import 'package:antinote/antinote.dart';
+import 'package:antinote_app/frontend/screens/shell/tab.dart';
+import 'package:antinote_app/frontend/screens/timetable/events/block.dart';
+import 'package:antinote_app/frontend/utils/utils.dart';
+import 'package:antinote_app/frontend/widgets/customs/loading.dart';
+import 'package:antinote_app/main.dart';
+import 'package:collection/collection.dart';
+import 'package:flutter/material.dart';
+import 'package:hugeicons_pro/hugeicons.dart';
 
 typedef RelevantSlots = ({int firstSlot, int lastSlot});
 typedef Classes = Map<DateTime, ValueNotifier<DayBlocks?>>;
@@ -373,7 +373,7 @@ class _TimetableDisplayState extends State<TimetableDisplay>
             to.timing.minute -
             from.timing.minute;
 
-        talker.info("${from.timing} -> ${to.timing} : $value");
+        talker.info('${from.timing} -> ${to.timing} : $value');
         displays.add(Expanded(flex: value, child: const SizedBox.shrink()));
       }
 
@@ -501,7 +501,7 @@ class _TimetableDisplayState extends State<TimetableDisplay>
   }
 
   @override
-  List<String> get loadChannels => _animating ? [] : ["communication"];
+  List<String> get loadChannels => _animating ? [] : ['communication'];
 
   int ensureCorrectConfiguration() {
     final days = DateRange(

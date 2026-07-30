@@ -1,13 +1,13 @@
-import "dart:async";
+import 'dart:async';
 
-import "package:antinote/antinote.dart";
-import "package:antinote_app/backend/src/home_page/manager.dart";
-import "package:antinote_app/backend/src/home_page/widget/configuration.dart";
-import "package:antinote_app/backend/src/state.dart";
-import "package:antinote_app/frontend/utils/utils.dart";
-import "package:collection/collection.dart";
-import "package:flutter/material.dart";
-import "package:uuid/v4.dart";
+import 'package:antinote/antinote.dart';
+import 'package:antinote_app/backend/src/home_page/manager.dart';
+import 'package:antinote_app/backend/src/home_page/widget/configuration.dart';
+import 'package:antinote_app/backend/src/state.dart';
+import 'package:antinote_app/frontend/utils/utils.dart';
+import 'package:collection/collection.dart';
+import 'package:flutter/material.dart';
+import 'package:uuid/v4.dart';
 
 final class const HomePageConfiguration({
   required final String name,
@@ -29,27 +29,27 @@ final class const HomePageConfiguration({
       );
 
   factory fromJson(Map<String, dynamic> json) => .new(
-    name: json.get("name"),
-    uid: json.get("id"),
+    name: json.get('name'),
+    uid: json.get('id'),
 
-    widgets: json.getLM("widgets").mapL((e) => .fromJson(e)),
+    widgets: json.getLM('widgets').mapL((e) => .fromJson(e)),
 
-    criterion: json.get("criterion") == null
+    criterion: json.get('criterion') == null
         ? null
-        : .fromJson(json.get("criterion")),
-    exclusive: json.get<bool?>("exclusive") ?? true,
+        : .fromJson(json.get('criterion')),
+    exclusive: json.get<bool?>('exclusive') ?? true,
   );
 
   Map<String, dynamic> toJson() => {
-    "name": name,
+    'name': name,
     // UUIDs shouldn't be stored as strings ideally, but since this is a very
     // low volume object, it's not that important.
-    "id": uid,
+    'id': uid,
 
-    "widgets": widgets.mapL((e) => e.toJson()),
+    'widgets': widgets.mapL((e) => e.toJson()),
 
-    "criterion": criterion?.toJson(),
-    "exclusive": exclusive,
+    'criterion': criterion?.toJson(),
+    'exclusive': exclusive,
   };
 
   HomePageConfiguration copyWith({
@@ -66,22 +66,22 @@ final class const HomePageConfiguration({
 }
 
 enum HomePageConfigurationCriterionType(final String id) {
-  relative("rel"),
-  operator("op"),
-  not("not"),
-  static("sta"),
-  classRelative("cla")
+  relative('rel'),
+  operator('op'),
+  not('not'),
+  static('sta'),
+  classRelative('cla')
 }
 
 sealed class const HomePageConfigurationCriterion() {
   List<HomePageRequest> requestsUntilRequirements(HomePageCache cache);
   FutureOr<bool> meetsRequirement(HomePageCache cache);
 
-  Map<String, dynamic> toJson() => {"id": id, ..._jsonProperties()};
+  Map<String, dynamic> toJson() => {'id': id.id, ..._jsonProperties()};
 
   factory fromJson(Map<String, dynamic> raw) {
     return switch (HomePageConfigurationCriterionType.values.firstWhere(
-      (element) => element.id == raw.get("id"),
+      (element) => element.id == raw.get('id'),
     )) {
       .relative => RelativeHomePageConfigurationCriterion.fromJson(raw),
       .operator => OperatorHomePageConfigurationCriterion.fromJson(raw),
@@ -142,20 +142,20 @@ final class RelativeHomePageConfigurationCriterion
       endAnchor = true;
 
   factory fromJson(Map<String, dynamic> raw) => .custom(
-    startMargin: raw.get("start_pos"),
-    startAnchor: raw.get("start_anc"),
-    state: .values.byName(raw.get("state")),
-    endMargin: raw.get("end_pos"),
-    endAnchor: raw.get("end_anc"),
+    startMargin: Duration(milliseconds: raw.get('start_pos')),
+    startAnchor: raw.get('start_anc'),
+    state: .values.byName(raw.get('state')),
+    endMargin: Duration(milliseconds: raw.get('end_pos')),
+    endAnchor: raw.get('end_anc'),
   );
 
   @override
   Map<String, dynamic> _jsonProperties() => {
-    "start_pos": startMargin,
-    "start_anc": startAnchor,
-    "state": state.name,
-    "end_pos": endMargin,
-    "end_anc": endAnchor,
+    'start_pos': startMargin.inMilliseconds,
+    'start_anc': startAnchor,
+    'state': state.name,
+    'end_pos': endMargin.inMilliseconds,
+    'end_anc': endAnchor,
   };
 
   @override
@@ -204,16 +204,16 @@ final class OperatorHomePageConfigurationCriterion
 
   factory fromJson(Map<String, dynamic> raw) =>
       OperatorHomePageConfigurationCriterion(
-        a: HomePageConfigurationCriterion.fromJson(raw.get("a")),
-        operation: .values.byName(raw.get("op")),
-        b: HomePageConfigurationCriterion.fromJson(raw.get("b")),
+        a: HomePageConfigurationCriterion.fromJson(raw.get('a')),
+        operation: .values.byName(raw.get('op')),
+        b: HomePageConfigurationCriterion.fromJson(raw.get('b')),
       );
 
   @override
   Map<String, dynamic> _jsonProperties() => {
-    "a": a.toJson(),
-    "op": operation.name,
-    "b": b.toJson(),
+    'a': a.toJson(),
+    'op': operation.name,
+    'b': b.toJson(),
   };
 
   @override
@@ -241,11 +241,11 @@ final class NotOperatorHomePageConfigurationCriterion
 
   factory fromJson(Map<String, dynamic> raw) =>
       NotOperatorHomePageConfigurationCriterion(
-        criterion: HomePageConfigurationCriterion.fromJson(raw.get("crit")),
+        criterion: HomePageConfigurationCriterion.fromJson(raw.get('crit')),
       );
 
   @override
-  Map<String, dynamic> _jsonProperties() => {"crit": criterion.toJson()};
+  Map<String, dynamic> _jsonProperties() => {'crit': criterion.toJson()};
 
   @override
   List<HomePageRequest> requestsUntilRequirements(HomePageCache cache) =>
@@ -262,30 +262,30 @@ final class const StaticHomePageConfigurationCriterion({
   required final DateTime end,
   required final AppState? mask,
 }) extends HomePageConfigurationCriterion {
-  this : assert(relation != .none, "Relation cannot be none");
+  this : assert(relation != .none, 'Relation cannot be none');
 
   @override
   HomePageConfigurationCriterionType get id => .static;
 
   factory fromJson(Map<String, dynamic> raw) =>
       StaticHomePageConfigurationCriterion(
-        relation: .values.byName(raw.get("rel")),
+        relation: .values.byName(raw.get('rel')),
         start: DateTime.fromMillisecondsSinceEpoch(
-          raw.get("start"),
+          raw.get('start'),
           isUtc: true,
         ),
-        end: DateTime.fromMillisecondsSinceEpoch(raw.get("end"), isUtc: true),
-        mask: raw.get<String?>("mask") == null
+        end: DateTime.fromMillisecondsSinceEpoch(raw.get('end'), isUtc: true),
+        mask: raw.get<String?>('mask') == null
             ? null
-            : .values.byName(raw.get<String>("mask")),
+            : .values.byName(raw.get<String>('mask')),
       );
 
   @override
   Map<String, dynamic> _jsonProperties() => {
-    "start": start.millisecondsSinceEpoch,
-    "end": end.millisecondsSinceEpoch,
-    "rel": relation.name,
-    "mask": mask?.name,
+    'start': start.millisecondsSinceEpoch,
+    'end': end.millisecondsSinceEpoch,
+    'rel': relation.name,
+    'mask': mask?.name,
   };
 
   @override
@@ -331,10 +331,10 @@ final class const ClassRelativeHomePageConfigurationCriterion({
   HomePageConfigurationCriterionType get id => .classRelative;
 
   factory fromJson(Map<String, dynamic> json) =>
-      .new(relation: .values.byName(json.get("rel")));
+      .new(relation: .values.byName(json.get('rel')));
 
   @override
-  Map<String, dynamic> _jsonProperties() => {"rel": relation.name};
+  Map<String, dynamic> _jsonProperties() => {'rel': relation.name};
 
   @override
   List<HomePageRequest> requestsUntilRequirements(HomePageCache cache) {

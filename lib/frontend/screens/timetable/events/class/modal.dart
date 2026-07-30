@@ -1,9 +1,9 @@
-import "package:antinote/antinote.dart";
-import "package:antinote_app/backend/backend.dart";
-import "package:antinote_app/frontend/utils/utils.dart";
-import "package:antinote_app/frontend/widgets/customs/list.dart";
-import "package:collection/collection.dart";
-import "package:flutter/material.dart";
+import 'package:antinote/antinote.dart';
+import 'package:antinote_app/backend/backend.dart';
+import 'package:antinote_app/frontend/utils/utils.dart';
+import 'package:antinote_app/frontend/widgets/customs/list.dart';
+import 'package:collection/collection.dart';
+import 'package:flutter/material.dart';
 
 Future<void> showClassModal(BuildContext context, Class defaultClass) async {
   final clazzCallback = context.sm.runTask<Class?>(
@@ -138,7 +138,7 @@ class ClassModalContents extends StatelessWidget {
           Padding(
             padding: const EdgeInsets.only(top: 12),
             child: Text(
-              "${clazz.startDate.asLongNumericDate()} ${clazz.startDate.asNumericTime()} - ${clazz.endDate.asNumericTime()} (${Formatters.formatDuration(clazz.endDate.difference(clazz.startDate))})",
+              '${clazz.startDate.asLongNumericDate()} ${clazz.startDate.asNumericTime()} - ${clazz.endDate.asNumericTime()} (${Formatters.formatDuration(clazz.endDate.difference(clazz.startDate))})',
               style: TextStyle(color: context.c.onSurface, fontWeight: .bold),
             ),
           ),

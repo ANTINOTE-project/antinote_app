@@ -1,4 +1,4 @@
-part of "../block.dart";
+part of '../block.dart';
 
 final class ClassEvent extends Event {
   final Class value;

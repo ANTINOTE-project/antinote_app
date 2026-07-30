@@ -1,5 +1,5 @@
-import "package:antinote_app/frontend/widgets/pressable.dart";
-import "package:flutter/material.dart";
+import 'package:antinote_app/frontend/widgets/pressable.dart';
+import 'package:flutter/material.dart';
 
 class CompactCard extends StatelessWidget {
   final ColorScheme scheme;

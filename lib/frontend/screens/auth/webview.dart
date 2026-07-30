@@ -1,10 +1,10 @@
-import "package:antinote/antinote.dart";
-import "package:antinote_app/frontend/utils/utils.dart";
-import "package:antinote_app/frontend/widgets/customs/app_bar.dart";
-import "package:antinote_app/main.dart";
-import "package:flutter/material.dart";
-import "package:go_router/go_router.dart";
-import "package:webview_flutter/webview_flutter.dart";
+import 'package:antinote/antinote.dart';
+import 'package:antinote_app/frontend/utils/utils.dart';
+import 'package:antinote_app/frontend/widgets/customs/app_bar.dart';
+import 'package:antinote_app/main.dart';
+import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
+import 'package:webview_flutter/webview_flutter.dart';
 
 class LoginWebviewScreen extends StatefulWidget {
   final MobileInstanceParameters parameters;
@@ -34,8 +34,8 @@ class _LoginWebviewScreenState extends State<LoginWebviewScreen> {
   bool _matchesCriteria(Uri? url) {
     return url != null &&
         widget.parameters.baseUrl.authority == url.authority &&
-        (url.queryParameters.containsKey("ticket") ||
-            url.queryParameters.containsKey("identifiant"));
+        (url.queryParameters.containsKey('ticket') ||
+            url.queryParameters.containsKey('identifiant'));
   }
 
   @override
@@ -74,7 +74,7 @@ class _LoginWebviewScreenState extends State<LoginWebviewScreen> {
               } catch (e, st) {
                 _loginHandled = false;
                 talker.error(
-                  "Failed to login although matched criterion",
+                  'Failed to login although matched criterion',
                   e,
                   st,
                 );

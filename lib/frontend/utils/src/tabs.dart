@@ -1,10 +1,11 @@
-import "package:antinote_app/frontend/screens/communication/screen.dart";
-import "package:antinote_app/frontend/screens/grades/screen.dart";
-import "package:antinote_app/frontend/screens/homeworks/screen.dart";
-import "package:antinote_app/frontend/screens/timetable/screen.dart";
-import "package:antinote_app/frontend/utils/src/context.dart";
-import "package:flutter/material.dart";
-import "package:hugeicons_pro/hugeicons.dart";
+import 'package:antinote_app/frontend/screens/communication/screen.dart';
+import 'package:antinote_app/frontend/screens/grades/screen.dart';
+import 'package:antinote_app/frontend/screens/home/screen.dart';
+import 'package:antinote_app/frontend/screens/homeworks/screen.dart';
+import 'package:antinote_app/frontend/screens/timetable/screen.dart';
+import 'package:antinote_app/frontend/utils/src/context.dart';
+import 'package:flutter/material.dart';
+import 'package:hugeicons_pro/hugeicons.dart';
 
 enum TabCategory { home, timetable, grades, homeworks, communication }
 
@@ -21,7 +22,7 @@ List<TabDestination> buildTabs(BuildContext context) {
     (
       icon: HugeIconsSolid.home01,
       label: context.l10n.home,
-      screen: const Placeholder(), // TODO
+      screen: const HomeScreen(),
       category: .home,
       tabs: [],
     ),

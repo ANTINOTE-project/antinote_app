@@ -1,14 +1,14 @@
-import "dart:async";
+import 'dart:async';
 
-import "package:antinote/antinote.dart";
-import "package:antinote_app/frontend/screens/communication/models.dart";
-import "package:antinote_app/frontend/screens/communication/news.dart";
-import "package:antinote_app/frontend/screens/shell/tab.dart";
-import "package:antinote_app/frontend/utils/utils.dart";
-import "package:antinote_app/frontend/widgets/customs/list.dart";
-import "package:flutter/material.dart";
-import "package:hugeicons_pro/hugeicons.dart";
-import "package:intl/intl.dart";
+import 'package:antinote/antinote.dart';
+import 'package:antinote_app/frontend/screens/communication/models.dart';
+import 'package:antinote_app/frontend/screens/communication/news.dart';
+import 'package:antinote_app/frontend/screens/shell/tab.dart';
+import 'package:antinote_app/frontend/utils/utils.dart';
+import 'package:antinote_app/frontend/widgets/customs/list.dart';
+import 'package:flutter/material.dart';
+import 'package:hugeicons_pro/hugeicons.dart';
+import 'package:intl/intl.dart';
 
 class CommunicationScreen extends StatefulWidget {
   const CommunicationScreen({super.key});

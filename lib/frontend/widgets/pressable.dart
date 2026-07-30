@@ -1,5 +1,5 @@
-import "package:flutter/material.dart";
-import "package:vibration/vibration.dart";
+import 'package:flutter/material.dart';
+import 'package:vibration/vibration.dart';
 
 class Pressable extends StatelessWidget {
   final Widget child;

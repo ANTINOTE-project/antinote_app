@@ -1,20 +1,20 @@
-import "dart:math";
+import 'dart:math';
 
-import "package:antinote/antinote.dart";
-import "package:antinote_app/backend/src/state.dart";
-import "package:antinote_app/frontend/screens/timetable/events/class/widget.dart";
-import "package:antinote_app/frontend/screens/timetable/events/meal/widget.dart";
-import "package:antinote_app/frontend/screens/timetable/events/pause/widget.dart";
-import "package:antinote_app/frontend/widgets/pressable.dart";
-import "package:collection/collection.dart";
-import "package:flutter/foundation.dart";
-import "package:flutter/material.dart";
+import 'package:antinote/antinote.dart';
+import 'package:antinote_app/backend/src/state.dart';
+import 'package:antinote_app/frontend/screens/timetable/events/class/widget.dart';
+import 'package:antinote_app/frontend/screens/timetable/events/meal/widget.dart';
+import 'package:antinote_app/frontend/screens/timetable/events/pause/widget.dart';
+import 'package:antinote_app/frontend/widgets/pressable.dart';
+import 'package:collection/collection.dart';
+import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
 
-import "../../../utils/utils.dart";
+import '../../../utils/utils.dart';
 
-part "class/event.dart";
-part "meal/event.dart";
-part "pause/event.dart";
+part 'class/event.dart';
+part 'meal/event.dart';
+part 'pause/event.dart';
 
 typedef DayBlocks = List<Block>;
 

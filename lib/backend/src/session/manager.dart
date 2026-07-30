@@ -1,11 +1,11 @@
-import "dart:async";
+import 'dart:async';
 
-import "package:antinote/antinote.dart";
-import "package:antinote_app/backend/src/session/holder.dart";
-import "package:antinote_app/frontend/routing/routes.dart";
-import "package:antinote_app/frontend/utils/utils.dart";
-import "package:flutter/material.dart";
-import "package:go_router/go_router.dart";
+import 'package:antinote/antinote.dart';
+import 'package:antinote_app/backend/src/session/holder.dart';
+import 'package:antinote_app/frontend/routing/routes.dart';
+import 'package:antinote_app/frontend/utils/utils.dart';
+import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 
 typedef RunCallback<T> = FutureOr<T> Function(RemoteSession session);
 
@@ -26,15 +26,15 @@ class SessionManager extends InheritedWidget {
 
     final defaultAccount = await context.as.getDefaultAccount();
 
-    if (defaultAccount != null) {
+    if (defaultAccount != null && !defaultAccount.invalid) {
       state.lastSeenAccountUid = defaultAccount.uid;
       return defaultAccount.uid;
     }
 
     if (!context.mounted) {
       throw Exception(
-        "Context got unmounted by the time we checked if any "
-        "default account existed",
+        'Context got unmounted by the time we checked if any '
+        'default account existed',
       );
     }
 
@@ -43,29 +43,16 @@ class SessionManager extends InheritedWidget {
     return state.lastSeenAccountUid!;
   }
 
-  Future<RemoteSession> ensureSession({
-    required BuildContext context,
-    String? accountUid,
-  }) {
-    if (!context.mounted) {
-      throw Exception(
-        "Wanted to ensure session existed but context is unmounted...",
-      );
-    }
-
-    return state.ensureSession(storage: context.as, accountUid: accountUid);
-  }
-
   static SessionManager of(BuildContext context) {
     final result = context.dependOnInheritedWidgetOfExactType<SessionManager>();
-    assert(result != null, "No SessionManager in context");
+    assert(result != null, 'No SessionManager in context');
 
     return result!;
   }
 
   Future<T> runTask<T>({
     required BuildContext? context,
-    List<String> channels = const ["communication"],
+    List<String> channels = const ['communication'],
     required RunCallback<T> callback,
     bool bypassStateLock = false,
     bool retry = false,
@@ -75,8 +62,8 @@ class SessionManager extends InheritedWidget {
 
       if (context != null && !context.mounted) {
         throw Exception(
-          "Waited for state lock to lift in order to not repeat requests from this "
-          "client. By that time, the state got unmounted.",
+          'Waited for state lock to lift in order to not repeat requests from this '
+          'client. By that time, the state got unmounted.',
         );
       }
     }
@@ -87,27 +74,42 @@ class SessionManager extends InheritedWidget {
 
     try {
       if (state.lastSeenAccountUid == null) {
-        if (context == null || !context.mounted) {
-          throw Exception(
-            "Wanted to run a task without having picked an account "
-            "ID and without a valid context...",
-          );
-        }
+        assert(
+          context != null && context.mounted,
+          'Wanted to run a task without having picked an account '
+          'ID and without a valid context...',
+        );
 
-        await ensureAccountUid(context);
+        await ensureAccountUid(context!);
       }
 
       final as = context == null || !context.mounted ? null : context.as;
 
       return await state.runTask(
-        sessionEnsurer: () {
+        sessionEnsurer: () async {
           assert(
             as != null,
-            "Wanted to run a task without having a session "
-            "and without a valid context...",
+            'Wanted to run a task without having a session '
+            'and without a valid context...',
           );
 
-          return state.ensureSession(storage: as!);
+          try {
+            return await state.ensureSession(storage: as!);
+          } on InvalidInstanceException {
+            assert(
+              context != null && context.mounted,
+              'Account became invalid but context is missing to ask user for a '
+              'new one...',
+            );
+
+            await ensureAccountUid(context!);
+
+            if (retry) {
+              return await state.ensureSession(storage: as!);
+            }
+
+            rethrow;
+          }
         },
         callback: callback,
         channels: channels,

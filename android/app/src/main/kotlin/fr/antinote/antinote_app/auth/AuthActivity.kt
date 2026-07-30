@@ -6,13 +6,14 @@ import android.os.Build
 import android.os.Bundle
 import fr.antinote.antinote_app.pigeon_posts.NativeLoginManager
 import io.flutter.embedding.android.FlutterActivity
+import io.flutter.embedding.android.FlutterFragmentActivity
 import io.flutter.embedding.engine.FlutterEngine
 
-class AuthActivity : FlutterActivity() {
+class AuthActivity : FlutterFragmentActivity() {
     override fun configureFlutterEngine(flutterEngine: FlutterEngine) {
         super.configureFlutterEngine(flutterEngine)
 
-        NativeLoginManager.setUp(flutterEngine.dartExecutor.binaryMessenger, LoginManager(this))
+        NativeLoginManager.setUp(flutterEngine.dartExecutor.binaryMessenger, LoginManager(this, this))
     }
 
     private var mAccountAuthenticatorResponse: AccountAuthenticatorResponse? = null

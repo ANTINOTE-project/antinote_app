@@ -9,9 +9,10 @@ import fr.antinote.antinote_app.session.SessionManager
 import fr.antinote.studies_management.antinote_app.pigeon_posts.NativeCalendarManager
 import fr.antinote.studies_management.antinote_app.pigeon_posts.NativeSessionManager
 import io.flutter.embedding.android.FlutterActivity
+import io.flutter.embedding.android.FlutterFragmentActivity
 import io.flutter.embedding.engine.FlutterEngine
 
-class MainActivity : FlutterActivity() {
+class MainActivity : FlutterFragmentActivity() {
     companion object {
         private const val TAG = "StudiesManagement"
     }
@@ -21,11 +22,11 @@ class MainActivity : FlutterActivity() {
 
     override fun configureFlutterEngine(flutterEngine: FlutterEngine) {
         sessionManager = SessionManager(this, flutterEngine.dartExecutor.binaryMessenger)
-        NativeLoginManager.setUp(flutterEngine.dartExecutor.binaryMessenger, LoginManager(this))
+        NativeLoginManager.setUp(flutterEngine.dartExecutor.binaryMessenger, LoginManager(applicationContext, this))
         NativeSessionManager.setUp(flutterEngine.dartExecutor.binaryMessenger, sessionManager)
         NativeCalendarManager.setUp(
             flutterEngine.dartExecutor.binaryMessenger,
-            CalendarManager(context)
+            CalendarManager(applicationContext)
         )
 
         // Is in debug mode

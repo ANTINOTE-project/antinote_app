@@ -1,10 +1,10 @@
-import "dart:async";
+import 'dart:async';
 
-import "package:antinote/antinote.dart";
-import "package:antinote_app/backend/backend.dart";
-import "package:antinote_app/frontend/utils/utils.dart";
-import "package:antinote_app/frontend/widgets/customs/loading.dart";
-import "package:flutter/material.dart";
+import 'package:antinote/antinote.dart';
+import 'package:antinote_app/backend/backend.dart';
+import 'package:antinote_app/frontend/utils/utils.dart';
+import 'package:antinote_app/frontend/widgets/customs/loading.dart';
+import 'package:flutter/material.dart';
 
 typedef RefreshIndicatorBuilder = Widget Function({
   required Widget child,
@@ -12,7 +12,7 @@ typedef RefreshIndicatorBuilder = Widget Function({
 });
 
 mixin TabMixin<T extends StatefulWidget> on State<T> {
-  List<String> get loadChannels => ["communication"];
+  List<String> get loadChannels => ['communication'];
   Stream<double?> load(RemoteSession session);
 
   bool loaded = false;

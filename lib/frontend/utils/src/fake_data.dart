@@ -1,11 +1,11 @@
-import "package:antinote/antinote.dart";
+import 'package:antinote/antinote.dart';
 
 const fakeGrade = Grade.defaultUnknownGrade;
 
 const fakeServices = [
   Service(
-    id: "1",
-    name: "Mathématiques",
+    id: '1',
+    name: 'Mathématiques',
     type: null,
     order: null,
     selfAverage: null,
@@ -18,8 +18,8 @@ const fakeServices = [
     inGroups: null,
   ),
   Service(
-    id: "2",
-    name: "Français",
+    id: '2',
+    name: 'Français',
     type: null,
     order: null,
     selfAverage: null,
@@ -32,8 +32,8 @@ const fakeServices = [
     inGroups: null,
   ),
   Service(
-    id: "3",
-    name: "Histoire",
+    id: '3',
+    name: 'Histoire',
     type: null,
     order: null,
     selfAverage: null,
@@ -46,8 +46,8 @@ const fakeServices = [
     inGroups: null,
   ),
   Service(
-    id: "4",
-    name: "Anglais",
+    id: '4',
+    name: 'Anglais',
     type: null,
     order: null,
     selfAverage: null,
@@ -60,8 +60,8 @@ const fakeServices = [
     inGroups: null,
   ),
   Service(
-    id: "5",
-    name: "Physique",
+    id: '5',
+    name: 'Physique',
     type: null,
     order: null,
     selfAverage: null,
@@ -77,7 +77,7 @@ const fakeServices = [
 
 const fakePeriod = Period(
   id: null,
-  name: "",
+  name: '',
   type: null,
   notationPeriodType: null,
   startDate: null,
@@ -87,7 +87,7 @@ const fakePeriod = Period(
 final fakeExams = List.filled(
   3,
   Exam(
-    id: "",
+    id: '',
     type: 0,
     selfGrade: fakeGrade,
     theoreticalMaxGrade: fakeGrade,

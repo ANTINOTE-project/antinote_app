@@ -1,10 +1,10 @@
-import "package:antinote/antinote.dart";
-import "package:antinote_app/frontend/utils/utils.dart";
-import "package:antinote_app/frontend/widgets/customs/list.dart";
-import "package:antinote_app/frontend/widgets/customs/loading.dart";
-import "package:antinote_app/frontend/widgets/text_icon.dart";
-import "package:collection/collection.dart";
-import "package:flutter/material.dart";
+import 'package:antinote/antinote.dart';
+import 'package:antinote_app/frontend/utils/utils.dart';
+import 'package:antinote_app/frontend/widgets/customs/list.dart';
+import 'package:antinote_app/frontend/widgets/customs/loading.dart';
+import 'package:antinote_app/frontend/widgets/text_icon.dart';
+import 'package:collection/collection.dart';
+import 'package:flutter/material.dart';
 
 Future<void> showMealModal(BuildContext context, DateTime date) async {
   final mealCallback = context.sm.runTask<Menu?>(
@@ -82,10 +82,10 @@ class SliverMealContents extends StatelessWidget {
                             for (final food in item.foods)
                               TextSpan(
                                 children: [
-                                  TextSpan(text: "- ${food.name}"),
+                                  TextSpan(text: '- ${food.name}'),
                                   // TODO: Display allergens and labels here
                                   if (item.foods.last != food)
-                                    const TextSpan(text: "\n"),
+                                    const TextSpan(text: '\n'),
                                 ],
                               ),
                           ],

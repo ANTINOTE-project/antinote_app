@@ -1,5 +1,5 @@
-import "package:antinote_app/backend/backend.dart";
-import "package:flutter/material.dart";
+import 'package:antinote_app/backend/backend.dart';
+import 'package:flutter/material.dart';
 
 /// Both dates are inclusive.
 typedef DateRange = DateTimeRange<DateTime>;
@@ -8,7 +8,7 @@ extension DateRangeUtils on DateRange {
   String pprint(BuildContext context) {
     return start == end
         ? start.asRelativeDate(context)
-        : "${start.asRelativeDate(context)} — ${end.asRelativeDate(context)}";
+        : '${start.asRelativeDate(context)} — ${end.asRelativeDate(context)}';
   }
 }
 

@@ -1,13 +1,36 @@
 plugins {
     id("com.android.application")
     id("dev.flutter.flutter-gradle-plugin")
+
+    id("com.google.protobuf") version "0.10.0"
 }
 
 dependencies {
+    implementation("androidx.datastore:datastore:1.2.1")
+    implementation("androidx.biometric:biometric:1.1.0")
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.11.0")
-    implementation("com.google.protobuf:protobuf-kotlin:4.35.0")
+    implementation("com.google.protobuf:protobuf-kotlin-lite:4.35.1")
     implementation("androidx.work:work-runtime-ktx:2.11.2")
 }
+
+protobuf {
+    protoc {
+        artifact = "com.google.protobuf:protoc:4.35.1"
+    }
+    generateProtoTasks {
+        all().forEach { task ->
+            task.builtins {
+                create("java") {
+                    option("lite")
+                }
+                create("kotlin") {
+                    option("lite")
+                }
+            }
+        }
+    }
+}
+
 
 android {
     namespace = "fr.antinote.antinote_app"

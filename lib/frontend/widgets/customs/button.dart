@@ -1,7 +1,7 @@
-import "package:antinote_app/frontend/utils/utils.dart";
-import "package:antinote_app/frontend/widgets/customs/loading.dart";
-import "package:antinote_app/frontend/widgets/pressable.dart";
-import "package:flutter/material.dart";
+import 'package:antinote_app/frontend/utils/utils.dart';
+import 'package:antinote_app/frontend/widgets/customs/loading.dart';
+import 'package:antinote_app/frontend/widgets/pressable.dart';
+import 'package:flutter/material.dart';
 
 class ButtonWidget extends StatelessWidget {
   final VoidCallback onPressed;

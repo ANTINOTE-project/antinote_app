@@ -1,12 +1,12 @@
-import "package:antinote/antinote.dart";
-import "package:antinote_app/frontend/utils/utils.dart";
-import "package:antinote_app/frontend/widgets/customs/app_bar.dart";
-import "package:antinote_app/frontend/widgets/customs/button.dart";
-import "package:antinote_app/frontend/widgets/customs/field.dart";
-import "package:antinote_app/frontend/widgets/customs/icon.dart";
-import "package:flutter/material.dart";
-import "package:go_router/go_router.dart";
-import "package:hugeicons_pro/hugeicons.dart";
+import 'package:antinote/antinote.dart';
+import 'package:antinote_app/frontend/utils/utils.dart';
+import 'package:antinote_app/frontend/widgets/customs/app_bar.dart';
+import 'package:antinote_app/frontend/widgets/customs/button.dart';
+import 'package:antinote_app/frontend/widgets/customs/field.dart';
+import 'package:antinote_app/frontend/widgets/customs/icon.dart';
+import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
+import 'package:hugeicons_pro/hugeicons.dart';
 
 class LoginPasswordScreen extends StatefulWidget {
   final Workspace workspace;

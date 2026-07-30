@@ -1,17 +1,17 @@
-import "dart:async";
+import 'dart:async';
 
-import "package:antinote/antinote.dart";
-import "package:antinote_app/frontend/routing/routes.dart";
-import "package:antinote_app/frontend/utils/utils.dart";
-import "package:antinote_app/frontend/widgets/customs/app_bar.dart";
-import "package:antinote_app/frontend/widgets/customs/button.dart";
-import "package:antinote_app/frontend/widgets/customs/field.dart";
-import "package:antinote_app/frontend/widgets/customs/list.dart";
-import "package:antinote_app/frontend/widgets/customs/loading.dart";
-import "package:antinote_app/main.dart";
-import "package:flutter/foundation.dart";
-import "package:flutter/material.dart";
-import "package:go_router/go_router.dart";
+import 'package:antinote/antinote.dart';
+import 'package:antinote_app/frontend/routing/routes.dart';
+import 'package:antinote_app/frontend/utils/utils.dart';
+import 'package:antinote_app/frontend/widgets/customs/app_bar.dart';
+import 'package:antinote_app/frontend/widgets/customs/button.dart';
+import 'package:antinote_app/frontend/widgets/customs/field.dart';
+import 'package:antinote_app/frontend/widgets/customs/list.dart';
+import 'package:antinote_app/frontend/widgets/customs/loading.dart';
+import 'package:antinote_app/main.dart';
+import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 
 class LoginUrlScreen extends StatefulWidget {
   const LoginUrlScreen({super.key});
@@ -22,7 +22,7 @@ class LoginUrlScreen extends StatefulWidget {
 
 class _LoginUrlScreenState extends State<LoginUrlScreen> {
   final _controller = TextEditingController(
-    text: kDebugMode ? "https://demo.index-education.net/pronote" : null,
+    text: kDebugMode ? 'https://demo.index-education.net/pronote' : null,
   );
   Timer? _debounce;
 
@@ -77,7 +77,7 @@ class _LoginUrlScreenState extends State<LoginUrlScreen> {
           } catch (e, st) {
             if (kDebugMode) {
               talker.error(
-                "Could not start ${workspace.label} session at $instanceUrl",
+                'Could not start ${workspace.label} session at $instanceUrl',
                 e,
                 st,
               );
@@ -169,9 +169,9 @@ class _LoginUrlScreenState extends State<LoginUrlScreen> {
                             subtitle: instance.periods
                                 .map(
                                   (e) =>
-                                      "- ${e.name} (${e.startDate} → ${e.endDate})",
+                                      '- ${e.name} (${e.startDate} → ${e.endDate})',
                                 )
-                                .join("\n"),
+                                .join('\n'),
                           ),
                         ],
 
@@ -199,7 +199,7 @@ class _LoginUrlScreenState extends State<LoginUrlScreen> {
 
                             final result = await context.push<LoginResult>(
                               Routes.auth.workspace,
-                              extra: {"parameters": parameters},
+                              extra: {'parameters': parameters},
                             );
 
                             if (result != null && context.mounted) {
@@ -209,7 +209,7 @@ class _LoginUrlScreenState extends State<LoginUrlScreen> {
                             // catch
                           } catch (e, st) {
                             talker.error(
-                              "Error during fetch of parameters",
+                              'Error during fetch of parameters',
                               e,
                               st,
                             );

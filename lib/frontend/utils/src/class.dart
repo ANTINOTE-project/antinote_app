@@ -1,8 +1,8 @@
-import "package:antinote/antinote.dart";
-import "package:antinote_app/frontend/utils/utils.dart";
-import "package:collection/collection.dart";
-import "package:flutter/widgets.dart";
-import "package:hugeicons_pro/hugeicons.dart";
+import 'package:antinote/antinote.dart';
+import 'package:antinote_app/frontend/utils/utils.dart';
+import 'package:collection/collection.dart';
+import 'package:flutter/widgets.dart';
+import 'package:hugeicons_pro/hugeicons.dart';
 
 extension ClassHelpers on Class {
   String classTitle(BuildContext context) =>
@@ -61,7 +61,7 @@ extension ClassContentHelper on ClassContent {
     ClassGroupContent(value: final v) => v.label,
     StudentClassContent(value: final v) => v.name,
 
-    UnknownContent(value: final v) => v.get<String?>("L"),
+    UnknownContent(value: final v) => v.get<String?>('L'),
     _ => null,
   };
 

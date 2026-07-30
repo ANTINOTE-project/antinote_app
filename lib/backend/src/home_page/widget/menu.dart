@@ -1,8 +1,8 @@
-part of "widget.dart";
+part of 'widget.dart';
 
 enum MenuParameter<T>(@override final String code)
     implements WidgetParameter<T> {
-  decayAfterMeal<bool>("decay_after_meal");
+  decayAfterMeal<bool>('decay_after_meal');
 }
 
 enum MenuArgument<T>() implements WidgetArgument<T> {
@@ -12,7 +12,7 @@ enum MenuArgument<T>() implements WidgetArgument<T> {
 final class const MenuWidget()
     extends WidgetDescriptor<Menu, MenuArgument, MenuParameter> {
   @override
-  String get id => "menu";
+  String get id => 'menu';
 
   @override
   get arguments => [
@@ -28,7 +28,7 @@ final class const MenuWidget()
           shown: true,
         ),
       ],
-      requiredUntilCompute: (session, cache) => [],
+      requiredUntilCompute: (session, cache, params) => [],
       computeValue: (session, cache, params) {
         final baseTime = DateTime.now().copyWith(isUtc: true);
         Date base = baseTime.toDay();
@@ -90,8 +90,6 @@ final class const MenuWidget()
   }
 
   @override
-  Widget build(BuildContext context, Menu value) {
-    // TODO: implement build
-    throw UnimplementedError();
-  }
+  Widget buildSliver(BuildContext context, Menu value) =>
+      MenuWidgetSliver(value: value);
 }

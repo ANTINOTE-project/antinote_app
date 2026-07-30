@@ -1,6 +1,6 @@
-import "package:antinote_app/frontend/utils/utils.dart";
-import "package:flutter/material.dart";
-import "package:vibration/vibration.dart";
+import 'package:antinote_app/frontend/utils/utils.dart';
+import 'package:flutter/material.dart';
+import 'package:vibration/vibration.dart';
 
 class IconWidget extends StatefulWidget {
   final IconData iconOn;

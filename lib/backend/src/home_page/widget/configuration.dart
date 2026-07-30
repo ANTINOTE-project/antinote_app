@@ -1,8 +1,8 @@
-import "package:antinote/antinote.dart";
-import "package:antinote_app/backend/src/home_page/configuration.dart";
-import "package:antinote_app/backend/src/home_page/widget/parameters.dart";
-import "package:antinote_app/backend/src/home_page/widget/widget.dart";
-import "package:antinote_app/l10n/app_localizations.dart";
+import 'package:antinote/antinote.dart';
+import 'package:antinote_app/backend/src/home_page/configuration.dart';
+import 'package:antinote_app/backend/src/home_page/widget/parameters.dart';
+import 'package:antinote_app/backend/src/home_page/widget/widget.dart';
+import 'package:antinote_app/l10n/app_localizations.dart';
 
 const descriptors = <WidgetDescriptor>[MenuWidget()];
 
@@ -48,7 +48,7 @@ List<HomePageConfiguration> createDefaultConfigurations(
     ),
     widgets: [
       // HomeworkWidget(),
-      // TimetableWidget(),
+      .new(descriptor: const TimetableDayWidget(), rawParameters: {}),
       // GradesWidget(),
     ],
   ),
@@ -68,7 +68,7 @@ List<HomePageConfiguration> createDefaultConfigurations(
     ),
     widgets: [
       // TimetableUpdatesWidget(),
-      // TimetableWidget(),
+      .new(descriptor: const TimetableDayWidget(), rawParameters: {}),
       // CommunicationsWidget(),
     ],
   ),
@@ -82,7 +82,7 @@ List<HomePageConfiguration> createDefaultConfigurations(
     ),
     widgets: [
       .new(descriptor: const MenuWidget(), rawParameters: {}),
-      // TimetableWidget(),
+      .new(descriptor: const TimetableDayWidget(), rawParameters: {}),
     ],
   ),
   .create(name: l10n.pauseConfig).copyWith(
@@ -120,9 +120,9 @@ final class HomePageWidgetConfiguration<
 }) {
   factory fromJson(Map<String, dynamic> json) {
     final descriptor = descriptors.firstWhere(
-      (e) => e.id == json.get("id"),
+      (e) => e.id == json.get('id'),
     ) as WidgetDescriptor<V, A, P>;
-    final params = json.getM("params");
+    final params = json.getM('params');
 
     return .new(
       descriptor: descriptor,
@@ -138,11 +138,9 @@ final class HomePageWidgetConfiguration<
     );
   }
 
-  WidgetParameters<P> get parameters => .new(params: rawParameters);
-
   Map<String, dynamic> toJson() => {
-    "id": descriptor.id,
-    "params": {
+    'id': descriptor.id,
+    'params': {
       for (final argument in descriptor.arguments)
         for (final parameter in argument.parameters)
           parameter.descriptor.id.code: parameter.descriptor.write(

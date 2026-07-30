@@ -1,12 +1,12 @@
-import "package:antinote/antinote.dart";
-import "package:antinote_app/frontend/screens/timetable/events/class/modal.dart";
-import "package:antinote_app/frontend/utils/utils.dart";
-import "package:antinote_app/frontend/widgets/overflow_row.dart";
-import "package:antinote_app/frontend/widgets/pressable.dart";
-import "package:flutter/material.dart";
-import "package:hugeicons_pro/hugeicons.dart";
+import 'package:antinote/antinote.dart';
+import 'package:antinote_app/frontend/screens/timetable/events/class/modal.dart';
+import 'package:antinote_app/frontend/utils/utils.dart';
+import 'package:antinote_app/frontend/widgets/overflow_row.dart';
+import 'package:antinote_app/frontend/widgets/pressable.dart';
+import 'package:flutter/material.dart';
+import 'package:hugeicons_pro/hugeicons.dart';
 
-import "../block.dart";
+import '../block.dart';
 
 class ClassWidget extends StatelessWidget {
   final Class clazz;
@@ -108,7 +108,7 @@ class ClassWidget extends StatelessWidget {
 
                     Flexible(
                       child: Text(
-                        clazz.status ?? "",
+                        clazz.status ?? '',
 
                         overflow: .ellipsis,
                         maxLines: 1,
@@ -245,7 +245,7 @@ class _ClassContent extends StatelessWidget {
       ClassGroupContent(value: final v) => (v.label, HugeIconsSolid.userGroup),
 
       UnknownContent(value: final v) => (
-        v.get("L"),
+        v.get('L'),
         HugeIconsSolid.fileUnknown,
       ),
       _ => (null, null),

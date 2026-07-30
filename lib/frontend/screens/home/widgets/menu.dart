@@ -1,12 +1,10 @@
-import "package:antinote/antinote.dart";
-import "package:flutter/material.dart";
+import 'package:antinote/antinote.dart';
+import 'package:flutter/material.dart';
 
-class const MenuWidget({super.key, required this.menu})
+class const MenuWidgetSliver({super.key, required final Menu value})
     extends StatelessWidget {
-  final Menu menu;
-
   @override
   Widget build(BuildContext context) {
-    return const Placeholder();
+    return const SliverToBoxAdapter(child: Text('Menu'));
   }
 }

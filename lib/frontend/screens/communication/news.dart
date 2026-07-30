@@ -1,12 +1,12 @@
-import "package:antinote/antinote.dart";
-import "package:antinote_app/frontend/utils/utils.dart";
-import "package:antinote_app/frontend/widgets/customs/attachment.dart";
-import "package:antinote_app/frontend/widgets/customs/list.dart";
-import "package:antinote_app/frontend/widgets/remote_html.dart";
-import "package:flutter/material.dart";
-import "package:go_router/go_router.dart";
-import "package:hugeicons_pro/hugeicons.dart";
-import "package:intl/intl.dart";
+import 'package:antinote/antinote.dart';
+import 'package:antinote_app/frontend/utils/utils.dart';
+import 'package:antinote_app/frontend/widgets/customs/attachment.dart';
+import 'package:antinote_app/frontend/widgets/customs/list.dart';
+import 'package:antinote_app/frontend/widgets/remote_html.dart';
+import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
+import 'package:hugeicons_pro/hugeicons.dart';
+import 'package:intl/intl.dart';
 
 class NewsScreen extends StatefulWidget {
   const NewsScreen({super.key, required this.news, required this.deleteNews});
@@ -119,11 +119,11 @@ class _NewsScreenState extends State<NewsScreen> {
   @override
   Widget build(BuildContext context) {
     final String pollSuffix = !_news.isPoll
-        ? ""
-        : " (${_news.anonymousResponse ? context.l10n.anonymousPoll : context.l10n.nominativePoll})";
+        ? ''
+        : ' (${_news.anonymousResponse ? context.l10n.anonymousPoll : context.l10n.nominativePoll})';
 
     final subtitle =
-        "${context.l10n.recipient(_news.recipientFirstName ?? context.l10n.self)}$pollSuffix";
+        '${context.l10n.recipient(_news.recipientFirstName ?? context.l10n.self)}$pollSuffix';
 
     return Scaffold(
       body: CustomScrollView(

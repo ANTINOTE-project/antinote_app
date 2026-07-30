@@ -1,16 +1,16 @@
-import "dart:async";
+import 'dart:async';
 
-import "package:antinote/antinote.dart";
-import "package:antinote_app/backend/backend.dart";
-import "package:antinote_app/frontend/routing/routes.dart";
-import "package:antinote_app/frontend/utils/utils.dart";
-import "package:antinote_app/frontend/widgets/customs/app_bar.dart";
-import "package:antinote_app/frontend/widgets/customs/list.dart";
-import "package:flutter/foundation.dart";
-import "package:flutter/material.dart";
-import "package:go_router/go_router.dart";
-import "package:hugeicons_pro/hugeicons.dart";
-import "package:skeletonizer/skeletonizer.dart";
+import 'package:antinote/antinote.dart';
+import 'package:antinote_app/backend/backend.dart';
+import 'package:antinote_app/frontend/routing/routes.dart';
+import 'package:antinote_app/frontend/utils/utils.dart';
+import 'package:antinote_app/frontend/widgets/customs/app_bar.dart';
+import 'package:antinote_app/frontend/widgets/customs/list.dart';
+import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
+import 'package:hugeicons_pro/hugeicons.dart';
+import 'package:skeletonizer/skeletonizer.dart';
 
 typedef Method = ({
   IconData icon,
@@ -104,18 +104,18 @@ class MethodsScreen extends StatelessWidget with WidgetsBindingObserver {
                 await sendResultIfLoggedIn(
                   context,
                   PasswordCredentials(
-                    username: "demonstration",
-                    password: "pronotevs",
+                    username: 'demonstration',
+                    password: 'pronotevs',
 
                     workspace: const Workspace(
                       type: WorkspaceType.mobileEleve,
-                      label: "",
-                      pathSegment: "mobile.eleve.html",
+                      label: '',
+                      pathSegment: 'mobile.eleve.html',
                     ),
 
                     deviceUuid: Credentials.generateDeviceUuid(),
                     baseUrl: Uri.parse(
-                      "https://demo.index-education.net/pronote",
+                      'https://demo.index-education.net/pronote',
                     ),
                   ).login(options: context.s.networking.sessionOptions),
                 );

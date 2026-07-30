@@ -1,5 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">ANTINOTE</string>
-    <string name="account_type">fr.antinote.antinote_app.account</string>
+    <string name="account_type" translatable="false">fr.antinote.antinote_app.account</string>
+    <string name="biometric_prompt_title">Authenticate</string>
+    <string name="biometric_prompt_subtitle">to log in</string>
+    <string name="biometric_prompt_description">Get access to your protected account credentials by confirming your identity</string>
+    <string name="biometric_prompt_cancel">Cancel</string>
 </resources>

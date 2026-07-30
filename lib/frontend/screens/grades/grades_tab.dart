@@ -1,19 +1,19 @@
-import "dart:async";
-import "dart:math" as math;
-import "dart:ui";
+import 'dart:async';
+import 'dart:math' as math;
+import 'dart:ui';
 
-import "package:antinote/antinote.dart";
-import "package:antinote_app/backend/backend.dart";
-import "package:antinote_app/frontend/screens/shell/tab.dart";
-import "package:antinote_app/frontend/utils/utils.dart";
-import "package:antinote_app/frontend/widgets/bottom_padding.dart";
-import "package:antinote_app/frontend/widgets/customs/list.dart";
-import "package:antinote_app/frontend/widgets/grade_text.dart";
-import "package:antinote_app/frontend/widgets/pressable.dart";
-import "package:flutter/material.dart";
-import "package:hugeicons_pro/hugeicons.dart";
-import "package:intl/intl.dart";
-import "package:skeletonizer/skeletonizer.dart";
+import 'package:antinote/antinote.dart';
+import 'package:antinote_app/backend/backend.dart';
+import 'package:antinote_app/frontend/screens/shell/tab.dart';
+import 'package:antinote_app/frontend/utils/utils.dart';
+import 'package:antinote_app/frontend/widgets/bottom_padding.dart';
+import 'package:antinote_app/frontend/widgets/customs/list.dart';
+import 'package:antinote_app/frontend/widgets/grade_text.dart';
+import 'package:antinote_app/frontend/widgets/pressable.dart';
+import 'package:flutter/material.dart';
+import 'package:hugeicons_pro/hugeicons.dart';
+import 'package:intl/intl.dart';
+import 'package:skeletonizer/skeletonizer.dart';
 
 part 'modal.dart';
 
@@ -604,7 +604,7 @@ class GradeCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final scheme = Utils.buildColorScheme(context, exam.service.color);
 
-    final date = DateFormat("dd/MM/yyyy").format(exam.date);
+    final date = DateFormat('dd/MM/yyyy').format(exam.date);
     final title = Utils.getExamComment(context, exam);
     final subject = exam.service.name;
 

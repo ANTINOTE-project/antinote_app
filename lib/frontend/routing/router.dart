@@ -1,17 +1,17 @@
-import "package:antinote/antinote.dart";
-import "package:antinote_app/frontend/routing/routes.dart";
-import "package:antinote_app/frontend/screens/auth/accounts.dart";
-import "package:antinote_app/frontend/screens/auth/city.dart";
-import "package:antinote_app/frontend/screens/auth/methods.dart";
-import "package:antinote_app/frontend/screens/auth/password.dart";
-import "package:antinote_app/frontend/screens/auth/qr_code.dart";
-import "package:antinote_app/frontend/screens/auth/school.dart";
-import "package:antinote_app/frontend/screens/auth/url.dart";
-import "package:antinote_app/frontend/screens/auth/webview.dart";
-import "package:antinote_app/frontend/screens/auth/workspace.dart";
-import "package:antinote_app/frontend/screens/settings/screen.dart";
-import "package:antinote_app/frontend/screens/shell/shell.dart";
-import "package:go_router/go_router.dart";
+import 'package:antinote/antinote.dart';
+import 'package:antinote_app/frontend/routing/routes.dart';
+import 'package:antinote_app/frontend/screens/auth/accounts.dart';
+import 'package:antinote_app/frontend/screens/auth/city.dart';
+import 'package:antinote_app/frontend/screens/auth/methods.dart';
+import 'package:antinote_app/frontend/screens/auth/password.dart';
+import 'package:antinote_app/frontend/screens/auth/qr_code.dart';
+import 'package:antinote_app/frontend/screens/auth/school.dart';
+import 'package:antinote_app/frontend/screens/auth/url.dart';
+import 'package:antinote_app/frontend/screens/auth/webview.dart';
+import 'package:antinote_app/frontend/screens/auth/workspace.dart';
+import 'package:antinote_app/frontend/screens/settings/screen.dart';
+import 'package:antinote_app/frontend/screens/shell/shell.dart';
+import 'package:go_router/go_router.dart';
 
 GoRouter makeRouter({String initialLocation = Routes.appShell}) => GoRouter(
   initialLocation: initialLocation,
@@ -49,8 +49,8 @@ GoRouter makeRouter({String initialLocation = Routes.appShell}) => GoRouter(
       builder: (context, state) {
         final extra = state.extra as Map<String, dynamic>;
         return LoginSelectSchoolScreen(
-          lat: extra["lat"] as double,
-          long: extra["long"] as double,
+          lat: extra['lat'] as double,
+          long: extra['long'] as double,
         );
       },
     ),
@@ -59,7 +59,7 @@ GoRouter makeRouter({String initialLocation = Routes.appShell}) => GoRouter(
       builder: (context, state) {
         final extra = state.extra as Map<String, dynamic>;
         return LoginSelectWorkspaceScreen(
-          parameters: extra["parameters"] as MobileInstanceParameters,
+          parameters: extra['parameters'] as MobileInstanceParameters,
         );
       },
     ),
@@ -68,8 +68,8 @@ GoRouter makeRouter({String initialLocation = Routes.appShell}) => GoRouter(
       builder: (context, state) {
         final extra = state.extra as Map<String, dynamic>;
         return LoginWebviewScreen(
-          parameters: extra["parameters"] as MobileInstanceParameters,
-          workspace: extra["workspace"] as Workspace,
+          parameters: extra['parameters'] as MobileInstanceParameters,
+          workspace: extra['workspace'] as Workspace,
         );
       },
     ),
@@ -78,8 +78,8 @@ GoRouter makeRouter({String initialLocation = Routes.appShell}) => GoRouter(
       builder: (context, state) {
         final extra = state.extra as Map<String, dynamic>;
         return LoginPasswordScreen(
-          workspace: extra["workspace"] as Workspace,
-          baseUrl: extra["baseUrl"] as Uri,
+          workspace: extra['workspace'] as Workspace,
+          baseUrl: extra['baseUrl'] as Uri,
         );
       },
     ),

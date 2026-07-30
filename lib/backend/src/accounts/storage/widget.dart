@@ -1,5 +1,5 @@
-import "package:antinote_app/backend/src/accounts/storage/base.dart";
-import "package:flutter/widgets.dart";
+import 'package:antinote_app/backend/src/accounts/storage/base.dart';
+import 'package:flutter/widgets.dart';
 
 class AccountScope extends InheritedWidget {
   const AccountScope({super.key, required this.storage, required super.child});
@@ -9,7 +9,7 @@ class AccountScope extends InheritedWidget {
   static AccountScope of(BuildContext context) {
     final AccountScope? result = context
         .dependOnInheritedWidgetOfExactType<AccountScope>();
-    assert(result != null, "No AccountScope found in context");
+    assert(result != null, 'No AccountScope found in context');
     return result!;
   }
 

@@ -1,6 +1,6 @@
-import "package:antinote/antinote.dart";
-import "package:antinote_app/frontend/screens/timetable/events/block.dart";
-import "package:flutter/material.dart";
+import 'package:antinote/antinote.dart';
+import 'package:antinote_app/frontend/screens/timetable/events/block.dart';
+import 'package:flutter/material.dart';
 
 enum AppState(final int priority) {
   /// Any kind of break during classday (excluding pauses).
@@ -192,7 +192,7 @@ class AppStateScheduler {
 
         return true;
       }(),
-      "Found two same app states in a row, those should be squashed into one entry",
+      'Found two same app states in a row, those should be squashed into one entry',
     );
 
     return entries;

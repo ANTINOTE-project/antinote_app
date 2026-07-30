@@ -1,16 +1,16 @@
-import "dart:math";
+import 'dart:math';
 
-import "package:antinote/antinote.dart";
-import "package:antinote_app/backend/src/accounts/storage/native.dart";
-import "package:antinote_app/backend/src/calendar/to_event.dart";
-import "package:antinote_app/backend/src/pigeon_posts/native_calendar.g.dart";
-import "package:antinote_app/backend/src/pigeon_posts/native_session.g.dart";
-import "package:antinote_app/backend/src/pigeon_posts/native_sync.g.dart";
-import "package:antinote_app/backend/src/session/holder.dart";
-import "package:antinote_app/backend/src/settings/networking.dart";
-import "package:antinote_app/backend/src/sync/polling_manager.dart";
-import "package:flutter/foundation.dart";
-import "package:flutter/material.dart";
+import 'package:antinote/antinote.dart';
+import 'package:antinote_app/backend/src/accounts/storage/native.dart';
+import 'package:antinote_app/backend/src/calendar/to_event.dart';
+import 'package:antinote_app/backend/src/pigeon_posts/native_calendar.g.dart';
+import 'package:antinote_app/backend/src/pigeon_posts/native_session.g.dart';
+import 'package:antinote_app/backend/src/pigeon_posts/native_sync.g.dart';
+import 'package:antinote_app/backend/src/session/holder.dart';
+import 'package:antinote_app/backend/src/settings/networking.dart';
+import 'package:antinote_app/backend/src/sync/polling_manager.dart';
+import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
 
 const _accountStorage = NativeAccountStorage();
 final _calendarManager = NativeCalendarManager();

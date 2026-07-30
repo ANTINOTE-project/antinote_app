@@ -1,5 +1,5 @@
-import "package:antinote_app/frontend/utils/utils.dart";
-import "package:flutter/material.dart";
+import 'package:antinote_app/frontend/utils/utils.dart';
+import 'package:flutter/material.dart';
 
 class SliverTextIcon extends StatelessWidget {
   final IconData? icon;

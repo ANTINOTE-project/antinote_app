@@ -1,14 +1,17 @@
-import "dart:convert";
-import "dart:io";
+import 'dart:convert';
+import 'dart:io';
 
-import "package:antinote_app/backend/src/accounts/storage/base.dart";
-import "package:antinote_app/main.dart";
-import "package:antinote_app/protos/account.pb.dart";
-import "package:shared_preferences/shared_preferences.dart";
+import 'package:antinote_app/backend/src/accounts/storage/base.dart';
+import 'package:antinote_app/main.dart';
+import 'package:antinote_app/protos/account.pb.dart';
+import 'package:flutter/foundation.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
+/// This is used as a fallback when occasionally testing the app for new
+/// platforms. [AntinoteAccount.storeSecurely] is not supported.
 class PreferencesAccountStorage implements AccountStorage {
-  static const sessionAccountsPref = "accounts";
-  static final isActive = !Platform.isAndroid;
+  static const sessionAccountsPref = 'accounts';
+  static final isActive = !Platform.isAndroid && kDebugMode;
 
   const PreferencesAccountStorage({required this.getRegistry});
 
@@ -25,7 +28,11 @@ class PreferencesAccountStorage implements AccountStorage {
     try {
       return AccountRegistry.fromBuffer(base64Decode(registry));
     } catch (e, st) {
-      talker.error("Failed to load account registry, creating a new one...", e, st);
+      talker.error(
+        'Failed to load account registry, creating a new one...',
+        e,
+        st,
+      );
       return AccountRegistry.create();
     }
   }
@@ -33,11 +40,15 @@ class PreferencesAccountStorage implements AccountStorage {
   Future<void> writeRegistry() async {
     // TODO: Save it directly as a protobuf without encoding in base64.
     final prefs = SharedPreferencesAsync();
-    await prefs.setString(sessionAccountsPref, base64Encode((await registry).writeToBuffer()));
+    await prefs.setString(
+      sessionAccountsPref,
+      base64Encode((await registry).writeToBuffer()),
+    );
   }
 
   @override
-  Future<List<AntinoteAccount>> listAccounts() async => (await registry).accounts;
+  Future<List<AntinoteAccount>> listAccounts() async =>
+      (await registry).accounts;
 
   @override
   Future<AntinoteAccount?> borrowAccountWithCredentials(String uid) async {
@@ -52,7 +63,9 @@ class PreferencesAccountStorage implements AccountStorage {
   Future<AntinoteAccount?> getDefaultAccount() async {
     final defaultAccountUid = (await registry).defaultAccountId;
 
-    return (await registry).accounts.where((element) => element.uid == defaultAccountUid).firstOrNull;
+    return (await registry).accounts
+        .where((element) => element.uid == defaultAccountUid)
+        .firstOrNull;
   }
 
   @override
@@ -100,7 +113,8 @@ class PreferencesAccountStorage implements AccountStorage {
     await writeRegistry();
   }
 
-  Future<void> disableDefaultAccount() async => await setDefaultAccount(account: null);
+  Future<void> disableDefaultAccount() async =>
+      await setDefaultAccount(account: null);
 
   Future<void> setDefaultAccount({required String? account}) async {
     final reg = await registry;
@@ -112,7 +126,4 @@ class PreferencesAccountStorage implements AccountStorage {
 
     await writeRegistry();
   }
-
-  @override
-  Future<AntinoteAccount> getCredentials(AntinoteAccount account) async => account;
 }

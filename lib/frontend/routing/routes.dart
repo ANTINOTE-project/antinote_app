@@ -1,9 +1,9 @@
 abstract final class Routes {
   const Routes._();
 
-  static const appShell = "/app_shell";
-  static const settings = "/settings";
-  static const news = "/news";
+  static const appShell = '/app_shell';
+  static const settings = '/settings';
+  static const news = '/news';
 
   static const auth = _AuthRoute();
 }
@@ -11,21 +11,21 @@ abstract final class Routes {
 class _AuthRoute {
   const _AuthRoute();
 
-  String get accounts => "/auth/accounts";
+  String get accounts => '/auth/accounts';
 
-  String get methods => "/auth/methods";
+  String get methods => '/auth/methods';
 
-  String get city => "/auth/city";
+  String get city => '/auth/city';
 
-  String get url => "/auth/url";
+  String get url => '/auth/url';
 
-  String get school => "/auth/school";
+  String get school => '/auth/school';
 
-  String get workspace => "/auth/workspace";
+  String get workspace => '/auth/workspace';
 
-  String get webview => "/auth/webview";
+  String get webview => '/auth/webview';
 
-  String get password => "/auth/password";
+  String get password => '/auth/password';
 
-  String get qrCode => "/auth/qr_code";
+  String get qrCode => '/auth/qr_code';
 }
