@@ -21,7 +21,7 @@ class MainActivity : FlutterFragmentActivity() {
     private var isFirstLaunch = true
 
     override fun configureFlutterEngine(flutterEngine: FlutterEngine) {
-        sessionManager = SessionManager(this, flutterEngine.dartExecutor.binaryMessenger)
+        sessionManager = SessionManager(applicationContext, flutterEngine.dartExecutor.binaryMessenger)
         NativeLoginManager.setUp(flutterEngine.dartExecutor.binaryMessenger, LoginManager(applicationContext, this))
         NativeSessionManager.setUp(flutterEngine.dartExecutor.binaryMessenger, sessionManager)
         NativeCalendarManager.setUp(

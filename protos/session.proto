@@ -1,0 +1,10 @@
+syntax = "proto3";
+package antinote_app;
+option java_package = "fr.antinote.antinote_app.protos";
+option java_multiple_files = true;
+
+message SessionRegistry {
+  // Maps account UIDs to raw sessions. This map does not automatically update when accounts in the
+  // [AccountRegistry] change. Manual updates need to be sent to delete obsolete sessions.
+  map<string, bytes> session = 1;
+}

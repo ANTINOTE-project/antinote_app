@@ -8,7 +8,6 @@ import android.app.Activity
 import android.content.ContentResolver
 import android.content.Context
 import android.content.Intent
-import android.media.MediaFormat.KEY_IS_DEFAULT
 import android.os.Build
 import android.os.Bundle
 import android.provider.CalendarContract
@@ -36,6 +35,7 @@ import fr.antinote.antinote_app.protos.EncryptedCredentials
 import fr.antinote.antinote_app.protos.copy
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.suspendCancellableCoroutine
@@ -92,7 +92,7 @@ class LoginManager(val context: Context, val activity: FragmentActivity) : Nativ
         }
     }
 
-    private val scope = CoroutineScope(Dispatchers.IO)
+    private val scope = CoroutineScope(Dispatchers.IO + SupervisorJob())
 
     val dekStore: MutableMap<String, SecretKey> = mutableMapOf()
 
@@ -287,9 +287,9 @@ class LoginManager(val context: Context, val activity: FragmentActivity) : Nativ
             if (!nativeResult) {
                 Log.e(TAG, "Account already exists...")
 
-                if (context is AuthActivity) {
-                    context.setResult(Activity.RESULT_CANCELED)
-                    context.finish()
+                if (activity is AuthActivity) {
+                    activity.setResult(Activity.RESULT_CANCELED)
+                    activity.finish()
                 }
 
                 callback(Result.success(false))
@@ -325,45 +325,55 @@ class LoginManager(val context: Context, val activity: FragmentActivity) : Nativ
         }
     }
 
-    override fun deleteAccount(uid: String, callback: (Result<Unit>) -> Unit) {
-        scope.launch {
-            val manager = AccountManager.get(context)
+    private suspend fun deleteAccounts(accountList: List<String>? = null) {
+        val manager = AccountManager.get(context)
 
-            manager.removeAccountExplicitly(manager.getAccountsByType(context.getString(R.string.account_type)).find {
-                return@find manager.getUserData(
-                    it,
-                    KEY_UID
-                ) == uid
-            }!!)
+        for (account in manager.getAccountsByType(context.getString(R.string.account_type))) {
+            if(accountList != null && !accountList.contains(manager.getUserData(account, KEY_UID))) {
+                continue
+            }
 
-            context.accountsStore.updateData { it.copy {
-                val toKeep = accounts.filter { account -> account.uid != uid }.toList()
+            if (account.type == context.getString(R.string.account_type)
+            ) {
+                manager.removeAccountExplicitly(account)
+            }
+        }
+
+        context.accountsStore.updateData { registry ->
+            registry.copy {
+                val toKeep = mutableListOf<AntinoteAccount>()
+                val keyStore = KeyStore.getInstance("AndroidKeyStore").apply { load(null) }
+                for(account in accounts) {
+                    if(accountList != null && !accountList.contains(account.uid)) {
+                        toKeep.add(account)
+                        continue
+                    }
+
+                    if(account.storeSecurely) {
+                        val alias = accountKeyAlias(account.uid)
+                        if(keyStore.isKeyEntry(alias)) {
+                            keyStore.deleteEntry(alias)
+                        }
+                    }
+                }
+
                 accounts.clear()
                 accounts.addAll(toKeep)
             } }
+    }
 
+    override fun deleteAccount(uid: String, callback: (Result<Unit>) -> Unit) {
+        scope.launch {
+            deleteAccounts(listOf(uid))
             callback(Result.success(Unit))
         }
     }
 
     override fun deleteAllAccounts(callback: (Result<Unit>) -> Unit) {
         scope.launch {
-            val manager = AccountManager.get(context)
-
-            for (account in manager.getAccountsByType(context.getString(R.string.account_type))) {
-                if (account.type == context.getString(R.string.account_type)
-                ) {
-                    manager.removeAccountExplicitly(account)
-                }
-            }
-
-            context.accountsStore.updateData { it.copy {
-                accounts.clear()
-            } }
-
+            deleteAccounts(null)
             callback(Result.success(Unit))
         }
-
     }
 
     override fun updateAccount(
@@ -405,7 +415,24 @@ class LoginManager(val context: Context, val activity: FragmentActivity) : Nativ
 
     override fun listAccounts(callback: (Result<List<ByteArray>>) -> Unit) {
         scope.launch {
-            callback(Result.success(context.accountsStore.data.first().accountsList.map { it.toByteArray() }.toList()))
+            val manager = AccountManager.get(context)
+            val nativeAccountUids = manager.getAccountsByType(context.getString(R.string.account_type)).map { manager.getUserData(it, KEY_UID) }
+
+            val accountIdsToDelete = mutableListOf<String>()
+            val rawAccounts = mutableListOf<ByteArray>()
+
+            for(account in context.accountsStore.data.first().accountsList) {
+                if(!nativeAccountUids.contains(account.uid)) {
+                    accountIdsToDelete.add(account.uid)
+                    continue
+                }
+
+                rawAccounts.add(account.toByteArray())
+            }
+
+            deleteAccounts(accountIdsToDelete)
+
+            callback(Result.success(rawAccounts))
         }
     }
 

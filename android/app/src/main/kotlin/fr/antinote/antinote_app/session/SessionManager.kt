@@ -11,17 +11,25 @@ import android.os.Message
 import android.os.Messenger
 import android.os.RemoteException
 import android.util.Log
+import fr.antinote.antinote_app.auth.accountsStore
 import fr.antinote.studies_management.antinote_app.pigeon_posts.NativeSessionManager
 import fr.antinote.studies_management.antinote_app.pigeon_posts.PollingManager
 import fr.antinote.studies_management.antinote_app.pigeon_posts.PollingState
 import fr.antinote.studies_management.antinote_app.pigeon_posts.ScheduledTask
 import io.flutter.plugin.common.BinaryMessenger
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.launch
 
 class SessionManager(val context: Context, binaryMessenger: BinaryMessenger) :
     NativeSessionManager, ServiceConnection {
     init {
         doBindService()
     }
+
+    private val scope = CoroutineScope(Dispatchers.IO + SupervisorJob())
 
     private var isBound = false
     private var mService: Messenger? = null
@@ -173,12 +181,16 @@ class SessionManager(val context: Context, binaryMessenger: BinaryMessenger) :
         service: IBinder?
     ) {
         mService = Messenger(service!!)
-        try {
-            val msg = Message.obtain(null, MSG_REGISTER_CLIENT)
-            msg.data.putStringArray("accounts", currentAccountUids.toTypedArray())
-            msg.replyTo = this@SessionManager.messenger
-            mService?.send(msg)
-        } catch (_: RemoteException) {
+
+        scope.launch {
+            try {
+                val msg = Message.obtain(null, MSG_REGISTER_CLIENT)
+                msg.data.putStringArray("accounts", currentAccountUids.toTypedArray())
+                msg.data.putStringArray("alive_accounts", context.accountsStore.data.first().accountsList.map { it.uid }.toTypedArray())
+                msg.replyTo = this@SessionManager.messenger
+                mService?.send(msg)
+            } catch (_: RemoteException) {
+            }
         }
     }
 
