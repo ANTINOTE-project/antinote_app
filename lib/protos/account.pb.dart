@@ -127,6 +127,8 @@ class AntinoteAccount extends $pb.GeneratedMessage {
     $0.Any? tokenCredentials,
     $core.bool? invalid,
     $core.bool? storeSecurely,
+    $core.bool? syncCalendar,
+    $core.bool? syncNotifications,
   }) {
     final result = create();
     if (uid != null) result.uid = uid;
@@ -138,6 +140,8 @@ class AntinoteAccount extends $pb.GeneratedMessage {
     if (tokenCredentials != null) result.tokenCredentials = tokenCredentials;
     if (invalid != null) result.invalid = invalid;
     if (storeSecurely != null) result.storeSecurely = storeSecurely;
+    if (syncCalendar != null) result.syncCalendar = syncCalendar;
+    if (syncNotifications != null) result.syncNotifications = syncNotifications;
     return result;
   }
 
@@ -164,6 +168,8 @@ class AntinoteAccount extends $pb.GeneratedMessage {
         subBuilder: $0.Any.create)
     ..aOB(8, _omitFieldNames ? '' : 'invalid')
     ..aOB(9, _omitFieldNames ? '' : 'storeSecurely')
+    ..aOB(10, _omitFieldNames ? '' : 'syncCalendar')
+    ..aOB(11, _omitFieldNames ? '' : 'syncNotifications')
     ..hasRequiredFields = false;
 
   @$core.Deprecated('See https://github.com/google/protobuf.dart/issues/998.')
@@ -279,6 +285,28 @@ class AntinoteAccount extends $pb.GeneratedMessage {
   $core.bool hasStoreSecurely() => $_has(8);
   @$pb.TagNumber(9)
   void clearStoreSecurely() => $_clearField(9);
+
+  /// Whether to periodically sync the calendar between the remote and the client. This can be done only when
+  /// [store_securely] is [false].
+  @$pb.TagNumber(10)
+  $core.bool get syncCalendar => $_getBF(9);
+  @$pb.TagNumber(10)
+  set syncCalendar($core.bool value) => $_setBool(9, value);
+  @$pb.TagNumber(10)
+  $core.bool hasSyncCalendar() => $_has(9);
+  @$pb.TagNumber(10)
+  void clearSyncCalendar() => $_clearField(10);
+
+  /// Whether to periodically sync notifications between the remote and the client. This can be done only when
+  /// [store_securely] is [false].
+  @$pb.TagNumber(11)
+  $core.bool get syncNotifications => $_getBF(10);
+  @$pb.TagNumber(11)
+  set syncNotifications($core.bool value) => $_setBool(10, value);
+  @$pb.TagNumber(11)
+  $core.bool hasSyncNotifications() => $_has(10);
+  @$pb.TagNumber(11)
+  void clearSyncNotifications() => $_clearField(11);
 }
 
 class AccountRegistry extends $pb.GeneratedMessage {

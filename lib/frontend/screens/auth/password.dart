@@ -90,6 +90,7 @@ class _LoginPasswordScreenState extends State<LoginPasswordScreen> {
 
                       workspace: widget.workspace,
                       baseUrl: widget.baseUrl,
+                      cookies: [],
 
                       deviceUuid: Credentials.generateDeviceUuid(),
                     );
@@ -97,7 +98,18 @@ class _LoginPasswordScreenState extends State<LoginPasswordScreen> {
                     final result = credentials.login(
                       options: context.s.networking.sessionOptions,
                     );
-                    context.pop(result);
+                    context.pop(() async {
+                      final loginResult = await result;
+
+                      if (loginResult.session.stack.demo) {
+                        return (
+                          session: loginResult.session,
+                          credentials: credentials,
+                        );
+                      }
+
+                      return loginResult;
+                    }());
                   },
 
                   label: context.l10n.loginButton,

@@ -6,4 +6,5 @@
     <string name="biometric_prompt_subtitle">to log in</string>
     <string name="biometric_prompt_description">Get access to your protected account credentials by confirming your identity</string>
     <string name="biometric_prompt_cancel">Cancel</string>
+    <string name="syncing">Syncing…</string>
 </resources>

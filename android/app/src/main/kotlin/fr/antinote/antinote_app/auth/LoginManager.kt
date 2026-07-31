@@ -19,9 +19,9 @@ import androidx.biometric.BiometricPrompt
 import androidx.core.content.ContextCompat
 import androidx.datastore.core.CorruptionException
 import androidx.datastore.core.DataStore
+import androidx.datastore.core.MultiProcessDataStoreFactory
 import androidx.datastore.core.Serializer
 import androidx.datastore.core.handlers.ReplaceFileCorruptionHandler
-import androidx.datastore.deviceProtectedDataStore
 import androidx.fragment.app.FragmentActivity
 import com.google.protobuf.Any
 import com.google.protobuf.ByteString
@@ -40,6 +40,7 @@ import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.suspendCancellableCoroutine
 import kotlinx.coroutines.withContext
+import java.io.File
 import java.io.InputStream
 import java.io.OutputStream
 import java.security.KeyStore
@@ -50,7 +51,7 @@ import javax.crypto.spec.GCMParameterSpec
 import javax.crypto.spec.SecretKeySpec
 import kotlin.io.encoding.Base64
 
-object AccountsStoreSerializer : Serializer<AccountRegistry> {
+object AccountStoreSerializer : Serializer<AccountRegistry> {
     override val defaultValue: AccountRegistry = AccountRegistry.getDefaultInstance()
 
     override suspend fun readFrom(input: InputStream): AccountRegistry {
@@ -66,29 +67,38 @@ object AccountsStoreSerializer : Serializer<AccountRegistry> {
     }
 }
 
+@Volatile
+private var ACCOUNT_STORE_INSTANCE: DataStore<AccountRegistry>? = null
 
-val Context.accountsStore: DataStore<AccountRegistry> by deviceProtectedDataStore(
-    fileName = "accounts.pb",
-    serializer = AccountsStoreSerializer,
-    corruptionHandler = ReplaceFileCorruptionHandler {
-        Log.e("AccountRegistry", "Could not read accounts, recreating...", it)
+val Context.accountStore: DataStore<AccountRegistry>
+    get() = ACCOUNT_STORE_INSTANCE ?: synchronized(this) {
+        ACCOUNT_STORE_INSTANCE ?: MultiProcessDataStoreFactory.create(
+            serializer = AccountStoreSerializer,
+            corruptionHandler = ReplaceFileCorruptionHandler {
+                Log.e("AccountRegistry", "Could not read accounts, recreating...", it)
 
-        AccountRegistry.getDefaultInstance()
+                AccountRegistry.getDefaultInstance()
+            },
+        ) {
+            File(filesDir, "session.pb")
+        }.also { ACCOUNT_STORE_INSTANCE = it }
     }
-)
 
-class LoginManager(val context: Context, val activity: FragmentActivity) : NativeLoginManager {
+class LoginManager(val context: Context, val activity: FragmentActivity?) : NativeLoginManager {
     companion object {
         private const val TAG = "LoginManager"
         const val KEY_UID = "uid"
-        private const val AUTHENTICATORS = BiometricManager.Authenticators.BIOMETRIC_WEAK or BiometricManager.Authenticators.BIOMETRIC_STRONG
-        private const val CIPHER = "${KeyProperties.KEY_ALGORITHM_AES}/${KeyProperties.BLOCK_MODE_GCM}/${KeyProperties.ENCRYPTION_PADDING_PKCS7}"
+        private const val AUTHENTICATORS =
+            BiometricManager.Authenticators.BIOMETRIC_WEAK or BiometricManager.Authenticators.BIOMETRIC_STRONG or BiometricManager.Authenticators.DEVICE_CREDENTIAL
+        private const val CIPHER =
+            "${KeyProperties.KEY_ALGORITHM_AES}/${KeyProperties.BLOCK_MODE_GCM}/${KeyProperties.ENCRYPTION_PADDING_PKCS7}"
 
         fun accountKeyAlias(uid: String): String = "TOKEN / $uid"
 
         fun accountForUid(context: Context, accountKey: String): Account {
             val am = AccountManager.get(context)
-            return am.getAccountsByType(context.getString(R.string.account_type)).first { am.getUserData(it, KEY_UID) == accountKey }
+            return am.getAccountsByType(context.getString(R.string.account_type))
+                .first { am.getUserData(it, KEY_UID) == accountKey }
         }
     }
 
@@ -119,10 +129,10 @@ class LoginManager(val context: Context, val activity: FragmentActivity) : Nativ
         val ciphertext = cipher.doFinal(data)
 
 
-        val encryptedDek : ByteString
+        val encryptedDek: ByteString
         val dekIv: ByteString
 
-        if(hadDek) {
+        if (hadDek) {
             encryptedDek = oldCredentials.dekData
             dekIv = oldCredentials.dekIv
         } else {
@@ -130,7 +140,7 @@ class LoginManager(val context: Context, val activity: FragmentActivity) : Nativ
             val hwCipher = Cipher.getInstance(CIPHER)
             hwCipher.init(Cipher.ENCRYPT_MODE, hwKey)
 
-            if(!getStoreKeyForAccount(hwCipher)) return null
+            if (!getStoreKeyForAccount(hwCipher)) return null
 
             encryptedDek = hwCipher.doFinal(dek.encoded).toByteString()
             dekIv = hwCipher.iv.toByteString()
@@ -155,12 +165,14 @@ class LoginManager(val context: Context, val activity: FragmentActivity) : Nativ
         val hwCipher = Cipher.getInstance(
             CIPHER
         )
-        hwCipher.init(Cipher.DECRYPT_MODE, hwKey, GCMParameterSpec(
-            128,
-            credentials.dekIv.toByteArray()
-        ))
+        hwCipher.init(
+            Cipher.DECRYPT_MODE, hwKey, GCMParameterSpec(
+                128,
+                credentials.dekIv.toByteArray()
+            )
+        )
 
-        if(!getStoreKeyForAccount(hwCipher)) {
+        if (!getStoreKeyForAccount(hwCipher)) {
             return null
         }
 
@@ -169,7 +181,11 @@ class LoginManager(val context: Context, val activity: FragmentActivity) : Nativ
         dekStore[uid] = dek
 
         val dataCipher = Cipher.getInstance(CIPHER)
-        dataCipher.init(Cipher.DECRYPT_MODE, dek, GCMParameterSpec(128, credentials.credentialIv.toByteArray()))
+        dataCipher.init(
+            Cipher.DECRYPT_MODE,
+            dek,
+            GCMParameterSpec(128, credentials.credentialIv.toByteArray())
+        )
 
         return dataCipher.doFinal(credentials.dekData.toByteArray())
     }
@@ -177,6 +193,8 @@ class LoginManager(val context: Context, val activity: FragmentActivity) : Nativ
     private suspend fun getStoreKeyForAccount(
         cipher: Cipher
     ): Boolean {
+        if (activity == null) throw IllegalStateException("Tried to authenticate user although login manager not attached to an activity")
+
         val cryptoObject = BiometricPrompt.CryptoObject(cipher)
 
         return withContext(Dispatchers.Main) {
@@ -185,29 +203,35 @@ class LoginManager(val context: Context, val activity: FragmentActivity) : Nativ
                     setTitle(context.getString(R.string.biometric_prompt_title))
                     setSubtitle(context.getString(R.string.biometric_prompt_subtitle))
                     setDescription(context.getString(R.string.biometric_prompt_description))
-                    setNegativeButtonText(context.getString(R.string.biometric_prompt_cancel))
+
+                    // Since we enable device credentials, we do not need to define this.
+                    // setNegativeButtonText(context.getString(R.string.biometric_prompt_cancel))
 
                     setConfirmationRequired(false)
                     setAllowedAuthenticators(AUTHENTICATORS)
                 }.build()
 
-                val executor = ContextCompat.getMainExecutor(activity)
+                val executor = ContextCompat.getMainExecutor(context)
 
-                val prompt = BiometricPrompt(activity, executor,object : BiometricPrompt.AuthenticationCallback() {
-                    override fun onAuthenticationSucceeded(result: BiometricPrompt.AuthenticationResult) {
-                        if(continuation.isActive) continuation.resume(true) {
-                                _, _, _ ->
+                val prompt = BiometricPrompt(
+                    activity,
+                    executor,
+                    object : BiometricPrompt.AuthenticationCallback() {
+                        override fun onAuthenticationSucceeded(result: BiometricPrompt.AuthenticationResult) {
+                            if (continuation.isActive) continuation.resume(true) { _, _, _ ->
+                            }
                         }
-                    }
 
-                    override fun onAuthenticationError(errorCode: Int, errString: CharSequence) {
-                        if(continuation.isActive) continuation.resume(false) {
-                                _, _, _ ->
+                        override fun onAuthenticationError(
+                            errorCode: Int,
+                            errString: CharSequence
+                        ) {
+                            if (continuation.isActive) continuation.resume(false) { _, _, _ ->
+                            }
                         }
-                    }
 
-                    override fun onAuthenticationFailed() {}
-                })
+                        override fun onAuthenticationFailed() {}
+                    })
 
                 continuation.invokeOnCancellation {
                     prompt.cancelAuthentication()
@@ -255,7 +279,7 @@ class LoginManager(val context: Context, val activity: FragmentActivity) : Nativ
         scope.launch {
             val account = AntinoteAccount.parseFrom(rawAccount)
 
-            val credentials: Any? = if(account.storeSecurely) {
+            val credentials: Any? = if (account.storeSecurely) {
                 encryptCredentials(account.uid, account.tokenCredentials.toByteArray(), null)?.run {
                     Any.parseFrom(toByteArray())
                 }
@@ -263,7 +287,7 @@ class LoginManager(val context: Context, val activity: FragmentActivity) : Nativ
                 account.tokenCredentials
             }
 
-            if(credentials == null) {
+            if (credentials == null) {
                 callback(Result.success(false))
                 return@launch
             }
@@ -272,7 +296,15 @@ class LoginManager(val context: Context, val activity: FragmentActivity) : Nativ
 
             Log.i(TAG, "In total, there are ${manager.accounts.size} accounts")
             for (account in manager.getAccountsByType(context.getString(R.string.account_type))) {
-                Log.d(TAG, "-> '${account.name}:${account.type}' (${manager.getUserData(account, KEY_UID)})")
+                Log.d(
+                    TAG,
+                    "-> '${account.name}:${account.type}' (${
+                        manager.getUserData(
+                            account,
+                            KEY_UID
+                        )
+                    })"
+                )
             }
 
             val nativeAccount = Account(account.name, context.getString(R.string.account_type))
@@ -296,11 +328,13 @@ class LoginManager(val context: Context, val activity: FragmentActivity) : Nativ
                 return@launch
             }
 
-            context.accountsStore.updateData { it.copy {
-                accounts.add(account.copy {
-                    tokenCredentials = credentials
-                })
-            } }
+            context.accountStore.updateData {
+                it.copy {
+                    accounts.add(account.copy {
+                        tokenCredentials = credentials
+                    })
+                }
+            }
 
             // TODO: Add a check for whether we have the calendar permission
             ContentResolver.setSyncAutomatically(nativeAccount, CalendarContract.AUTHORITY, true)
@@ -329,7 +363,13 @@ class LoginManager(val context: Context, val activity: FragmentActivity) : Nativ
         val manager = AccountManager.get(context)
 
         for (account in manager.getAccountsByType(context.getString(R.string.account_type))) {
-            if(accountList != null && !accountList.contains(manager.getUserData(account, KEY_UID))) {
+            if (accountList != null && !accountList.contains(
+                    manager.getUserData(
+                        account,
+                        KEY_UID
+                    )
+                )
+            ) {
                 continue
             }
 
@@ -339,19 +379,19 @@ class LoginManager(val context: Context, val activity: FragmentActivity) : Nativ
             }
         }
 
-        context.accountsStore.updateData { registry ->
+        context.accountStore.updateData { registry ->
             registry.copy {
                 val toKeep = mutableListOf<AntinoteAccount>()
                 val keyStore = KeyStore.getInstance("AndroidKeyStore").apply { load(null) }
-                for(account in accounts) {
-                    if(accountList != null && !accountList.contains(account.uid)) {
+                for (account in accounts) {
+                    if (accountList != null && !accountList.contains(account.uid)) {
                         toKeep.add(account)
                         continue
                     }
 
-                    if(account.storeSecurely) {
+                    if (account.storeSecurely) {
                         val alias = accountKeyAlias(account.uid)
-                        if(keyStore.isKeyEntry(alias)) {
+                        if (keyStore.isKeyEntry(alias)) {
                             keyStore.deleteEntry(alias)
                         }
                     }
@@ -359,7 +399,8 @@ class LoginManager(val context: Context, val activity: FragmentActivity) : Nativ
 
                 accounts.clear()
                 accounts.addAll(toKeep)
-            } }
+            }
+        }
     }
 
     override fun deleteAccount(uid: String, callback: (Result<Unit>) -> Unit) {
@@ -384,22 +425,24 @@ class LoginManager(val context: Context, val activity: FragmentActivity) : Nativ
         scope.launch {
             val newAccount = AntinoteAccount.parseFrom(newRawAccount)
 
-            context.accountsStore.updateData { registry ->
+            context.accountStore.updateData { registry ->
                 registry.copy {
                     val accIndex = accounts.indexOfFirst { it.uid == uid }
-                    if(accIndex == -1) {
+                    if (accIndex == -1) {
                         callback(Result.failure(IllegalStateException("Tried to update an account that does not exist")))
                         return@updateData registry
                     } else {
                         val oldAccount = accounts[accIndex]
                         accounts[accIndex] = newAccount.copy {
-                            if(hasTokenCredentials() && newAccount.storeSecurely) {
-                                val newCredentials = encryptCredentials(uid, newAccount.tokenCredentials.toByteArray(),
-                                    if(oldAccount.storeSecurely) {
+                            if (hasTokenCredentials() && newAccount.storeSecurely) {
+                                val newCredentials = encryptCredentials(
+                                    uid, newAccount.tokenCredentials.toByteArray(),
+                                    if (oldAccount.storeSecurely) {
                                         EncryptedCredentials.parseFrom(oldAccount.tokenCredentials.toByteArray())
-                                    } else null)
+                                    } else null
+                                )
 
-                                if(newCredentials == null) {
+                                if (newCredentials == null) {
                                     callback(Result.success(false))
                                     return@updateData registry
                                 }
@@ -416,13 +459,15 @@ class LoginManager(val context: Context, val activity: FragmentActivity) : Nativ
     override fun listAccounts(callback: (Result<List<ByteArray>>) -> Unit) {
         scope.launch {
             val manager = AccountManager.get(context)
-            val nativeAccountUids = manager.getAccountsByType(context.getString(R.string.account_type)).map { manager.getUserData(it, KEY_UID) }
+            val nativeAccountUids =
+                manager.getAccountsByType(context.getString(R.string.account_type))
+                    .map { manager.getUserData(it, KEY_UID) }
 
             val accountIdsToDelete = mutableListOf<String>()
             val rawAccounts = mutableListOf<ByteArray>()
 
-            for(account in context.accountsStore.data.first().accountsList) {
-                if(!nativeAccountUids.contains(account.uid)) {
+            for (account in context.accountStore.data.first().accountsList) {
+                if (!nativeAccountUids.contains(account.uid)) {
                     accountIdsToDelete.add(account.uid)
                     continue
                 }
@@ -438,45 +483,51 @@ class LoginManager(val context: Context, val activity: FragmentActivity) : Nativ
 
     override fun getAccountWithCredentials(uid: String, callback: (Result<ByteArray?>) -> Unit) {
         scope.launch {
-            val account = context.accountsStore.data.first().accountsList.firstOrNull { it.uid == uid }
+            val account =
+                context.accountStore.data.first().accountsList.firstOrNull { it.uid == uid }
 
-            if(account == null) {
+            if (account == null) {
                 callback(Result.success(null))
                 return@launch
             }
 
-            if(!account.storeSecurely) {
+            if (!account.storeSecurely) {
                 callback(Result.success(account.toByteArray()))
                 return@launch
             }
 
-            val decrypted = decryptCredentials(uid, EncryptedCredentials.parseFrom(account.tokenCredentials.toByteArray()))
+            val decrypted = decryptCredentials(
+                uid,
+                EncryptedCredentials.parseFrom(account.tokenCredentials.toByteArray())
+            )
 
-            if(decrypted == null) {
+            if (decrypted == null) {
                 callback(Result.success(null))
                 return@launch
             }
 
-            callback(Result.success(
-                account.copy {
-                    tokenCredentials = Any.parseFrom(decrypted.toByteString())
-                }.toByteArray()
-            ))
+            callback(
+                Result.success(
+                    account.copy {
+                        tokenCredentials = Any.parseFrom(decrypted.toByteString())
+                    }.toByteArray()
+                )
+            )
         }
     }
 
     override fun getDefaultAccount(callback: (Result<ByteArray?>) -> Unit) {
         scope.launch {
-            val registry = context.accountsStore.data.first()
+            val registry = context.accountStore.data.first()
 
-            if(registry.defaultAccountId == null) {
+            if (registry.defaultAccountId == null) {
                 callback(Result.success(null))
                 return@launch
             }
 
             val account = registry.accountsList.firstOrNull { it.uid == registry.defaultAccountId }
 
-            if(account == null) {
+            if (account == null) {
                 callback(Result.success(null))
                 return@launch
             }
@@ -488,9 +539,9 @@ class LoginManager(val context: Context, val activity: FragmentActivity) : Nativ
 
     override fun setDefaultAccount(uid: String?, callback: (Result<Unit>) -> Unit) {
         scope.launch {
-            context.accountsStore.updateData { registry ->
+            context.accountStore.updateData { registry ->
                 registry.copy {
-                    if(uid == null) {
+                    if (uid == null) {
                         clearDefaultAccountId()
                     } else {
                         defaultAccountId = uid

@@ -73,7 +73,9 @@ class MethodsScreen extends StatelessWidget with WidgetsBindingObserver {
     final result = await pushed;
     if (result == null || !context.mounted) return;
 
-    final account = result.refreshCredentials.asAntinoteAccount(result.session);
+    // TODO: Handle nullability by sending an error message.
+    final account = result.credentials!.asAntinoteAccount(result.session);
+
     await context.as.addAccount(account);
 
     if (context.mounted) {
@@ -101,9 +103,8 @@ class MethodsScreen extends StatelessWidget with WidgetsBindingObserver {
           if (kDebugMode)
             IconButton(
               onPressed: () async {
-                await sendResultIfLoggedIn(
-                  context,
-                  PasswordCredentials(
+                await sendResultIfLoggedIn(context, () async {
+                  final credentials = PasswordCredentials(
                     username: 'demonstration',
                     password: 'pronotevs',
 
@@ -117,8 +118,14 @@ class MethodsScreen extends StatelessWidget with WidgetsBindingObserver {
                     baseUrl: Uri.parse(
                       'https://demo.index-education.net/pronote',
                     ),
-                  ).login(options: context.s.networking.sessionOptions),
-                );
+                    cookies: [],
+                  );
+                  final result = await credentials.login(
+                    options: context.s.networking.sessionOptions,
+                  );
+
+                  return (credentials: credentials, session: result.session);
+                }());
               },
 
               icon: const Icon(HugeIconsSolid.developer),

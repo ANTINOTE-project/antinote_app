@@ -11,7 +11,7 @@ import android.os.Message
 import android.os.Messenger
 import android.os.RemoteException
 import android.util.Log
-import fr.antinote.antinote_app.auth.accountsStore
+import fr.antinote.antinote_app.auth.accountStore
 import fr.antinote.studies_management.antinote_app.pigeon_posts.NativeSessionManager
 import fr.antinote.studies_management.antinote_app.pigeon_posts.PollingManager
 import fr.antinote.studies_management.antinote_app.pigeon_posts.PollingState
@@ -186,7 +186,7 @@ class SessionManager(val context: Context, binaryMessenger: BinaryMessenger) :
             try {
                 val msg = Message.obtain(null, MSG_REGISTER_CLIENT)
                 msg.data.putStringArray("accounts", currentAccountUids.toTypedArray())
-                msg.data.putStringArray("alive_accounts", context.accountsStore.data.first().accountsList.map { it.uid }.toTypedArray())
+                msg.data.putStringArray("alive_accounts", context.accountStore.data.first().accountsList.map { it.uid }.toTypedArray())
                 msg.replyTo = this@SessionManager.messenger
                 mService?.send(msg)
             } catch (_: RemoteException) {

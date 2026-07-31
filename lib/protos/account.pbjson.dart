@@ -58,6 +58,14 @@ const AntinoteAccount$json = {
     },
     {'1': 'invalid', '3': 8, '4': 1, '5': 8, '10': 'invalid'},
     {'1': 'store_securely', '3': 9, '4': 1, '5': 8, '10': 'storeSecurely'},
+    {'1': 'sync_calendar', '3': 10, '4': 1, '5': 8, '10': 'syncCalendar'},
+    {
+      '1': 'sync_notifications',
+      '3': 11,
+      '4': 1,
+      '5': 8,
+      '10': 'syncNotifications'
+    },
   ],
 };
 
@@ -68,7 +76,9 @@ final $typed_data.Uint8List antinoteAccountDescriptor = $convert.base64Decode(
     'UhFlc3RhYmxpc2htZW50TmFtZRIZCghiYXNlX3VybBgFIAEoCVIHYmFzZVVybBIlCg53b3Jrc3'
     'BhY2VfbmFtZRgGIAEoCVINd29ya3NwYWNlTmFtZRJBChF0b2tlbl9jcmVkZW50aWFscxgHIAEo'
     'CzIULmdvb2dsZS5wcm90b2J1Zi5BbnlSEHRva2VuQ3JlZGVudGlhbHMSGAoHaW52YWxpZBgIIA'
-    'EoCFIHaW52YWxpZBIlCg5zdG9yZV9zZWN1cmVseRgJIAEoCFINc3RvcmVTZWN1cmVseQ==');
+    'EoCFIHaW52YWxpZBIlCg5zdG9yZV9zZWN1cmVseRgJIAEoCFINc3RvcmVTZWN1cmVseRIjCg1z'
+    'eW5jX2NhbGVuZGFyGAogASgIUgxzeW5jQ2FsZW5kYXISLQoSc3luY19ub3RpZmljYXRpb25zGA'
+    'sgASgIUhFzeW5jTm90aWZpY2F0aW9ucw==');
 
 @$core.Deprecated('Use accountRegistryDescriptor instead')
 const AccountRegistry$json = {

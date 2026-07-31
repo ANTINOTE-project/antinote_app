@@ -8,7 +8,6 @@ plugins {
 dependencies {
     implementation("androidx.datastore:datastore:1.2.1")
     implementation("androidx.biometric:biometric:1.1.0")
-    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.11.0")
     implementation("com.google.protobuf:protobuf-kotlin-lite:4.35.1")
     implementation("androidx.work:work-runtime-ktx:2.11.2")
 }
@@ -60,7 +59,7 @@ android {
         }
     }
 
-    flavorDimensions += "default"
+    flavorDimensions.add("default")
 
     productFlavors {
         create("dev") {

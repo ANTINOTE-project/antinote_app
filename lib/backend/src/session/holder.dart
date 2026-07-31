@@ -73,12 +73,20 @@ class SessionDataHolder extends ChangeNotifier {
     }
 
     try {
-      final (refreshCredentials: newCreds, session: session) = await credentials
-          .login(options: _settings.sessionOptions);
+      final (credentials: newCreds, session: session) = await credentials.login(
+        options: _settings.sessionOptions,
+      );
 
-      account = account.setCredentials(newCreds).deepCopy()
-        ..invalid = false
-        ..freeze();
+      account =
+          account
+              .setCredentials(
+                newCreds != null && !session.stack.demo
+                    ? newCreds
+                    : credentials,
+              )
+              .deepCopy()
+            ..invalid = false
+            ..freeze();
       await storage.updateAccount(account, lastSeenAccountUid!);
 
       lastSeenSession = session;
