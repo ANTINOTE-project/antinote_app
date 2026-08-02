@@ -27,6 +27,8 @@ Future<SyncResult> syncTask(String accountUid) async {
     accountUid,
   );
 
+  WidgetsFlutterBinding.ensureInitialized();
+
   var settings = NetworkingSettings();
   if (!(await settings.initialize())) {
     await settings.clear();
@@ -34,6 +36,8 @@ Future<SyncResult> syncTask(String accountUid) async {
 
     final result = await settings.initialize();
     if (!result) {
+      libLog.warning('Could not initialize parameters, attempting later...');
+
       return SyncResult(
         result: .availability,
         totalEntries: 0,

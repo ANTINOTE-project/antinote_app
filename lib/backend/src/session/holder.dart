@@ -11,6 +11,8 @@ import 'package:flutter/foundation.dart';
 final NativeSessionManager _sessionManager = NativeSessionManager();
 final _nativeSessionManagerSupported = Platform.isAndroid;
 
+// TODO: Remove the account UID stuff from the session data holder, separate
+//  them so that we can manage to cache multiple sessions as once.
 class SessionDataHolder extends ChangeNotifier {
   RemoteSession? _curSession;
 
@@ -63,9 +65,13 @@ class SessionDataHolder extends ChangeNotifier {
        );
 
   Future<RemoteSession> relogin({required AccountStorage storage}) async {
-    var account = (await storage.borrowAccountWithCredentials(
+    var account = await storage.borrowAccountWithCredentials(
       lastSeenAccountUid!,
-    ))!;
+    );
+
+    if (account == null) {
+      throw Exception('Account not found in storage ($lastSeenAccountUid)');
+    }
 
     final credentials = account.credentials;
     if (credentials == null) {
@@ -101,7 +107,7 @@ class SessionDataHolder extends ChangeNotifier {
       return lastSeenSession!;
     } on InvalidInstanceException {
       await storage.updateAccount(
-        account.deepCopy()
+        account!.deepCopy()
           ..invalid = true
           ..freeze(),
         lastSeenAccountUid ?? account.uid,
@@ -150,7 +156,7 @@ class SessionDataHolder extends ChangeNotifier {
       "the session's account UID",
     );
 
-    late final ScheduledTask? task;
+    final ScheduledTask? task;
 
     if (_nativeSessionManagerSupported) {
       task = await _sessionManager.scheduleTask(
@@ -201,7 +207,8 @@ class SessionDataHolder extends ChangeNotifier {
 
     late T callbackResult;
     try {
-      for (var curTry = 1; curTry <= (retry ? 2 : 1); curTry++) {
+      final maxTries = retry ? 2 : 1;
+      for (var curTry = 1; curTry <= maxTries; curTry++) {
         try {
           print('Trying ($curTry/${retry ? 2 : 1}) task $debugId...');
           callbackResult = await callback.call(currentlyAppliedSession!);

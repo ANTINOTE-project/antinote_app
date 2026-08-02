@@ -4,34 +4,23 @@ import android.accounts.Account
 import android.accounts.AccountManager
 import android.content.AbstractThreadedSyncAdapter
 import android.content.ContentProviderClient
+import android.content.ContentResolver
 import android.content.Context
 import android.content.SyncResult
 import android.os.Bundle
-import android.os.Handler
-import android.os.Looper
+import android.provider.CalendarContract
 import android.util.Log
 import androidx.work.Constraints
 import androidx.work.Data
+import androidx.work.ExistingWorkPolicy
 import androidx.work.NetworkType
 import androidx.work.OneTimeWorkRequest
-import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.OutOfQuotaPolicy
 import androidx.work.WorkManager
 import androidx.work.await
 import fr.antinote.antinote_app.auth.LoginManager
-import fr.antinote.antinote_app.calendar.CalendarManager
-import fr.antinote.antinote_app.pigeon_posts.NativeLoginManager
-import fr.antinote.antinote_app.session.SessionManager
-import fr.antinote.studies_management.antinote_app.pigeon_posts.NativeCalendarManager
-import fr.antinote.studies_management.antinote_app.pigeon_posts.NativeSessionManager
-import fr.antinote.studies_management.antinote_app.pigeon_posts.NativeSyncManager
-import fr.antinote.studies_management.antinote_app.pigeon_posts.SyncResultType
-import io.flutter.FlutterInjector
-import io.flutter.embedding.engine.FlutterEngine
-import io.flutter.embedding.engine.dart.DartExecutor
+import fr.antinote.antinote_app.protos.SyncTaskType
 import kotlinx.coroutines.runBlocking
-import java.util.concurrent.CountDownLatch
-import java.util.concurrent.TimeUnit
 
 class SyncAdapter @JvmOverloads constructor(
     context: Context,
@@ -40,6 +29,7 @@ class SyncAdapter @JvmOverloads constructor(
 ) : AbstractThreadedSyncAdapter(context, autoInitialize, allowParallelSyncs) {
     companion object {
         const val TAG = "SyncAdapter"
+        const val LEGACY_SYNC_WORK = "legacy_sync_"
     }
 
     override fun onPerformSync(
@@ -49,7 +39,13 @@ class SyncAdapter @JvmOverloads constructor(
         provider: ContentProviderClient,
         syncResult: SyncResult
     ) {
-        Log.i(TAG, "Starting sync...")
+        val isManual = extras.getBoolean(ContentResolver.SYNC_EXTRAS_MANUAL, false)
+        if (!isManual) {
+            ContentResolver.setSyncAutomatically(account, authority, false)
+            return
+        }
+
+        Log.i(TAG, "Redirecting sync to worker...")
         val manager = AccountManager.get(context)
         val uid = manager.getUserData(account, LoginManager.KEY_UID)
 
@@ -60,15 +56,36 @@ class SyncAdapter @JvmOverloads constructor(
             setConstraints(
                 Constraints.Builder().setRequiredNetworkType(NetworkType.CONNECTED).build()
             )
-            setInputData(Data.Builder().putStringArray(SyncWorker.KEY_UIDS, arrayOf(uid)).build())
+            setInputData(Data.Builder().run {
+                putStringArray(SyncWorker.KEY_UIDS, arrayOf(uid))
+                putIntArray(
+                    SyncWorker.KEY_FORCED_TASKS, intArrayOf(
+                        when (authority) {
+                            CalendarContract.AUTHORITY -> SyncTaskType.CALENDAR.number
+                            else -> throw IllegalArgumentException("Unknown provider authority: $authority")
+                        }
+                    )
+                )
+
+                build()
+            })
 
             build()
         }
 
-        val op = WorkManager.getInstance(context).enqueue(request)
+        val thread = Thread.currentThread()
+
+        val operation = WorkManager.getInstance(context)
+            .enqueueUniqueWork(LEGACY_SYNC_WORK + thread.name, ExistingWorkPolicy.REPLACE, request)
 
         runBlocking {
-            op.await()
+            operation.await()
         }
+    }
+
+    override fun onSyncCanceled(thread: Thread) {
+        WorkManager.getInstance(context).cancelUniqueWork(LEGACY_SYNC_WORK + thread.name)
+
+        super.onSyncCanceled(thread)
     }
 }

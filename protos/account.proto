@@ -4,6 +4,29 @@ option java_package = "fr.antinote.antinote_app.protos";
 option java_multiple_files = true;
 
 import "google/protobuf/any.proto";
+import "google/protobuf/timestamp.proto";
+
+enum SyncTaskType {
+  // Sync the calendar between the remote and the client (timetable and agenda). This can only be
+  // done when [AntinoteAccount.store_securely] is [false].
+  CALENDAR = 0;
+  // Sync notifications between the remote and the client (homework, grades, cancellation,
+  // communication...). This can only be done when [AntinoteAccount.store_securely] is [false].
+  NOTIFICATIONS = 1;
+}
+
+message SyncTaskData {
+  // The type of sync task this message annotates.
+  SyncTaskType type = 1;
+  // The last time this task was successfully completed.
+  google.protobuf.Timestamp last_synced = 2;
+
+  // Whether the task is currently enabled.
+  bool enabled = 3;
+
+  // This is used to store additional that is specific to the task type.
+  optional google.protobuf.Any specialized_data = 4;
+}
 
 message EncryptedCredentials {
   // The token that's used to login.
@@ -41,12 +64,7 @@ message AntinoteAccount {
   // Whether to store the account in the Keystore of the platform.
   bool store_securely = 9;
 
-  // Whether to periodically sync the calendar between the remote and the client. This can be done only when
-  // [store_securely] is [false].
-  bool sync_calendar = 10;
-  // Whether to periodically sync notifications between the remote and the client. This can be done only when
-  // [store_securely] is [false].
-  bool sync_notifications = 11;
+  repeated SyncTaskData sync_data = 10;
 }
 
 message AccountRegistry {

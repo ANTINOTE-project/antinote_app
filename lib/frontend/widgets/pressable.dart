@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:vibration/vibration.dart';
+import 'package:flutter/services.dart';
 
 class Pressable extends StatelessWidget {
   final Widget child;
@@ -33,9 +33,7 @@ class Pressable extends StatelessWidget {
   void _onTapDown() async {
     if (!hasFeedback || !hasVibration) return;
 
-    if (await Vibration.hasVibrator()) {
-      await Vibration.vibrate(duration: 6);
-    }
+    await HapticFeedback.selectionClick();
   }
 
   @override

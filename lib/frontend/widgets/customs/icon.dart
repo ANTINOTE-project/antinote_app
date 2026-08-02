@@ -1,6 +1,6 @@
 import 'package:antinote_app/frontend/utils/utils.dart';
 import 'package:flutter/material.dart';
-import 'package:vibration/vibration.dart';
+import 'package:flutter/services.dart';
 
 class IconWidget extends StatefulWidget {
   final IconData iconOn;
@@ -59,7 +59,7 @@ class _IconWidgetState extends State<IconWidget>
   }
 
   Future<void> _triggerAnimation() async {
-    await Vibration.vibrate(duration: 7);
+    await HapticFeedback.selectionClick();
     await _controller.reverse();
 
     if (!mounted) return;

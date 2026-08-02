@@ -16,40 +16,40 @@ import 'package:pigeon/pigeon.dart';
 //
 @HostApi()
 abstract class NativeSyncManager {
-  void syncFinished(SyncResult result);
+  void syncFinished(SyncResponse result);
 }
 
 enum SyncResultType {
   /// When the sync completes successfully.
   success,
 
-  /// When we get an invalid login exception.
-  auth,
+  /// When we can't access the remote or have temporary issues.
+  retry,
 
-  /// When we lose or never get to contact the PRONOTE instance.
-  availability,
-
-  /// When we have trouble actually parsing the different elements or writing
-  /// them to system.
-  parsing,
+  /// When the credentials are invalid or the feature is unavailable.
+  failure,
 }
 
-final class SyncResult {
+final class SyncRequest {
+  /// The account protobuf (without credentials) to perform the task.
+  final Uint8List account;
+
+  /// The ID of the sync request type that may be forced (although it is may be
+  /// disabled).
+  final int? forcedScope;
+
+  const SyncRequest({required this.account, required this.forcedScope});
+}
+
+final class SyncResponse {
+  /// The result for the sync task.
   final SyncResultType result;
 
-  final int totalEntries;
-  final int addedEntries;
-  final int removedEntries;
-  final int updatedEntries;
+  const SyncResponse({required this.result});
+}
 
-  final bool dbIssue;
-
-  const SyncResult({
-    required this.result,
-    required this.totalEntries,
-    required this.addedEntries,
-    required this.removedEntries,
-    required this.updatedEntries,
-    required this.dbIssue,
-  });
+@FlutterApi()
+abstract class SyncManager {
+  @async
+  SyncResponse sendRequest(SyncRequest request);
 }

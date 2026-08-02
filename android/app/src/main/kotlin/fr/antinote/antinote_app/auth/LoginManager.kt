@@ -336,8 +336,7 @@ class LoginManager(val context: Context, val activity: FragmentActivity?) : Nati
                 }
             }
 
-            // TODO: Add a check for whether we have the calendar permission
-            ContentResolver.setSyncAutomatically(nativeAccount, CalendarContract.AUTHORITY, true)
+            ContentResolver.setSyncAutomatically(nativeAccount, CalendarContract.AUTHORITY, false)
 
             Log.d(TAG, "Added account to manager with UID ${account.uid}")
 

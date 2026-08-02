@@ -2,23 +2,20 @@ package fr.antinote.antinote_app.auth
 
 import android.accounts.AccountAuthenticatorResponse
 import android.accounts.AccountManager
+import android.content.Context
 import android.os.Build
 import android.os.Bundle
+import fr.antinote.antinote_app.App
 import fr.antinote.antinote_app.pigeon_posts.NativeLoginManager
 import io.flutter.embedding.android.FlutterActivity
 import io.flutter.embedding.android.FlutterFragmentActivity
 import io.flutter.embedding.engine.FlutterEngine
+import io.flutter.embedding.engine.FlutterEngineGroup
+import io.flutter.embedding.engine.dart.DartExecutor
 
 class AuthActivity : FlutterFragmentActivity() {
-    override fun configureFlutterEngine(flutterEngine: FlutterEngine) {
-        super.configureFlutterEngine(flutterEngine)
-
-        NativeLoginManager.setUp(flutterEngine.dartExecutor.binaryMessenger, LoginManager(this, this))
-    }
-
     private var mAccountAuthenticatorResponse: AccountAuthenticatorResponse? = null
     private var mResultBundle: Bundle? = null
-
     /**
      * Set the result that is to be sent as the result of the request that caused this
      * Activity to be launched. If result is null or this method is never called then
@@ -54,6 +51,26 @@ class AuthActivity : FlutterFragmentActivity() {
         if (mAccountAuthenticatorResponse != null) {
             mAccountAuthenticatorResponse!!.onRequestContinued()
         }
+    }
+
+    override fun provideFlutterEngine(context: Context): FlutterEngine? {
+        val app = context.applicationContext as App
+
+        val entrypoint = DartExecutor.DartEntrypoint(
+            appBundlePath,
+            dartEntrypointFunctionName
+        )
+
+        return app.engineGroup.createAndRunEngine(
+            FlutterEngineGroup.Options(context).setDartEntrypoint(entrypoint)
+                .setDartEntrypointArgs(dartEntrypointArgs).setInitialRoute(initialRoute)
+        )
+    }
+
+    override fun configureFlutterEngine(flutterEngine: FlutterEngine) {
+        super.configureFlutterEngine(flutterEngine)
+
+        NativeLoginManager.setUp(flutterEngine.dartExecutor.binaryMessenger, LoginManager(this, this))
     }
 
     /**

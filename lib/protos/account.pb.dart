@@ -13,9 +13,116 @@
 import 'dart:core' as $core;
 
 import 'package:protobuf/protobuf.dart' as $pb;
-import 'package:protobuf/well_known_types/google/protobuf/any.pb.dart' as $0;
+import 'package:protobuf/well_known_types/google/protobuf/any.pb.dart' as $1;
+import 'package:protobuf/well_known_types/google/protobuf/timestamp.pb.dart'
+    as $0;
+
+import 'account.pbenum.dart';
 
 export 'package:protobuf/protobuf.dart' show GeneratedMessageGenericExtensions;
+
+export 'account.pbenum.dart';
+
+class SyncTaskData extends $pb.GeneratedMessage {
+  factory SyncTaskData({
+    SyncTaskType? type,
+    $0.Timestamp? lastSynced,
+    $core.bool? enabled,
+    $1.Any? specializedData,
+  }) {
+    final result = create();
+    if (type != null) result.type = type;
+    if (lastSynced != null) result.lastSynced = lastSynced;
+    if (enabled != null) result.enabled = enabled;
+    if (specializedData != null) result.specializedData = specializedData;
+    return result;
+  }
+
+  SyncTaskData._();
+
+  factory SyncTaskData.fromBuffer($core.List<$core.int> data,
+          [$pb.ExtensionRegistry registry = $pb.ExtensionRegistry.EMPTY]) =>
+      create()..mergeFromBuffer(data, registry);
+  factory SyncTaskData.fromJson($core.String json,
+          [$pb.ExtensionRegistry registry = $pb.ExtensionRegistry.EMPTY]) =>
+      create()..mergeFromJson(json, registry);
+
+  static final $pb.BuilderInfo _i = $pb.BuilderInfo(
+      _omitMessageNames ? '' : 'SyncTaskData',
+      package: const $pb.PackageName(_omitMessageNames ? '' : 'antinote_app'),
+      createEmptyInstance: create)
+    ..aE<SyncTaskType>(1, _omitFieldNames ? '' : 'type',
+        enumValues: SyncTaskType.values)
+    ..aOM<$0.Timestamp>(2, _omitFieldNames ? '' : 'lastSynced',
+        subBuilder: $0.Timestamp.create)
+    ..aOB(3, _omitFieldNames ? '' : 'enabled')
+    ..aOM<$1.Any>(4, _omitFieldNames ? '' : 'specializedData',
+        subBuilder: $1.Any.create)
+    ..hasRequiredFields = false;
+
+  @$core.Deprecated('See https://github.com/google/protobuf.dart/issues/998.')
+  SyncTaskData clone() => deepCopy();
+  @$core.Deprecated('See https://github.com/google/protobuf.dart/issues/998.')
+  SyncTaskData copyWith(void Function(SyncTaskData) updates) =>
+      super.copyWith((message) => updates(message as SyncTaskData))
+          as SyncTaskData;
+
+  @$core.override
+  $pb.BuilderInfo get info_ => _i;
+
+  @$core.pragma('dart2js:noInline')
+  static SyncTaskData create() => SyncTaskData._();
+  @$core.override
+  SyncTaskData createEmptyInstance() => create();
+  @$core.pragma('dart2js:noInline')
+  static SyncTaskData getDefault() => _defaultInstance ??=
+      $pb.GeneratedMessage.$_defaultFor<SyncTaskData>(create);
+  static SyncTaskData? _defaultInstance;
+
+  /// The type of sync task this message annotates.
+  @$pb.TagNumber(1)
+  SyncTaskType get type => $_getN(0);
+  @$pb.TagNumber(1)
+  set type(SyncTaskType value) => $_setField(1, value);
+  @$pb.TagNumber(1)
+  $core.bool hasType() => $_has(0);
+  @$pb.TagNumber(1)
+  void clearType() => $_clearField(1);
+
+  /// The last time this task was successfully completed.
+  @$pb.TagNumber(2)
+  $0.Timestamp get lastSynced => $_getN(1);
+  @$pb.TagNumber(2)
+  set lastSynced($0.Timestamp value) => $_setField(2, value);
+  @$pb.TagNumber(2)
+  $core.bool hasLastSynced() => $_has(1);
+  @$pb.TagNumber(2)
+  void clearLastSynced() => $_clearField(2);
+  @$pb.TagNumber(2)
+  $0.Timestamp ensureLastSynced() => $_ensure(1);
+
+  /// Whether the task is currently enabled.
+  @$pb.TagNumber(3)
+  $core.bool get enabled => $_getBF(2);
+  @$pb.TagNumber(3)
+  set enabled($core.bool value) => $_setBool(2, value);
+  @$pb.TagNumber(3)
+  $core.bool hasEnabled() => $_has(2);
+  @$pb.TagNumber(3)
+  void clearEnabled() => $_clearField(3);
+
+  /// This is used to store additional that is specific to the task type.
+  @$pb.TagNumber(4)
+  $1.Any get specializedData => $_getN(3);
+  @$pb.TagNumber(4)
+  set specializedData($1.Any value) => $_setField(4, value);
+  @$pb.TagNumber(4)
+  $core.bool hasSpecializedData() => $_has(3);
+  @$pb.TagNumber(4)
+  void clearSpecializedData() => $_clearField(4);
+  @$pb.TagNumber(4)
+  $1.Any ensureSpecializedData() => $_ensure(3);
+}
 
 class EncryptedCredentials extends $pb.GeneratedMessage {
   factory EncryptedCredentials({
@@ -124,11 +231,10 @@ class AntinoteAccount extends $pb.GeneratedMessage {
     $core.String? establishmentName,
     $core.String? baseUrl,
     $core.String? workspaceName,
-    $0.Any? tokenCredentials,
+    $1.Any? tokenCredentials,
     $core.bool? invalid,
     $core.bool? storeSecurely,
-    $core.bool? syncCalendar,
-    $core.bool? syncNotifications,
+    $core.Iterable<SyncTaskData>? syncData,
   }) {
     final result = create();
     if (uid != null) result.uid = uid;
@@ -140,8 +246,7 @@ class AntinoteAccount extends $pb.GeneratedMessage {
     if (tokenCredentials != null) result.tokenCredentials = tokenCredentials;
     if (invalid != null) result.invalid = invalid;
     if (storeSecurely != null) result.storeSecurely = storeSecurely;
-    if (syncCalendar != null) result.syncCalendar = syncCalendar;
-    if (syncNotifications != null) result.syncNotifications = syncNotifications;
+    if (syncData != null) result.syncData.addAll(syncData);
     return result;
   }
 
@@ -164,12 +269,12 @@ class AntinoteAccount extends $pb.GeneratedMessage {
     ..aOS(4, _omitFieldNames ? '' : 'establishmentName')
     ..aOS(5, _omitFieldNames ? '' : 'baseUrl')
     ..aOS(6, _omitFieldNames ? '' : 'workspaceName')
-    ..aOM<$0.Any>(7, _omitFieldNames ? '' : 'tokenCredentials',
-        subBuilder: $0.Any.create)
+    ..aOM<$1.Any>(7, _omitFieldNames ? '' : 'tokenCredentials',
+        subBuilder: $1.Any.create)
     ..aOB(8, _omitFieldNames ? '' : 'invalid')
     ..aOB(9, _omitFieldNames ? '' : 'storeSecurely')
-    ..aOB(10, _omitFieldNames ? '' : 'syncCalendar')
-    ..aOB(11, _omitFieldNames ? '' : 'syncNotifications')
+    ..pPM<SyncTaskData>(10, _omitFieldNames ? '' : 'syncData',
+        subBuilder: SyncTaskData.create)
     ..hasRequiredFields = false;
 
   @$core.Deprecated('See https://github.com/google/protobuf.dart/issues/998.')
@@ -255,15 +360,15 @@ class AntinoteAccount extends $pb.GeneratedMessage {
   /// The actual identifiers for the account. Some information within it may be
   /// duplicated. If [store_securely] is [true], this will be [EncryptedCredentials].
   @$pb.TagNumber(7)
-  $0.Any get tokenCredentials => $_getN(6);
+  $1.Any get tokenCredentials => $_getN(6);
   @$pb.TagNumber(7)
-  set tokenCredentials($0.Any value) => $_setField(7, value);
+  set tokenCredentials($1.Any value) => $_setField(7, value);
   @$pb.TagNumber(7)
   $core.bool hasTokenCredentials() => $_has(6);
   @$pb.TagNumber(7)
   void clearTokenCredentials() => $_clearField(7);
   @$pb.TagNumber(7)
-  $0.Any ensureTokenCredentials() => $_ensure(6);
+  $1.Any ensureTokenCredentials() => $_ensure(6);
 
   /// Whether this account is determined to be defunct, and is blocked from ever
   /// being logged to when it is the [AccountRegistry.default_account_id].
@@ -286,27 +391,8 @@ class AntinoteAccount extends $pb.GeneratedMessage {
   @$pb.TagNumber(9)
   void clearStoreSecurely() => $_clearField(9);
 
-  /// Whether to periodically sync the calendar between the remote and the client. This can be done only when
-  /// [store_securely] is [false].
   @$pb.TagNumber(10)
-  $core.bool get syncCalendar => $_getBF(9);
-  @$pb.TagNumber(10)
-  set syncCalendar($core.bool value) => $_setBool(9, value);
-  @$pb.TagNumber(10)
-  $core.bool hasSyncCalendar() => $_has(9);
-  @$pb.TagNumber(10)
-  void clearSyncCalendar() => $_clearField(10);
-
-  /// Whether to periodically sync notifications between the remote and the client. This can be done only when
-  /// [store_securely] is [false].
-  @$pb.TagNumber(11)
-  $core.bool get syncNotifications => $_getBF(10);
-  @$pb.TagNumber(11)
-  set syncNotifications($core.bool value) => $_setBool(10, value);
-  @$pb.TagNumber(11)
-  $core.bool hasSyncNotifications() => $_has(10);
-  @$pb.TagNumber(11)
-  void clearSyncNotifications() => $_clearField(11);
+  $pb.PbList<SyncTaskData> get syncData => $_getList(9);
 }
 
 class AccountRegistry extends $pb.GeneratedMessage {

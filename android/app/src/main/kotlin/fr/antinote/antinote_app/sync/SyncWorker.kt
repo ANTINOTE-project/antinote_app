@@ -8,20 +8,25 @@ import androidx.core.app.NotificationManagerCompat
 import androidx.work.CoroutineWorker
 import androidx.work.ForegroundInfo
 import androidx.work.WorkerParameters
+import fr.antinote.antinote_app.App
 import fr.antinote.antinote_app.R
 import fr.antinote.antinote_app.auth.LoginManager
 import fr.antinote.antinote_app.auth.accountStore
 import fr.antinote.antinote_app.calendar.CalendarManager
 import fr.antinote.antinote_app.pigeon_posts.NativeLoginManager
 import fr.antinote.antinote_app.protos.AntinoteAccount
+import fr.antinote.antinote_app.protos.SyncTaskType
 import fr.antinote.antinote_app.session.SessionManager
 import fr.antinote.studies_management.antinote_app.pigeon_posts.NativeCalendarManager
 import fr.antinote.studies_management.antinote_app.pigeon_posts.NativeSessionManager
 import fr.antinote.studies_management.antinote_app.pigeon_posts.NativeSyncManager
+import fr.antinote.studies_management.antinote_app.pigeon_posts.SyncResult
 import fr.antinote.studies_management.antinote_app.pigeon_posts.SyncResultType
 import io.flutter.FlutterInjector
 import io.flutter.embedding.engine.FlutterEngine
+import io.flutter.embedding.engine.FlutterEngineGroup
 import io.flutter.embedding.engine.dart.DartExecutor
+import io.flutter.plugins.sharedpreferences.SharedPreferencesPlugin
 import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -33,31 +38,45 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withTimeout
 import kotlin.time.Duration.Companion.minutes
 
-class SyncWorker(appContext: Context, workerParams: WorkerParameters) : CoroutineWorker(appContext, workerParams) {
+class SyncWorker(appContext: Context, workerParams: WorkerParameters) :
+    CoroutineWorker(appContext, workerParams) {
     companion object {
         const val TAG = "SyncWorker"
         const val KEY_UIDS = "account_uids"
+        const val KEY_FORCED_TASKS = "forced"
         const val SYNC_NOTIFICATION_CHANNEL_ID = "sync_channel"
 
-        fun shouldDoSync(account: AntinoteAccount): Boolean = !account.storeSecurely && (account.syncCalendar || account.syncNotifications)
+        fun shouldDoSync(account: AntinoteAccount): Boolean =
+            !account.storeSecurely && account.syncDataList.any { it.enabled }
     }
 
-    data class JobData(var workResult: Result? = null, var engine: FlutterEngine? = null, var sessionManager: SessionManager? = null)
+    data class JobData(
+        var workResult: Result? = null,
+        var engine: FlutterEngine? = null,
+        var sessionManager: SessionManager? = null
+    )
 
     private val mainScope = CoroutineScope(Dispatchers.Main + SupervisorJob())
 
     override suspend fun doWork(): Result {
         Log.i(TAG, "Starting sync...")
 
+        val app = applicationContext as App
+
         val uids = inputData.getStringArray(KEY_UIDS)
         val validUids = mutableListOf<String>()
 
-        for(account in applicationContext.accountStore.data.first().accountsList) {
-            if(!shouldDoSync(account)) continue
-            if(uids != null && !uids.contains(account.uid)) continue
+        val forcedTasks =
+            inputData.getIntArray(KEY_FORCED_TASKS)?.map { SyncTaskType.forNumber(it) }
+
+        for (account in applicationContext.accountStore.data.first().accountsList) {
+            if (!shouldDoSync(account) || (!account.storeSecurely && forcedTasks?.isNotEmpty() ?: false)) continue
+            if (uids != null && !uids.contains(account.uid)) continue
 
             validUids.add(account.uid)
         }
+
+        if (validUids.isEmpty()) return Result.failure()
 
         val data = JobData()
 
@@ -67,21 +86,28 @@ class SyncWorker(appContext: Context, workerParams: WorkerParameters) : Coroutin
             val flutterLoader = FlutterInjector.instance().flutterLoader()
 
             flutterLoader.startInitialization(applicationContext)
-            flutterLoader.ensureInitializationComplete(applicationContext, arrayOf())
-
-            data.engine = FlutterEngine(applicationContext)
+            flutterLoader.ensureInitializationComplete(applicationContext, null)
 
             val entrypoint = DartExecutor.DartEntrypoint(
                 flutterLoader.findAppBundlePath(),
                 "syncMain"
             )
 
-            data.sessionManager = SessionManager(applicationContext, data.engine!!.dartExecutor.binaryMessenger)
+            val options = FlutterEngineGroup.Options(applicationContext).run {
+                setAutomaticallyRegisterPlugins(false)
+                setDartEntrypoint(entrypoint)
+                setDartEntrypointArgs(validUids)
+            }
+
+            data.engine = app.engineGroup.createAndRunEngine(options)
+            data.engine?.plugins?.add(SharedPreferencesPlugin())
+            data.sessionManager =
+                SessionManager(applicationContext, data.engine!!.dartExecutor.binaryMessenger)
 
             NativeSyncManager.setUp(
                 data.engine!!.dartExecutor.binaryMessenger,
                 object : NativeSyncManager {
-                    override fun syncFinished(result: fr.antinote.studies_management.antinote_app.pigeon_posts.SyncResult) {
+                    override fun syncFinished(result: SyncResult) {
                         data.workResult = when (result.result) {
                             SyncResultType.SUCCESS -> Result.success()
                             SyncResultType.AUTH -> Result.failure()
@@ -97,15 +123,13 @@ class SyncWorker(appContext: Context, workerParams: WorkerParameters) : Coroutin
                 data.engine!!.dartExecutor.binaryMessenger,
                 CalendarManager(applicationContext)
             )
-            NativeLoginManager.setUp(data.engine!!.dartExecutor.binaryMessenger, LoginManager(applicationContext, null))
+            NativeLoginManager.setUp(
+                data.engine!!.dartExecutor.binaryMessenger,
+                LoginManager(applicationContext, null)
+            )
             NativeSessionManager.setUp(
                 data.engine!!.dartExecutor.binaryMessenger,
                 data.sessionManager
-            )
-
-            data.engine!!.dartExecutor.executeDartEntrypoint(
-                entrypoint,
-                validUids
             )
         }
 
@@ -119,6 +143,7 @@ class SyncWorker(appContext: Context, workerParams: WorkerParameters) : Coroutin
 
             result = data.workResult ?: Result.failure()
         } catch (_: TimeoutCancellationException) {
+            Log.e(TAG, "Timeout while trying to update accounts.")
             result = Result.retry()
         } finally {
             mainScope.launch {
@@ -132,8 +157,11 @@ class SyncWorker(appContext: Context, workerParams: WorkerParameters) : Coroutin
 
     override suspend fun getForegroundInfo(): ForegroundInfo {
         NotificationManagerCompat.from(applicationContext).createNotificationChannel(
-            NotificationChannelCompat.Builder(SYNC_NOTIFICATION_CHANNEL_ID,
-                NotificationManagerCompat.IMPORTANCE_MIN).build())
+            NotificationChannelCompat.Builder(
+                SYNC_NOTIFICATION_CHANNEL_ID,
+                NotificationManagerCompat.IMPORTANCE_MIN
+            ).build()
+        )
 
         return ForegroundInfo(
             0,
