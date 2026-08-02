@@ -44,17 +44,16 @@ class AttachmentItemWidget extends StatelessWidget {
           LinkAttachment(url: final url) => Uri.parse(url),
           FileAttachment() => await context.sm.runTask(
             context: context,
+            channels: [],
             callback: (session) async {
-              final cachedAttachment = session.getCachedValue(
-                switch (attachment) {
-                  FileAttachment() => .FILE_ATTACHMENT,
-                  LinkAttachment() => .LINK_ATTACHMENT,
-                },
+              final cachedAttachment = session.getCachedValue<FileAttachment>(
+                .FILE_ATTACHMENT,
                 attachment.visualId,
               );
 
               return await cachedAttachment.getLinkToAttachment(session);
             },
+            debugLabel: 'Retrieves link from file',
           ),
         };
 

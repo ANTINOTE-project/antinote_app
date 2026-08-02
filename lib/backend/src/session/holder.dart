@@ -73,9 +73,8 @@ class SessionDataHolder extends ChangeNotifier {
     }
 
     try {
-      final (credentials: newCreds, session: session) = await credentials.login(
-        options: _settings.sessionOptions,
-      );
+      final LoginResult(credentials: newCreds, session: session) =
+          await credentials.login(options: _settings.sessionOptions);
 
       account =
           account
@@ -135,9 +134,7 @@ class SessionDataHolder extends ChangeNotifier {
       lastSeenAccountUid = accountUid;
     }
 
-    await relogin(storage: storage);
-
-    return lastSeenSession!;
+    return await relogin(storage: storage);
   }
 
   Future<T> runTask<T>({
@@ -145,6 +142,7 @@ class SessionDataHolder extends ChangeNotifier {
     List<String> channels = const ['communication'],
     bool retry = false,
     required RunCallback<T> callback,
+    required String? debugLabel,
   }) async {
     assert(
       lastSeenAccountUid != null,
@@ -159,6 +157,7 @@ class SessionDataHolder extends ChangeNotifier {
         lastSeenAccountUid!,
         channels,
         lastSeenSessionVersion,
+        kDebugMode ? debugLabel : null,
       );
 
       if (task.session != null &&
@@ -196,12 +195,15 @@ class SessionDataHolder extends ChangeNotifier {
 
     int debugId = DateTime.now().microsecondsSinceEpoch;
 
-    talker.info('Start task $debugId with ${channels.join(',')}.');
+    talker.info(
+      'Start task $debugId with ${channels.join(',')} (retry $retry).',
+    );
 
     late T callbackResult;
     try {
-      for (var curTry = retry ? 1 : 2; curTry <= 2; curTry++) {
+      for (var curTry = 1; curTry <= (retry ? 2 : 1); curTry++) {
         try {
+          print('Trying ($curTry/${retry ? 2 : 1}) task $debugId...');
           callbackResult = await callback.call(currentlyAppliedSession!);
 
           break;
@@ -215,11 +217,9 @@ class SessionDataHolder extends ChangeNotifier {
             const DisconnectionAccessor.unlogged(),
           );
 
-          if (beforeCounter + 2 >= errorCounter && curTry == 1) {
+          if (curTry == 1 && retry) {
             talker.info('Restarting session to retry callback...');
 
-            // Probably due to an expired session, retrying once.
-            // TODO: Print information about the session exception.
             _curSession = null;
             currentlyAppliedSession = await sessionEnsurer();
             needToApply = true;

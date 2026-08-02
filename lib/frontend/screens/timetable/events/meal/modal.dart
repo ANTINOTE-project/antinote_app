@@ -13,6 +13,7 @@ Future<void> showMealModal(BuildContext context, DateTime date) async {
       return (await session.access(MenuPageAccessor(date: date))).menus
           .firstWhereOrNull((element) => element.time.isAtSameMomentAs(date));
     },
+    debugLabel: 'Fetch detailed data about menu',
   );
 
   await showModalBottomSheet(

@@ -1,3 +1,5 @@
+import 'package:antinote/antinote.dart';
+
 enum CommunicationType {
   discussion(pageId: 131),
   news(pageId: 8),
@@ -18,21 +20,34 @@ final class CommunicationFilter {
   );
 }
 
-final class CommunicationThreadPreview {
-  final String title;
-  final DateTime publishDate;
-  final CommunicationType commType;
-  final String authorName;
-  final String visualId;
+sealed class CommunicationThreadPreview({
+  required final String title,
+  required final DateTime publishDate,
+  required final CommunicationType commType,
+  required final String authorName,
+  required final String visualId,
 
-  final bool read;
+  required final bool read,
+});
 
-  const CommunicationThreadPreview({
-    required this.title,
-    required this.publishDate,
-    required this.commType,
-    required this.authorName,
-    required this.visualId,
-    required this.read,
-  });
-}
+final class InformationThreadPreview({
+  required super.title,
+  required super.publishDate,
+  required super.commType,
+  required super.authorName,
+  required super.visualId,
+
+  required super.read,
+
+  required final NewsDisplayMode mode,
+}) extends CommunicationThreadPreview;
+
+final class DiscussionThreadPreview({
+  required super.title,
+  required super.publishDate,
+  required super.commType,
+  required super.authorName,
+  required super.visualId,
+
+  required super.read,
+}) extends CommunicationThreadPreview;

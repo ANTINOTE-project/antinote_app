@@ -124,7 +124,10 @@ class MethodsScreen extends StatelessWidget with WidgetsBindingObserver {
                     options: context.s.networking.sessionOptions,
                   );
 
-                  return (credentials: credentials, session: result.session);
+                  return LoginResult(
+                    credentials: credentials,
+                    session: result.session,
+                  );
                 }());
               },
 

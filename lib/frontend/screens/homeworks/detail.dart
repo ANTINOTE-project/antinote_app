@@ -144,6 +144,7 @@ class _HomeworkDetailScreenState extends State<HomeworkDetailScreen> {
                             ),
                           );
                         },
+                        debugLabel: 'Update state for homework',
                       );
 
                       widget.onHomeworkChange.call(_isDone);

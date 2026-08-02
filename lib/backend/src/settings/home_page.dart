@@ -38,7 +38,7 @@ class HomePageSettings extends SettingsCategory {
       created.widgets.add(.new(descriptor: descriptor, rawParameters: {}));
     }
 
-    await set('base_config', created.toJson());
+    await set('base_config', jsonEncode(created.toJson()));
 
     return created;
   }

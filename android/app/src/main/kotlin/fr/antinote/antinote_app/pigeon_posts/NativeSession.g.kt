@@ -302,7 +302,7 @@ private open class NativeSessionPigeonCodec : StandardMessageCodec() {
  */
 interface NativeSessionManager {
   fun setCurrentAccountsListener(accountUid: List<String>)
-  fun scheduleTask(accountUid: String, channels: List<String>, lastSessionVersion: Long?, callback: (Result<ScheduledTask>) -> Unit)
+  fun scheduleTask(accountUid: String, channels: List<String>, lastSessionVersion: Long?, debugLabel: String?, callback: (Result<ScheduledTask>) -> Unit)
   fun finishTask(accountUid: String, taskId: Long, newSession: ByteArray?, callback: (Result<Long?>) -> Unit)
   fun registerSession(accountUid: String, session: ByteArray, callback: (Result<Long>) -> Unit)
   fun getPollingState(accountUid: String, callback: (Result<PollingState>) -> Unit)
@@ -343,7 +343,8 @@ interface NativeSessionManager {
             val accountUidArg = args[0] as String
             val channelsArg = args[1] as List<String>
             val lastSessionVersionArg = args[2] as Long?
-            api.scheduleTask(accountUidArg, channelsArg, lastSessionVersionArg) { result: Result<ScheduledTask> ->
+            val debugLabelArg = args[3] as String?
+            api.scheduleTask(accountUidArg, channelsArg, lastSessionVersionArg, debugLabelArg) { result: Result<ScheduledTask> ->
               val error = result.exceptionOrNull()
               if (error != null) {
                 reply.reply(NativeSessionPigeonUtils.wrapError(error))

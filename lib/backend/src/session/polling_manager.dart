@@ -103,6 +103,7 @@ class SessionPollingManager extends PollingManager {
           }
         },
         channels: ['polling'],
+        debugLabel: 'Run polling client',
       );
     });
   }

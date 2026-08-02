@@ -199,7 +199,7 @@ final class HomePageWidgetState<
 
   bool get loaded => value != null;
 
-  WidgetDescriptor<V, A, dynamic> get descriptor => configuration.descriptor;
+  WidgetDescriptor<V, A, P> get descriptor => configuration.descriptor;
 
   WidgetParameters<P> get parameters =>
       .new(params: configuration.rawParameters);
@@ -258,6 +258,7 @@ final class HomePageManager() {
 
         return widget;
       },
+      debugLabel: 'Fetching new data to reload a home page widget',
     );
   }
 
@@ -354,13 +355,7 @@ final class HomePageManager() {
     final Map<int, HomePageWidgetState> loaded = {};
 
     final List<HomePageWidgetState> entries = widgets
-        .mapIndexed(
-          (index, element) => HomePageWidgetState(
-            configuration: element,
-            rawArguments: <WidgetArgument, dynamic>{},
-            index: index,
-          ),
-        )
+        .mapIndexed((index, element) => element.createState(index))
         .toList();
     while (entries.isNotEmpty) {
       final requests = <HomePageRequest>[];
@@ -378,6 +373,7 @@ final class HomePageManager() {
             cache,
             entry.parameters,
           );
+
           if (required.isEmpty) {
             final value = await argument.computeValue(
               session,

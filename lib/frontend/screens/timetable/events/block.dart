@@ -68,6 +68,11 @@ final class Block {
 
     int biggest = 0;
     for (final remainingEvent in events) {
+      if (remainingEvent.endTime.difference(remainingEvent.startTime) ==
+          .zero) {
+        continue;
+      }
+
       remaining
           .putIfAbsent(remainingEvent.priority, () => [])
           .add(remainingEvent);
@@ -236,25 +241,31 @@ class _BlockWidgetState extends State<BlockWidget> {
         );
       }
 
-      display.add(
-        Expanded(
-          flex: event.endTime.difference(event.startTime).inMinutes,
-          child: switch (event) {
-            ClassEvent() => ClassWidget(
-              clazz: event.value,
-              borderRadius: borderRadius,
-            ),
-            MealEvent() => MealBlockWidget(
-              block: event,
-              borderRadius: borderRadius,
-            ),
-            PauseEvent() => PauseBlockWidget(
-              block: event,
-              borderRadius: borderRadius,
-            ),
-          },
-        ),
-      );
+      final durationMinutes = event.endTime
+          .difference(event.startTime)
+          .inMinutes;
+
+      if (durationMinutes > 0) {
+        display.add(
+          Expanded(
+            flex: durationMinutes,
+            child: switch (event) {
+              ClassEvent() => ClassWidget(
+                clazz: event.value,
+                borderRadius: borderRadius,
+              ),
+              MealEvent() => MealBlockWidget(
+                block: event,
+                borderRadius: borderRadius,
+              ),
+              PauseEvent() => PauseBlockWidget(
+                block: event,
+                borderRadius: borderRadius,
+              ),
+            },
+          ),
+        );
+      }
 
       curTime = event.endTime;
     }

@@ -13,10 +13,10 @@ abstract class Formatters {
   static String formatDuration(Duration d, {bool isCompact = false}) {
     if (d.inMinutes > 60) {
       if (isCompact) {
-        return "${d.inHours > 0 ? "${d.inHours}h" : ""}${d.inMinutes % 60}";
+        return '${d.inHours}h${d.inMinutes % 60}';
       }
 
-      return "${d.inHours > 0 ? "${d.inHours}h " : ""}${d.inMinutes % 60} min";
+      return "${d.inHours}h${d.inMinutes % 60 == 0 ? '' : ' ${d.inMinutes % 60} min'}";
     }
 
     return '${d.inMinutes} min';

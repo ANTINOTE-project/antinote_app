@@ -241,14 +241,14 @@ class NativeSessionManager {
     ;
   }
 
-  Future<ScheduledTask> scheduleTask(String accountUid, List<String> channels, int? lastSessionVersion) async {
+  Future<ScheduledTask> scheduleTask(String accountUid, List<String> channels, int? lastSessionVersion, String? debugLabel) async {
     final pigeonVar_channelName = 'dev.flutter.pigeon.antinote_app.NativeSessionManager.scheduleTask$pigeonVar_messageChannelSuffix';
     final pigeonVar_channel = BasicMessageChannel<Object?>(
       pigeonVar_channelName,
       pigeonChannelCodec,
       binaryMessenger: pigeonVar_binaryMessenger,
     );
-    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[accountUid, channels, lastSessionVersion]);
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[accountUid, channels, lastSessionVersion, debugLabel]);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
     final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(

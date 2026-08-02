@@ -55,8 +55,6 @@ Future<SyncResult> syncTask(String accountUid) async {
       .runTask<FetchResult?>(
         sessionEnsurer: () => state.ensureSession(storage: _accountStorage),
         callback: (session) async {
-          await session.ensurePage(16);
-
           final map = <UserResource, List<RecurringClass<Class>>>{};
 
           for (final resource in session.user.resources) {
@@ -79,6 +77,8 @@ Future<SyncResult> syncTask(String accountUid) async {
             address: session.instance.establishmentName,
           );
         },
+        debugLabel:
+            'Fetch sync data (including timetable, user data, instance data)',
       )
       .onError<AuthException>((error, stackTrace) {
         syncResult = SyncResult(

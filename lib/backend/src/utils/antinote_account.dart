@@ -12,9 +12,7 @@ extension LoadCredentials on AntinoteAccount {
                 SerializedTokenCredentials.getDefault(),
               ) =>
             TokenCredentials.restore(
-              tokenCredentials.unpackInto(
-                SerializedTokenCredentials.getDefault(),
-              ),
+              tokenCredentials.unpackInto(SerializedTokenCredentials.create()),
             ),
           _
               when tokenCredentials.canUnpackInto(
@@ -22,7 +20,7 @@ extension LoadCredentials on AntinoteAccount {
               ) =>
             PasswordCredentials.restore(
               tokenCredentials.unpackInto(
-                SerializedPasswordCredentials.getDefault(),
+                SerializedPasswordCredentials.create(),
               ),
             ),
           _ => throw UnimplementedError(

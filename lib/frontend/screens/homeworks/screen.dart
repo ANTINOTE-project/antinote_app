@@ -47,8 +47,6 @@ class _HomeworksScreenState extends State<HomeworksScreen>
 
   Future<void> _updateHomeworks(int week, {RemoteSession? session}) async {
     Future<void> update(RemoteSession session) async {
-      await session.ensurePage(88);
-
       final weekStart = session.instance.getDateForWeekNumber(week);
       final weekEnd = weekStart.add(const Duration(days: 6));
       final days = DateRange(start: weekStart, end: weekEnd).listDays();
@@ -58,7 +56,7 @@ class _HomeworksScreenState extends State<HomeworksScreen>
       }
 
       final pageData = await session.access(
-        NotebookPageAccessor(weeks: {week}),
+        NotebookPageAccessor(section: .homework, weeks: {week}),
       );
 
       final triaged = {for (final day in days) day: <Homework>[]};
@@ -98,7 +96,11 @@ class _HomeworksScreenState extends State<HomeworksScreen>
     if (session != null) {
       await update(session);
     } else {
-      await context.sm.runTask(context: context, callback: update);
+      await context.sm.runTask(
+        context: context,
+        callback: update,
+        debugLabel: 'Fetch new homeworks',
+      );
     }
   }
 

@@ -1,12 +1,16 @@
 import 'package:antinote/antinote.dart';
 import 'package:antinote_app/backend/src/home_page/configuration.dart';
+import 'package:antinote_app/backend/src/home_page/manager.dart';
 import 'package:antinote_app/backend/src/home_page/widget/parameters.dart';
 import 'package:antinote_app/backend/src/home_page/widget/widget.dart';
 import 'package:antinote_app/l10n/app_localizations.dart';
 
-const descriptors = <WidgetDescriptor>[MenuWidget()];
+const descriptors = <WidgetDescriptor>[MenuWidget(), TimetableDayWidget()];
 
-const defaultDescriptors = <WidgetDescriptor>[MenuWidget()];
+const defaultDescriptors = <WidgetDescriptor>[
+  TimetableDayWidget(),
+  MenuWidget(),
+];
 
 List<HomePageConfiguration> createDefaultConfigurations(
   AppLocalizations l10n,
@@ -149,4 +153,11 @@ final class HomePageWidgetConfiguration<
           ),
     },
   };
+
+  HomePageWidgetState<V, A, P> createState(int index) =>
+      HomePageWidgetState<V, A, P>(
+        configuration: this,
+        rawArguments: <A, dynamic>{},
+        index: index,
+      );
 }

@@ -53,6 +53,7 @@ abstract class NativeSessionManager {
     String accountUid,
     List<String> channels,
     int? lastSessionVersion,
+    String? debugLabel,
   );
 
   @async

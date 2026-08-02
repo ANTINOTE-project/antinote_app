@@ -48,6 +48,8 @@ class SessionManager(val context: Context, binaryMessenger: BinaryMessenger) :
     internal class IncomingHandler(val manager: SessionManager) :
         Handler(Looper.myLooper() ?: Looper.getMainLooper()) {
         override fun handleMessage(msg: Message) {
+            Log.i(TAG, "Received message: ${msg.what}")
+
             when (msg.what) {
                 MSG_REGISTER_CLIENT -> {
                     manager.clientId = msg.data.getLong("client_id")
@@ -262,6 +264,7 @@ class SessionManager(val context: Context, binaryMessenger: BinaryMessenger) :
         accountUid: String,
         channels: List<String>,
         lastSessionVersion: Long?,
+        debugLabel: String?,
         callback: (Result<ScheduledTask>) -> Unit
     ) {
         if (!isBound) doBindService()
@@ -276,6 +279,10 @@ class SessionManager(val context: Context, binaryMessenger: BinaryMessenger) :
         }
         msg.data.putLong("client_id", clientId!!)
         msg.data.putLong("client_task_id", clientTaskId)
+
+        if(debugLabel != null) {
+            msg.data.putString("debug_label", debugLabel)
+        }
 
         msg.replyTo = this@SessionManager.messenger
 

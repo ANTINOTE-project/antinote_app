@@ -22,17 +22,13 @@ import com.google.protobuf.kotlin.toByteString
 import fr.antinote.antinote_app.protos.SessionRegistry
 import fr.antinote.antinote_app.protos.copy
 import fr.antinote.studies_management.antinote_app.pigeon_posts.PollingState
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 import java.io.InputStream
 import java.io.OutputStream
 import java.lang.ref.WeakReference
 import java.util.LinkedList
 import java.util.Queue
-import kotlin.io.encoding.Base64
 
 
 object SessionRegistrySerializer : Serializer<SessionRegistry> {
@@ -112,6 +108,7 @@ const val MSG_EDIT_CLIENT = 3
  * - `client_id` (long): The ID of the client used to schedule this task.
  * - `client_task_id` (long): An ID provided by the client for the service to give back in the
  *   response to correctly identify the task.
+ * - `debug_label` (string, optional): Short expression explaining the role of the task.
  *
  * Returns (when the client can run its task):
  * - `session` (byte array, optional): The serialized session the client uses to run its task. This is
@@ -210,8 +207,6 @@ class SessionManagementService : Service() {
     companion object {
         private const val TAG = "SessionManageService"
     }
-
-    private val serviceScope = CoroutineScope(Dispatchers.IO + SupervisorJob())
 
     internal data class SessionManagementClient(
         var listenedAccounts: List<String>?,
@@ -321,7 +316,9 @@ class SessionManagementService : Service() {
         channels: List<String>,
         scheduler: Messenger,
         clientTaskId: Long,
-        ownerClientId: Long
+        ownerClientId: Long,
+
+        debugLabel: String?,
     ): Long? {
         val manager = createOrGetManager(accountId)
 
@@ -339,10 +336,18 @@ class SessionManagementService : Service() {
         if (channels.none {
                 manager.busyChannels.contains(it)
             }) {
+            Log.d(TAG, "Starting task $clientTaskId '$debugLabel'")
             manager.busyChannels.addAll(channels)
             manager.lockOwners[taskId] = newTask
             return taskId
         } else {
+            Log.d(TAG, "Task got scheduled, waiting for the following tasks to end to start task $clientTaskId:")
+            for(task in manager.taskQueue) {
+                if(channels.none { task.channels.contains(it) }) continue
+                Log.d(TAG, "- ${task.clientTaskId} (${task.channels.joinToString(", ")})")
+            }
+            Log.d(TAG, "Label: '$debugLabel'")
+
             manager.taskQueue.add(
                 newTask
             )
@@ -379,6 +384,8 @@ class SessionManagementService : Service() {
             Log.w(TAG, "FinishTask: Task ID $taskId does not own any locks.")
             return Pair(manager.latestVersion, null)
         }
+
+        Log.d(TAG, "Ending task $taskId...")
 
         manager.busyChannels.removeAll(task.channels.toSet())
 
@@ -495,7 +502,7 @@ class SessionManagementService : Service() {
                 if(rawSession != null) {
                     msg.data.putByteArray(
                         "session",
-                        Base64.decode(rawSession)
+                        rawSession
                     )
                 }
             }
@@ -520,7 +527,9 @@ class SessionManagementService : Service() {
                 Log.i(TAG, "Received a message without a replyTo... ${msg.what} ${msg.data}")
             }
 
-            svc.serviceScope.launch {
+            Log.i(TAG, "Received message: ${msg.what}")
+
+            runBlocking {
                 when (msg.what) {
                     MSG_REGISTER_CLIENT -> {
                         val accounts = msg.data.getStringArray("accounts")?.asList()
@@ -541,7 +550,7 @@ class SessionManagementService : Service() {
                             msg.replyTo.binder.linkToDeath(this@IncomingHandler, 0)
                         } catch (_: RemoteException) {
                             svc.clients.remove(clientId)
-                            return@launch
+                            return@runBlocking
                         }
 
                         val res = Message.obtain(null, MSG_REGISTER_CLIENT)
@@ -564,7 +573,7 @@ class SessionManagementService : Service() {
                                 msg.replyTo.send(res)
                             } catch (_: RemoteException) {
                             }
-                            return@launch
+                            return@runBlocking
                         }
 
                         // Safe parsing
@@ -597,17 +606,19 @@ class SessionManagementService : Service() {
                         val clientTaskId = msg.data.getLong("client_task_id", -1L)
                         val ownerClientId = msg.data.getLong("client_id", -1L)
 
+                        val debugLabel = msg.data.getString("debug_label")
+
                         if (accountId == null || channels == null || clientTaskId == -1L || ownerClientId == -1L) {
                             Log.e(
                                 TAG,
                                 "Schedule Task failed: Missing required fields (account, channels, client_task_id, or client_id)"
                             )
-                            return@launch
+                            return@runBlocking
                         }
 
                         if (!svc.clients.containsKey(ownerClientId)) {
                             Log.e(TAG, "Schedule Task failed: Invalid Client ID provided")
-                            return@launch
+                            return@runBlocking
                         }
 
                         val resultTaskId = svc.scheduleTask(
@@ -615,7 +626,8 @@ class SessionManagementService : Service() {
                             channels = channels,
                             scheduler = msg.replyTo,
                             clientTaskId = clientTaskId,
-                            ownerClientId = ownerClientId
+                            ownerClientId = ownerClientId,
+                            debugLabel = debugLabel
                         )
 
                         if (resultTaskId != null && resultTaskId != -1L) {
@@ -635,7 +647,7 @@ class SessionManagementService : Service() {
 
                         if (accountId == null || taskId == -1L) {
                             Log.e(TAG, "Finish Task failed: Missing account or task_id")
-                            return@launch
+                            return@runBlocking
                         }
 
                         val result = svc.finishTask(
@@ -675,7 +687,7 @@ class SessionManagementService : Service() {
                                 TAG,
                                 "Update Session failed: Missing account, client_task_id, or task_id"
                             )
-                            return@launch
+                            return@runBlocking
                         }
 
                         val result = svc.updateSession(accountId, newSession)
@@ -692,7 +704,7 @@ class SessionManagementService : Service() {
 
                     MSG_POLLING_UPDATED -> {
                         Log.e(TAG, "Received a server-only message (MSG_SESSION_UPDATED)")
-                        return@launch
+                        return@runBlocking
                     }
 
                     MSG_GET_POLLING_STATE -> {
@@ -700,7 +712,7 @@ class SessionManagementService : Service() {
 
                         if (accountId == null) {
                             Log.e(TAG, "Get Polling State failed: Missing account")
-                            return@launch
+                            return@runBlocking
                         }
 
                         val manager = svc.createOrGetManager(accountId)
@@ -727,12 +739,12 @@ class SessionManagementService : Service() {
                                 TAG,
                                 "Update Polling State failed: Missing account, state, or server_signature"
                             )
-                            return@launch
+                            return@runBlocking
                         }
 
                         if (state == null) {
                             Log.e(TAG, "Unknown PollingState ID: ${msg.data.getInt("state")}")
-                            return@launch
+                            return@runBlocking
                         }
 
                         svc.updatePollingState(accountId, state, serverSignature)
@@ -759,11 +771,11 @@ class SessionManagementService : Service() {
                                 TAG,
                                 "Ask To Take Polling failed: Missing client_id, account_id, or agree"
                             )
-                            return@launch
+                            return@runBlocking
                         }
 
                         if (!agree) {
-                            return@launch
+                            return@runBlocking
                         }
 
                         val manager = svc.createOrGetManager(accountId, false)
@@ -773,7 +785,7 @@ class SessionManagementService : Service() {
                                 TAG, "Polling job already got taken by a client, but someone " +
                                         "else agreed to do it"
                             )
-                            return@launch
+                            return@runBlocking
                         }
 
                         manager.pollingOwner = clientId
@@ -805,7 +817,7 @@ class SessionManagementService : Service() {
                 val deadEntry =
                     service?.clients?.entries?.find { it.value.dest.binder == who } ?: return@post
 
-                service?.serviceScope?.launch {
+                runBlocking {
                     service?.cleanupDeadClient(deadEntry.key)
                 } ?: Log.w(TAG, "Binder died but service is absent to do client cleanup.")
             }

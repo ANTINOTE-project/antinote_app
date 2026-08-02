@@ -431,7 +431,8 @@ class LoginManager(val context: Context, val activity: FragmentActivity?) : Nati
                     if (accIndex == -1) {
                         callback(Result.failure(IllegalStateException("Tried to update an account that does not exist")))
                         return@updateData registry
-                    } else {
+                    }
+
                         val oldAccount = accounts[accIndex]
                         accounts[accIndex] = newAccount.copy {
                             if (hasTokenCredentials() && newAccount.storeSecurely) {
@@ -450,7 +451,9 @@ class LoginManager(val context: Context, val activity: FragmentActivity?) : Nati
                                 tokenCredentials = Any.parseFrom(newCredentials.toByteArray())
                             }
                         }
-                    }
+
+                    callback(Result.success(true))
+
                 }
             }
         }

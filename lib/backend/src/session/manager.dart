@@ -56,6 +56,7 @@ class SessionManager extends InheritedWidget {
     required RunCallback<T> callback,
     bool bypassStateLock = false,
     bool retry = false,
+    required String? debugLabel,
   }) async {
     if (state.stateLock != null && !bypassStateLock) {
       await state.stateLock!.future;
@@ -114,6 +115,7 @@ class SessionManager extends InheritedWidget {
         callback: callback,
         channels: channels,
         retry: retry,
+        debugLabel: debugLabel,
       );
     } finally {
       if (!bypassStateLock) {

@@ -81,17 +81,16 @@ class _ReportTabState extends State<ReportTab> with TabMixin<ReportTab> {
 
   @override
   Stream<double?> load(RemoteSession session) async* {
-    if (widget.classReport) {
-      await session.ensurePage(41);
-    } else {
-      await session.ensurePage(13);
-    }
-
     final period = session.instance.periods.firstWhere(
       (e) => e.visualId == widget.periodId,
     );
 
-    _data = await session.access(ReportAccessor(period: period));
+    _data = await session.access(
+      ReportAccessor(
+        section: widget.classReport ? .clazz : .student,
+        period: period,
+      ),
+    );
   }
 }
 

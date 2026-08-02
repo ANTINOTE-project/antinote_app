@@ -28,8 +28,6 @@ class _TimetableScreenState extends State<TimetableScreen> {
   ) async {
     final loadedDays = {for (final day in dayList) day: <Class>[]};
 
-    await session.ensurePage(16);
-
     for (final clazz in (await session.access(
       TimetableAccessor.forRange(
         resource: session.userResource,
@@ -141,6 +139,7 @@ class _TimetableDisplayState extends State<TimetableDisplay>
           context: context,
           callback: (session) async =>
               await widget.updateBlocks(session, days, dayList),
+          debugLabel: 'Fetch classes for ${days.toString()}',
         );
       }
     } catch (e, st) {
@@ -235,7 +234,6 @@ class _TimetableDisplayState extends State<TimetableDisplay>
                   } else {
                     final child = IntrinsicHeight(
                       child: Row(
-                        crossAxisAlignment: .stretch,
                         spacing: 8,
                         children: [
                           if (slots != null)

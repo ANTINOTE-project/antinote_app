@@ -53,6 +53,7 @@ class _AppShellState extends State<AppShell> {
           defaultSignature = session.stack.serverSignature;
         });
       },
+      debugLabel: 'Subscribe to server signature stream',
     );
   }
 

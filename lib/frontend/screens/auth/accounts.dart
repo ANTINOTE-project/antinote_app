@@ -100,6 +100,7 @@ class _AccountsScreenState extends State<AccountsScreen>
         callback: (session) {
           talker.info('Logged in with session ID ${session.stack.sessionId}!');
         },
+        debugLabel: 'Log in user',
       );
 
       WidgetsBinding.instance.addPostFrameCallback((timeStamp) {

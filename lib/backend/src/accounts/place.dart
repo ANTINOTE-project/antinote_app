@@ -24,22 +24,22 @@ enum PlaceType {
   };
 }
 
-class City {
-  final String name;
-  final String address;
-  final double latitude;
-  final double longitude;
-  final String? region;
-  final PlaceType placeType;
-
-  const City({
-    required this.name,
-    required this.address,
-    required this.latitude,
-    required this.longitude,
-    required this.region,
-    this.placeType = PlaceType.other,
-  });
+final class const City({
+  required final String name,
+  required final String address,
+  required final double latitude,
+  required final double longitude,
+  required final String? region,
+  final PlaceType placeType = .other,
+}) {
+  factory decode(Map<String, dynamic> nav) => .new(
+    name: nav.get('name'),
+    address: nav.get('display_name'),
+    latitude: double.parse(nav.get('lat')),
+    longitude: double.parse(nav.get('lon')),
+    region: nav.getM('address').get('region'),
+    placeType: PlaceType.fromString(nav.get('addresstype')),
+  );
 
   static Future<List<City>> fetchCitiesAroundPlace(String query) async {
     final uri = Uri.https('nominatim.openstreetmap.org', '/search', {
@@ -56,26 +56,12 @@ class City {
     );
 
     try {
-      return (jsonDecode(response.body) as ListJsonNavigator)
-          .cast<MapJsonNavigator>()
-          .mapL((e) => (e).asCity());
+      return (jsonDecode(response.body) as List<dynamic>)
+          .cast<Map<String, dynamic>>()
+          .mapL((e) => .decode(e));
     } catch (e, st) {
       debugPrintStack(stackTrace: st, label: e.toString());
-      print(response.body);
       return [];
     }
-  }
-}
-
-extension AsCity on MapJsonNavigator {
-  City asCity() {
-    return City(
-      name: get('name'),
-      address: get('display_name'),
-      latitude: double.parse(get('lat')),
-      longitude: double.parse(get('lon')),
-      region: getM('address').get('region'),
-      placeType: PlaceType.fromString(get('addresstype')),
-    );
   }
 }

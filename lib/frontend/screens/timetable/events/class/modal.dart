@@ -25,6 +25,7 @@ Future<void> showClassModal(BuildContext context, Class defaultClass) async {
         ),
       )).firstWhereOrNull((element) => element.id == latestClass.id);
     },
+    debugLabel: 'Fetch detailed data about class',
   );
 
   await showModalBottomSheet(
@@ -39,9 +40,7 @@ Future<void> showClassModal(BuildContext context, Class defaultClass) async {
             switchInCurve: Curves.fastOutSlowIn,
             child: SingleChildScrollView(
               key: ValueKey(snapshot.connectionState == .done),
-              child: ClassModalContents(
-                clazz: snapshot.data ?? defaultClass,
-              ),
+              child: ClassModalContents(clazz: snapshot.data ?? defaultClass),
             ),
           );
         },
