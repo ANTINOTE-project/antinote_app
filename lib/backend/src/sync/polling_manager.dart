@@ -1,7 +1,7 @@
-import "dart:convert";
+import 'dart:convert';
 
-import "package:antinote_app/backend/src/pigeon_posts/native_session.g.dart";
-import "package:antinote_app/backend/src/session/holder.dart";
+import 'package:antinote_app/backend/src/pigeon_posts/native_session.g.dart';
+import 'package:antinote_app/backend/src/session/holder.dart';
 
 class SyncPollingManager extends PollingManager {
   SyncPollingManager({required this.state});

@@ -1,4 +1,4 @@
-import "package:flutter/material.dart";
+import 'package:flutter/material.dart';
 
 class LoadingWidget extends StatelessWidget {
   final double size;

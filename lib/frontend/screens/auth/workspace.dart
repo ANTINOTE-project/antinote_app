@@ -1,12 +1,12 @@
-import "package:antinote/antinote.dart";
-import "package:antinote_app/frontend/routing/routes.dart";
-import "package:antinote_app/frontend/utils/utils.dart";
-import "package:antinote_app/frontend/widgets/customs/app_bar.dart";
-import "package:antinote_app/frontend/widgets/customs/list.dart";
-import "package:antinote_app/main.dart";
-import "package:flutter/material.dart";
-import "package:go_router/go_router.dart";
-import "package:hugeicons_pro/hugeicons.dart";
+import 'package:antinote/antinote.dart';
+import 'package:antinote_app/frontend/routing/routes.dart';
+import 'package:antinote_app/frontend/utils/utils.dart';
+import 'package:antinote_app/frontend/widgets/customs/app_bar.dart';
+import 'package:antinote_app/frontend/widgets/customs/list.dart';
+import 'package:antinote_app/main.dart';
+import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
+import 'package:hugeicons_pro/hugeicons.dart';
 
 class LoginSelectWorkspaceScreen extends StatefulWidget {
   final MobileInstanceParameters parameters;
@@ -51,12 +51,12 @@ class _LoginSelectWorkspaceScreenState
     if (_casLoginActive) {
       result = await context.push<LoginResult>(
         Routes.auth.webview,
-        extra: {"parameters": widget.parameters, "workspace": workspace},
+        extra: {'parameters': widget.parameters, 'workspace': workspace},
       );
     } else {
       result = await context.push<LoginResult>(
         Routes.auth.password,
-        extra: {"workspace": workspace, "baseUrl": widget.parameters.baseUrl},
+        extra: {'workspace': workspace, 'baseUrl': widget.parameters.baseUrl},
       );
     }
 
@@ -107,7 +107,7 @@ class _LoginSelectWorkspaceScreenState
                   onPressed: () async {
                     if (isNotStudent) {
                       return talker.warning(
-                        "Login with an account that is not a student one is not implemented",
+                        'Login with an account that is not a student one is not implemented',
                       );
                     }
 

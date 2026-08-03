@@ -4,25 +4,23 @@ import android.accounts.Account
 import android.accounts.AccountManager
 import android.content.AbstractThreadedSyncAdapter
 import android.content.ContentProviderClient
+import android.content.ContentResolver
 import android.content.Context
 import android.content.SyncResult
 import android.os.Bundle
-import android.os.Handler
-import android.os.Looper
+import android.provider.CalendarContract
 import android.util.Log
+import androidx.work.Constraints
+import androidx.work.Data
+import androidx.work.ExistingWorkPolicy
+import androidx.work.NetworkType
+import androidx.work.OneTimeWorkRequest
+import androidx.work.OutOfQuotaPolicy
+import androidx.work.WorkManager
+import androidx.work.await
 import fr.antinote.antinote_app.auth.LoginManager
-import fr.antinote.antinote_app.calendar.CalendarManager
-import fr.antinote.antinote_app.pigeon_posts.NativeLoginManager
-import fr.antinote.antinote_app.session.SessionManager
-import fr.antinote.studies_management.antinote_app.pigeon_posts.NativeCalendarManager
-import fr.antinote.studies_management.antinote_app.pigeon_posts.NativeSessionManager
-import fr.antinote.studies_management.antinote_app.pigeon_posts.NativeSyncManager
-import fr.antinote.studies_management.antinote_app.pigeon_posts.SyncResultType
-import io.flutter.FlutterInjector
-import io.flutter.embedding.engine.FlutterEngine
-import io.flutter.embedding.engine.dart.DartExecutor
-import java.util.concurrent.CountDownLatch
-import java.util.concurrent.TimeUnit
+import fr.antinote.antinote_app.protos.SyncTaskType
+import kotlinx.coroutines.runBlocking
 
 class SyncAdapter @JvmOverloads constructor(
     context: Context,
@@ -31,9 +29,8 @@ class SyncAdapter @JvmOverloads constructor(
 ) : AbstractThreadedSyncAdapter(context, autoInitialize, allowParallelSyncs) {
     companion object {
         const val TAG = "SyncAdapter"
+        const val LEGACY_SYNC_WORK = "legacy_sync_"
     }
-
-
 
     override fun onPerformSync(
         account: Account,
@@ -42,81 +39,53 @@ class SyncAdapter @JvmOverloads constructor(
         provider: ContentProviderClient,
         syncResult: SyncResult
     ) {
-        Log.i(TAG, "Starting sync...")
-        val accountManager = AccountManager.get(context)
-        val uid = accountManager.getUserData(account, LoginManager.KEY_UID)
+        val isManual = extras.getBoolean(ContentResolver.SYNC_EXTRAS_MANUAL, false)
+        if (!isManual) {
+            ContentResolver.setSyncAutomatically(account, authority, false)
+            return
+        }
 
-        val latch = CountDownLatch(1)
-        var engine: FlutterEngine? = null
-        var sessionManager: SessionManager? = null
+        Log.i(TAG, "Redirecting sync to worker...")
+        val manager = AccountManager.get(context)
+        val uid = manager.getUserData(account, LoginManager.KEY_UID)
 
-        Handler(Looper.getMainLooper()).post {
-            val applicationContext = context.applicationContext
-            val flutterLoader = FlutterInjector.instance().flutterLoader()
-
-            flutterLoader.startInitialization(applicationContext)
-            flutterLoader.ensureInitializationComplete(applicationContext, arrayOf())
-
-            val newEngine = FlutterEngine(applicationContext)
-            engine = newEngine
-            val entrypoint = DartExecutor.DartEntrypoint(
-                flutterLoader.findAppBundlePath(),
-                "syncMain"
+        val request = OneTimeWorkRequest.Builder(SyncWorker::class).run {
+            setExpedited(
+                OutOfQuotaPolicy.RUN_AS_NON_EXPEDITED_WORK_REQUEST
             )
-
-            val newSessionManager = SessionManager(context, newEngine.dartExecutor.binaryMessenger)
-            sessionManager = newSessionManager
-
-            NativeSyncManager.setUp(
-                newEngine.dartExecutor.binaryMessenger,
-                object : NativeSyncManager {
-                    override fun syncFinished(result: fr.antinote.studies_management.antinote_app.pigeon_posts.SyncResult) {
-                        when (result.result) {
-                            SyncResultType.SUCCESS -> syncResult.clear()
-                            SyncResultType.AUTH -> syncResult.stats.numAuthExceptions++
-                            SyncResultType.AVAILABILITY -> syncResult.stats.numIoExceptions++
-                            SyncResultType.PARSING -> syncResult.stats.numParseExceptions++
+            setConstraints(
+                Constraints.Builder().setRequiredNetworkType(NetworkType.CONNECTED).build()
+            )
+            setInputData(Data.Builder().run {
+                putStringArray(SyncWorker.KEY_UIDS, arrayOf(uid))
+                putIntArray(
+                    SyncWorker.KEY_FORCED_TASKS, intArrayOf(
+                        when (authority) {
+                            CalendarContract.AUTHORITY -> SyncTaskType.CALENDAR.number
+                            else -> throw IllegalArgumentException("Unknown provider authority: $authority")
                         }
+                    )
+                )
 
-                        syncResult.stats.numEntries = result.totalEntries
-                        syncResult.stats.numDeletes = result.removedEntries
-                        syncResult.stats.numInserts = result.addedEntries
-                        syncResult.stats.numUpdates = result.updatedEntries
+                build()
+            })
 
-                        syncResult.databaseError = result.dbIssue
-
-                        latch.countDown()
-                    }
-                }
-            )
-            NativeCalendarManager.setUp(
-                newEngine.dartExecutor.binaryMessenger,
-                CalendarManager(context)
-            )
-            NativeLoginManager.setUp(newEngine.dartExecutor.binaryMessenger, LoginManager(context))
-            NativeSessionManager.setUp(
-                newEngine.dartExecutor.binaryMessenger,
-                newSessionManager
-            )
-
-            newEngine.dartExecutor.executeDartEntrypoint(
-                entrypoint,
-                listOf(uid)
-            )
+            build()
         }
 
-        try {
-            val finished = latch.await(10, TimeUnit.MINUTES)
-            if (!finished) {
-                syncResult.stats.numIoExceptions++
-            }
-        } catch (_: InterruptedException) {
-            syncResult.stats.numIoExceptions++
-        } finally {
-            Handler(Looper.getMainLooper()).post {
-                sessionManager?.doUnbindService()
-                engine?.destroy()
-            }
+        val thread = Thread.currentThread()
+
+        val operation = WorkManager.getInstance(context)
+            .enqueueUniqueWork(LEGACY_SYNC_WORK + thread.name, ExistingWorkPolicy.REPLACE, request)
+
+        runBlocking {
+            operation.await()
         }
+    }
+
+    override fun onSyncCanceled(thread: Thread) {
+        WorkManager.getInstance(context).cancelUniqueWork(LEGACY_SYNC_WORK + thread.name)
+
+        super.onSyncCanceled(thread)
     }
 }

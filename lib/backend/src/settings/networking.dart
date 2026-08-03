@@ -1,11 +1,11 @@
-import "dart:convert";
+import 'dart:convert';
 
-import "package:antinote/antinote.dart";
-import "package:antinote_app/backend/src/settings/category.dart";
+import 'package:antinote/antinote.dart';
+import 'package:antinote_app/backend/src/settings/category.dart';
 
 class NetworkingSettings extends SettingsCategory {
   @override
-  String get name => "networking";
+  String get name => 'networking';
 
   @override
   int get latestVersion => 1;
@@ -17,9 +17,9 @@ class NetworkingSettings extends SettingsCategory {
   List<dynamic> get registeredFields => [version, sessionOptions];
 
   SessionOptions get sessionOptions {
-    if (has("session_options")) {
+    if (has('session_options')) {
       return SessionOptions.fromBuffer(
-        base64Decode(get<String>("session_options")!),
+        base64Decode(get<String>('session_options')!),
       )..freeze();
     }
 
@@ -27,5 +27,5 @@ class NetworkingSettings extends SettingsCategory {
   }
 
   Future<void> setSessionOptions(SessionOptions value) =>
-      set("session_options", base64Encode(value.writeToBuffer()));
+      set('session_options', base64Encode(value.writeToBuffer()));
 }

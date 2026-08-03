@@ -1,12 +1,12 @@
-import "package:antinote/antinote.dart";
-import "package:antinote_app/frontend/utils/utils.dart";
-import "package:antinote_app/frontend/widgets/customs/app_bar.dart";
-import "package:antinote_app/frontend/widgets/customs/button.dart";
-import "package:antinote_app/frontend/widgets/customs/field.dart";
-import "package:antinote_app/frontend/widgets/customs/icon.dart";
-import "package:flutter/material.dart";
-import "package:go_router/go_router.dart";
-import "package:hugeicons_pro/hugeicons.dart";
+import 'package:antinote/antinote.dart';
+import 'package:antinote_app/frontend/utils/utils.dart';
+import 'package:antinote_app/frontend/widgets/customs/app_bar.dart';
+import 'package:antinote_app/frontend/widgets/customs/button.dart';
+import 'package:antinote_app/frontend/widgets/customs/field.dart';
+import 'package:antinote_app/frontend/widgets/customs/icon.dart';
+import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
+import 'package:hugeicons_pro/hugeicons.dart';
 
 class LoginPasswordScreen extends StatefulWidget {
   final Workspace workspace;
@@ -90,6 +90,7 @@ class _LoginPasswordScreenState extends State<LoginPasswordScreen> {
 
                       workspace: widget.workspace,
                       baseUrl: widget.baseUrl,
+                      cookies: [],
 
                       deviceUuid: Credentials.generateDeviceUuid(),
                     );
@@ -97,7 +98,18 @@ class _LoginPasswordScreenState extends State<LoginPasswordScreen> {
                     final result = credentials.login(
                       options: context.s.networking.sessionOptions,
                     );
-                    context.pop(result);
+                    context.pop(() async {
+                      final loginResult = await result;
+
+                      if (loginResult.session.stack.demo) {
+                        return (
+                          session: loginResult.session,
+                          credentials: credentials,
+                        );
+                      }
+
+                      return loginResult;
+                    }());
                   },
 
                   label: context.l10n.loginButton,

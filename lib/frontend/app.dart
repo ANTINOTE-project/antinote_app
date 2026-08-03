@@ -1,10 +1,10 @@
-import "package:antinote_app/backend/src/settings/registry.dart";
-import "package:antinote_app/frontend/routing/router.dart";
-import "package:antinote_app/l10n/app_localizations.dart";
-import "package:dynamic_color/dynamic_color.dart";
-import "package:flutter/material.dart";
-import "package:flutter_localizations/flutter_localizations.dart";
-import "package:go_router/go_router.dart";
+import 'package:antinote_app/backend/src/settings/registry.dart';
+import 'package:antinote_app/frontend/routing/router.dart';
+import 'package:antinote_app/l10n/app_localizations.dart';
+import 'package:dynamic_color/dynamic_color.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:go_router/go_router.dart';
 
 class App extends StatefulWidget {
   final String initialLocation;
@@ -70,7 +70,7 @@ class _AppState extends State<App> {
               return MaterialApp.router(
                 debugShowCheckedModeBanner: false,
 
-                title: "ANTINOTE",
+                title: 'ANTINOTE',
 
                 theme: light,
                 highContrastTheme: lightHighContrast,

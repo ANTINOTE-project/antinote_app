@@ -1,9 +1,45 @@
 syntax = "proto3";
 package antinote_app;
 option java_package = "fr.antinote.antinote_app.protos";
-option optimize_for = LITE_RUNTIME;
+option java_multiple_files = true;
 
 import "google/protobuf/any.proto";
+import "google/protobuf/timestamp.proto";
+
+enum SyncTaskType {
+  // Sync the calendar between the remote and the client (timetable and agenda). This can only be
+  // done when [AntinoteAccount.store_securely] is [false].
+  CALENDAR = 0;
+  // Sync notifications between the remote and the client (homework, grades, cancellation,
+  // communication...). This can only be done when [AntinoteAccount.store_securely] is [false].
+  NOTIFICATIONS = 1;
+}
+
+message SyncTaskData {
+  // The type of sync task this message annotates.
+  SyncTaskType type = 1;
+  // The last time this task was successfully completed.
+  google.protobuf.Timestamp last_synced = 2;
+
+  // Whether the task is currently enabled.
+  bool enabled = 3;
+
+  // This is used to store additional that is specific to the task type.
+  optional google.protobuf.Any specialized_data = 4;
+}
+
+message EncryptedCredentials {
+  // The token that's used to login.
+  bytes credential_data = 1;
+  // The IV that needs to be used to decrypt [credential_data].
+  bytes credential_iv = 2;
+
+  // Needs to be decrypted to decrypt [credential_data] and [credential_iv]. We do this to ask the
+  // user for biometrics once upon login and being able to do multiple operations at once.
+  bytes dek_data = 3;
+  // IV used to decrypt [dek_data].
+  bytes dek_iv = 4;
+}
 
 message AntinoteAccount {
   // An internal Unique IDentifier used as a primary key to reference accounts
@@ -19,9 +55,16 @@ message AntinoteAccount {
   string base_url = 5;
   // The display name of the workspace this account is linked to.
   string workspace_name = 6;
-  // The actual identifiers for the account. Some informations within it may be
-  // duplicated.
+  // The actual identifiers for the account. Some information within it may be
+  // duplicated. If [store_securely] is [true], this will be [EncryptedCredentials].
   google.protobuf.Any token_credentials = 7;
+  // Whether this account is determined to be defunct, and is blocked from ever
+  // being logged to when it is the [AccountRegistry.default_account_id].
+  bool invalid = 8;
+  // Whether to store the account in the Keystore of the platform.
+  bool store_securely = 9;
+
+  repeated SyncTaskData sync_data = 10;
 }
 
 message AccountRegistry {

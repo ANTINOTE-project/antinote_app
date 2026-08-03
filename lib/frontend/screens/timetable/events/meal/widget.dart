@@ -1,10 +1,10 @@
-import "package:antinote/antinote.dart";
-import "package:antinote_app/frontend/screens/timetable/events/block.dart";
-import "package:antinote_app/frontend/screens/timetable/events/meal/modal.dart";
-import "package:antinote_app/frontend/utils/utils.dart";
-import "package:antinote_app/frontend/widgets/pressable.dart";
-import "package:flutter/material.dart";
-import "package:hugeicons_pro/hugeicons.dart";
+import 'package:antinote/antinote.dart';
+import 'package:antinote_app/frontend/screens/timetable/events/block.dart';
+import 'package:antinote_app/frontend/screens/timetable/events/meal/modal.dart';
+import 'package:antinote_app/frontend/utils/utils.dart';
+import 'package:antinote_app/frontend/widgets/pressable.dart';
+import 'package:flutter/material.dart';
+import 'package:hugeicons_pro/hugeicons.dart';
 
 class MealBlockWidget extends StatelessWidget {
   const MealBlockWidget({

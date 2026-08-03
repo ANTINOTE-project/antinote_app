@@ -77,7 +77,7 @@ Future<void> _showDetails({
 
                       trailing: item.coefficient != null
                           ? Text(
-                              "×${Formatters.formatNumber(item.coefficient)}",
+                              '×${Formatters.formatNumber(item.coefficient)}',
                               style: TextStyle(
                                 color: scheme.primary,
                                 fontSize: 20,

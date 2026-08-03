@@ -1,7 +1,8 @@
-import "package:antinote_app/backend/src/settings/category.dart";
-import "package:antinote_app/backend/src/settings/networking.dart";
-import "package:antinote_app/backend/src/settings/theme.dart";
-import "package:flutter/material.dart";
+import 'package:antinote_app/backend/src/settings/category.dart';
+import 'package:antinote_app/backend/src/settings/home_page.dart';
+import 'package:antinote_app/backend/src/settings/networking.dart';
+import 'package:antinote_app/backend/src/settings/theme.dart';
+import 'package:flutter/material.dart';
 
 class SettingsScope extends InheritedWidget {
   const SettingsScope({
@@ -15,7 +16,7 @@ class SettingsScope extends InheritedWidget {
   static SettingsScope of(BuildContext context) {
     final SettingsScope? result = context
         .dependOnInheritedWidgetOfExactType<SettingsScope>();
-    assert(result != null, "No SettingsScope found in context");
+    assert(result != null, 'No SettingsScope found in context');
     return result!;
   }
 
@@ -26,7 +27,7 @@ class SettingsScope extends InheritedWidget {
 /// Base settings category where all other settings categories should register.
 class SettingsRegistry extends SettingsCategory {
   @override
-  String get name => "base";
+  String get name => 'base';
 
   @override
   int get latestVersion => 1;
@@ -36,8 +37,13 @@ class SettingsRegistry extends SettingsCategory {
   @override
   List<dynamic> get registeredFields => [version];
   @override
-  List<SettingsCategory> get registeredChildren => [theme, networking];
+  List<SettingsCategory> get registeredChildren => [
+    theme,
+    networking,
+    homePage,
+  ];
 
   final theme = ThemeSettings();
   final networking = NetworkingSettings();
+  final homePage = HomePageSettings();
 }

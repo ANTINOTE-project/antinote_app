@@ -1,7 +1,7 @@
-import "package:antinote_app/frontend/utils/utils.dart";
-import "package:flutter/material.dart";
-import "package:go_router/go_router.dart";
-import "package:hugeicons_pro/hugeicons.dart";
+import 'package:antinote_app/frontend/utils/utils.dart';
+import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
+import 'package:hugeicons_pro/hugeicons.dart';
 
 class AppBarWidget extends StatelessWidget implements PreferredSizeWidget {
   final AlignmentGeometry titleAlign;
@@ -56,7 +56,7 @@ class AppBarWidget extends StatelessWidget implements PreferredSizeWidget {
                       textAlign: .center,
                       style: context.tt.titleLarge!.copyWith(
                         fontWeight: .bold,
-                        fontFamily: "SNPro",
+                        fontFamily: 'SNPro',
                       ),
                       child: title!,
                     )

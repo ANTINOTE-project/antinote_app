@@ -1,18 +1,18 @@
-import "dart:async";
-import "dart:math";
+import 'dart:async';
+import 'dart:math';
 
-import "package:antinote/antinote.dart";
-import "package:antinote_app/backend/backend.dart";
-import "package:antinote_app/frontend/screens/homeworks/detail.dart";
-import "package:antinote_app/frontend/screens/shell/tab.dart";
-import "package:antinote_app/frontend/utils/utils.dart";
-import "package:antinote_app/frontend/widgets/bottom_padding.dart";
-import "package:antinote_app/frontend/widgets/customs/loading.dart";
-import "package:antinote_app/frontend/widgets/pressable.dart";
-import "package:antinote_app/frontend/widgets/remote_html.dart";
-import "package:collection/collection.dart";
-import "package:flutter/material.dart";
-import "package:hugeicons_pro/hugeicons.dart";
+import 'package:antinote/antinote.dart';
+import 'package:antinote_app/backend/backend.dart';
+import 'package:antinote_app/frontend/screens/homeworks/detail.dart';
+import 'package:antinote_app/frontend/screens/shell/tab.dart';
+import 'package:antinote_app/frontend/utils/utils.dart';
+import 'package:antinote_app/frontend/widgets/bottom_padding.dart';
+import 'package:antinote_app/frontend/widgets/customs/loading.dart';
+import 'package:antinote_app/frontend/widgets/pressable.dart';
+import 'package:antinote_app/frontend/widgets/remote_html.dart';
+import 'package:collection/collection.dart';
+import 'package:flutter/material.dart';
+import 'package:hugeicons_pro/hugeicons.dart';
 
 typedef Homeworks = Map<DateTime, ValueNotifier<List<Homework>?>>;
 
@@ -47,8 +47,6 @@ class _HomeworksScreenState extends State<HomeworksScreen>
 
   Future<void> _updateHomeworks(int week, {RemoteSession? session}) async {
     Future<void> update(RemoteSession session) async {
-      await session.ensurePage(88);
-
       final weekStart = session.instance.getDateForWeekNumber(week);
       final weekEnd = weekStart.add(const Duration(days: 6));
       final days = DateRange(start: weekStart, end: weekEnd).listDays();
@@ -58,7 +56,7 @@ class _HomeworksScreenState extends State<HomeworksScreen>
       }
 
       final pageData = await session.access(
-        NotebookPageAccessor(weeks: {week}),
+        NotebookPageAccessor(section: .homework, weeks: {week}),
       );
 
       final triaged = {for (final day in days) day: <Homework>[]};
@@ -98,7 +96,11 @@ class _HomeworksScreenState extends State<HomeworksScreen>
     if (session != null) {
       await update(session);
     } else {
-      await SessionManager.execute(context: context, callback: update);
+      await context.sm.runTask(
+        context: context,
+        callback: update,
+        debugLabel: 'Fetch new homeworks',
+      );
     }
   }
 

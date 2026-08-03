@@ -1,6 +1,6 @@
-import "package:antinote/antinote.dart";
-import "package:antinote_app/frontend/screens/timetable/events/block.dart";
-import "package:flutter/material.dart";
+import 'package:antinote/antinote.dart';
+import 'package:antinote_app/frontend/screens/timetable/events/block.dart';
+import 'package:flutter/material.dart';
 
 enum AppState(final int priority) {
   /// Any kind of break during classday (excluding pauses).
@@ -22,7 +22,13 @@ enum AppState(final int priority) {
   defaultState(0)
 }
 
-typedef AppStateEntry = ({DateTimeRange range, AppState state});
+enum TimeRelation { before, during, after, none }
+
+final class const AppStateEntry({
+  required final DateTimeRange range,
+  required final AppState state,
+  required final TimeRelation classRelation,
+});
 typedef _Marker = ({DateTime time, Event? event, bool isTransfer, bool start});
 
 class AppStateScheduler {
@@ -74,11 +80,15 @@ class AppStateScheduler {
     DateTime lastTime = day.copyWith();
     AppState lastState = .defaultState;
 
-    bool startedClass = false;
+    TimeRelation classRelation = classEnd == null ? .none : .before;
 
     int i = 0;
     while (i < ends.length) {
       final curTime = ends[i].time;
+
+      if (classRelation == .during && !curTime.isBefore(classEnd!)) {
+        classRelation = .after;
+      }
 
       while (i < ends.length && ends[i].time == curTime) {
         final endpoint = ends[i];
@@ -97,10 +107,12 @@ class AppStateScheduler {
       AppState? newState;
 
       if (activeEvents.isEmpty) {
-        newState = startedClass ? .classBreak : .defaultState;
+        newState = classRelation == .during ? .classBreak : .defaultState;
       } else {
         final duringActiveTime =
-            startedClass && classEnd != null && !curTime.isAfter(classEnd);
+            classRelation == .during &&
+            classEnd != null &&
+            !curTime.isAfter(classEnd);
 
         for (final event in activeEvents) {
           final AppState eventState = switch (event.event) {
@@ -125,7 +137,7 @@ class AppStateScheduler {
       }
 
       if (newState == .clazz) {
-        startedClass = true;
+        classRelation = .during;
       }
 
       if (lastState == .transfer) {
@@ -140,10 +152,13 @@ class AppStateScheduler {
 
       if (newState != lastState) {
         if (curTime.isAfter(lastTime)) {
-          entries.add((
-            range: DateTimeRange(start: lastTime, end: curTime),
-            state: lastState,
-          ));
+          entries.add(
+            .new(
+              range: DateTimeRange(start: lastTime, end: curTime),
+              state: lastState,
+              classRelation: classRelation,
+            ),
+          );
         }
         lastTime = curTime;
         lastState = newState!;
@@ -155,10 +170,13 @@ class AppStateScheduler {
     }
 
     if (!lastTime.isAtSameMomentAs(nextDay)) {
-      entries.add((
-        range: DateTimeRange(start: lastTime, end: nextDay),
-        state: .defaultState,
-      ));
+      entries.add(
+        .new(
+          range: DateTimeRange(start: lastTime, end: nextDay),
+          state: .defaultState,
+          classRelation: classRelation,
+        ),
+      );
     }
 
     assert(
@@ -174,7 +192,7 @@ class AppStateScheduler {
 
         return true;
       }(),
-      "Found two same app states in a row, those should be squashed into one entry",
+      'Found two same app states in a row, those should be squashed into one entry',
     );
 
     return entries;

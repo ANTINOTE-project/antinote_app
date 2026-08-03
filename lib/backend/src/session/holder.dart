@@ -1,16 +1,18 @@
-import "dart:async";
-import "dart:io";
+import 'dart:async';
+import 'dart:io';
 
-import "package:antinote/antinote.dart";
-import "package:antinote_app/backend/backend.dart";
-import "package:antinote_app/backend/src/settings/networking.dart";
-import "package:antinote_app/main.dart";
-import "package:antinote_app/protos/account.pb.dart";
-import "package:flutter/foundation.dart";
+import 'package:antinote/antinote.dart';
+import 'package:antinote_app/backend/backend.dart';
+import 'package:antinote_app/backend/src/settings/networking.dart';
+import 'package:antinote_app/main.dart';
+import 'package:antinote_app/protos/account.pb.dart';
+import 'package:flutter/foundation.dart';
 
 final NativeSessionManager _sessionManager = NativeSessionManager();
 final _nativeSessionManagerSupported = Platform.isAndroid;
 
+// TODO: Remove the account UID stuff from the session data holder, separate
+//  them so that we can manage to cache multiple sessions as once.
 class SessionDataHolder extends ChangeNotifier {
   RemoteSession? _curSession;
 
@@ -29,7 +31,16 @@ class SessionDataHolder extends ChangeNotifier {
   }
 
   int? lastSeenSessionVersion;
-  String? lastSeenAccountUid;
+
+  String? _curAccountUid;
+
+  String? get lastSeenAccountUid => _curAccountUid;
+
+  set lastSeenAccountUid(String? newValue) {
+    talker.info('Set account UID to $newValue');
+    _curAccountUid = newValue;
+  }
+
   Completer<void>? stateLock;
 
   NetworkingSettings _settings;
@@ -37,7 +48,7 @@ class SessionDataHolder extends ChangeNotifier {
   SessionDataHolder._({
     required this._curSession,
     required this.lastSeenSessionVersion,
-    required this.lastSeenAccountUid,
+    required this._curAccountUid,
     required this.stateLock,
     required this._settings,
   });
@@ -48,38 +59,66 @@ class SessionDataHolder extends ChangeNotifier {
   }) : this._(
          curSession: null,
          lastSeenSessionVersion: null,
-         lastSeenAccountUid: account?.uid,
+         curAccountUid: account?.uid,
          stateLock: null,
          settings: settings,
        );
 
   Future<RemoteSession> relogin({required AccountStorage storage}) async {
-    var account = (await storage.borrowAccountWithCredentials(
+    var account = await storage.borrowAccountWithCredentials(
       lastSeenAccountUid!,
-    ))!;
+    );
+
+    if (account == null) {
+      throw Exception('Account not found in storage ($lastSeenAccountUid)');
+    }
 
     final credentials = account.credentials;
     if (credentials == null) {
-      throw Exception("No credentials linked to account ${account.uid}");
+      throw Exception('No credentials linked to account ${account.uid}');
     }
 
-    final (refreshCredentials: newCreds, session: session) = await credentials
-        .login(options: _settings.sessionOptions);
+    try {
+      final LoginResult(credentials: newCreds, session: session) =
+          await credentials.login(options: _settings.sessionOptions);
 
-    account = account.setCredentials(newCreds);
-    await storage.updateAccount(account, lastSeenAccountUid!);
+      account =
+          account
+              .setCredentials(
+                newCreds != null && !session.stack.demo
+                    ? newCreds
+                    : credentials,
+              )
+              .deepCopy()
+            ..invalid = false
+            ..freeze();
+      await storage.updateAccount(account, lastSeenAccountUid!);
 
-    lastSeenSession = session;
-    if (_nativeSessionManagerSupported) {
-      lastSeenSessionVersion = await _sessionManager.registerSession(
-        lastSeenAccountUid!,
-        session.exportBinary(),
+      lastSeenSession = session;
+      if (_nativeSessionManagerSupported) {
+        lastSeenSessionVersion = await _sessionManager.registerSession(
+          lastSeenAccountUid!,
+          session.exportBinary(),
+        );
+      } else {
+        lastSeenSessionVersion = 0;
+      }
+
+      return lastSeenSession!;
+    } on InvalidInstanceException {
+      await storage.updateAccount(
+        account!.deepCopy()
+          ..invalid = true
+          ..freeze(),
+        lastSeenAccountUid ?? account.uid,
       );
-    } else {
-      lastSeenSessionVersion = 0;
-    }
 
-    return lastSeenSession!;
+      lastSeenAccountUid = null;
+
+      talker.warning('Marked account ${account.uid} invalid.');
+
+      rethrow;
+    }
   }
 
   Future<RemoteSession> ensureSession({
@@ -88,8 +127,8 @@ class SessionDataHolder extends ChangeNotifier {
   }) async {
     assert(
       lastSeenAccountUid != null || accountUid != null,
-      "Tried to ensure session for an "
-      "account UID we did not have...",
+      'Tried to ensure session for an '
+      'account UID we did not have...',
     );
 
     if (lastSeenSession != null &&
@@ -101,29 +140,30 @@ class SessionDataHolder extends ChangeNotifier {
       lastSeenAccountUid = accountUid;
     }
 
-    await relogin(storage: storage);
-
-    return lastSeenSession!;
+    return await relogin(storage: storage);
   }
 
   Future<T> runTask<T>({
     required FutureOr<RemoteSession> Function() sessionEnsurer,
-    List<String> channels = const ["communication"],
+    List<String> channels = const ['communication'],
+    bool retry = false,
     required RunCallback<T> callback,
+    required String? debugLabel,
   }) async {
     assert(
       lastSeenAccountUid != null,
-      "Tried to run a task but we do not have "
+      'Tried to run a task but we do not have '
       "the session's account UID",
     );
 
-    late final ScheduledTask? task;
+    final ScheduledTask? task;
 
     if (_nativeSessionManagerSupported) {
       task = await _sessionManager.scheduleTask(
         lastSeenAccountUid!,
         channels,
         lastSeenSessionVersion,
+        kDebugMode ? debugLabel : null,
       );
 
       if (task.session != null &&
@@ -159,10 +199,18 @@ class SessionDataHolder extends ChangeNotifier {
 
     final beforeCounter = currentlyAppliedSession.stack.order(.communication);
 
+    int debugId = DateTime.now().microsecondsSinceEpoch;
+
+    talker.info(
+      'Start task $debugId with ${channels.join(',')} (retry $retry).',
+    );
+
     late T callbackResult;
     try {
-      for (var curTry = 1; curTry <= 2; curTry++) {
+      final maxTries = retry ? 2 : 1;
+      for (var curTry = 1; curTry <= maxTries; curTry++) {
         try {
+          print('Trying ($curTry/${retry ? 2 : 1}) task $debugId...');
           callbackResult = await callback.call(currentlyAppliedSession!);
 
           break;
@@ -170,17 +218,15 @@ class SessionDataHolder extends ChangeNotifier {
           final errorCounter = currentlyAppliedSession!.stack.order(
             .communication,
           );
-          talker.warning("Error counter at $errorCounter");
+          talker.warning('Error counter at $errorCounter');
 
           await currentlyAppliedSession.access(
             const DisconnectionAccessor.unlogged(),
           );
 
-          if (beforeCounter + 2 >= errorCounter && curTry == 1) {
-            talker.info("Restarting session to retry callback...");
+          if (curTry == 1 && retry) {
+            talker.info('Restarting session to retry callback...');
 
-            // Probably due to an expired session, retrying once.
-            // TODO: Print information about the session exception.
             _curSession = null;
             currentlyAppliedSession = await sessionEnsurer();
             needToApply = true;
@@ -195,6 +241,8 @@ class SessionDataHolder extends ChangeNotifier {
 
       rethrow;
     } finally {
+      talker.info('End task $debugId.');
+
       if (task != null) {
         final newVersion = await _sessionManager.finishTask(
           lastSeenAccountUid!,
@@ -211,18 +259,18 @@ class SessionDataHolder extends ChangeNotifier {
     }
 
     if (lastSeenSession != null &&
-        channels.contains("communication") &&
+        channels.contains('communication') &&
         beforeCounter == lastSeenSession!.stack.order(.communication)) {
       talker.warning(
-        "Callback did not send any request but still asked "
-        "for communication channel...",
+        'Callback did not send any request but still asked '
+        'for communication channel...',
       );
     } else if (lastSeenSession != null &&
-        !channels.contains("communication") &&
+        !channels.contains('communication') &&
         beforeCounter > lastSeenSession!.stack.order(.communication)) {
       talker.warning(
-        "Callback sent communication requests but did not "
-        "ask for the channel...",
+        'Callback sent communication requests but did not '
+        'ask for the channel...',
       );
     }
 

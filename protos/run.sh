@@ -1,1 +1,1 @@
-protoc -I="." --dart_out="lib/" --java_out="android/app/src/main/java/" --kotlin_out="android/app/src/main/kotlin/" "protos/account.proto"
+protoc -I="." --dart_out="lib/" "protos/account.proto"

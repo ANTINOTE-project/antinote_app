@@ -1,13 +1,13 @@
-import "package:antinote/antinote.dart";
-import "package:antinote_app/backend/backend.dart";
-import "package:antinote_app/frontend/utils/utils.dart";
-import "package:antinote_app/frontend/widgets/compact_card.dart";
-import "package:antinote_app/frontend/widgets/customs/list.dart";
-import "package:antinote_app/frontend/widgets/grade_text.dart";
-import "package:antinote_app/frontend/widgets/pressable.dart";
-import "package:antinote_app/frontend/widgets/remote_html.dart";
-import "package:flutter/material.dart";
-import "package:hugeicons_pro/hugeicons.dart";
+import 'package:antinote/antinote.dart';
+import 'package:antinote_app/backend/backend.dart';
+import 'package:antinote_app/frontend/utils/utils.dart';
+import 'package:antinote_app/frontend/widgets/compact_card.dart';
+import 'package:antinote_app/frontend/widgets/customs/list.dart';
+import 'package:antinote_app/frontend/widgets/grade_text.dart';
+import 'package:antinote_app/frontend/widgets/pressable.dart';
+import 'package:antinote_app/frontend/widgets/remote_html.dart';
+import 'package:flutter/material.dart';
+import 'package:hugeicons_pro/hugeicons.dart';
 
 class HomeWidget extends StatelessWidget {
   final String label;
@@ -113,7 +113,7 @@ class AttendanceWidget extends StatelessWidget {
       onShowMorePressed: () {},
 
       label: data.absences.length > 5
-          ? "${context.l10n.homeAttendance} (+${data.absences.length - 5})"
+          ? '${context.l10n.homeAttendance} (+${data.absences.length - 5})'
           : context.l10n.homeAttendance,
 
       content: ListWidget(
@@ -127,7 +127,7 @@ class AttendanceWidget extends StatelessWidget {
         itemBuilder: (context, absence, borderRadius) {
           final isJustified = absence.reasons.isNotEmpty;
           final title = isJustified
-              ? absence.reasons.map((e) => e.name).join(", ")
+              ? absence.reasons.map((e) => e.name).join(', ')
               : context.l10n.absenceNotJustified;
 
           return ItemWidget(
@@ -183,7 +183,7 @@ class GradesWidget extends StatelessWidget {
 
     return HomeWidget(
       label: exams.length > 5
-          ? "${context.l10n.grades} (+${exams.length - 5})"
+          ? '${context.l10n.grades} (+${exams.length - 5})'
           : context.l10n.grades,
 
       onShowMorePressed: () {
@@ -250,7 +250,7 @@ class HomeworksWidget extends StatelessWidget {
 
     return HomeWidget(
       label: homeworks.length > 5
-          ? "${context.l10n.homeworks} (+${homeworks.length - 5})"
+          ? '${context.l10n.homeworks} (+${homeworks.length - 5})'
           : context.l10n.homeworks,
 
       onShowMorePressed: () {

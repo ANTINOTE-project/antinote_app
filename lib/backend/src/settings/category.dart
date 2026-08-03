@@ -1,8 +1,8 @@
-import "dart:async";
+import 'dart:async';
 
-import "package:antinote_app/main.dart";
-import "package:flutter/foundation.dart";
-import "package:shared_preferences/shared_preferences.dart";
+import 'package:antinote_app/main.dart';
+import 'package:flutter/foundation.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 typedef SettingsUpgradeTask = FutureOr<void> Function(
   SharedPreferencesWithCache prefs,
@@ -35,7 +35,7 @@ abstract class SettingsCategory extends ChangeNotifier {
   /// [writtenDefault]. Else, DO NOT do a null-check on the value received.
   T? get<T>(String key, {T? writtenDefault}) {
     if (_mode == .registering) {
-      assert(!_registered.containsKey(key), "Registered same field twice.");
+      assert(!_registered.containsKey(key), 'Registered same field twice.');
       _registered[key] = writtenDefault;
 
       return writtenDefault;
@@ -59,7 +59,7 @@ abstract class SettingsCategory extends ChangeNotifier {
 
   bool has(String key) {
     if (_mode == .registering) {
-      assert(!_registered.containsKey(key), "Registered same field twice.");
+      assert(!_registered.containsKey(key), 'Registered same field twice.');
       _registered[key] = null;
       return false;
     }
@@ -76,7 +76,7 @@ abstract class SettingsCategory extends ChangeNotifier {
 
     initializationState = Completer();
 
-    talker.info("Registering $name...");
+    talker.info('Registering $name...');
 
     try {
       _mode = .registering;
@@ -84,8 +84,8 @@ abstract class SettingsCategory extends ChangeNotifier {
       _mode = .none;
     } catch (e, st) {
       debugPrint(
-        "Error while initializing $name settings (registering "
-        "fields)",
+        'Error while initializing $name settings (registering '
+        'fields)',
       );
       debugPrintStack(stackTrace: st, label: e.toString());
 
@@ -94,8 +94,8 @@ abstract class SettingsCategory extends ChangeNotifier {
     }
 
     _prefs = await SharedPreferencesWithCache.create(
-      cacheOptions: SharedPreferencesWithCacheOptions(allowList: fieldNames),
-      cache: Map.fromEntries(
+      cacheOptions: .new(allowList: fieldNames),
+      cache: .fromEntries(
         _registered.entries.where((element) => element.value != null),
       ),
     );
@@ -123,8 +123,8 @@ abstract class SettingsCategory extends ChangeNotifier {
       for (final fieldName in child.allFieldNames) {
         assert(
           !allFieldNames.contains(fieldName),
-          "Registered same field twice "
-          "(from a child settings category).",
+          'Registered same field twice '
+          '(from a child settings category).',
         );
       }
 
@@ -145,8 +145,8 @@ abstract class SettingsCategory extends ChangeNotifier {
         upgradeTasks[newVersion]!(_prefs);
       } catch (e, st) {
         debugPrint(
-          "Error while trying to update settings to version $newVersion in "
-          "$name settings",
+          'Error while trying to update settings to version $newVersion in '
+          '$name settings',
         );
         debugPrintStack(stackTrace: st, label: e.toString());
 
@@ -188,6 +188,6 @@ abstract class SettingsCategory extends ChangeNotifier {
     super.dispose();
   }
 
-  String get _versionFieldName => "${name}_version";
+  String get _versionFieldName => '${name}_version';
   int get version => get(_versionFieldName, writtenDefault: latestVersion)!;
 }

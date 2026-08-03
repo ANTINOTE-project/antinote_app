@@ -1,16 +1,16 @@
-import "dart:math";
+import 'dart:math';
 
-import "package:antinote/antinote.dart";
-import "package:antinote_app/backend/src/accounts/storage/native.dart";
-import "package:antinote_app/backend/src/calendar/to_event.dart";
-import "package:antinote_app/backend/src/pigeon_posts/native_calendar.g.dart";
-import "package:antinote_app/backend/src/pigeon_posts/native_session.g.dart";
-import "package:antinote_app/backend/src/pigeon_posts/native_sync.g.dart";
-import "package:antinote_app/backend/src/session/holder.dart";
-import "package:antinote_app/backend/src/settings/networking.dart";
-import "package:antinote_app/backend/src/sync/polling_manager.dart";
-import "package:flutter/foundation.dart";
-import "package:flutter/material.dart";
+import 'package:antinote/antinote.dart';
+import 'package:antinote_app/backend/src/accounts/storage/native.dart';
+import 'package:antinote_app/backend/src/calendar/to_event.dart';
+import 'package:antinote_app/backend/src/pigeon_posts/native_calendar.g.dart';
+import 'package:antinote_app/backend/src/pigeon_posts/native_session.g.dart';
+import 'package:antinote_app/backend/src/pigeon_posts/native_sync.g.dart';
+import 'package:antinote_app/backend/src/session/holder.dart';
+import 'package:antinote_app/backend/src/settings/networking.dart';
+import 'package:antinote_app/backend/src/sync/polling_manager.dart';
+import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
 
 const _accountStorage = NativeAccountStorage();
 final _calendarManager = NativeCalendarManager();
@@ -27,6 +27,8 @@ Future<SyncResult> syncTask(String accountUid) async {
     accountUid,
   );
 
+  WidgetsFlutterBinding.ensureInitialized();
+
   var settings = NetworkingSettings();
   if (!(await settings.initialize())) {
     await settings.clear();
@@ -34,6 +36,8 @@ Future<SyncResult> syncTask(String accountUid) async {
 
     final result = await settings.initialize();
     if (!result) {
+      libLog.warning('Could not initialize parameters, attempting later...');
+
       return SyncResult(
         result: .availability,
         totalEntries: 0,
@@ -55,8 +59,6 @@ Future<SyncResult> syncTask(String accountUid) async {
       .runTask<FetchResult?>(
         sessionEnsurer: () => state.ensureSession(storage: _accountStorage),
         callback: (session) async {
-          await session.ensurePage(16);
-
           final map = <UserResource, List<RecurringClass<Class>>>{};
 
           for (final resource in session.user.resources) {
@@ -79,6 +81,8 @@ Future<SyncResult> syncTask(String accountUid) async {
             address: session.instance.establishmentName,
           );
         },
+        debugLabel:
+            'Fetch sync data (including timetable, user data, instance data)',
       )
       .onError<AuthException>((error, stackTrace) {
         syncResult = SyncResult(

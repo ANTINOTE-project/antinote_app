@@ -1,15 +1,15 @@
-import "dart:async";
+import 'dart:async';
 
-import "package:antinote/antinote.dart";
-import "package:antinote_app/frontend/screens/shell/tab.dart";
-import "package:antinote_app/frontend/utils/utils.dart";
-import "package:antinote_app/frontend/widgets/bottom_padding.dart";
-import "package:antinote_app/frontend/widgets/customs/list.dart";
-import "package:antinote_app/frontend/widgets/grade_text.dart";
-import "package:antinote_app/frontend/widgets/pressable.dart";
-import "package:flutter/material.dart";
-import "package:flutter/services.dart";
-import "package:hugeicons_pro/hugeicons.dart";
+import 'package:antinote/antinote.dart';
+import 'package:antinote_app/frontend/screens/shell/tab.dart';
+import 'package:antinote_app/frontend/utils/utils.dart';
+import 'package:antinote_app/frontend/widgets/bottom_padding.dart';
+import 'package:antinote_app/frontend/widgets/customs/list.dart';
+import 'package:antinote_app/frontend/widgets/grade_text.dart';
+import 'package:antinote_app/frontend/widgets/pressable.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:hugeicons_pro/hugeicons.dart';
 
 class ReportTab extends StatefulWidget {
   final VisualId periodId;
@@ -81,17 +81,16 @@ class _ReportTabState extends State<ReportTab> with TabMixin<ReportTab> {
 
   @override
   Stream<double?> load(RemoteSession session) async* {
-    if (widget.classReport) {
-      await session.ensurePage(41);
-    } else {
-      await session.ensurePage(13);
-    }
-
     final period = session.instance.periods.firstWhere(
       (e) => e.visualId == widget.periodId,
     );
 
-    _data = await session.access(ReportAccessor(period: period));
+    _data = await session.access(
+      ReportAccessor(
+        section: widget.classReport ? .clazz : .student,
+        period: period,
+      ),
+    );
   }
 }
 
@@ -434,7 +433,7 @@ class _ServiceWidget extends StatelessWidget {
               children: [
                 if (hasTeachers)
                   Text(
-                    service.teachers!.map((t) => t.name).join(", "),
+                    service.teachers!.map((t) => t.name).join(', '),
 
                     overflow: .ellipsis,
                     maxLines: 1,
@@ -499,7 +498,7 @@ class _ServiceWidget extends StatelessWidget {
                 isColumn: true,
 
                 itemBuilder: (context, a, borderRadius) {
-                  final trimmed = a.name?.trim() ?? "";
+                  final trimmed = a.name?.trim() ?? '';
 
                   return ItemWidget(
                     backgroundColor: scheme.surfaceContainer,
@@ -554,7 +553,7 @@ class _ServiceWidget extends StatelessWidget {
                       ),
                       if (hasTeachers)
                         Text(
-                          section.teachers!.map((t) => t.name).join(", "),
+                          section.teachers!.map((t) => t.name).join(', '),
 
                           overflow: .ellipsis,
                           maxLines: 1,
@@ -573,7 +572,7 @@ class _ServiceWidget extends StatelessWidget {
                           isColumn: true,
 
                           itemBuilder: (context, a, borderRadius) {
-                            final trimmed = (a.name ?? a.title)?.trim() ?? "";
+                            final trimmed = (a.name ?? a.title)?.trim() ?? '';
 
                             return ItemWidget(
                               backgroundColor: scheme.surfaceContainer,

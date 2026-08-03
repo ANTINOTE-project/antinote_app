@@ -53,15 +53,9 @@ class AntinoteAuthenticator(val context: Context) : AbstractAccountAuthenticator
         account: Account,
         authTokenType: String,
         options: Bundle
-    ): Bundle? {
-        return Bundle().apply {
-            putString(AccountManager.KEY_ACCOUNT_NAME, account.name)
-            putString(AccountManager.KEY_ACCOUNT_TYPE, account.type)
-            putString(
-                AccountManager.KEY_AUTHTOKEN,
-                AccountManager.get(context).peekAuthToken(account, authTokenType)
-            )
-        }
+    ): Bundle {
+        Log.i(TAG, "Tried to get auth token")
+        TODO("Not yet implemented")
     }
 
     override fun getAuthTokenLabel(authTokenType: String): String {
@@ -72,8 +66,8 @@ class AntinoteAuthenticator(val context: Context) : AbstractAccountAuthenticator
         response: AccountAuthenticatorResponse,
         account: Account,
         features: Array<out String?>
-    ): Bundle? {
-        Log.i(TAG, "Tried to get features for account for features $features")
+    ): Bundle {
+        Log.i(TAG, "Tried to get features for account for features ${features.contentToString()}")
 
         return Bundle().apply {
             putBoolean(AccountManager.KEY_BOOLEAN_RESULT, true)

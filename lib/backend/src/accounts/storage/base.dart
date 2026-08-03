@@ -1,8 +1,8 @@
-import "package:antinote_app/backend/src/accounts/storage/native.dart";
-import "package:antinote_app/backend/src/accounts/storage/preferences.dart";
-import "package:antinote_app/backend/src/accounts/storage/widget.dart";
-import "package:antinote_app/protos/account.pb.dart";
-import "package:flutter/material.dart";
+import 'package:antinote_app/backend/src/accounts/storage/native.dart';
+import 'package:antinote_app/backend/src/accounts/storage/preferences.dart';
+import 'package:antinote_app/backend/src/accounts/storage/widget.dart';
+import 'package:antinote_app/protos/account.pb.dart';
+import 'package:flutter/material.dart';
 
 abstract class AccountStorage {
   const AccountStorage();
@@ -23,7 +23,7 @@ abstract class AccountStorage {
 
   static AccountStorage of(BuildContext context) {
     final result = context.dependOnInheritedWidgetOfExactType<AccountScope>();
-    assert(result != null, "No AccountStorage found in context.");
+    assert(result != null, 'No AccountStorage found in context.');
 
     return result!.storage;
   }
@@ -46,6 +46,4 @@ abstract class AccountStorage {
   Future<void> deleteAccount(String uid);
 
   Future<void> deleteAllAccounts();
-
-  Future<AntinoteAccount> getCredentials(AntinoteAccount account);
 }

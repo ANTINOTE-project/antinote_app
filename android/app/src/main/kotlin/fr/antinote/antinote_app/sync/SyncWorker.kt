@@ -1,108 +1,178 @@
 package fr.antinote.antinote_app.sync
 
-import android.accounts.AccountManager
 import android.content.Context
-import android.os.Handler
-import android.os.Looper
 import android.util.Log
-import androidx.work.Worker
+import androidx.core.app.NotificationChannelCompat
+import androidx.core.app.NotificationCompat
+import androidx.core.app.NotificationManagerCompat
+import androidx.work.CoroutineWorker
+import androidx.work.ForegroundInfo
 import androidx.work.WorkerParameters
+import fr.antinote.antinote_app.App
+import fr.antinote.antinote_app.R
 import fr.antinote.antinote_app.auth.LoginManager
+import fr.antinote.antinote_app.auth.accountStore
 import fr.antinote.antinote_app.calendar.CalendarManager
 import fr.antinote.antinote_app.pigeon_posts.NativeLoginManager
+import fr.antinote.antinote_app.protos.AntinoteAccount
+import fr.antinote.antinote_app.protos.SyncTaskType
 import fr.antinote.antinote_app.session.SessionManager
 import fr.antinote.studies_management.antinote_app.pigeon_posts.NativeCalendarManager
 import fr.antinote.studies_management.antinote_app.pigeon_posts.NativeSessionManager
 import fr.antinote.studies_management.antinote_app.pigeon_posts.NativeSyncManager
+import fr.antinote.studies_management.antinote_app.pigeon_posts.SyncResult
 import fr.antinote.studies_management.antinote_app.pigeon_posts.SyncResultType
 import io.flutter.FlutterInjector
 import io.flutter.embedding.engine.FlutterEngine
+import io.flutter.embedding.engine.FlutterEngineGroup
 import io.flutter.embedding.engine.dart.DartExecutor
-import java.util.concurrent.CountDownLatch
-import java.util.concurrent.TimeUnit
+import io.flutter.plugins.sharedpreferences.SharedPreferencesPlugin
+import kotlinx.coroutines.CompletableDeferred
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.TimeoutCancellationException
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withTimeout
+import kotlin.time.Duration.Companion.minutes
 
-class SyncWorker(appContext: Context, workerParams: WorkerParameters) : Worker(appContext, workerParams) {
+class SyncWorker(appContext: Context, workerParams: WorkerParameters) :
+    CoroutineWorker(appContext, workerParams) {
     companion object {
         const val TAG = "SyncWorker"
+        const val KEY_UIDS = "account_uids"
+        const val KEY_FORCED_TASKS = "forced"
+        const val SYNC_NOTIFICATION_CHANNEL_ID = "sync_channel"
+
+        fun shouldDoSync(account: AntinoteAccount): Boolean =
+            !account.storeSecurely && account.syncDataList.any { it.enabled }
     }
 
-    override fun doWork(): Result {
+    data class JobData(
+        var workResult: Result? = null,
+        var engine: FlutterEngine? = null,
+        var sessionManager: SessionManager? = null
+    )
+
+    private val mainScope = CoroutineScope(Dispatchers.Main + SupervisorJob())
+
+    override suspend fun doWork(): Result {
         Log.i(TAG, "Starting sync...")
 
-        val uid = inputData.getString("account_uid")!!
-        val accountManager = AccountManager.get(applicationContext)
-        if(accountManager.accounts.none { accountManager.getUserData(it, LoginManager.KEY_UID) == uid }) {
-            return Result.failure()
+        val app = applicationContext as App
+
+        val uids = inputData.getStringArray(KEY_UIDS)
+        val validUids = mutableListOf<String>()
+
+        val forcedTasks =
+            inputData.getIntArray(KEY_FORCED_TASKS)?.map { SyncTaskType.forNumber(it) }
+
+        for (account in applicationContext.accountStore.data.first().accountsList) {
+            if (!shouldDoSync(account) || (!account.storeSecurely && forcedTasks?.isNotEmpty() ?: false)) continue
+            if (uids != null && !uids.contains(account.uid)) continue
+
+            validUids.add(account.uid)
         }
 
+        if (validUids.isEmpty()) return Result.failure()
 
-        val latch = CountDownLatch(1)
-        var workResult: Result? = null;
-        var engine: FlutterEngine? = null
-        var sessionManager: SessionManager? = null
+        val data = JobData()
 
-        Handler(Looper.getMainLooper()).post {
+        val syncLock: CompletableDeferred<Unit> = CompletableDeferred()
+
+        val job: Job = mainScope.launch {
             val flutterLoader = FlutterInjector.instance().flutterLoader()
 
             flutterLoader.startInitialization(applicationContext)
-            flutterLoader.ensureInitializationComplete(applicationContext, arrayOf())
+            flutterLoader.ensureInitializationComplete(applicationContext, null)
 
-            val newEngine = FlutterEngine(applicationContext)
-            engine = newEngine
             val entrypoint = DartExecutor.DartEntrypoint(
                 flutterLoader.findAppBundlePath(),
                 "syncMain"
             )
 
-            val newSessionManager = SessionManager(applicationContext, newEngine.dartExecutor.binaryMessenger)
-            sessionManager = newSessionManager
+            val options = FlutterEngineGroup.Options(applicationContext).run {
+                setAutomaticallyRegisterPlugins(false)
+                setDartEntrypoint(entrypoint)
+                setDartEntrypointArgs(validUids)
+            }
+
+            data.engine = app.engineGroup.createAndRunEngine(options)
+            data.engine?.plugins?.add(SharedPreferencesPlugin())
+            data.sessionManager =
+                SessionManager(applicationContext, data.engine!!.dartExecutor.binaryMessenger)
 
             NativeSyncManager.setUp(
-                newEngine.dartExecutor.binaryMessenger,
+                data.engine!!.dartExecutor.binaryMessenger,
                 object : NativeSyncManager {
-                    override fun syncFinished(result: fr.antinote.studies_management.antinote_app.pigeon_posts.SyncResult) {
-                        workResult = when (result.result) {
+                    override fun syncFinished(result: SyncResult) {
+                        data.workResult = when (result.result) {
                             SyncResultType.SUCCESS -> Result.success()
                             SyncResultType.AUTH -> Result.failure()
                             SyncResultType.AVAILABILITY -> Result.retry()
                             SyncResultType.PARSING -> Result.failure()
                         }
 
-                        latch.countDown()
+                        syncLock.complete(Unit)
                     }
                 }
             )
             NativeCalendarManager.setUp(
-                newEngine.dartExecutor.binaryMessenger,
+                data.engine!!.dartExecutor.binaryMessenger,
                 CalendarManager(applicationContext)
             )
-            NativeLoginManager.setUp(newEngine.dartExecutor.binaryMessenger, LoginManager(applicationContext))
-            NativeSessionManager.setUp(
-                newEngine.dartExecutor.binaryMessenger,
-                newSessionManager
+            NativeLoginManager.setUp(
+                data.engine!!.dartExecutor.binaryMessenger,
+                LoginManager(applicationContext, null)
             )
-
-            newEngine.dartExecutor.executeDartEntrypoint(
-                entrypoint,
-                listOf(uid)
+            NativeSessionManager.setUp(
+                data.engine!!.dartExecutor.binaryMessenger,
+                data.sessionManager
             )
         }
+
+        var result: Result
 
         try {
-            val finished = latch.await(3, TimeUnit.MINUTES)
-            if (!finished) {
-                workResult = Result.retry()
+            withTimeout(validUids.size.minutes) {
+                job.join()
+                syncLock.await()
             }
-        } catch (_: InterruptedException) {
-            workResult = Result.retry()
+
+            result = data.workResult ?: Result.failure()
+        } catch (_: TimeoutCancellationException) {
+            Log.e(TAG, "Timeout while trying to update accounts.")
+            result = Result.retry()
         } finally {
-            Handler(Looper.getMainLooper()).post {
-                sessionManager?.doUnbindService()
-                engine?.destroy()
-            }
+            mainScope.launch {
+                data.sessionManager?.doUnbindService()
+                data.engine?.destroy()
+            }.join()
         }
 
-        return workResult ?: Result.failure()
+        return result
     }
 
+    override suspend fun getForegroundInfo(): ForegroundInfo {
+        NotificationManagerCompat.from(applicationContext).createNotificationChannel(
+            NotificationChannelCompat.Builder(
+                SYNC_NOTIFICATION_CHANNEL_ID,
+                NotificationManagerCompat.IMPORTANCE_MIN
+            ).build()
+        )
+
+        return ForegroundInfo(
+            0,
+            NotificationCompat.Builder(applicationContext, SYNC_NOTIFICATION_CHANNEL_ID).run {
+                setContentTitle(applicationContext.getString(R.string.syncing))
+                setSmallIcon(R.drawable.rounded_sync_arrow_down_24)
+
+                // TODO: Make sync have a progress indicator using the NativeSyncManager.
+
+                build()
+            }
+        )
+    }
 }

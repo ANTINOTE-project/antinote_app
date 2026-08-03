@@ -1,19 +1,19 @@
-import "package:antinote_app/backend/src/pigeon_posts/native_sync.g.dart";
-import "package:antinote_app/backend/src/sync/task.dart";
-import "package:antinote_app/frontend/entrypoints/login.dart";
-import "package:antinote_app/frontend/entrypoints/main.dart";
-import "package:flutter/material.dart";
-import "package:talker/talker.dart";
+import 'package:antinote_app/backend/src/pigeon_posts/native_sync.g.dart';
+import 'package:antinote_app/backend/src/sync/task.dart';
+import 'package:antinote_app/frontend/entrypoints/login.dart';
+import 'package:antinote_app/frontend/entrypoints/main.dart';
+import 'package:flutter/material.dart';
+import 'package:talker/talker.dart';
 
 final talker = Talker();
 
-@pragma("vm:entry-point")
+@pragma('vm:entry-point')
 void main() => mainEntrypoint();
 
-@pragma("vm:entry-point")
+@pragma('vm:entry-point')
 void loginMain() => loginEntrypoint();
 
-@pragma("vm:entry-point")
+@pragma('vm:entry-point')
 Future<void> syncMain(List<String> args) async {
   WidgetsFlutterBinding.ensureInitialized();
 

@@ -1,15 +1,15 @@
-import "package:pigeon/pigeon.dart";
+import 'package:pigeon/pigeon.dart';
 
 @ConfigurePigeon(
   PigeonOptions(
-    dartOut: "lib/backend/src/pigeon_posts/native_calendar.g.dart",
+    dartOut: 'lib/backend/src/pigeon_posts/native_calendar.g.dart',
     dartOptions: DartOptions(),
-    kotlinOut: "android/app/src/main/kotlin/fr/antinote/antinote_app/pigeon_posts/NativeCalendar.g.kt",
+    kotlinOut: 'android/app/src/main/kotlin/fr/antinote/antinote_app/pigeon_posts/NativeCalendar.g.kt',
     kotlinOptions: KotlinOptions(
-      errorClassName: "CalendarManagerError",
-      package: "fr.antinote.studies_management.antinote_app.pigeon_posts",
+      errorClassName: 'CalendarManagerError',
+      package: 'fr.antinote.studies_management.antinote_app.pigeon_posts',
     ),
-    dartPackageName: "antinote_app",
+    dartPackageName: 'antinote_app',
   ),
 )
 //

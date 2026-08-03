@@ -1,7 +1,7 @@
-import "package:antinote/antinote.dart";
-import "package:antinote_app/backend/src/session/manager.dart";
-import "package:antinote_app/frontend/utils/utils.dart";
-import "package:flutter/material.dart";
+import 'package:antinote/antinote.dart';
+import 'package:antinote_app/backend/src/session/manager.dart';
+import 'package:antinote_app/frontend/utils/utils.dart';
+import 'package:flutter/material.dart';
 
 class ShellController extends InheritedWidget {
   final void Function(TabCategory category) goToTab;
@@ -15,7 +15,7 @@ class ShellController extends InheritedWidget {
   static ShellController of(BuildContext context) {
     final result = context
         .dependOnInheritedWidgetOfExactType<ShellController>();
-    assert(result != null, "No ShellController found in context");
+    assert(result != null, 'No ShellController found in context');
 
     return result!;
   }
@@ -41,7 +41,7 @@ class _AppShellState extends State<AppShell> {
   int currentPage = 0;
 
   void loadNotificationStream() {
-    SessionManager.execute(
+    context.sm.runTask(
       context: context,
       channels: const [],
 
@@ -53,6 +53,7 @@ class _AppShellState extends State<AppShell> {
           defaultSignature = session.stack.serverSignature;
         });
       },
+      debugLabel: 'Subscribe to server signature stream',
     );
   }
 

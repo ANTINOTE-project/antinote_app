@@ -1,13 +1,12 @@
-import "package:antinote/antinote.dart";
-import "package:antinote_app/backend/src/session/manager.dart";
-import "package:antinote_app/frontend/utils/utils.dart";
-import "package:antinote_app/frontend/widgets/customs/app_bar.dart";
-import "package:antinote_app/frontend/widgets/customs/attachment.dart";
-import "package:antinote_app/frontend/widgets/customs/icon.dart";
-import "package:antinote_app/frontend/widgets/customs/list.dart";
-import "package:antinote_app/frontend/widgets/remote_html.dart";
-import "package:flutter/material.dart";
-import "package:hugeicons_pro/hugeicons.dart";
+import 'package:antinote/antinote.dart';
+import 'package:antinote_app/frontend/utils/utils.dart';
+import 'package:antinote_app/frontend/widgets/customs/app_bar.dart';
+import 'package:antinote_app/frontend/widgets/customs/attachment.dart';
+import 'package:antinote_app/frontend/widgets/customs/icon.dart';
+import 'package:antinote_app/frontend/widgets/customs/list.dart';
+import 'package:antinote_app/frontend/widgets/remote_html.dart';
+import 'package:flutter/material.dart';
+import 'package:hugeicons_pro/hugeicons.dart';
 
 class HomeworkDetailScreen extends StatefulWidget {
   final void Function(bool value) onHomeworkChange;
@@ -129,7 +128,7 @@ class _HomeworkDetailScreenState extends State<HomeworkDetailScreen> {
                         _isDone = !_isDone;
                       });
 
-                      await SessionManager.execute(
+                      await context.sm.runTask(
                         context: context,
 
                         callback: (session) async {
@@ -145,6 +144,7 @@ class _HomeworkDetailScreenState extends State<HomeworkDetailScreen> {
                             ),
                           );
                         },
+                        debugLabel: 'Update state for homework',
                       );
 
                       widget.onHomeworkChange.call(_isDone);

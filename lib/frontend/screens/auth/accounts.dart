@@ -1,14 +1,14 @@
-import "package:antinote_app/frontend/routing/routes.dart";
-import "package:antinote_app/frontend/utils/utils.dart";
-import "package:antinote_app/frontend/widgets/customs/app_bar.dart";
-import "package:antinote_app/frontend/widgets/customs/button.dart";
-import "package:antinote_app/frontend/widgets/customs/list.dart";
-import "package:antinote_app/main.dart";
-import "package:antinote_app/protos/account.pb.dart";
-import "package:flutter/material.dart";
-import "package:go_router/go_router.dart";
-import "package:hugeicons_pro/hugeicons.dart";
-import "package:skeletonizer/skeletonizer.dart";
+import 'package:antinote_app/frontend/routing/routes.dart';
+import 'package:antinote_app/frontend/utils/utils.dart';
+import 'package:antinote_app/frontend/widgets/customs/app_bar.dart';
+import 'package:antinote_app/frontend/widgets/customs/button.dart';
+import 'package:antinote_app/frontend/widgets/customs/list.dart';
+import 'package:antinote_app/main.dart';
+import 'package:antinote_app/protos/account.pb.dart';
+import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
+import 'package:hugeicons_pro/hugeicons.dart';
+import 'package:skeletonizer/skeletonizer.dart';
 
 class AccountsScreen extends StatefulWidget {
   const AccountsScreen({super.key});
@@ -22,9 +22,9 @@ class _AccountsScreenState extends State<AccountsScreen>
   static final List<AntinoteAccount> _fakeAccounts = List.filled(
     5,
     AntinoteAccount(
-      name: "fake account name",
-      establishmentName: "fake establishment",
-      workspaceName: "fake workspace",
+      name: 'fake account name',
+      establishmentName: 'fake establishment',
+      workspaceName: 'fake workspace',
     ),
   );
 
@@ -98,8 +98,9 @@ class _AccountsScreenState extends State<AccountsScreen>
         channels: const [],
 
         callback: (session) {
-          talker.info("Logged in with session ID ${session.stack.sessionId}!");
+          talker.info('Logged in with session ID ${session.stack.sessionId}!');
         },
+        debugLabel: 'Log in user',
       );
 
       WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
@@ -108,7 +109,7 @@ class _AccountsScreenState extends State<AccountsScreen>
         }
       });
     } catch (e, st) {
-      talker.error("Login failed", e, st);
+      talker.error('Login failed', e, st);
 
       sm.state.lastSeenAccountUid = beforeUid;
       sm.state.lastSeenSession = beforeSession;

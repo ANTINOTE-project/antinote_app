@@ -1,15 +1,14 @@
-import "dart:async";
+import 'dart:async';
 
-import "package:antinote/antinote.dart";
-import "package:antinote_app/backend/backend.dart";
-import "package:antinote_app/frontend/screens/communication/models.dart";
-import "package:antinote_app/frontend/screens/communication/news.dart";
-import "package:antinote_app/frontend/screens/shell/tab.dart";
-import "package:antinote_app/frontend/utils/utils.dart";
-import "package:antinote_app/frontend/widgets/customs/list.dart";
-import "package:flutter/material.dart";
-import "package:hugeicons_pro/hugeicons.dart";
-import "package:intl/intl.dart";
+import 'package:antinote/antinote.dart';
+import 'package:antinote_app/frontend/screens/communication/models.dart';
+import 'package:antinote_app/frontend/screens/communication/news.dart';
+import 'package:antinote_app/frontend/screens/shell/tab.dart';
+import 'package:antinote_app/frontend/utils/utils.dart';
+import 'package:antinote_app/frontend/widgets/customs/list.dart';
+import 'package:flutter/material.dart';
+import 'package:hugeicons_pro/hugeicons.dart';
+import 'package:intl/intl.dart';
 
 class CommunicationScreen extends StatefulWidget {
   const CommunicationScreen({super.key});
@@ -68,7 +67,7 @@ class _CommunicationScreenState extends State<CommunicationScreen>
               ),
 
               onPressed: () async {
-                await SessionManager.execute(
+                await context.sm.runTask(
                   context: context,
                   channels: const [],
 
@@ -77,7 +76,10 @@ class _CommunicationScreenState extends State<CommunicationScreen>
                       case .poll:
                       case .news:
                         {
-                          if (!context.mounted) return;
+                          if (!context.mounted ||
+                              thread is! InformationThreadPreview) {
+                            return;
+                          }
 
                           final notifier = ValueNotifier(
                             session.getCachedValue<News>(
@@ -91,6 +93,7 @@ class _CommunicationScreenState extends State<CommunicationScreen>
 
                             MaterialPageRoute(
                               builder: (context) => NewsScreen(
+                                mode: thread.mode,
                                 news: notifier,
 
                                 deleteNews: () {
@@ -106,6 +109,7 @@ class _CommunicationScreenState extends State<CommunicationScreen>
                         }
                     }
                   },
+                  debugLabel: 'Retrieve news and discussion data from cache.',
                 );
               },
             );
@@ -119,30 +123,35 @@ class _CommunicationScreenState extends State<CommunicationScreen>
     RemoteSession session,
     CommunicationType type,
   ) async {
-    await session.ensurePage(type.pageId);
-
     switch (type) {
       case .poll:
       case .news:
         {
-          final news = await session.access(
+          final newsPage = await session.access(
             const NewsPageAccessor.defaultMode(),
           );
-          return news.collections
-              .fold(
-                <News>[],
-                (previousValue, element) => previousValue + element.news,
-              )
-              .mapL(
-                (e) => CommunicationThreadPreview(
-                  title: e.label,
-                  publishDate: e.creationTime,
-                  commType: e.isPoll ? .poll : .news,
-                  authorName: e.author,
-                  visualId: e.visualId,
-                  read: e.read,
+
+          final threads = newsPage.collections
+              .map(
+                (collection) => collection.news.map(
+                  (e) => InformationThreadPreview(
+                    title: e.label,
+                    publishDate: e.creationTime,
+                    commType: e.isPoll ? .poll : .news,
+                    authorName: e.author,
+                    visualId: e.visualId,
+                    read: e.read,
+                    mode: collection.mode,
+                  ),
                 ),
-              );
+              )
+              .fold(
+                <InformationThreadPreview>[],
+                (previousValue, element) => previousValue..addAll(element),
+              )
+              .toList(growable: false);
+
+          return threads;
         }
       case .discussion:
         {
@@ -151,7 +160,7 @@ class _CommunicationScreenState extends State<CommunicationScreen>
           );
 
           return page.discussions.mapL(
-            (e) => CommunicationThreadPreview(
+            (e) => DiscussionThreadPreview(
               title: e.subject,
               publishDate: e.parsedDateLabel,
               commType: .discussion,

@@ -1,15 +1,23 @@
-import "package:antinote/antinote.dart";
-import "package:antinote_app/frontend/utils/utils.dart";
-import "package:antinote_app/frontend/widgets/customs/attachment.dart";
-import "package:antinote_app/frontend/widgets/customs/list.dart";
-import "package:antinote_app/frontend/widgets/remote_html.dart";
-import "package:flutter/material.dart";
-import "package:go_router/go_router.dart";
-import "package:hugeicons_pro/hugeicons.dart";
-import "package:intl/intl.dart";
+import 'package:antinote/antinote.dart';
+import 'package:antinote_app/frontend/screens/shell/tab.dart';
+import 'package:antinote_app/frontend/utils/utils.dart';
+import 'package:antinote_app/frontend/widgets/customs/attachment.dart';
+import 'package:antinote_app/frontend/widgets/customs/list.dart';
+import 'package:antinote_app/frontend/widgets/remote_html.dart';
+import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
+import 'package:hugeicons_pro/hugeicons.dart';
+import 'package:intl/intl.dart';
 
 class NewsScreen extends StatefulWidget {
-  const NewsScreen({super.key, required this.news, required this.deleteNews});
+  const NewsScreen({
+    super.key,
+    required this.mode,
+    required this.news,
+    required this.deleteNews,
+  });
+
+  final NewsDisplayMode mode;
 
   final ValueNotifier<News> news;
   final VoidCallback deleteNews;
@@ -18,112 +26,39 @@ class NewsScreen extends StatefulWidget {
   State<NewsScreen> createState() => _NewsScreenState();
 }
 
-class _NewsScreenState extends State<NewsScreen> {
-  // TODO: Check if there are session-specific IDs we SEND when we give out the
-  // TODO: updated answers to a poll.
+class _NewsScreenState extends State<NewsScreen> with TabMixin<NewsScreen> {
   final Map<String, NewsQuestionAnswer> _overriddenAnswers = {};
 
   Future<void> _sendCompleted() async {
-    // TODO: Reimplement it in a safe manner
     throw UnimplementedError();
-    // await SessionManager.execute(
-    //   context: context,
-    //   callback: (session) async {
-    //     await session.ensurePage(CommunicationType.news.pageId);
-    //
-    //     await session.access(
-    //       ChangeNewsStateAccessor(
-    //         updatesToPerform: {
-    //           widget.news.value!: NewsUpdate(
-    //             read:
-    //                 _overriddenAnswers.values.any(
-    //                   (final element) =>
-    //                       element is RANewsQuestionAnswer && element.answered,
-    //                 )
-    //                 ? true
-    //                 : null,
-    //             onlyMarkedRead: null,
-    //             deleted: null,
-    //             answersToChange: _overriddenAnswers.map(
-    //               (key, value) => MapEntry(
-    //                 session.getCachedValue<NewsQuestion>(.NEWS_QUESTION, key),
-    //                 value,
-    //               ),
-    //             ),
-    //           ),
-    //         },
-    //       ),
-    //     );
-    //   },
-    // );
-    //
-    // news = await widget.onNewsUpdated();
   }
 
   Future<void> _toggleReadStatus() async {
     throw UnimplementedError();
-
-    // await SessionManager.run(
-    //   context: context,
-    //   callback: (session) async {
-    //     await session.ensurePage(CommunicationType.news.pageId);
-    //
-    //     await session.access(
-    //       ChangeNewsStateAccessor(
-    //         updatesToPerform: {
-    //           news: NewsUpdate(
-    //             read: !news.read,
-    //             onlyMarkedRead: !news.read ? true : null,
-    //             deleted: null,
-    //             answersToChange: {},
-    //           ),
-    //         },
-    //       ),
-    //     );
-    //   },
-    // );
-
-    // news = await widget.onNewsUpdated();
   }
 
   Future<void> _delete() async {
     throw UnimplementedError();
-
-    // await SessionManager.execute(
-    //   context: context,
-    //   callback: (session) async {
-    //     await session.ensurePage(CommunicationType.news.pageId);
-    //
-    //     await session.access(
-    //       ChangeNewsStateAccessor(
-    //         updatesToPerform: {
-    //           news: NewsUpdate(
-    //             read: null,
-    //             onlyMarkedRead: null,
-    //             deleted: true,
-    //             answersToChange: {},
-    //           ),
-    //         },
-    //       ),
-    //     );
-    //   },
-    // );
-
-    // news = await widget.onNewsUpdated();
   }
 
   News get _news => widget.news.value;
 
+  late List<NewsQuestion> questions;
+
   static final _dateFormat = DateFormat(DateFormat.MONTH_WEEKDAY_DAY);
 
   @override
-  Widget build(BuildContext context) {
+  Widget buildLoaded(
+    BuildContext context,
+    RefreshIndicatorBuilder buildRefreshIndicator,
+    bool partial,
+  ) {
     final String pollSuffix = !_news.isPoll
-        ? ""
-        : " (${_news.anonymousResponse ? context.l10n.anonymousPoll : context.l10n.nominativePoll})";
+        ? ''
+        : ' (${_news.anonymousResponse ? context.l10n.anonymousPoll : context.l10n.nominativePoll})';
 
     final subtitle =
-        "${context.l10n.recipient(_news.recipientFirstName ?? context.l10n.self)}$pollSuffix";
+        '${context.l10n.recipient(_news.recipientFirstName ?? context.l10n.self)}$pollSuffix';
 
     return Scaffold(
       body: CustomScrollView(
@@ -203,7 +138,7 @@ class _NewsScreenState extends State<NewsScreen> {
             padding: const .symmetric(horizontal: 12),
 
             sliver: ListWidget(
-              items: _news.questions,
+              items: questions,
 
               itemBuilder: (context, question, borderRadius) {
                 return _Question(
@@ -216,6 +151,24 @@ class _NewsScreenState extends State<NewsScreen> {
         ],
       ),
     );
+  }
+
+  @override
+  List<String> get loadChannels =>
+      _news.questions == null ? ['communication'] : [];
+
+  @override
+  Stream<double?> load(RemoteSession session) async* {
+    if (_news.questions != null) {
+      questions = _news.questions!;
+      return;
+    }
+
+    questions =
+        _news.questions ??
+        (await session.access(
+          NewsContentAccessor(mode: widget.mode, baseNews: _news),
+        )).questions;
   }
 }
 
@@ -304,7 +257,7 @@ class _Answer extends StatelessWidget {
     final answer = question.answer;
 
     return switch (answer) {
-      RANewsQuestionAnswer(answered: final answered) => ItemWidget(
+      RANewsQuestionAnswer(withAnswer: final answered) => ItemWidget(
         backgroundColor: context.c.surfaceContainerHigh,
         borderRadius: borderRadius,
 

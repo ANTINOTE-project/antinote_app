@@ -1,7 +1,7 @@
 package fr.antinote.antinote_app.session
 
-import android.accounts.AccountManager
 import android.app.Service
+import android.content.Context
 import android.content.Intent
 import android.os.Handler
 import android.os.HandlerThread
@@ -12,21 +12,59 @@ import android.os.Messenger
 import android.os.Process
 import android.os.RemoteException
 import android.util.Log
-import fr.antinote.antinote_app.R
-import fr.antinote.antinote_app.auth.LoginManager
+import androidx.datastore.core.CorruptionException
+import androidx.datastore.core.DataStore
+import androidx.datastore.core.Serializer
+import androidx.datastore.core.handlers.ReplaceFileCorruptionHandler
+import androidx.datastore.deviceProtectedDataStore
+import com.google.protobuf.InvalidProtocolBufferException
+import com.google.protobuf.kotlin.toByteString
+import fr.antinote.antinote_app.protos.SessionRegistry
+import fr.antinote.antinote_app.protos.copy
 import fr.antinote.studies_management.antinote_app.pigeon_posts.PollingState
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.runBlocking
+import java.io.InputStream
+import java.io.OutputStream
 import java.lang.ref.WeakReference
 import java.util.LinkedList
 import java.util.Queue
-import kotlin.io.encoding.Base64
 
+
+object SessionRegistrySerializer : Serializer<SessionRegistry> {
+    override val defaultValue: SessionRegistry = SessionRegistry.getDefaultInstance()
+
+    override suspend fun readFrom(input: InputStream): SessionRegistry {
+        try {
+            return SessionRegistry.parseFrom(input)
+        } catch (exception: InvalidProtocolBufferException) {
+            throw CorruptionException("Cannot read proto.", exception)
+        }
+    }
+
+    override suspend fun writeTo(t: SessionRegistry, output: OutputStream) {
+        return t.writeTo(output)
+    }
+}
+
+val Context.sessionStore: DataStore<SessionRegistry> by deviceProtectedDataStore(
+    fileName = "session.pb",
+    serializer = SessionRegistrySerializer,
+    corruptionHandler = ReplaceFileCorruptionHandler {
+        Log.e("SessionRegistry", "Could not read accounts, recreating...", it)
+
+        SessionRegistry.getDefaultInstance()
+    }
+)
 
 /**
  * Registers a new client to receive updates on the different accounts.
  *
  * Parameters are:
  * - `accounts` (string list, optional): The list of accounts the client wants to listen to.
- * Defaults to all.
+ *   Defaults to all.
+ * - `alive_accounts` (string list, optional): All accounts UIDs that are still registered both in
+ *   [android.accounts.AccountManager] and [fr.antinote.antinote_app.protos.AccountRegistry].
  *
  * Returns:
  * - `client_id` (long): The ID of the client that was just registered.
@@ -50,13 +88,13 @@ const val MSG_UNREGISTER_CLIENT = 2
  * Parameters are:
  * - `client_id` (long): The ID of the client to edit.
  * - `accounts` (string array, optional): The list of accounts the client receives updates for.
- * Defaults to all.
+ *   Defaults to all.
  * - `listen_to` (string array, optional): The list of fields the client receives updates for.
- * Including `session_id` is recommended.
+ *   Including `session_id` is recommended.
  *
  * Returns:
  * - `successful` (boolean): Whether the change was successful (`false` meaning the client doesn't
- * exist)
+ *   exist)
  */
 const val MSG_EDIT_CLIENT = 3
 
@@ -69,7 +107,8 @@ const val MSG_EDIT_CLIENT = 3
  * - `last_session_version` (long, optional): The ID of the last seen version for the session that's asked.
  * - `client_id` (long): The ID of the client used to schedule this task.
  * - `client_task_id` (long): An ID provided by the client for the service to give back in the
- * response to correctly identify the task.
+ *   response to correctly identify the task.
+ * - `debug_label` (string, optional): Short expression explaining the role of the task.
  *
  * Returns (when the client can run its task):
  * - `session` (byte array, optional): The serialized session the client uses to run its task. This is
@@ -87,7 +126,7 @@ const val MSG_SCHEDULE_TASK = 4
  * - `account` (string): The ID of the account for which the task was just finished.
  * - `task_id` (long): The ID of the task that just finished.
  * - `new_session` (byte array, optional): The new serialized session. Only include if it changed during
- * the task.
+ *   the task.
  *
  * Returns:
  * - `task_id` (long): The ID of the task that was just finished.
@@ -104,7 +143,7 @@ const val MSG_FINISH_TASK = 5
  * - `account` (string): The ID of the account whose session will get updated.
  * - `client_task_id` (long): The ID of the request set by the client.
  * - `new_session` (byte array): The new serialized session. This is a patch we put onto the existing
- * session (if there was any).
+ *   session (if there was any).
  *
  * Returns:
  * - `client_task_id` (long): Identical to the one in the request.
@@ -130,7 +169,8 @@ const val MSG_POLLING_UPDATED = 7
  *
  * Returns:
  * - `account` (string): The ID of the account whose polling state got fetched.
- * - `state` (int): The polling state for the account (see [fr.antinote.studies_management.antinote_app.pigeon_posts.PollingState]).
+ * - `state` (int): The polling state for the account (see
+ *   [fr.antinote.studies_management.antinote_app.pigeon_posts.PollingState]).
  */
 const val MSG_GET_POLLING_STATE = 8
 
@@ -139,7 +179,8 @@ const val MSG_GET_POLLING_STATE = 8
  *
  * Parameters are:
  * - `account` (string): The ID of the account whose polling state will get updated.
- * - `state` (int): The new polling state (see [fr.antinote.studies_management.antinote_app.pigeon_posts.PollingState]).
+ * - `state` (int): The new polling state (see
+ *   [fr.antinote.studies_management.antinote_app.pigeon_posts.PollingState]).
  * - `server_signature` (string, optional): The newly enforced server signature, if available.
  *
  * Returns:
@@ -165,7 +206,6 @@ const val MSG_ASK_TO_TAKE_POLLING = 10
 class SessionManagementService : Service() {
     companion object {
         private const val TAG = "SessionManageService"
-        private const val AUTH_TOKEN_TYPE = "session"
     }
 
     internal data class SessionManagementClient(
@@ -200,18 +240,8 @@ class SessionManagementService : Service() {
     private fun createOrGetManager(
         accountId: String,
         advertise: Boolean = true
-    ): AccountSessionManager? {
-        val manager = accountSessionManagers.getOrPut(accountId) {
-            val am = AccountManager.get(this)
-            val account = am.accounts.firstOrNull {
-                it.type == getString(R.string.account_type) && am.getUserData(
-                    it,
-                    LoginManager.KEY_UID
-                ) == accountId
-            }
-            if (account == null) return null
-            AccountSessionManager()
-        }
+    ): AccountSessionManager {
+        val manager = accountSessionManagers.getOrPut(accountId) { AccountSessionManager() }
 
         if (manager.pollingState == PollingState.UNAVAILABLE && advertise) {
             advertisePollingJob(accountId)
@@ -242,10 +272,6 @@ class SessionManagementService : Service() {
         newServerSignature: String?
     ) {
         val manager = createOrGetManager(accountId)
-        if (manager == null) {
-            Log.w(TAG, "UpdatePollingState: Manager not found for account $accountId")
-            return
-        }
 
         manager.pollingState = newPollingState
 
@@ -254,10 +280,6 @@ class SessionManagementService : Service() {
 
     private fun sendAccountUpdate(accountId: String, newServerSignature: String?) {
         val manager = createOrGetManager(accountId)
-        if (manager == null) {
-            Log.w(TAG, "SendAccountUpdate: Manager not found for account $accountId")
-            return
-        }
 
         val msg = Message.obtain(null, MSG_POLLING_UPDATED)
         msg.data.putString("account", accountId)
@@ -294,14 +316,11 @@ class SessionManagementService : Service() {
         channels: List<String>,
         scheduler: Messenger,
         clientTaskId: Long,
-        ownerClientId: Long
+        ownerClientId: Long,
+
+        debugLabel: String?,
     ): Long? {
         val manager = createOrGetManager(accountId)
-
-        if (manager == null) {
-            Log.w(TAG, "ScheduleTask: Manager not found for account $accountId")
-            return null
-        }
 
         val taskId = nextTaskId++
         val newTask = SessionTask(
@@ -317,10 +336,18 @@ class SessionManagementService : Service() {
         if (channels.none {
                 manager.busyChannels.contains(it)
             }) {
+            Log.d(TAG, "Starting task $clientTaskId '$debugLabel'")
             manager.busyChannels.addAll(channels)
             manager.lockOwners[taskId] = newTask
             return taskId
         } else {
+            Log.d(TAG, "Task got scheduled, waiting for the following tasks to end to start task $clientTaskId:")
+            for(task in manager.taskQueue) {
+                if(channels.none { task.channels.contains(it) }) continue
+                Log.d(TAG, "- ${task.clientTaskId} (${task.channels.joinToString(", ")})")
+            }
+            Log.d(TAG, "Label: '$debugLabel'")
+
             manager.taskQueue.add(
                 newTask
             )
@@ -328,39 +355,25 @@ class SessionManagementService : Service() {
         }
     }
 
-    private fun updateSession(accountId: String, newSession: ByteArray): Long {
+    private suspend fun updateSession(accountId: String, newSession: ByteArray): Long {
         val manager = createOrGetManager(accountId)
 
-        if (manager == null) {
-            Log.w(TAG, "UpdateSession: Manager not found for account $accountId")
-            return -1L
+        this.sessionStore.updateData { registry ->
+            registry.copy {
+                session[accountId] = newSession.toByteString()
+            }
         }
-
-        val am = AccountManager.get(this)
-        val account = am.accounts.firstOrNull {
-            it.type == getString(R.string.account_type) &&
-                    am.getUserData(it, LoginManager.KEY_UID) == accountId
-        }
-        if (account != null) {
-
-            am.setAuthToken(account, AUTH_TOKEN_TYPE, Base64.encode(newSession))
-            manager.latestVersion++
-        }
+        manager.latestVersion++
 
         return manager.latestVersion
     }
 
-    private fun finishTask(
+    private suspend fun finishTask(
         accountId: String,
         taskId: Long,
         newSession: ByteArray?
     ): Pair<Long, List<SessionTask>?> {
         val manager = createOrGetManager(accountId)
-
-        if (manager == null) {
-            Log.w(TAG, "FinishTask: Manager not found for account $accountId")
-            return Pair(-1L, null)
-        }
 
         if (newSession != null) {
             updateSession(accountId, newSession)
@@ -372,6 +385,8 @@ class SessionManagementService : Service() {
             return Pair(manager.latestVersion, null)
         }
 
+        Log.d(TAG, "Ending task $taskId...")
+
         manager.busyChannels.removeAll(task.channels.toSet())
 
         val newTasks = processTaskQueue(manager)
@@ -379,7 +394,7 @@ class SessionManagementService : Service() {
         return Pair(manager.latestVersion, newTasks)
     }
 
-    private fun cleanupDeadClient(deadClientId: Long) {
+    private suspend fun cleanupDeadClient(deadClientId: Long) {
         Log.i(TAG, "Cleaning up dead client ID: $deadClientId")
 
         clients.remove(deadClientId)
@@ -420,6 +435,18 @@ class SessionManagementService : Service() {
         }
     }
 
+    private suspend fun cleanupDeadAccounts(aliveAccounts: List<String>) {
+        this.sessionStore.updateData { registry ->
+            registry.copy {
+                for(accountUid in session.keys) {
+                    if(!aliveAccounts.contains(accountUid)) {
+                        session.remove(accountUid)
+                    }
+                }
+            }
+        }
+    }
+
     private lateinit var workerThread: HandlerThread
     private lateinit var messenger: Messenger
 
@@ -446,7 +473,7 @@ class SessionManagementService : Service() {
         val service: SessionManagementService?
             get() = serviceRef.get()
 
-        fun sendTaskScheduledMessage(
+        suspend fun sendTaskScheduledMessage(
             target: Messenger,
             clientTaskId: Long,
             taskId: Long,
@@ -467,23 +494,17 @@ class SessionManagementService : Service() {
                 return
             }
 
-            val am = AccountManager.get(svc)
-            val account = am.accounts.firstOrNull {
-                it.type == svc.getString(R.string.account_type) && am.getUserData(
-                    it,
-                    LoginManager.KEY_UID
-                ) == accountId
-            }
-
             val manager = svc.accountSessionManagers[accountId]!!
 
-            val at = am.peekAuthToken(account, AUTH_TOKEN_TYPE)
-            if (account != null && at != null && lastSessionVersion < manager.latestVersion) {
+            if (lastSessionVersion < manager.latestVersion) {
+                val rawSession = svc.sessionStore.data.first().sessionMap[accountId]?.toByteArray()
 
-                msg.data.putByteArray(
-                    "session",
-                    Base64.decode(at)
-                )
+                if(rawSession != null) {
+                    msg.data.putByteArray(
+                        "session",
+                        rawSession
+                    )
+                }
             }
 
             msg.data.putLong("session_version", manager.latestVersion)
@@ -506,280 +527,282 @@ class SessionManagementService : Service() {
                 Log.i(TAG, "Received a message without a replyTo... ${msg.what} ${msg.data}")
             }
 
-            when (msg.what) {
-                MSG_REGISTER_CLIENT -> {
-                    val accounts = msg.data.getStringArray("accounts")?.asList()
+            Log.i(TAG, "Received message: ${msg.what}")
 
-                    val clientId = svc.nextClientId++
+            runBlocking {
+                when (msg.what) {
+                    MSG_REGISTER_CLIENT -> {
+                        val accounts = msg.data.getStringArray("accounts")?.asList()
+                        val aliveAccounts = msg.data.getStringArray("alive_accounts")?.asList()
 
-                    svc.clients[clientId] = SessionManagementClient(
-                        listenedAccounts = accounts,
-                        dest = msg.replyTo
-                    )
+                        val clientId = svc.nextClientId++
 
-                    try {
-                        msg.replyTo.binder.linkToDeath(this, 0)
-                    } catch (_: RemoteException) {
-                        svc.clients.remove(clientId)
-                        return
-                    }
+                        svc.clients[clientId] = SessionManagementClient(
+                            listenedAccounts = accounts,
+                            dest = msg.replyTo
+                        )
 
-                    val res = Message.obtain(null, MSG_REGISTER_CLIENT)
-                    res.data.putLong("client_id", clientId)
+                        if(aliveAccounts != null) {
+                            svc.cleanupDeadAccounts(aliveAccounts)
+                        }
 
-                    try {
-                        msg.replyTo.send(res)
-                    } catch (_: RemoteException) {
-                    }
-                }
+                        try {
+                            msg.replyTo.binder.linkToDeath(this@IncomingHandler, 0)
+                        } catch (_: RemoteException) {
+                            svc.clients.remove(clientId)
+                            return@runBlocking
+                        }
 
-                MSG_EDIT_CLIENT -> {
-                    val clientId = msg.data.getLong("client_id", -1L)
-                    val client = svc.clients[clientId]
+                        val res = Message.obtain(null, MSG_REGISTER_CLIENT)
+                        res.data.putLong("client_id", clientId)
 
-                    if (client == null) {
-                        val res = obtainMessage(MSG_EDIT_CLIENT)
-                        res.data.putBoolean("successful", false)
                         try {
                             msg.replyTo.send(res)
                         } catch (_: RemoteException) {
                         }
-                        return
                     }
 
-                    // Safe parsing
-                    client.listenedAccounts =
-                        msg.data.getStringArray("accounts")?.toList() ?: client.listenedAccounts
+                    MSG_EDIT_CLIENT -> {
+                        val clientId = msg.data.getLong("client_id", -1L)
+                        val client = svc.clients[clientId]
 
-                    val res = obtainMessage(MSG_EDIT_CLIENT)
-                    res.data.putBoolean("successful", true)
-                    try {
-                        msg.replyTo.send(res)
-                    } catch (_: RemoteException) {
+                        if (client == null) {
+                            val res = obtainMessage(MSG_EDIT_CLIENT)
+                            res.data.putBoolean("successful", false)
+                            try {
+                                msg.replyTo.send(res)
+                            } catch (_: RemoteException) {
+                            }
+                            return@runBlocking
+                        }
+
+                        // Safe parsing
+                        client.listenedAccounts =
+                            msg.data.getStringArray("accounts")?.toList() ?: client.listenedAccounts
+
+                        val res = obtainMessage(MSG_EDIT_CLIENT)
+                        res.data.putBoolean("successful", true)
+                        try {
+                            msg.replyTo.send(res)
+                        } catch (_: RemoteException) {
+                        }
                     }
-                }
 
-                MSG_UNREGISTER_CLIENT -> {
-                    val clientId = msg.data.getLong("client_id", -1L)
-                    svc.cleanupDeadClient(clientId)
+                    MSG_UNREGISTER_CLIENT -> {
+                        val clientId = msg.data.getLong("client_id", -1L)
+                        svc.cleanupDeadClient(clientId)
 
-                    val res = obtainMessage(MSG_UNREGISTER_CLIENT)
-                    res.data.putBoolean("successful", true)
-                    try {
-                        msg.replyTo.send(res)
-                    } catch (_: RemoteException) {
+                        val res = obtainMessage(MSG_UNREGISTER_CLIENT)
+                        res.data.putBoolean("successful", true)
+                        try {
+                            msg.replyTo.send(res)
+                        } catch (_: RemoteException) {
+                        }
                     }
-                }
 
-                MSG_SCHEDULE_TASK -> {
-                    val accountId = msg.data.getString("account")
-                    val channels = msg.data.getStringArray("channels")?.asList()
-                    val clientTaskId = msg.data.getLong("client_task_id", -1L)
-                    val ownerClientId = msg.data.getLong("client_id", -1L)
+                    MSG_SCHEDULE_TASK -> {
+                        val accountId = msg.data.getString("account")
+                        val channels = msg.data.getStringArray("channels")?.asList()
+                        val clientTaskId = msg.data.getLong("client_task_id", -1L)
+                        val ownerClientId = msg.data.getLong("client_id", -1L)
 
-                    if (accountId == null || channels == null || clientTaskId == -1L || ownerClientId == -1L) {
-                        Log.e(
-                            TAG,
-                            "Schedule Task failed: Missing required fields (account, channels, client_task_id, or client_id)"
+                        val debugLabel = msg.data.getString("debug_label")
+
+                        if (accountId == null || channels == null || clientTaskId == -1L || ownerClientId == -1L) {
+                            Log.e(
+                                TAG,
+                                "Schedule Task failed: Missing required fields (account, channels, client_task_id, or client_id)"
+                            )
+                            return@runBlocking
+                        }
+
+                        if (!svc.clients.containsKey(ownerClientId)) {
+                            Log.e(TAG, "Schedule Task failed: Invalid Client ID provided")
+                            return@runBlocking
+                        }
+
+                        val resultTaskId = svc.scheduleTask(
+                            accountId = accountId,
+                            channels = channels,
+                            scheduler = msg.replyTo,
+                            clientTaskId = clientTaskId,
+                            ownerClientId = ownerClientId,
+                            debugLabel = debugLabel
                         )
-                        return
+
+                        if (resultTaskId != null && resultTaskId != -1L) {
+                            sendTaskScheduledMessage(
+                                msg.replyTo,
+                                clientTaskId,
+                                resultTaskId,
+                                msg.data.getLong("last_session_version", -1L),
+                                accountId
+                            )
+                        }
                     }
 
-                    if (!svc.clients.containsKey(ownerClientId)) {
-                        Log.e(TAG, "Schedule Task failed: Invalid Client ID provided")
-                        return
-                    }
+                    MSG_FINISH_TASK -> {
+                        val accountId = msg.data.getString("account")
+                        val taskId = msg.data.getLong("task_id", -1L)
 
-                    val resultTaskId = svc.scheduleTask(
-                        accountId = accountId,
-                        channels = channels,
-                        scheduler = msg.replyTo,
-                        clientTaskId = clientTaskId,
-                        ownerClientId = ownerClientId
-                    )
+                        if (accountId == null || taskId == -1L) {
+                            Log.e(TAG, "Finish Task failed: Missing account or task_id")
+                            return@runBlocking
+                        }
 
-                    if (resultTaskId != null && resultTaskId != -1L) {
-                        sendTaskScheduledMessage(
-                            msg.replyTo,
-                            clientTaskId,
-                            resultTaskId,
-                            msg.data.getLong("last_session_version", -1L),
-                            accountId
+                        val result = svc.finishTask(
+                            accountId = accountId,
+                            taskId = taskId,
+                            newSession = msg.data.getByteArray("new_session")
                         )
+
+                        val res = obtainMessage(MSG_FINISH_TASK)
+                        res.data.putLong("task_id", taskId)
+                        res.data.putLong("new_session_version", result.first)
+
+                        try {
+                            msg.replyTo.send(res)
+                        } catch (_: RemoteException) {
+                        }
+
+                        val newTasks = result.second
+                        newTasks?.forEach { newTask ->
+                            sendTaskScheduledMessage(
+                                target = newTask.scheduler,
+                                clientTaskId = newTask.clientTaskId, // Use clientTaskId, not id (which is internal)
+                                taskId = newTask.id,
+                                lastSessionVersion = result.first,
+                                accountId = newTask.accountId
+                            )
+                        }
                     }
+
+                    MSG_UPDATE_SESSION -> {
+                        val accountId = msg.data.getString("account")
+                        val clientTaskId = msg.data.getLong("client_task_id", -1L)
+                        val newSession = msg.data.getByteArray("new_session")
+
+                        if (accountId == null || clientTaskId == -1L || newSession == null) {
+                            Log.e(
+                                TAG,
+                                "Update Session failed: Missing account, client_task_id, or task_id"
+                            )
+                            return@runBlocking
+                        }
+
+                        val result = svc.updateSession(accountId, newSession)
+
+                        val res = obtainMessage(MSG_UPDATE_SESSION)
+                        res.data.putLong("client_task_id", clientTaskId)
+                        res.data.putLong("new_session_version", result)
+
+                        try {
+                            msg.replyTo.send(res)
+                        } catch (_: RemoteException) {
+                        }
+                    }
+
+                    MSG_POLLING_UPDATED -> {
+                        Log.e(TAG, "Received a server-only message (MSG_SESSION_UPDATED)")
+                        return@runBlocking
+                    }
+
+                    MSG_GET_POLLING_STATE -> {
+                        val accountId = msg.data.getString("account")
+
+                        if (accountId == null) {
+                            Log.e(TAG, "Get Polling State failed: Missing account")
+                            return@runBlocking
+                        }
+
+                        val manager = svc.createOrGetManager(accountId)
+
+                        val res = obtainMessage(MSG_GET_POLLING_STATE)
+                        res.data.putInt("state", manager.pollingState.raw)
+                        res.data.putString("account", accountId)
+
+                        try {
+                            msg.replyTo.send(res)
+                        } catch (_: RemoteException) {
+                        }
+                    }
+
+                    MSG_UPDATE_POLLING_STATE -> {
+                        val accountId = msg.data.getString("account")
+                        val state = PollingState.ofRaw(msg.data.getInt("state"))
+                        val serverSignature = msg.data.getString("server_signature")
+                        if (accountId == null || !msg.data.containsKey("state") || !msg.data.containsKey(
+                                "server_signature"
+                            )
+                        ) {
+                            Log.e(
+                                TAG,
+                                "Update Polling State failed: Missing account, state, or server_signature"
+                            )
+                            return@runBlocking
+                        }
+
+                        if (state == null) {
+                            Log.e(TAG, "Unknown PollingState ID: ${msg.data.getInt("state")}")
+                            return@runBlocking
+                        }
+
+                        svc.updatePollingState(accountId, state, serverSignature)
+
+                        val res = obtainMessage(MSG_UPDATE_POLLING_STATE)
+                        res.data.putBoolean("successful", true)
+
+                        try {
+                            msg.replyTo.send(res)
+                        } catch (_: RemoteException) {
+                        }
+                    }
+
+                    MSG_ASK_TO_TAKE_POLLING -> {
+                        val clientId = msg.data.getLong("client_id")
+                        val accountId = msg.data.getString("account")
+                        val agree = msg.data.getBoolean("agree")
+
+                        if (!msg.data.containsKey("client_id") || accountId == null || !msg.data.containsKey(
+                                "agree"
+                            )
+                        ) {
+                            Log.e(
+                                TAG,
+                                "Ask To Take Polling failed: Missing client_id, account_id, or agree"
+                            )
+                            return@runBlocking
+                        }
+
+                        if (!agree) {
+                            return@runBlocking
+                        }
+
+                        val manager = svc.createOrGetManager(accountId, false)
+
+                        if (manager.pollingState != PollingState.UNAVAILABLE || manager.pollingOwner != null) {
+                            Log.w(
+                                TAG, "Polling job already got taken by a client, but someone " +
+                                        "else agreed to do it"
+                            )
+                            return@runBlocking
+                        }
+
+                        manager.pollingOwner = clientId
+                        manager.pollingState = PollingState.ALIVE
+
+                        val res = obtainMessage(MSG_ASK_TO_TAKE_POLLING)
+                        res.data.putBoolean("confirmed", true)
+                        res.data.putString("account", accountId)
+
+                        try {
+                            msg.replyTo.send(res)
+                        } catch (_: RemoteException) {
+                        }
+                    }
+
+                    else -> super.handleMessage(msg)
                 }
-
-                MSG_FINISH_TASK -> {
-                    val accountId = msg.data.getString("account")
-                    val taskId = msg.data.getLong("task_id", -1L)
-
-                    if (accountId == null || taskId == -1L) {
-                        Log.e(TAG, "Finish Task failed: Missing account or task_id")
-                        return
-                    }
-
-                    val result = svc.finishTask(
-                        accountId = accountId,
-                        taskId = taskId,
-                        newSession = msg.data.getByteArray("new_session")
-                    )
-
-                    val res = obtainMessage(MSG_FINISH_TASK)
-                    res.data.putLong("task_id", taskId)
-                    res.data.putLong("new_session_version", result.first)
-
-                    try {
-                        msg.replyTo.send(res)
-                    } catch (_: RemoteException) {
-                    }
-
-                    val newTasks = result.second
-                    newTasks?.forEach { newTask ->
-                        sendTaskScheduledMessage(
-                            target = newTask.scheduler,
-                            clientTaskId = newTask.clientTaskId, // Use clientTaskId, not id (which is internal)
-                            taskId = newTask.id,
-                            lastSessionVersion = result.first,
-                            accountId = newTask.accountId
-                        )
-                    }
-                }
-
-                MSG_UPDATE_SESSION -> {
-                    val accountId = msg.data.getString("account")
-                    val clientTaskId = msg.data.getLong("client_task_id", -1L)
-                    val newSession = msg.data.getByteArray("new_session")
-
-                    if (accountId == null || clientTaskId == -1L || newSession == null) {
-                        Log.e(
-                            TAG,
-                            "Update Session failed: Missing account, client_task_id, or task_id"
-                        )
-                        return
-                    }
-
-                    val result = svc.updateSession(accountId, newSession)
-
-                    val res = obtainMessage(MSG_UPDATE_SESSION)
-                    res.data.putLong("client_task_id", clientTaskId)
-                    res.data.putLong("new_session_version", result)
-
-                    try {
-                        msg.replyTo.send(res)
-                    } catch (_: RemoteException) {
-                    }
-                }
-
-                MSG_POLLING_UPDATED -> {
-                    Log.e(TAG, "Received a server-only message (MSG_SESSION_UPDATED)")
-                    return
-                }
-
-                MSG_GET_POLLING_STATE -> {
-                    val accountId = msg.data.getString("account")
-
-                    if (accountId == null) {
-                        Log.e(TAG, "Get Polling State failed: Missing account")
-                        return
-                    }
-
-                    val manager = svc.createOrGetManager(accountId)
-
-                    if (manager == null) {
-                        Log.w(TAG, "GetPollingState: Manager not found for account $accountId")
-                        return
-                    }
-
-                    val res = obtainMessage(MSG_GET_POLLING_STATE)
-                    res.data.putInt("state", manager.pollingState.raw)
-                    res.data.putString("account", accountId)
-
-                    try {
-                        msg.replyTo.send(res)
-                    } catch (_: RemoteException) {
-                    }
-                }
-
-                MSG_UPDATE_POLLING_STATE -> {
-                    val accountId = msg.data.getString("account")
-                    val state = PollingState.ofRaw(msg.data.getInt("state"))
-                    val serverSignature = msg.data.getString("server_signature")
-                    if (accountId == null || !msg.data.containsKey("state") || !msg.data.containsKey(
-                            "server_signature"
-                        )
-                    ) {
-                        Log.e(
-                            TAG,
-                            "Update Polling State failed: Missing account, state, or server_signature"
-                        )
-                        return
-                    }
-
-                    if (state == null) {
-                        Log.e(TAG, "Unknown PollingState ID: ${msg.data.getInt("state")}")
-                        return
-                    }
-
-                    svc.updatePollingState(accountId, state, serverSignature)
-
-                    val res = obtainMessage(MSG_UPDATE_POLLING_STATE)
-                    res.data.putBoolean("successful", true)
-
-                    try {
-                        msg.replyTo.send(res)
-                    } catch (_: RemoteException) {
-                    }
-                }
-
-                MSG_ASK_TO_TAKE_POLLING -> {
-                    val clientId = msg.data.getLong("client_id")
-                    val accountId = msg.data.getString("account")
-                    val agree = msg.data.getBoolean("agree")
-
-                    if (!msg.data.containsKey("client_id") || accountId == null || !msg.data.containsKey(
-                            "agree"
-                        )
-                    ) {
-                        Log.e(
-                            TAG,
-                            "Ask To Take Polling failed: Missing client_id, account_id, or agree"
-                        )
-                        return
-                    }
-
-                    if (!agree) {
-                        return
-                    }
-
-                    val manager = svc.createOrGetManager(accountId, false)
-                    if (manager == null) {
-                        Log.e(TAG, "No manager for $accountId")
-                        return
-                    }
-
-
-                    if (manager.pollingState != PollingState.UNAVAILABLE || manager.pollingOwner != null) {
-                        Log.w(
-                            TAG, "Polling job already got taken by a client, but someone " +
-                                    "else agreed to do it"
-                        )
-                        return
-                    }
-
-                    manager.pollingOwner = clientId
-                    manager.pollingState = PollingState.ALIVE
-
-                    val res = obtainMessage(MSG_ASK_TO_TAKE_POLLING)
-                    res.data.putBoolean("confirmed", true)
-                    res.data.putString("account", accountId)
-
-                    try {
-                        msg.replyTo.send(res)
-                    } catch (_: RemoteException) {
-                    }
-                }
-
-                else -> super.handleMessage(msg)
             }
         }
 
@@ -793,7 +816,10 @@ class SessionManagementService : Service() {
             post {
                 val deadEntry =
                     service?.clients?.entries?.find { it.value.dest.binder == who } ?: return@post
-                service?.cleanupDeadClient(deadEntry.key)
+
+                runBlocking {
+                    service?.cleanupDeadClient(deadEntry.key)
+                } ?: Log.w(TAG, "Binder died but service is absent to do client cleanup.")
             }
         }
     }

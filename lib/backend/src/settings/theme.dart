@@ -1,10 +1,10 @@
-import "package:antinote_app/backend/src/settings/category.dart";
-import "package:antinote_app/frontend/screens/settings/screen.dart";
-import "package:flutter/material.dart";
+import 'package:antinote_app/backend/src/settings/category.dart';
+import 'package:antinote_app/frontend/screens/settings/screen.dart';
+import 'package:flutter/material.dart';
 
 class ThemeSettings extends SettingsCategory {
   @override
-  String get name => "theme";
+  String get name => 'theme';
 
   @override
   int get latestVersion => 1;
@@ -20,21 +20,22 @@ class ThemeSettings extends SettingsCategory {
   ];
 
   Color get seedColor =>
-      Color(get("seed_color") ?? AppColor.coral.color.toARGB32());
-  Future<void> setSeedColor(Color value) => set("seed_color", value.toARGB32());
+      Color(get('seed_color') ?? AppColor.coral.color.toARGB32());
+  Future<void> setSeedColor(Color value) => set('seed_color', value.toARGB32());
 
-  bool get isDynamic => get("is_dynamic") ?? false;
-  Future<void> setIsDynamic(bool value) => set("is_dynamic", value);
+  bool get isDynamic => get('is_dynamic') ?? false;
+  Future<void> setIsDynamic(bool value) => set('is_dynamic', value);
 
-  bool get showProfilePicture => get("show_profile_picture") ?? true;
+  bool get showProfilePicture => get('show_profile_picture') ?? true;
   Future<void> setShowProfilePicture(bool value) =>
-      set("show_profile_picture", value);
+      set('show_profile_picture', value);
 
   ColorScheme _scheme(Brightness brightness, double contrastLevel) {
     return ColorScheme.fromSeed(
       seedColor: seedColor,
       brightness: brightness,
       contrastLevel: contrastLevel,
+      dynamicSchemeVariant: .vibrant,
     );
   }
 
@@ -42,7 +43,7 @@ class ThemeSettings extends SettingsCategory {
     return ThemeData(
       colorScheme: colorScheme,
       useMaterial3: true,
-      fontFamily: "SNPro",
+      fontFamily: 'SNPro',
       typography: Typography.material2021(colorScheme: colorScheme),
       scaffoldBackgroundColor: colorScheme.surface,
       canvasColor: colorScheme.surface,

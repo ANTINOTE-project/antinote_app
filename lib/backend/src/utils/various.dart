@@ -1,8 +1,8 @@
 // Credit: https://stackoverflow.com/a/68847631 (by Raul Mabe)
-import "package:antinote/antinote.dart";
-import "package:antinote_app/frontend/utils/utils.dart";
-import "package:flutter/material.dart";
-import "package:intl/intl.dart";
+import 'package:antinote/antinote.dart';
+import 'package:antinote_app/frontend/utils/utils.dart';
+import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 
 extension IterableExt<T> on Iterable<T> {
   Iterable<T> superJoin(T separator) {
@@ -21,15 +21,15 @@ extension IterableExt<T> on Iterable<T> {
 
 extension StringExt on String {
   String capitalize() {
-    return isEmpty ? this : "${this[0].toUpperCase()}${substring(1)}";
+    return isEmpty ? this : '${this[0].toUpperCase()}${substring(1)}';
   }
 }
 
 extension AsRelativeDateString on DateTime {
-  static final DateFormat _shortDateFormatter = DateFormat("EEEE, MMMM dd");
-  static final DateFormat _numericDateFormatter = DateFormat("dd MMM");
-  static final DateFormat _shortTimeFormatter = DateFormat("HH:mm");
-  static final DateFormat _longDateFormatter = DateFormat("dd/MM/yy");
+  static final DateFormat _shortDateFormatter = DateFormat('EEEE, MMMM dd');
+  static final DateFormat _numericDateFormatter = DateFormat('dd MMM');
+  static final DateFormat _shortTimeFormatter = DateFormat('HH:mm');
+  static final DateFormat _longDateFormatter = DateFormat('dd/MM/yy');
 
   String asLongNumericDate() {
     return _longDateFormatter.format(this);
@@ -58,13 +58,13 @@ extension AsRelativeDateString on DateTime {
     }
 
     if (!dayOnly) {
-      dayTitle += " à ${_shortTimeFormatter.format(this)}";
+      dayTitle += ' à ${_shortTimeFormatter.format(this)}';
     }
 
     return dayTitle;
   }
 
-  static final DateFormat _shortWeekdayFormatter = DateFormat("EEEE");
+  static final DateFormat _shortWeekdayFormatter = DateFormat('EEEE');
 
   String asRelativeWeekday(BuildContext context) {
     final today = DateTime.now().toUtc().toDay();
@@ -91,7 +91,7 @@ final icalUtcDateFormat = DateFormat("yyyyMMdd'T'HHmmss'Z'");
 /// Written by András Szepesházi on Stackoverflow
 int numOfWeeks(int year) {
   DateTime dec28 = DateTime(year, 12, 28);
-  int dayOfDec28 = int.parse(DateFormat("D").format(dec28));
+  int dayOfDec28 = int.parse(DateFormat('D').format(dec28));
   return ((dayOfDec28 - dec28.weekday + 10) / 7).floor();
 }
 
@@ -99,7 +99,7 @@ int numOfWeeks(int year) {
 ///
 /// Written by András Szepesházi on Stackoverflow
 int weekNumber(DateTime date) {
-  int dayOfYear = int.parse(DateFormat("D").format(date));
+  int dayOfYear = int.parse(DateFormat('D').format(date));
   int woy = ((dayOfYear - date.weekday + 10) / 7).floor();
   if (woy < 1) {
     woy = numOfWeeks(date.year - 1);

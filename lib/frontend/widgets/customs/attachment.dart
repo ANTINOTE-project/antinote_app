@@ -1,9 +1,9 @@
-import "package:antinote/antinote.dart";
-import "package:antinote_app/backend/backend.dart";
-import "package:antinote_app/frontend/widgets/customs/list.dart";
-import "package:flutter/material.dart";
-import "package:hugeicons_pro/hugeicons.dart";
-import "package:url_launcher/url_launcher.dart";
+import 'package:antinote/antinote.dart';
+import 'package:antinote_app/frontend/utils/utils.dart';
+import 'package:antinote_app/frontend/widgets/customs/list.dart';
+import 'package:flutter/material.dart';
+import 'package:hugeicons_pro/hugeicons.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class AttachmentItemWidget extends StatelessWidget {
   const AttachmentItemWidget({
@@ -42,19 +42,18 @@ class AttachmentItemWidget extends StatelessWidget {
       onPressed: () async {
         final url = switch (attachment) {
           LinkAttachment(url: final url) => Uri.parse(url),
-          FileAttachment() => await SessionManager.execute(
+          FileAttachment() => await context.sm.runTask(
             context: context,
+            channels: [],
             callback: (session) async {
-              final cachedAttachment = session.getCachedValue(
-                switch (attachment) {
-                  FileAttachment() => .FILE_ATTACHMENT,
-                  LinkAttachment() => .LINK_ATTACHMENT,
-                },
+              final cachedAttachment = session.getCachedValue<FileAttachment>(
+                .FILE_ATTACHMENT,
                 attachment.visualId,
               );
 
               return await cachedAttachment.getLinkToAttachment(session);
             },
+            debugLabel: 'Retrieves link from file',
           ),
         };
 

@@ -1,4 +1,4 @@
-part of "../block.dart";
+part of '../block.dart';
 
 final class PauseEvent extends Event {
   final String title;

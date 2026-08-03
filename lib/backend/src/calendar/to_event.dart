@@ -1,9 +1,9 @@
-import "package:antinote/antinote.dart";
-import "package:antinote_app/backend/backend.dart";
-import "package:antinote_app/backend/src/pigeon_posts/native_calendar.g.dart";
-import "package:antinote_app/frontend/utils/src/class.dart";
-import "package:flutter/material.dart";
-import "package:rrule/rrule.dart";
+import 'package:antinote/antinote.dart';
+import 'package:antinote_app/backend/backend.dart';
+import 'package:antinote_app/backend/src/pigeon_posts/native_calendar.g.dart';
+import 'package:antinote_app/frontend/utils/src/class.dart';
+import 'package:flutter/material.dart';
+import 'package:rrule/rrule.dart';
 
 final class _ClassInstanceEvent {
   final int start;
@@ -41,17 +41,17 @@ final class _ClassInstanceEvent {
     final String? location;
 
     if (clazz is Lesson) {
-      className = clazz.subject?.name ?? "Matière non désignée";
+      className = clazz.subject?.name ?? 'Matière non désignée';
       if (clazz.status != null) {
-        className = "[${clazz.status!.toUpperCase()}] $className";
+        className = '[${clazz.status!.toUpperCase()}] $className';
       }
 
       location = address;
     } else if (clazz is Detention) {
-      className = "Retenue";
+      className = 'Retenue';
       location = address;
     } else if (clazz is Activity) {
-      className = "Activité pédagogique";
+      className = 'Activité pédagogique';
       location = null;
     } else {
       throw UnimplementedError();
@@ -62,7 +62,7 @@ final class _ClassInstanceEvent {
     final descriptionBuilder = StringBuffer();
 
     if (clazz.notes != null) {
-      descriptionBuilder.writeln("Notes : ${clazz.notes!}");
+      descriptionBuilder.writeln('Notes : ${clazz.notes!}');
     }
 
     if (clazz is Lesson) {
@@ -79,7 +79,7 @@ final class _ClassInstanceEvent {
       for (final group in clazz.groups) {
         attendees.add(
           AttendeeEntry(
-            name: "${group.label} (groupe)",
+            name: '${group.label} (groupe)',
             instanceDomain: instanceDomain,
             visualId: group.visualIdUrl,
             type: .group,
@@ -108,10 +108,10 @@ final class _ClassInstanceEvent {
       }
 
       if (clazz.virtualClassrooms.isNotEmpty) {
-        descriptionBuilder.writeln("Classes virtuelles :");
+        descriptionBuilder.writeln('Classes virtuelles :');
         for (int i = 0; i < clazz.virtualClassrooms.length; i++) {
           descriptionBuilder.write(
-            "- ${clazz.virtualClassrooms[i].toString()}",
+            '- ${clazz.virtualClassrooms[i].toString()}',
           );
 
           if (i + 1 < clazz.virtualClassrooms.length) {
@@ -189,7 +189,7 @@ extension ToNewRecurringCalendarEventEntry on RecurringClass {
         until: occurrences.last.startTime.copyWith(isUtc: false).toUtc(),
       ).toString(options: const RecurrenceRuleToStringOptions(isTimeUtc: true));
 
-      if (recurrenceRule.startsWith("RRULE:")) {
+      if (recurrenceRule.startsWith('RRULE:')) {
         recurrenceRule = recurrenceRule.substring(6);
       }
     }
@@ -210,7 +210,7 @@ extension ToNewRecurringCalendarEventEntry on RecurringClass {
           .toUtc()
           .millisecondsSinceEpoch,
       duration:
-          "P${mockClass.endDate.difference(mockClass.startDate).inSeconds}S",
+          'P${mockClass.endDate.difference(mockClass.startDate).inSeconds}S',
       rrule: recurrenceRule,
       rdate: recurrenceRule != null
           ? null
@@ -220,7 +220,7 @@ extension ToNewRecurringCalendarEventEntry on RecurringClass {
                     e.startTime.copyWith(isUtc: false).toUtc(),
                   ),
                 )
-                .join(","),
+                .join(','),
       exdate: [
         ...calendarExceptions.map(
           (e) => icalUtcDateFormat.format(e.copyWith(isUtc: false).toUtc()),
@@ -230,7 +230,7 @@ extension ToNewRecurringCalendarEventEntry on RecurringClass {
         //     e.startTime.copyWith(isUtc: false).toUtc(),
         //   ),
         // ),
-      ].join(","),
+      ].join(','),
       calendarId: calendarId,
       title: mainInstance.title,
       descriptions: mainInstance.description,

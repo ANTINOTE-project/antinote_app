@@ -1,14 +1,14 @@
-import "dart:math";
+import 'dart:math';
 
-import "package:antinote/antinote.dart";
-import "package:antinote_app/frontend/routing/routes.dart";
-import "package:antinote_app/frontend/utils/utils.dart";
-import "package:antinote_app/frontend/widgets/customs/app_bar.dart";
-import "package:antinote_app/frontend/widgets/customs/list.dart";
-import "package:antinote_app/main.dart";
-import "package:flutter/material.dart";
-import "package:go_router/go_router.dart";
-import "package:hugeicons_pro/hugeicons.dart";
+import 'package:antinote/antinote.dart';
+import 'package:antinote_app/frontend/routing/routes.dart';
+import 'package:antinote_app/frontend/utils/utils.dart';
+import 'package:antinote_app/frontend/widgets/customs/app_bar.dart';
+import 'package:antinote_app/frontend/widgets/customs/list.dart';
+import 'package:antinote_app/main.dart';
+import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
+import 'package:hugeicons_pro/hugeicons.dart';
 
 class LoginSelectSchoolScreen extends StatefulWidget {
   final double lat;
@@ -36,7 +36,7 @@ class _LoginSelectSchoolScreenState extends State<LoginSelectSchoolScreen> {
         List.generate(r.nextInt(20) + 15, (_) => r.nextInt(26) + 97),
       ),
 
-      postalCode: "00000",
+      postalCode: '00000',
 
       latitude: 0,
       longitude: 0,
@@ -88,7 +88,7 @@ class _LoginSelectSchoolScreenState extends State<LoginSelectSchoolScreen> {
 
                       final result = await context.push<LoginResult>(
                         Routes.auth.workspace,
-                        extra: {"parameters": parameters},
+                        extra: {'parameters': parameters},
                       );
 
                       if (result != null && context.mounted) {
@@ -97,14 +97,14 @@ class _LoginSelectSchoolScreenState extends State<LoginSelectSchoolScreen> {
 
                       // catch
                     } catch (e, st) {
-                      talker.error("Error during fetch of parameters", e, st);
+                      talker.error('Error during fetch of parameters', e, st);
                     }
                   },
 
                   leading: const Icon(HugeIconsSolid.school),
 
                   title: Text(instance.name),
-                  subtitle: Text("${instance.distance.toStringAsFixed(2)} km"),
+                  subtitle: Text('${instance.distance.toStringAsFixed(2)} km'),
 
                   trailing: Icon(
                     HugeIconsSolid.arrowRight01,

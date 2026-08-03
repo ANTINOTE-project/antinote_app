@@ -1,12 +1,12 @@
-import "dart:convert";
-import "dart:io";
-import "dart:math";
+import 'dart:convert';
+import 'dart:io';
+import 'dart:math';
 
-import "package:antinote/antinote.dart";
-import "package:antinote_app/backend/src/pigeon_posts/native_session.g.dart";
-import "package:antinote_app/backend/src/session/holder.dart";
-import "package:antinote_app/main.dart";
-import "package:flutter/foundation.dart";
+import 'package:antinote/antinote.dart';
+import 'package:antinote_app/backend/src/pigeon_posts/native_session.g.dart';
+import 'package:antinote_app/backend/src/session/holder.dart';
+import 'package:antinote_app/main.dart';
+import 'package:flutter/foundation.dart';
 
 final NativeSessionManager _sessionManager = NativeSessionManager();
 
@@ -22,7 +22,7 @@ class SessionPollingManager extends PollingManager {
   bool askToTakePolling(String accountUid) {
     final answer =
         state.lastSeenAccountUid == accountUid && state.lastSeenSession != null;
-    talker.info("Got asked whether to take polling job... Answered $answer");
+    talker.info('Got asked whether to take polling job... Answered $answer');
     return answer;
   }
 
@@ -33,12 +33,12 @@ class SessionPollingManager extends PollingManager {
 
   @override
   void startPolling(String accountUid) {
-    talker.info("Starting polling...");
+    talker.info('Starting polling...');
     Future.microtask(() async {
       await state.runTask(
         sessionEnsurer: () => throw UnimplementedError(
-          "Being asked to do "
-          "polling normally implies already listening to the account.",
+          'Being asked to do '
+          'polling normally implies already listening to the account.',
         ),
         callback: (session) async {
           var lastPoll = <String, dynamic>{};
@@ -83,7 +83,7 @@ class SessionPollingManager extends PollingManager {
               break;
             } on IOException {
               restartCount += 1;
-              talker.info("Polling just failed for the ${restartCount}th time");
+              talker.info('Polling just failed for the ${restartCount}th time');
 
               if (restartCount >= _maxRetries) {
                 await _sessionManager.updatePollingState(
@@ -102,7 +102,8 @@ class SessionPollingManager extends PollingManager {
             }
           }
         },
-        channels: ["polling"],
+        channels: ['polling'],
+        debugLabel: 'Run polling client',
       );
     });
   }

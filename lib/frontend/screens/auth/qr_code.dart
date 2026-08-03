@@ -1,15 +1,15 @@
-import "dart:async";
+import 'dart:async';
 
-import "package:antinote/antinote.dart";
-import "package:antinote_app/frontend/utils/utils.dart";
-import "package:antinote_app/frontend/widgets/customs/app_bar.dart";
-import "package:antinote_app/frontend/widgets/customs/button.dart";
-import "package:antinote_app/frontend/widgets/customs/field.dart";
-import "package:antinote_app/frontend/widgets/customs/loading.dart";
-import "package:flutter/material.dart";
-import "package:go_router/go_router.dart";
-import "package:hugeicons_pro/hugeicons.dart";
-import "package:mobile_scanner/mobile_scanner.dart";
+import 'package:antinote/antinote.dart';
+import 'package:antinote_app/frontend/utils/utils.dart';
+import 'package:antinote_app/frontend/widgets/customs/app_bar.dart';
+import 'package:antinote_app/frontend/widgets/customs/button.dart';
+import 'package:antinote_app/frontend/widgets/customs/field.dart';
+import 'package:antinote_app/frontend/widgets/customs/loading.dart';
+import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
+import 'package:hugeicons_pro/hugeicons.dart';
+import 'package:mobile_scanner/mobile_scanner.dart';
 
 class LoginQrCodeScreen extends StatefulWidget {
   const LoginQrCodeScreen({super.key});
@@ -330,7 +330,7 @@ class _PinCodeDialogState extends State<_PinCodeDialog> {
             FieldWidget(
               controller: _pinCodeController,
               keyboardType: .number,
-              hintText: "0000",
+              hintText: '0000',
             ),
 
             Row(

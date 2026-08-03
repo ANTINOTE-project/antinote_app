@@ -1,7 +1,7 @@
-import "dart:math" as math;
+import 'dart:math' as math;
 
-import "package:flutter/material.dart";
-import "package:flutter/rendering.dart";
+import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 
 class OverflowRow extends MultiChildRenderObjectWidget {
   final double spacing;
@@ -120,7 +120,7 @@ class RenderOverflowRow extends RenderBox
 
   double _getBadgeIntrinsicHeight() {
     final badgePainter = TextPainter(
-      text: TextSpan(text: "+99", style: _badgeStyle),
+      text: TextSpan(text: '+99', style: _badgeStyle),
       textDirection: _textDirection,
     )..layout();
     return badgePainter.height + _badgePadding.vertical;
@@ -200,7 +200,7 @@ class RenderOverflowRow extends RenderBox
       while (visibleCount >= 0) {
         int hiddenCount = childCount - visibleCount;
         final badgePainter = TextPainter(
-          text: TextSpan(text: "+$hiddenCount", style: _badgeStyle),
+          text: TextSpan(text: '+$hiddenCount', style: _badgeStyle),
           textDirection: _textDirection,
         )..layout();
 
@@ -275,7 +275,7 @@ class RenderOverflowRow extends RenderBox
         int hiddenCount = childCount - visibleCount;
 
         _badgePainter = TextPainter(
-          text: TextSpan(text: "+$hiddenCount", style: _badgeStyle),
+          text: TextSpan(text: '+$hiddenCount', style: _badgeStyle),
           textDirection: _textDirection,
         )..layout();
 

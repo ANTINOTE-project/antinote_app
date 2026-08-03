@@ -1,4 +1,4 @@
-part of "../block.dart";
+part of '../block.dart';
 
 class MealEvent extends Event {
   @override

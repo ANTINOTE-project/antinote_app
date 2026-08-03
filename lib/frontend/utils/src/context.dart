@@ -1,9 +1,9 @@
-import "package:antinote_app/backend/src/accounts/storage/base.dart";
-import "package:antinote_app/backend/src/session/manager.dart";
-import "package:antinote_app/backend/src/settings/registry.dart";
-import "package:antinote_app/frontend/screens/shell/shell.dart";
-import "package:antinote_app/l10n/app_localizations.dart";
-import "package:flutter/material.dart";
+import 'package:antinote_app/backend/src/accounts/storage/base.dart';
+import 'package:antinote_app/backend/src/session/manager.dart';
+import 'package:antinote_app/backend/src/settings/registry.dart';
+import 'package:antinote_app/frontend/screens/shell/shell.dart';
+import 'package:antinote_app/l10n/app_localizations.dart';
+import 'package:flutter/material.dart';
 
 extension BuildContextExtensions on BuildContext {
   AccountStorage get as => AccountStorage.of(this);

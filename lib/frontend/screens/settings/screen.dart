@@ -1,14 +1,14 @@
-import "package:antinote_app/frontend/routing/routes.dart";
-import "package:antinote_app/frontend/screens/settings/networking.dart";
-import "package:antinote_app/frontend/screens/settings/theme.dart";
-import "package:antinote_app/frontend/utils/utils.dart";
-import "package:antinote_app/frontend/widgets/customs/app_bar.dart";
-import "package:antinote_app/frontend/widgets/customs/button.dart";
-import "package:antinote_app/frontend/widgets/text_icon.dart";
-import "package:antinote_app/l10n/app_localizations.dart";
-import "package:flutter/material.dart";
-import "package:go_router/go_router.dart";
-import "package:hugeicons_pro/hugeicons.dart";
+import 'package:antinote_app/frontend/routing/routes.dart';
+import 'package:antinote_app/frontend/screens/settings/networking.dart';
+import 'package:antinote_app/frontend/screens/settings/theme.dart';
+import 'package:antinote_app/frontend/utils/utils.dart';
+import 'package:antinote_app/frontend/widgets/customs/app_bar.dart';
+import 'package:antinote_app/frontend/widgets/customs/button.dart';
+import 'package:antinote_app/frontend/widgets/text_icon.dart';
+import 'package:antinote_app/l10n/app_localizations.dart';
+import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
+import 'package:hugeicons_pro/hugeicons.dart';
 
 enum AppColor {
   coral(Color(0xff904a40)),

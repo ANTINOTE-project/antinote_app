@@ -1,7 +1,7 @@
-import "package:antinote_app/frontend/utils/utils.dart";
-import "package:antinote_app/frontend/widgets/pressable.dart";
-import "package:flutter/material.dart";
-import "package:skeletonizer/skeletonizer.dart";
+import 'package:antinote_app/frontend/utils/utils.dart';
+import 'package:antinote_app/frontend/widgets/pressable.dart';
+import 'package:flutter/material.dart';
+import 'package:skeletonizer/skeletonizer.dart';
 
 class ListWidget<T> extends StatelessWidget {
   final Widget Function(BuildContext context, T item, BorderRadius borderRadius)
@@ -263,7 +263,7 @@ class ItemWidget extends StatelessWidget {
                       style: TextStyle(
                         fontSize: 16,
                         fontWeight: .w800,
-                        fontFamily: "SNPro",
+                        fontFamily: 'SNPro',
 
                         color: context.c.onSurface,
                       ),
@@ -279,7 +279,7 @@ class ItemWidget extends StatelessWidget {
                       style: TextStyle(
                         fontSize: 12,
                         fontWeight: .bold,
-                        fontFamily: "SNPro",
+                        fontFamily: 'SNPro',
 
                         color: context.c.outline,
                       ),

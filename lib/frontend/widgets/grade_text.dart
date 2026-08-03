@@ -1,6 +1,6 @@
-import "package:antinote/antinote.dart";
-import "package:antinote_app/frontend/utils/utils.dart";
-import "package:flutter/material.dart";
+import 'package:antinote/antinote.dart';
+import 'package:antinote_app/frontend/utils/utils.dart';
+import 'package:flutter/material.dart';
 
 class GradeText extends StatelessWidget {
   final Grade selfGrade;
@@ -66,7 +66,7 @@ class GradeText extends StatelessWidget {
             const WidgetSpan(child: SizedBox(width: 2)),
 
             TextSpan(
-              text: "/${Formatters.formatNumber(maxGrade.value, digits: 0)}",
+              text: '/${Formatters.formatNumber(maxGrade.value, digits: 0)}',
 
               style: TextStyle(
                 color: context.c.onSurfaceVariant,
