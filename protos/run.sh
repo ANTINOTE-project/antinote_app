@@ -1,1 +1,1 @@
-protoc -I="." --dart_out="lib/" "protos/account.proto"
+protoc -I="." --dart_out="lib/data/" "protos/account.proto"

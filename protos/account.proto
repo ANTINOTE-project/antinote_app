@@ -67,7 +67,7 @@ message AntinoteAccount {
   repeated SyncTaskData sync_data = 10;
 }
 
-message AccountRegistry {
+message SerializedAccountRegistry {
   repeated AntinoteAccount accounts = 1;
   optional string default_account_id = 2;
 }

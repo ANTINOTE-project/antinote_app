@@ -6,14 +6,13 @@ import android.content.Context
 import android.os.Build
 import android.os.Bundle
 import fr.antinote.antinote_app.App
+import fr.antinote.antinote_app.GroupedFlutterFragmentActivity
 import fr.antinote.antinote_app.pigeon_posts.NativeLoginManager
-import io.flutter.embedding.android.FlutterActivity
-import io.flutter.embedding.android.FlutterFragmentActivity
 import io.flutter.embedding.engine.FlutterEngine
 import io.flutter.embedding.engine.FlutterEngineGroup
 import io.flutter.embedding.engine.dart.DartExecutor
 
-class AuthActivity : FlutterFragmentActivity() {
+class AuthActivity : GroupedFlutterFragmentActivity() {
     private var mAccountAuthenticatorResponse: AccountAuthenticatorResponse? = null
     private var mResultBundle: Bundle? = null
     /**

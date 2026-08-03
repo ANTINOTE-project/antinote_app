@@ -1,6 +1,5 @@
 package fr.antinote.antinote_app
 
-import android.content.Context
 import android.content.pm.ApplicationInfo
 import android.util.Log
 import fr.antinote.antinote_app.auth.LoginManager
@@ -9,33 +8,15 @@ import fr.antinote.antinote_app.pigeon_posts.NativeLoginManager
 import fr.antinote.antinote_app.session.SessionManager
 import fr.antinote.studies_management.antinote_app.pigeon_posts.NativeCalendarManager
 import fr.antinote.studies_management.antinote_app.pigeon_posts.NativeSessionManager
-import io.flutter.embedding.android.FlutterActivity
-import io.flutter.embedding.android.FlutterFragmentActivity
 import io.flutter.embedding.engine.FlutterEngine
-import io.flutter.embedding.engine.FlutterEngineGroup
-import io.flutter.embedding.engine.dart.DartExecutor
 
-class MainActivity : FlutterFragmentActivity() {
+class MainActivity : GroupedFlutterFragmentActivity() {
     companion object {
         private const val TAG = "StudiesManagement"
     }
 
     lateinit var sessionManager: SessionManager
     private var isFirstLaunch = true
-
-    override fun provideFlutterEngine(context: Context): FlutterEngine? {
-        val app = context.applicationContext as App
-
-        val entrypoint = DartExecutor.DartEntrypoint(
-            appBundlePath,
-            dartEntrypointFunctionName
-        )
-
-        return app.engineGroup.createAndRunEngine(
-            FlutterEngineGroup.Options(context).setDartEntrypoint(entrypoint)
-                .setDartEntrypointArgs(dartEntrypointArgs).setInitialRoute(initialRoute)
-        )
-    }
 
     override fun configureFlutterEngine(flutterEngine: FlutterEngine) {
         sessionManager =

@@ -1,7 +1,6 @@
-import 'package:antinote_app/backend/src/pigeon_posts/native_sync.g.dart';
-import 'package:antinote_app/backend/src/sync/task.dart';
-import 'package:antinote_app/frontend/entrypoints/login.dart';
-import 'package:antinote_app/frontend/entrypoints/main.dart';
+import 'package:antinote_app/data/src/pigeon_posts/native_sync.g.dart';
+import 'package:antinote_app/ui/entrypoints/login.dart';
+import 'package:antinote_app/ui/entrypoints/main.dart';
 import 'package:flutter/material.dart';
 import 'package:talker/talker.dart';
 
@@ -20,7 +19,7 @@ Future<void> syncMain(List<String> args) async {
   SyncResult? result;
 
   try {
-    result = await syncTask(args.first);
+    // result = await syncTask(args.first);
   } finally {
     await NativeSyncManager().syncFinished(
       result ??

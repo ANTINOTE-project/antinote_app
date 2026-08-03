@@ -29,7 +29,7 @@ import com.google.protobuf.InvalidProtocolBufferException
 import com.google.protobuf.kotlin.toByteString
 import fr.antinote.antinote_app.R
 import fr.antinote.antinote_app.pigeon_posts.NativeLoginManager
-import fr.antinote.antinote_app.protos.AccountRegistry
+import fr.antinote.antinote_app.protos.SerializedAccountRegistry
 import fr.antinote.antinote_app.protos.AntinoteAccount
 import fr.antinote.antinote_app.protos.EncryptedCredentials
 import fr.antinote.antinote_app.protos.copy
@@ -51,33 +51,33 @@ import javax.crypto.spec.GCMParameterSpec
 import javax.crypto.spec.SecretKeySpec
 import kotlin.io.encoding.Base64
 
-object AccountStoreSerializer : Serializer<AccountRegistry> {
-    override val defaultValue: AccountRegistry = AccountRegistry.getDefaultInstance()
+object AccountStoreSerializer : Serializer<SerializedAccountRegistry> {
+    override val defaultValue: SerializedAccountRegistry = SerializedAccountRegistry.getDefaultInstance()
 
-    override suspend fun readFrom(input: InputStream): AccountRegistry {
+    override suspend fun readFrom(input: InputStream): SerializedAccountRegistry {
         try {
-            return AccountRegistry.parseFrom(input)
+            return SerializedAccountRegistry.parseFrom(input)
         } catch (exception: InvalidProtocolBufferException) {
             throw CorruptionException("Cannot read proto.", exception)
         }
     }
 
-    override suspend fun writeTo(t: AccountRegistry, output: OutputStream) {
+    override suspend fun writeTo(t: SerializedAccountRegistry, output: OutputStream) {
         return t.writeTo(output)
     }
 }
 
 @Volatile
-private var ACCOUNT_STORE_INSTANCE: DataStore<AccountRegistry>? = null
+private var ACCOUNT_STORE_INSTANCE: DataStore<SerializedAccountRegistry>? = null
 
-val Context.accountStore: DataStore<AccountRegistry>
+val Context.accountStore: DataStore<SerializedAccountRegistry>
     get() = ACCOUNT_STORE_INSTANCE ?: synchronized(this) {
         ACCOUNT_STORE_INSTANCE ?: MultiProcessDataStoreFactory.create(
             serializer = AccountStoreSerializer,
             corruptionHandler = ReplaceFileCorruptionHandler {
-                Log.e("AccountRegistry", "Could not read accounts, recreating...", it)
+                Log.e("SerializedAccountRegistry", "Could not read accounts, recreating...", it)
 
-                AccountRegistry.getDefaultInstance()
+                SerializedAccountRegistry.getDefaultInstance()
             },
         ) {
             File(filesDir, "session.pb")
