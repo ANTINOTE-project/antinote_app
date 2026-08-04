@@ -261,5 +261,14 @@
   "beforeClassConfig": "Avant les cours",
   "lunchConfig": "Demi-pension",
   "pauseConfig": "Étude",
-  "classConfig": "Cours"
+  "classConfig": "Cours",
+
+  "explainCurrentConfig": "Vous êtes en mode \"{mode}\"",
+  "@explainCurrentConfig": {
+    "placeholders": {
+      "mode": {
+        "type": "String"
+      }
+    }
+  }
 }

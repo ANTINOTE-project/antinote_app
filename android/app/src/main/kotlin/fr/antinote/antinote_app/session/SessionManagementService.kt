@@ -276,6 +276,8 @@ class SessionManagementService : Service() {
 
         manager.pollingState = newPollingState
 
+        Log.i(TAG, "Polling state for account $accountId got updated to ${newPollingState.name}")
+
         sendAccountUpdate(accountId, newServerSignature)
     }
 
@@ -524,8 +526,6 @@ class SessionManagementService : Service() {
             if (msg.replyTo == null) {
                 Log.i(TAG, "Received a message without a replyTo... ${msg.what} ${msg.data}")
             }
-
-            Log.i(TAG, "Received message: ${msg.what}")
 
             runBlocking {
                 when (msg.what) {
@@ -778,7 +778,7 @@ class SessionManagementService : Service() {
 
                         val manager = svc.createOrGetManager(accountId, false)
 
-                        if (manager.pollingState != PollingState.UNAVAILABLE || manager.pollingOwner != null) {
+                        if (manager.pollingOwner != null) {
                             Log.w(
                                 TAG, "Polling job already got taken by a client, but someone " +
                                         "else agreed to do it"
@@ -787,7 +787,7 @@ class SessionManagementService : Service() {
                         }
 
                         manager.pollingOwner = clientId
-                        manager.pollingState = PollingState.ALIVE
+                        manager.pollingState = PollingState.PAUSED
 
                         val res = obtainMessage(MSG_ASK_TO_TAKE_POLLING)
                         res.data.putBoolean("confirmed", true)

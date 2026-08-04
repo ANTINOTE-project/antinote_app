@@ -2,8 +2,11 @@ import 'dart:async';
 
 import 'package:antinote/antinote.dart';
 import 'package:antinote_app/ui/utils/utils.dart';
+import 'package:antinote_app/ui/widgets/customs/button.dart';
 import 'package:antinote_app/ui/widgets/customs/loading.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:hugeicons_pro/hugeicons.dart';
 
 typedef RefreshIndicatorBuilder = Widget Function({
   required Widget child,
@@ -11,10 +14,11 @@ typedef RefreshIndicatorBuilder = Widget Function({
 });
 
 mixin PageMixin<T extends StatefulWidget> on State<T> {
-  Stream<double?> loadPage();
+  Future<void> loadPage();
 
   bool loaded = false;
-  Stream<double?>? _loader;
+  // TODO: Bring back stream loader when we figure out how to pass exceptions.
+  Future<void>? _loader;
 
   @override
   Future<void> didChangeDependencies() async {
@@ -42,30 +46,39 @@ mixin PageMixin<T extends StatefulWidget> on State<T> {
     double? progress,
   ) => LoadingWidget(progress: progress);
 
-  // TODO: Custom message when error occurs
   Widget buildErrored(
     BuildContext context,
     RefreshIndicatorBuilder buildRefreshIndicator,
     Object? error,
-  ) => buildLoading(context, buildRefreshIndicator, .5);
+    StackTrace? stackTrace,
+  ) => buildRefreshIndicator(
+    child: Column(
+      mainAxisAlignment: .center,
+      children: [
+        const Icon(HugeIconsSolid.bug02, size: 48),
+        Padding(
+          padding: const .symmetric(vertical: 4),
+          child: Text(
+            context.l10n.anErrorOccurred,
+            style: TextTheme.of(context).titleMedium,
+          ),
+        ),
+        if (kDebugMode)
+          ButtonWidget(
+            onPressed: () {
+              libLog.fine('${error.runtimeType}', error, stackTrace);
+            },
+            label: 'Show error in console',
+          ),
+      ],
+    ),
+  );
 
   void _updateCallback() {
-    final controller = StreamController<double?>.broadcast();
-    _loader = controller.stream;
-
     libLog.info('Loading page $runtimeType...');
 
-    () async {
-      try {
-        await for (final event in loadPage()) {
-          controller.add(event);
-        }
-      } catch (e, st) {
-        controller.addError(e, st);
-      }
-
-      controller.close();
-    }().whenComplete(() {
+    _loader = loadPage();
+    _loader!.whenComplete(() {
       if (mounted) {
         setState(() {
           loaded = true;
@@ -77,7 +90,7 @@ mixin PageMixin<T extends StatefulWidget> on State<T> {
 
   Future<void> reload({bool fromRefreshIndicator = false}) async {
     if (_loader != null) {
-      await _loader!.length;
+      await _loader!;
       return;
     }
 
@@ -92,7 +105,7 @@ mixin PageMixin<T extends StatefulWidget> on State<T> {
     _updateCallback();
 
     try {
-      await _loader?.length;
+      await _loader;
     } catch (_) {
       /* We log errors in the builder directly. */
     }
@@ -114,13 +127,18 @@ mixin PageMixin<T extends StatefulWidget> on State<T> {
       child: child,
     );
 
-    return StreamBuilder(
-      stream: _loader,
+    return FutureBuilder(
+      future: _loader,
       builder: (context, snapshot) {
         late Widget child;
 
         if (snapshot.hasError) {
-          child = buildErrored(context, buildRefreshIndicator, snapshot.error);
+          child = buildErrored(
+            context,
+            buildRefreshIndicator,
+            snapshot.error,
+            snapshot.stackTrace,
+          );
         } else if (snapshot.connectionState == .done ||
             (snapshot.connectionState == .active && snapshot.hasData) ||
             (loaded && snapshot.connectionState == .none)) {
@@ -130,7 +148,7 @@ mixin PageMixin<T extends StatefulWidget> on State<T> {
             snapshot.connectionState == .active,
           );
         } else {
-          child = buildLoading(context, buildRefreshIndicator, snapshot.data);
+          child = buildLoading(context, buildRefreshIndicator, null);
         }
 
         return AnimatedSwitcher(
@@ -146,16 +164,14 @@ mixin PageMixin<T extends StatefulWidget> on State<T> {
 
 mixin TabMixin<T extends StatefulWidget> on PageMixin<T> {
   Set<String> get loadChannels => {'communication'};
-  Stream<double?> load(RemoteSession session);
+  Future<void> load(RemoteSession session);
 
   @override
-  Stream<double?> loadPage() async* {
-    yield* await context.ar.runTask(
+  Future<void> loadPage() async {
+    await context.ar.runTask(
       context: context,
       channels: loadChannels,
-      callback: (session) async* {
-        yield* load(session);
-      },
+      callback: load,
       debugLabel: 'Reload page $runtimeType',
       retry: true,
     );

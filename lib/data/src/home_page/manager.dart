@@ -80,7 +80,7 @@ final class HomePageCache {
 
   /// Ensures the menu for a day is loaded.
   bool hasMenuForDay(Date day) => _dayMenus.containsKey(day);
-  Menu dayMenu(Date day) => _dayMenus[day]!;
+  Menu dayMenu(Date day) => _dayMenus[day] ?? Menu(time: day, meals: []);
 
   /// We expect the most important requests to be put at the start.
   ///
@@ -419,6 +419,8 @@ final class HomePageManager() {
 
       entries.clear();
       entries.addAll(newEntries);
+
+      await _cache.runBestRequest(session, requests);
     }
 
     return loaded.entries

@@ -173,7 +173,7 @@ class _CommunicationScreenState extends State<CommunicationScreen>
   }
 
   @override
-  Stream<double?> load(RemoteSession session) async* {
+  Future<void> load(RemoteSession session) async {
     final threads = <CommunicationThreadPreview>[];
 
     final curPage = session.stack.clientSignature?.tab;
@@ -183,9 +183,9 @@ class _CommunicationScreenState extends State<CommunicationScreen>
       this.threads = [];
     }
 
-    yield 0;
+    // yield 0;
 
-    int loadedCount = 0;
+    // int loadedCount = 0;
 
     for (final commType in filter.allowedTypes.where(
       (element) => session.user.hasAccessToTab(element.pageId),
@@ -199,8 +199,8 @@ class _CommunicationScreenState extends State<CommunicationScreen>
             ..sort((a, b) => b.publishDate.compareTo(a.publishDate));
         }
 
-        loadedCount++;
-        yield loadedCount / toLoad.length;
+        // loadedCount++;
+        // yield loadedCount / toLoad.length;
         break;
       }
     }
@@ -213,11 +213,11 @@ class _CommunicationScreenState extends State<CommunicationScreen>
           ..sort((a, b) => b.publishDate.compareTo(a.publishDate));
       }
 
-      loadedCount++;
-      yield loadedCount / toLoad.length;
+      // loadedCount++;
+      // yield loadedCount / toLoad.length;
     }
 
     // Supposed to be 1 anyways but just to be sure...
-    yield 1;
+    // yield 1;
   }
 }

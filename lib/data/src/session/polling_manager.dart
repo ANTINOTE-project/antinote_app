@@ -35,15 +35,22 @@ class SessionPollingManager extends PollingManager {
     talker.info('Starting polling...');
 
     Future.microtask(() async {
-      final result = await registry.pickAccount(accountUid);
+      var wrapper = registry.specificSession(accountUid);
+      if (wrapper == null) {
+        final result = await registry.pickAccount(accountUid);
 
-      await _sessionManager.updatePollingState(
-        accountUid,
-        result ? .alive : .dead,
-        null,
-      );
+        if (!result) {
+          await _sessionManager.updatePollingState(accountUid, .dead, null);
+          return;
+        }
 
-      await registry.runRawTask(
+        wrapper = registry.specificSession(accountUid)!;
+      }
+
+      await wrapper.runTask(
+        options: registry.settings.sessionOptions,
+        storage: registry.storage,
+        sendSession: false,
         callback: (session) async {
           var lastPoll = <String, dynamic>{};
           var restartCount = 0;
@@ -73,15 +80,13 @@ class SessionPollingManager extends PollingManager {
 
               restartCount = 0;
 
-              if (mapEquals(lastPoll, newPoll)) continue;
-
-              lastPoll = newPoll;
-
               await _sessionManager.updatePollingState(
                 accountUid,
                 .alive,
-                jsonEncode(newPoll),
+                mapEquals(lastPoll, newPoll) ? null : jsonEncode(newPoll),
               );
+
+              lastPoll = newPoll;
             } on SessionException {
               await _sessionManager.updatePollingState(accountUid, .dead, null);
               break;
@@ -119,14 +124,8 @@ class SessionPollingManager extends PollingManager {
         final result = registry.specificSession(accountUid);
         if (result == null) return;
 
-        await result.runTask(
-          storage: registry.storage,
-          options: registry.settings.sessionOptions,
-          callback: (session) {
-            session.stack.updateServerSignature(jsonDecode(newServerSignature));
-          },
-          channels: const {},
-          debugLabel: 'Updating server signature',
+        result.unsafeSession?.stack.updateServerSignature(
+          jsonDecode(newServerSignature),
         );
       });
     }

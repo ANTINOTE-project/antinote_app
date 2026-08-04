@@ -159,7 +159,7 @@ class _NewsScreenState extends State<NewsScreen>
       _news.questions == null ? {'communication'} : {};
 
   @override
-  Stream<double?> load(RemoteSession session) async* {
+  Future<void> load(RemoteSession session) async {
     if (_news.questions != null) {
       questions = _news.questions!;
       return;

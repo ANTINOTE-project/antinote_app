@@ -81,7 +81,7 @@ class _ReportTabState extends State<ReportTab>
   }
 
   @override
-  Stream<double?> load(RemoteSession session) async* {
+  Future<void> load(RemoteSession session) async {
     final period = session.instance.periods.firstWhere(
       (e) => e.visualId == widget.periodId,
     );

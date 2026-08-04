@@ -229,7 +229,9 @@ final class SessionWrapper({required final String accountUid}) {
         }
       }
 
-      final tryCount = retry || _state?.polling == .unavailable ? 2 : 1;
+      final oldPollingState = _state?.polling;
+
+      var tryCount = retry ? 2 : 1;
       for (int curTry = 1; curTry <= tryCount; curTry++) {
         try {
           final session = await ensureSession(
@@ -237,8 +239,42 @@ final class SessionWrapper({required final String accountUid}) {
             options: options,
           );
 
-          return await callback(session);
+          final result = await callback(session);
+
+          if (_state != null) {
+            _state = .new(
+              session: _state!.session,
+              polling: .alive,
+              version: _state!.version,
+            );
+          }
+
+          if (channels.isNotEmpty &&
+              _nativeSessionManagerSupported &&
+              sendSession) {
+            libLog.info(
+              'Marking $accountUid polling as ALIVE because task '
+              'using network succeeded ($debugLabel).',
+            );
+            await _sessionManager.updatePollingState(accountUid, .alive, null);
+          }
+
+          return result;
         } on SessionException {
+          if ((oldPollingState == .unavailable || oldPollingState == .paused) &&
+              curTry == 1 &&
+              !retry) {
+            // We give the callback one more chance to run since we probably did
+            // not know the session already died and the death of the session
+            // wasn't its fault.
+            tryCount++;
+
+            libLog.info(
+              'Giving the task one more chance to perform since the '
+              'session was probably already dead when the task started.',
+            );
+          }
+
           if (_state != null) {
             _state = .new(
               session: _state!.session,
@@ -251,10 +287,10 @@ final class SessionWrapper({required final String accountUid}) {
             await _sessionManager.updatePollingState(accountUid, .dead, null);
           }
 
-          libLog.severe('Session exception... ($curTry/$tryCount)');
+          libLog.info('Session exception... ($curTry/$tryCount)');
           if (curTry == tryCount) rethrow;
         } catch (e, st) {
-          libLog.severe('Failed to run callback... ($curTry/$tryCount)', e, st);
+          libLog.info('Failed to run callback... ($curTry/$tryCount)', e, st);
           if (curTry == tryCount) rethrow;
         }
       }

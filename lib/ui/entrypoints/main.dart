@@ -11,8 +11,9 @@ import 'package:logging/logging.dart';
 
 Future<void> mainEntrypoint() async {
   hierarchicalLoggingEnabled = true;
+  libLog.level = .ALL;
   libLog.onRecord.listen((event) {
-    print('[${event.level.name}] ${event.message}');
+    debugPrint('[${event.level.name}] ${event.message}');
     if (event.error != null) {
       debugPrintStack(
         stackTrace: event.stackTrace,

@@ -9,6 +9,7 @@ import 'package:antinote_app/ui/widgets/bottom_padding.dart';
 import 'package:antinote_app/ui/widgets/customs/list.dart';
 import 'package:antinote_app/ui/widgets/grade_text.dart';
 import 'package:antinote_app/ui/widgets/pressable.dart';
+import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:hugeicons_pro/hugeicons.dart';
 import 'package:intl/intl.dart';
@@ -263,7 +264,7 @@ class _GradesTabState extends State<GradesTab>
   }
 
   @override
-  Stream<double?> load(RemoteSession session) async* {
+  Future<void> load(RemoteSession session) async {
     await session.ensurePage(198);
 
     final period = session.instance.periods.firstWhere(
@@ -704,7 +705,9 @@ class _ServicesGrades extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final entries = (data ?? fakeServiceGradeList).entries;
+    final entries = (data ?? fakeServiceGradeList).entries.sorted(
+      (a, b) => a.key.name.compareTo(b.key.name),
+    );
 
     return SliverMainAxisGroup(
       slivers: [

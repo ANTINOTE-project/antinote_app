@@ -212,7 +212,7 @@ class _HomeworksScreenState extends State<HomeworksScreen>
   }
 
   @override
-  Stream<double?> load(RemoteSession session) async* {
+  Future<void> load(RemoteSession session) async {
     _data = session.instance;
 
     final firstWeekNumber = session.instance.firstWeekNumber;

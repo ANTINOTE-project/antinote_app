@@ -1,3 +1,4 @@
+import 'package:antinote/antinote.dart';
 import 'package:antinote_app/data/protos/account.pb.dart';
 import 'package:antinote_app/data/src/accounts/registry.dart';
 import 'package:antinote_app/data/src/accounts/storage/base.dart';
@@ -10,6 +11,16 @@ import 'package:logging/logging.dart';
 
 Future<void> loginEntrypoint() async {
   hierarchicalLoggingEnabled = true;
+  libLog.level = .ALL;
+  libLog.onRecord.listen((event) {
+    debugPrint('[${event.level.name}] ${event.message}');
+    if (event.error != null) {
+      debugPrintStack(
+        stackTrace: event.stackTrace,
+        label: event.error.toString(),
+      );
+    }
+  });
 
   WidgetsFlutterBinding.ensureInitialized();
 

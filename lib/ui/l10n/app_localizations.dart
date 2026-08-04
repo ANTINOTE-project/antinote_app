@@ -985,6 +985,12 @@ abstract class AppLocalizations {
   /// In fr, this message translates to:
   /// **'Cours'**
   String get classConfig;
+
+  /// No description provided for @explainCurrentConfig.
+  ///
+  /// In fr, this message translates to:
+  /// **'Vous êtes en mode \"{mode}\"'**
+  String explainCurrentConfig(String mode);
 }
 
 class _AppLocalizationsDelegate

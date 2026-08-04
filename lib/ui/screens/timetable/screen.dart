@@ -251,14 +251,14 @@ class _TimetableDisplayState extends State<TimetableDisplay>
                                   if (dayClasses == null) {
                                     return const LoadingWidget();
                                   }
-                                  if (dayClasses.isEmpty) {
+                                  if (dayClasses.isEmpty || slots == null) {
                                     return const SizedBox.shrink();
                                   }
 
                                   return _buildEventsColumn(
                                     context,
                                     day,
-                                    slots!, // TODO: Find if this is a safe cast.
+                                    slots,
                                     dayClasses,
                                   );
                                 },
@@ -597,7 +597,7 @@ class _TimetableDisplayState extends State<TimetableDisplay>
   }
 
   @override
-  Stream<double?> load(RemoteSession session) async* {
+  Future<void> load(RemoteSession session) async {
     _scheduleDisplayData = session.instance;
 
     final currentGroupIndex = ensureCorrectConfiguration();

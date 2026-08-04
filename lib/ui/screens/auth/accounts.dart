@@ -26,7 +26,7 @@ class _AccountsScreenState extends State<AccountsScreen>
   String? _loggingUid;
 
   @override
-  Stream<double?> loadPage() async* {
+  Future<void> loadPage() async {
     final ar = context.ar;
 
     _accounts = await ar.storage.listAccounts();

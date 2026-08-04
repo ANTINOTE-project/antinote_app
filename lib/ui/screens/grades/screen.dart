@@ -127,7 +127,7 @@ class _GradesScreenState extends State<GradesScreen>
   }
 
   @override
-  Stream<double?> load(RemoteSession session) async* {
+  Future<void> load(RemoteSession session) async {
     final periodData = session.userResource.tabsForPeriods.firstWhereOrNull(
       (element) => element.location == 198,
     );

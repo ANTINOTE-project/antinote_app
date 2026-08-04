@@ -1,7 +1,10 @@
 import 'package:antinote/antinote.dart';
 import 'package:antinote_app/data/src/home_page/manager.dart';
 import 'package:antinote_app/ui/screens/shell/tab.dart';
+import 'package:antinote_app/ui/utils/utils.dart';
+import 'package:antinote_app/ui/widgets/customs/list.dart';
 import 'package:flutter/material.dart';
+import 'package:hugeicons_pro/hugeicons.dart';
 
 class HomePageScope extends InheritedWidget {
   const HomePageScope({super.key, required this.manager, required super.child});
@@ -46,11 +49,13 @@ class _HomeScreenState extends State<HomeScreen>
         child: CustomScrollView(
           slivers: [
             for (final widget in homePageManager.loadedWidgets)
-              ValueListenableBuilder(
-                valueListenable: widget,
-                builder: (context, value, child) {
-                  return widget.descriptor.buildSliver(context, value);
-                },
+              SliverSafeArea(
+                sliver: ValueListenableBuilder(
+                  valueListenable: widget,
+                  builder: (context, value, child) {
+                    return widget.descriptor.buildSliver(context, value);
+                  },
+                ),
               ),
           ],
         ),
@@ -59,8 +64,52 @@ class _HomeScreenState extends State<HomeScreen>
   }
 
   @override
-  Stream<double?> load(RemoteSession session) async* {
+  Future<void> load(RemoteSession session) async {
     homePageManager = HomePageManager();
     await homePageManager.initialize(context, session);
+
+    libLog.info(
+      'Loaded home page with ${homePageManager.loadedWidgets.length} widget(s)',
+    );
+  }
+}
+
+class const HomeWidget({
+  super.key,
+
+  required final IconData icon,
+  required final Widget title,
+
+  final VoidCallback? onShowMore,
+
+  required final Widget child,
+}) extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      spacing: 2,
+      children: [
+        ItemWidget(
+          borderRadius: .vertical(
+            top: ListWidget.radius,
+            bottom: onShowMore == null
+                ? ListWidget.defaultRadius
+                : ListWidget.radius,
+          ),
+          title: Row(spacing: 8, children: [Icon(icon), title]),
+          subtitle: child,
+        ),
+        if (onShowMore != null)
+          ItemWidget(
+            borderRadius: const .vertical(
+              top: ListWidget.defaultRadius,
+              bottom: ListWidget.radius,
+            ),
+            title: Text(context.l10n.homeShowMore),
+            trailing: const Icon(HugeIconsSolid.arrowRight01),
+            onPressed: onShowMore,
+          ),
+      ],
+    );
   }
 }

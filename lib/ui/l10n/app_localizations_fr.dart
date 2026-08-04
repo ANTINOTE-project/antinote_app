@@ -554,4 +554,9 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get classConfig => 'Cours';
+
+  @override
+  String explainCurrentConfig(String mode) {
+    return 'Vous êtes en mode \"$mode\"';
+  }
 }

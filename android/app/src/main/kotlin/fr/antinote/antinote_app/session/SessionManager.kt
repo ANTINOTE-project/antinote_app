@@ -48,8 +48,6 @@ class SessionManager(val context: Context, binaryMessenger: BinaryMessenger) :
     internal class IncomingHandler(val manager: SessionManager) :
         Handler(Looper.myLooper() ?: Looper.getMainLooper()) {
         override fun handleMessage(msg: Message) {
-            Log.i(TAG, "Received message: ${msg.what}")
-
             when (msg.what) {
                 MSG_REGISTER_CLIENT -> {
                     manager.clientId = msg.data.getLong("client_id")
