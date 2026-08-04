@@ -1,3 +1,4 @@
+import 'package:antinote/antinote.dart';
 import 'package:antinote_app/data/backend.dart';
 import 'package:antinote_app/data/protos/account.pb.dart';
 import 'package:antinote_app/data/src/accounts/registry.dart';
@@ -6,8 +7,20 @@ import 'package:antinote_app/data/src/settings/registry.dart';
 import 'package:antinote_app/ui/app.dart';
 import 'package:antinote_app/ui/routing/routes.dart';
 import 'package:flutter/material.dart';
+import 'package:logging/logging.dart';
 
 Future<void> mainEntrypoint() async {
+  hierarchicalLoggingEnabled = true;
+  libLog.onRecord.listen((event) {
+    print('[${event.level.name}] ${event.message}');
+    if (event.error != null) {
+      debugPrintStack(
+        stackTrace: event.stackTrace,
+        label: event.error.toString(),
+      );
+    }
+  });
+
   WidgetsFlutterBinding.ensureInitialized();
 
   final registry = SettingsRegistry();

@@ -32,11 +32,14 @@ sealed class const WidgetDescriptor<
 
   abstract final List<WidgetArgumentEntry<dynamic, A, P>> arguments;
 
+  WidgetArguments<A> createArguments(Map<dynamic, dynamic> args) =>
+      WidgetArguments<A>(args: args.cast<A, dynamic>());
+
   /// [computeValue] won't be called until this is empty.
   List<HomePageRequest> requiredUntilCompute(
     RemoteSession session,
     HomePageCache cache,
-    WidgetArguments<A> args,
+    WidgetArguments args,
   );
 
   /// If return value is null, the whole widget won't be shown.
@@ -46,7 +49,7 @@ sealed class const WidgetDescriptor<
   FutureOr<V?> computeValue(
     RemoteSession session,
     HomePageCache cache,
-    WidgetArguments<A> args,
+    WidgetArguments args,
   );
 
   /// This should only be redirecting to a widget in the front end, no fancy
@@ -88,7 +91,7 @@ final class const WidgetArgumentEntry<
   required final List<HomePageRequest> Function(
     RemoteSession session,
     HomePageCache cache,
-    WidgetParameters<P> params,
+    WidgetParameters<WidgetParameter> params,
   )
   requiredUntilCompute,
 
@@ -99,7 +102,10 @@ final class const WidgetArgumentEntry<
   required final FutureOr<V?> Function(
     RemoteSession session,
     HomePageCache cache,
-    WidgetParameters<P> params,
+    WidgetParameters<WidgetParameter> params,
   )
   computeValue,
-});
+}) {
+  WidgetParameters<P> createParameters(Map<dynamic, dynamic> params) =>
+      WidgetParameters<P>(params: params.cast<P, dynamic>());
+}

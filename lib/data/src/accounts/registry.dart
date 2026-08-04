@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:io';
 
 import 'package:antinote/antinote.dart';
@@ -23,10 +24,13 @@ final class AccountRegistry({
   SessionWrapper? get curSession =>
       _curAccount == null ? null : _sessions[_curAccount];
 
+  SessionWrapper? specificSession(String accountUid) => _sessions[accountUid];
+
   String? _curAccount;
   String? get curAccountUid => _curAccount;
 
   bool get accountPicked => _curAccount != null;
+  Completer<void>? pickLock;
 
   bool managesAccount(String accountUid) => _sessions.containsKey(accountUid);
 
@@ -36,20 +40,33 @@ final class AccountRegistry({
       'Tried to ensure the account is picked with an unmounted context',
     );
 
-    if (_curAccount != null) return;
-
     final router = GoRouter.of(context);
 
-    final defaultAccount = await _storage.getDefaultAccount();
-    if (defaultAccount != null && !defaultAccount.invalid) {
-      _curAccount = defaultAccount.uid;
-      return;
+    if (pickLock != null) {
+      await pickLock!.future;
     }
 
-    // This never returns until [accountPicked] is true.
-    await router.push(Routes.auth.accounts);
+    pickLock = Completer();
 
-    assert(accountPicked);
+    try {
+      if (_curAccount != null) return;
+
+      final defaultAccount = await _storage.getDefaultAccount();
+      if (defaultAccount != null && !defaultAccount.invalid) {
+        await pickAccount(defaultAccount.uid);
+        return;
+      }
+
+      libLog.info('Sent user to account pick screen');
+
+      // This never returns until [accountPicked] is true.
+      await router.push(Routes.auth.accounts);
+
+      assert(accountPicked);
+    } finally {
+      pickLock?.complete();
+      pickLock = null;
+    }
   }
 
   Future<bool> pickAccount(String accountUid) async {
@@ -68,6 +85,7 @@ final class AccountRegistry({
         options: settings.sessionOptions,
         channels: {},
         debugLabel: 'Logging in to account $accountUid',
+        retry: true,
       );
 
       if (_nativeSessionManagerSupported) {
@@ -121,6 +139,7 @@ final class AccountRegistry({
     required SessionTaskCallback<T> callback,
     Set<String> channels = const {'communication'},
     required String? debugLabel,
+    bool retry = false,
   }) async {
     await ensureAccountPicked(context: context);
 
@@ -128,6 +147,7 @@ final class AccountRegistry({
       callback: callback,
       channels: channels,
       debugLabel: debugLabel,
+      retry: retry,
     );
   }
 
@@ -137,6 +157,7 @@ final class AccountRegistry({
     required SessionTaskCallback<T> callback,
     Set<String> channels = const {'communication'},
     required String? debugLabel,
+    bool retry = false,
   }) async {
     return curSession!.runTask(
       callback: callback,
@@ -144,6 +165,7 @@ final class AccountRegistry({
       debugLabel: debugLabel,
       storage: _storage,
       options: settings.sessionOptions,
+      retry: retry,
     );
   }
 }

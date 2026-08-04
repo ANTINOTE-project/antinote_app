@@ -2,10 +2,10 @@ import 'dart:async';
 import 'dart:io';
 
 import 'package:antinote/antinote.dart';
+import 'package:antinote_app/data/protos/account.pb.dart';
 import 'package:antinote_app/data/src/accounts/storage/base.dart';
 import 'package:antinote_app/data/src/pigeon_posts/native_session.g.dart';
 import 'package:antinote_app/data/src/utils/antinote_account.dart';
-import 'package:antinote_app/data/protos/account.pb.dart';
 
 // TODO: Move that to centralized place (it is duplicated in base.dart).
 final NativeSessionManager _sessionManager = NativeSessionManager();
@@ -82,7 +82,9 @@ final class SessionWrapper({required final String accountUid}) {
     _loginLock = Completer();
 
     try {
-      final account = await storage.borrowAccountWithCredentials(accountUid);
+      AntinoteAccount? account = await storage.borrowAccountWithCredentials(
+        accountUid,
+      );
       if (account == null) {
         throw StateError('Tried to log in to a non-existent account.');
       }
@@ -106,14 +108,14 @@ final class SessionWrapper({required final String accountUid}) {
         newSession = createdSession;
 
         if (newCredentials != null) {
-          await storage.updateAccount(
-            account.setCredentials(newCredentials),
-            accountUid,
+          account = account.setCredentials(
+            newSession.stack.demo ? credentials : newCredentials,
           );
+          await storage.updateAccount(account, accountUid);
         }
       } catch (e, st) {
         libLog.severe(
-          'Couldn\'t login into account ${account.uid}. Marking the account as invalid',
+          'Couldn\'t login into account ${account?.uid}. Marking the account as invalid',
           e,
           st,
         );
@@ -124,10 +126,10 @@ final class SessionWrapper({required final String accountUid}) {
           );
         }
 
-        await storage.updateAccount(
-          account.rebuild((acc) => acc.invalid = true),
-          accountUid,
-        );
+        account = account?.rebuild((acc) => acc.invalid = true);
+        if (account != null) {
+          await storage.updateAccount(account, accountUid);
+        }
 
         rethrow;
       }
@@ -172,8 +174,11 @@ final class SessionWrapper({required final String accountUid}) {
     required SessionOptions options,
     Set<String> channels = const {'communication'},
     String? debugLabel,
+    bool retry = false,
+    bool sendSession = true,
   }) async {
     ScheduledTask? task;
+    Completer<void>? createdLock;
 
     try {
       if (_nativeSessionManagerSupported) {
@@ -205,61 +210,81 @@ final class SessionWrapper({required final String accountUid}) {
 
         while (true) {
           bool goMode = true;
-          List<Completer<void>> createdLocks = [];
+          createdLock = Completer();
           for (final channel in channels) {
             final lock = _taskLocks[channel];
             if (lock != null && !lock.isCompleted) {
               goMode = false;
 
-              for (final createdLock in createdLocks) {
-                createdLock.complete();
-              }
-
+              createdLock.complete();
               await lock.future;
+
               break;
             }
 
-            final newLock = Completer<void>();
-            _taskLocks[channel] = newLock;
-            createdLocks.add(newLock);
+            _taskLocks[channel] = createdLock;
           }
 
           if (goMode) break;
         }
       }
 
-      await ensureSession(storage: storage, options: options);
+      final tryCount = retry || _state?.polling == .unavailable ? 2 : 1;
+      for (int curTry = 1; curTry <= tryCount; curTry++) {
+        try {
+          final session = await ensureSession(
+            storage: storage,
+            options: options,
+          );
 
-      return await callback(_state!.session);
-    } on SessionException {
-      if (_state != null) {
-        _state = .new(
-          session: _state!.session,
-          polling: .dead,
-          version: _state!.version,
-        );
+          return await callback(session);
+        } on SessionException {
+          if (_state != null) {
+            _state = .new(
+              session: _state!.session,
+              polling: .dead,
+              version: _state!.version,
+            );
+          }
+
+          if (_nativeSessionManagerSupported) {
+            await _sessionManager.updatePollingState(accountUid, .dead, null);
+          }
+
+          libLog.severe('Session exception... ($curTry/$tryCount)');
+          if (curTry == tryCount) rethrow;
+        } catch (e, st) {
+          libLog.severe('Failed to run callback... ($curTry/$tryCount)', e, st);
+          if (curTry == tryCount) rethrow;
+        }
       }
 
-      rethrow;
+      // Dart does not resolve the check in the catch as being complete, so we
+      // need to add this so that the code compiles (although this exception
+      // cannot actually be called).
+      throw UnimplementedError();
     } finally {
-      if (_nativeSessionManagerSupported && task != null) {
-        final newVersion = await _sessionManager.finishTask(
-          accountUid,
-          task.taskId,
-          _state?.session.exportBinary(),
-        );
-
-        if (newVersion != null && _state != null) {
-          _state = .new(
-            session: _state!.session,
-            polling: _state!.polling,
-            version: newVersion,
+      if (_nativeSessionManagerSupported) {
+        if (task != null) {
+          final newVersion = await _sessionManager.finishTask(
+            accountUid,
+            task.taskId,
+            sendSession ? _state?.session.exportBinary() : null,
           );
+
+          if (newVersion != null && _state != null) {
+            _state = .new(
+              session: _state!.session,
+              polling: _state!.polling,
+              version: newVersion,
+            );
+          }
         }
-      } else if (!_nativeSessionManagerSupported) {
+      } else if (createdLock != null) {
+        createdLock.complete(null);
+
         for (final channel in channels) {
-          _taskLocks[channel]?.complete(null);
-          _taskLocks[channel] = null;
+          if (_taskLocks[channel] == createdLock) _taskLocks[channel] = null;
         }
       }
     }

@@ -1,13 +1,16 @@
+import 'package:antinote_app/data/protos/account.pb.dart';
 import 'package:antinote_app/data/src/accounts/registry.dart';
 import 'package:antinote_app/data/src/accounts/storage/base.dart';
 import 'package:antinote_app/data/src/accounts/storage/widget.dart';
 import 'package:antinote_app/data/src/settings/registry.dart';
-import 'package:antinote_app/data/protos/account.pb.dart';
 import 'package:antinote_app/ui/app.dart';
 import 'package:antinote_app/ui/routing/routes.dart';
 import 'package:flutter/material.dart';
+import 'package:logging/logging.dart';
 
 Future<void> loginEntrypoint() async {
+  hierarchicalLoggingEnabled = true;
+
   WidgetsFlutterBinding.ensureInitialized();
 
   final registry = SettingsRegistry();

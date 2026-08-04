@@ -2,7 +2,7 @@ import 'package:pigeon/pigeon.dart';
 
 @ConfigurePigeon(
   PigeonOptions(
-    dartOut: 'lib/backend/src/pigeon_posts/native_session.g.dart',
+    dartOut: 'lib/data/src/pigeon_posts/native_session.g.dart',
     dartOptions: DartOptions(),
     kotlinOut: 'android/app/src/main/kotlin/fr/antinote/antinote_app/pigeon_posts/NativeSession.g.kt',
     kotlinOptions: KotlinOptions(
@@ -83,4 +83,6 @@ abstract class PollingManager {
   void startPolling(String accountUid);
 
   void serverSignatureChanged(String accountUid, String newServerSignature);
+
+  void pollingUpdated(String accountUid, PollingState newState);
 }

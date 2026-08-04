@@ -72,7 +72,7 @@ final class const MenuWidget()
   List<HomePageRequest> requiredUntilCompute(
     RemoteSession session,
     HomePageCache cache,
-    WidgetArguments<MenuArgument<dynamic>> args,
+    WidgetArguments args,
   ) {
     final day = args.get(MenuArgument.day);
     if (cache.hasMenuForDay(day)) return [];
@@ -84,7 +84,7 @@ final class const MenuWidget()
   FutureOr<Menu?> computeValue(
     RemoteSession session,
     HomePageCache cache,
-    WidgetArguments<MenuArgument<dynamic>> args,
+    WidgetArguments args,
   ) {
     return cache.dayMenu(args.get(MenuArgument.day));
   }

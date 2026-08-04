@@ -1,9 +1,9 @@
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:antinote_app/data/protos/account.pb.dart';
 import 'package:antinote_app/data/src/accounts/storage/base.dart';
 import 'package:antinote_app/main.dart';
-import 'package:antinote_app/data/protos/account.pb.dart';
 import 'package:flutter/foundation.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -38,7 +38,6 @@ class PreferencesAccountStorage implements AccountStorage {
   }
 
   Future<void> writeRegistry() async {
-    // TODO: Save it directly as a protobuf without encoding in base64.
     final prefs = SharedPreferencesAsync();
     await prefs.setString(
       sessionAccountsPref,

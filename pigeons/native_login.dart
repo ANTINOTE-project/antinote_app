@@ -2,7 +2,7 @@ import 'package:pigeon/pigeon.dart';
 
 @ConfigurePigeon(
   PigeonOptions(
-    dartOut: 'lib/backend/src/pigeon_posts/native_login.g.dart',
+    dartOut: 'lib/data/src/pigeon_posts/native_login.g.dart',
     dartOptions: DartOptions(),
     kotlinOut: 'android/app/src/main/kotlin/fr/antinote/antinote_app/pigeon_posts/NativeLogin.g.kt',
     kotlinOptions: KotlinOptions(

@@ -23,7 +23,7 @@ final class const TimetableDayWidget()
 
   @override
   get arguments => [
-    WidgetArgumentEntry(
+    WidgetArgumentEntry<Date, TimetableDayArgument, TimetableDayParameter>(
       id: .day,
       parameters: [
         WidgetParameterEntry(
@@ -125,7 +125,7 @@ final class const TimetableDayWidget()
   List<HomePageRequest> requiredUntilCompute(
     RemoteSession session,
     HomePageCache cache,
-    WidgetArguments<TimetableDayArgument<dynamic>> args,
+    WidgetArguments<WidgetArgument> args,
   ) {
     final day = args.get(TimetableDayArgument.day);
     if (!cache.hasDayBaseSchedules(day)) return [.schedules(day)];
@@ -137,7 +137,7 @@ final class const TimetableDayWidget()
   FutureOr<DayBlocks?> computeValue(
     RemoteSession session,
     HomePageCache cache,
-    WidgetArguments<TimetableDayArgument<dynamic>> args,
+    WidgetArguments args,
   ) {
     return cache.dayBlocks(args.get(TimetableDayArgument.day));
   }

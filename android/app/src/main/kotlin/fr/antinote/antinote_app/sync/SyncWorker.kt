@@ -20,7 +20,7 @@ import fr.antinote.antinote_app.session.SessionManager
 import fr.antinote.studies_management.antinote_app.pigeon_posts.NativeCalendarManager
 import fr.antinote.studies_management.antinote_app.pigeon_posts.NativeSessionManager
 import fr.antinote.studies_management.antinote_app.pigeon_posts.NativeSyncManager
-import fr.antinote.studies_management.antinote_app.pigeon_posts.SyncResult
+import fr.antinote.studies_management.antinote_app.pigeon_posts.SyncResponse
 import fr.antinote.studies_management.antinote_app.pigeon_posts.SyncResultType
 import io.flutter.FlutterInjector
 import io.flutter.embedding.engine.FlutterEngine
@@ -107,12 +107,11 @@ class SyncWorker(appContext: Context, workerParams: WorkerParameters) :
             NativeSyncManager.setUp(
                 data.engine!!.dartExecutor.binaryMessenger,
                 object : NativeSyncManager {
-                    override fun syncFinished(result: SyncResult) {
+                    override fun syncFinished(result: SyncResponse) {
                         data.workResult = when (result.result) {
                             SyncResultType.SUCCESS -> Result.success()
-                            SyncResultType.AUTH -> Result.failure()
-                            SyncResultType.AVAILABILITY -> Result.retry()
-                            SyncResultType.PARSING -> Result.failure()
+                            SyncResultType.RETRY -> Result.retry()
+                            SyncResultType.FAILURE -> Result.failure()
                         }
 
                         syncLock.complete(Unit)

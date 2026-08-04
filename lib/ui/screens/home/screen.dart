@@ -28,7 +28,8 @@ class HomeScreen extends StatefulWidget {
   State<HomeScreen> createState() => _HomeScreenState();
 }
 
-class _HomeScreenState extends State<HomeScreen> with TabMixin<HomeScreen> {
+class _HomeScreenState extends State<HomeScreen>
+    with PageMixin<HomeScreen>, TabMixin<HomeScreen> {
   late HomePageManager homePageManager;
 
   @override

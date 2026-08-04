@@ -7,6 +7,6 @@ class const TimetableDayWidgetSliver({
 }) extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return const SliverToBoxAdapter(child: Text('Timetable day'));
+    return SliverToBoxAdapter(child: Text('Timetable day ${value.length}'));
   }
 }

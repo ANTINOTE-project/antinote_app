@@ -32,12 +32,12 @@ extension LoadCredentials on AntinoteAccount {
 const _prefix = 'antinote';
 
 extension SetCredentials on AntinoteAccount {
-  AntinoteAccount setCredentials(Credentials credentials) => deepCopy()
-    ..tokenCredentials = Any.pack(
+  AntinoteAccount setCredentials(Credentials credentials) => rebuild(
+    (p0) => p0.tokenCredentials = Any.pack(
       (credentials as SerializableObject).serialize(),
       typeUrlPrefix: _prefix,
-    )
-    ..freeze();
+    ),
+  );
 }
 
 extension CredentialsAsAntinoteAccount on Credentials {
@@ -74,6 +74,6 @@ extension CredentialsAsAntinoteAccount on Credentials {
           tokenCredentials: Any.pack(serialize(), typeUrlPrefix: _prefix),
         ),
       _ => throw UnimplementedError('Unknown credentials type: $runtimeType'),
-    };
+    }..freeze();
   }
 }

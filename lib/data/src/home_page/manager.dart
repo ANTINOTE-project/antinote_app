@@ -202,8 +202,11 @@ final class HomePageWidgetState<
   WidgetDescriptor<V, A, P> get descriptor => configuration.descriptor;
 
   WidgetParameters<P> get parameters =>
+      descriptor.arguments.firstOrNull?.createParameters(
+        configuration.rawParameters,
+      ) ??
       .new(params: configuration.rawParameters);
-  WidgetArguments<A> get arguments => .new(args: rawArguments);
+  WidgetArguments<A> get arguments => descriptor.createArguments(rawArguments);
 }
 
 /// This manager is "short-lived". A new one should be created on each reload.
@@ -413,6 +416,9 @@ final class HomePageManager() {
             arguments,
           );
       }
+
+      entries.clear();
+      entries.addAll(newEntries);
     }
 
     return loaded.entries

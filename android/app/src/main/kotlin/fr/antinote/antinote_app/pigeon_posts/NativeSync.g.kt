@@ -15,6 +15,9 @@ import java.io.ByteArrayOutputStream
 import java.nio.ByteBuffer
 private object NativeSyncPigeonUtils {
 
+  fun createConnectionError(channelName: String): SyncManagerError {
+    return SyncManagerError("channel-error",  "Unable to establish connection on channel: '$channelName'.", "")  }
+
   fun wrapResult(result: Any?): List<Any?> {
     return listOf(result)
   }
@@ -195,15 +198,10 @@ class SyncManagerError (
 enum class SyncResultType(val raw: Int) {
   /** When the sync completes successfully. */
   SUCCESS(0),
-  /** When we get an invalid login exception. */
-  AUTH(1),
-  /** When we lose or never get to contact the PRONOTE instance. */
-  AVAILABILITY(2),
-  /**
-   * When we have trouble actually parsing the different elements or writing
-   * them to system.
-   */
-  PARSING(3);
+  /** When we can't access the remote or have temporary issues. */
+  RETRY(1),
+  /** When the credentials are invalid or the feature is unavailable. */
+  FAILURE(2);
 
   companion object {
     fun ofRaw(raw: Int): SyncResultType? {
@@ -213,34 +211,27 @@ enum class SyncResultType(val raw: Int) {
 }
 
 /** Generated class from Pigeon that represents data sent in messages. */
-data class SyncResult (
-  val result: SyncResultType,
-  val totalEntries: Long,
-  val addedEntries: Long,
-  val removedEntries: Long,
-  val updatedEntries: Long,
-  val dbIssue: Boolean
+data class SyncRequest (
+  /** The account protobuf (without credentials) to perform the task. */
+  val account: ByteArray,
+  /**
+   * The ID of the sync request type that may be forced (although it is may be
+   * disabled).
+   */
+  val forcedScope: Long? = null
 )
  {
   companion object {
-    fun fromList(pigeonVar_list: List<Any?>): SyncResult {
-      val result = pigeonVar_list[0] as SyncResultType
-      val totalEntries = pigeonVar_list[1] as Long
-      val addedEntries = pigeonVar_list[2] as Long
-      val removedEntries = pigeonVar_list[3] as Long
-      val updatedEntries = pigeonVar_list[4] as Long
-      val dbIssue = pigeonVar_list[5] as Boolean
-      return SyncResult(result, totalEntries, addedEntries, removedEntries, updatedEntries, dbIssue)
+    fun fromList(pigeonVar_list: List<Any?>): SyncRequest {
+      val account = pigeonVar_list[0] as ByteArray
+      val forcedScope = pigeonVar_list[1] as Long?
+      return SyncRequest(account, forcedScope)
     }
   }
   fun toList(): List<Any?> {
     return listOf(
-      result,
-      totalEntries,
-      addedEntries,
-      removedEntries,
-      updatedEntries,
-      dbIssue,
+      account,
+      forcedScope,
     )
   }
   override fun equals(other: Any?): Boolean {
@@ -250,22 +241,56 @@ data class SyncResult (
     if (this === other) {
       return true
     }
-    val other = other as SyncResult
-    return NativeSyncPigeonUtils.deepEquals(this.result, other.result) && NativeSyncPigeonUtils.deepEquals(this.totalEntries, other.totalEntries) && NativeSyncPigeonUtils.deepEquals(this.addedEntries, other.addedEntries) && NativeSyncPigeonUtils.deepEquals(this.removedEntries, other.removedEntries) && NativeSyncPigeonUtils.deepEquals(this.updatedEntries, other.updatedEntries) && NativeSyncPigeonUtils.deepEquals(this.dbIssue, other.dbIssue)
+    val other = other as SyncRequest
+    return NativeSyncPigeonUtils.deepEquals(this.account, other.account) && NativeSyncPigeonUtils.deepEquals(this.forcedScope, other.forcedScope)
+  }
+
+  override fun hashCode(): Int {
+    var result = javaClass.hashCode()
+    result = 31 * result + NativeSyncPigeonUtils.deepHash(this.account)
+    result = 31 * result + NativeSyncPigeonUtils.deepHash(this.forcedScope)
+    return result
+  }
+  override fun toString(): String {
+    return "SyncRequest(account=${account.contentToString()}, forcedScope=$forcedScope)"
+  }
+}
+
+/** Generated class from Pigeon that represents data sent in messages. */
+data class SyncResponse (
+  /** The result for the sync task. */
+  val result: SyncResultType
+)
+ {
+  companion object {
+    fun fromList(pigeonVar_list: List<Any?>): SyncResponse {
+      val result = pigeonVar_list[0] as SyncResultType
+      return SyncResponse(result)
+    }
+  }
+  fun toList(): List<Any?> {
+    return listOf(
+      result,
+    )
+  }
+  override fun equals(other: Any?): Boolean {
+    if (other == null || other.javaClass != javaClass) {
+      return false
+    }
+    if (this === other) {
+      return true
+    }
+    val other = other as SyncResponse
+    return NativeSyncPigeonUtils.deepEquals(this.result, other.result)
   }
 
   override fun hashCode(): Int {
     var result = javaClass.hashCode()
     result = 31 * result + NativeSyncPigeonUtils.deepHash(this.result)
-    result = 31 * result + NativeSyncPigeonUtils.deepHash(this.totalEntries)
-    result = 31 * result + NativeSyncPigeonUtils.deepHash(this.addedEntries)
-    result = 31 * result + NativeSyncPigeonUtils.deepHash(this.removedEntries)
-    result = 31 * result + NativeSyncPigeonUtils.deepHash(this.updatedEntries)
-    result = 31 * result + NativeSyncPigeonUtils.deepHash(this.dbIssue)
     return result
   }
   override fun toString(): String {
-    return "SyncResult(result=$result, totalEntries=$totalEntries, addedEntries=$addedEntries, removedEntries=$removedEntries, updatedEntries=$updatedEntries, dbIssue=$dbIssue)"
+    return "SyncResponse(result=$result)"
   }
 }
 private open class NativeSyncPigeonCodec : StandardMessageCodec() {
@@ -278,7 +303,12 @@ private open class NativeSyncPigeonCodec : StandardMessageCodec() {
       }
       130.toByte() -> {
         return (readValue(buffer) as? List<Any?>)?.let {
-          SyncResult.fromList(it)
+          SyncRequest.fromList(it)
+        }
+      }
+      131.toByte() -> {
+        return (readValue(buffer) as? List<Any?>)?.let {
+          SyncResponse.fromList(it)
         }
       }
       else -> super.readValueOfType(type, buffer)
@@ -290,8 +320,12 @@ private open class NativeSyncPigeonCodec : StandardMessageCodec() {
         stream.write(129)
         writeValue(stream, value.raw.toLong())
       }
-      is SyncResult -> {
+      is SyncRequest -> {
         stream.write(130)
+        writeValue(stream, value.toList())
+      }
+      is SyncResponse -> {
+        stream.write(131)
         writeValue(stream, value.toList())
       }
       else -> super.writeValue(stream, value)
@@ -301,7 +335,7 @@ private open class NativeSyncPigeonCodec : StandardMessageCodec() {
 
 /** Generated interface from Pigeon that represents a handler of messages from Flutter. */
 interface NativeSyncManager {
-  fun syncFinished(result: SyncResult)
+  fun syncFinished(result: SyncResponse)
 
   companion object {
     /** The codec used by NativeSyncManager. */
@@ -317,7 +351,7 @@ interface NativeSyncManager {
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
-            val resultArg = args[0] as SyncResult
+            val resultArg = args[0] as SyncResponse
             val wrapped: List<Any?> = try {
               api.syncFinished(resultArg)
               listOf(null)
@@ -330,6 +364,35 @@ interface NativeSyncManager {
           channel.setMessageHandler(null)
         }
       }
+    }
+  }
+}
+/** Generated class from Pigeon that represents Flutter messages that can be called from Kotlin. */
+class SyncManager(private val binaryMessenger: BinaryMessenger, private val messageChannelSuffix: String = "") {
+  companion object {
+    /** The codec used by SyncManager. */
+    val codec: MessageCodec<Any?> by lazy {
+      NativeSyncPigeonCodec()
+    }
+  }
+  fun sendRequest(requestArg: SyncRequest, callback: (Result<SyncResponse>) -> Unit)
+{
+    val separatedMessageChannelSuffix = if (messageChannelSuffix.isNotEmpty()) ".$messageChannelSuffix" else ""
+    val channelName = "dev.flutter.pigeon.antinote_app.SyncManager.sendRequest$separatedMessageChannelSuffix"
+    val channel = BasicMessageChannel<Any?>(binaryMessenger, channelName, codec)
+    channel.send(listOf(requestArg)) {
+      if (it is List<*>) {
+        if (it.size > 1) {
+          callback(Result.failure(SyncManagerError(it[0] as String, it[1] as String, it[2] as String?)))
+        } else if (it[0] == null) {
+          callback(Result.failure(SyncManagerError("null-error", "Flutter api returned null value for non-null return value.", "")))
+        } else {
+          val output = it[0] as SyncResponse
+          callback(Result.success(output))
+        }
+      } else {
+        callback(Result.failure(NativeSyncPigeonUtils.createConnectionError(channelName)))
+      } 
     }
   }
 }

@@ -1,0 +1,1 @@
+-keep class fr.antinote.antinote_app.protos.** { *; }

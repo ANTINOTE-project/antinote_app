@@ -2,7 +2,7 @@ import 'package:pigeon/pigeon.dart';
 
 @ConfigurePigeon(
   PigeonOptions(
-    dartOut: 'lib/backend/src/pigeon_posts/native_calendar.g.dart',
+    dartOut: 'lib/data/src/pigeon_posts/native_calendar.g.dart',
     dartOptions: DartOptions(),
     kotlinOut: 'android/app/src/main/kotlin/fr/antinote/antinote_app/pigeon_posts/NativeCalendar.g.kt',
     kotlinOptions: KotlinOptions(
@@ -155,7 +155,10 @@ final class NewCalendarEntry {
 
 @HostApi()
 abstract class NativeCalendarManager {
-  List<ExistingCalendarEventEntry> listExisting(String accountUid, int calendarId);
+  List<ExistingCalendarEventEntry> listExisting(
+    String accountUid,
+    int calendarId,
+  );
 
   List<ExistingCalendarEntry> listCalendars(String accountUid);
 

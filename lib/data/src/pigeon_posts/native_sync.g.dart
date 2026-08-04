@@ -34,6 +34,16 @@ Object? _extractReplyValueOrThrow(
   return replyList.firstOrNull;
 }
 
+
+List<Object?> wrapResponse({Object? result, PlatformException? error, bool empty = false}) {
+  if (empty) {
+    return <Object?>[];
+  }
+  if (error == null) {
+    return <Object?>[result];
+  }
+  return <Object?>[error.code, error.message, error.details];
+}
 bool _deepEquals(Object? a, Object? b) {
   if (identical(a, b)) {
     return true;
@@ -100,73 +110,53 @@ int _deepHash(Object? value) {
 enum SyncResultType {
   /// When the sync completes successfully.
   success,
-  /// When we get an invalid login exception.
-  auth,
-  /// When we lose or never get to contact the PRONOTE instance.
-  availability,
-  /// When we have trouble actually parsing the different elements or writing
-  /// them to system.
-  parsing,
+  /// When we can't access the remote or have temporary issues.
+  retry,
+  /// When the credentials are invalid or the feature is unavailable.
+  failure,
 }
 
-class SyncResult {
-  SyncResult({
-    required this.result,
-    required this.totalEntries,
-    required this.addedEntries,
-    required this.removedEntries,
-    required this.updatedEntries,
-    required this.dbIssue,
+class SyncRequest {
+  SyncRequest({
+    required this.account,
+    this.forcedScope,
   });
 
-  SyncResultType result;
+  /// The account protobuf (without credentials) to perform the task.
+  Uint8List account;
 
-  int totalEntries;
-
-  int addedEntries;
-
-  int removedEntries;
-
-  int updatedEntries;
-
-  bool dbIssue;
+  /// The ID of the sync request type that may be forced (although it is may be
+  /// disabled).
+  int? forcedScope;
 
   List<Object?> _toList() {
     return <Object?>[
-      result,
-      totalEntries,
-      addedEntries,
-      removedEntries,
-      updatedEntries,
-      dbIssue,
+      account,
+      forcedScope,
     ];
   }
 
   Object encode() {
     return _toList();  }
 
-  static SyncResult decode(Object result) {
+  static SyncRequest decode(Object result) {
     result as List<Object?>;
-    return SyncResult(
-      result: result[0]! as SyncResultType,
-      totalEntries: result[1]! as int,
-      addedEntries: result[2]! as int,
-      removedEntries: result[3]! as int,
-      updatedEntries: result[4]! as int,
-      dbIssue: result[5]! as bool,
+    return SyncRequest(
+      account: result[0]! as Uint8List,
+      forcedScope: result[1] as int?,
     );
   }
 
   @override
   // ignore: avoid_equals_and_hash_code_on_mutable_classes
   bool operator ==(Object other) {
-    if (other is! SyncResult || other.runtimeType != runtimeType) {
+    if (other is! SyncRequest || other.runtimeType != runtimeType) {
       return false;
     }
     if (identical(this, other)) {
       return true;
     }
-    return _deepEquals(result, other.result) && _deepEquals(totalEntries, other.totalEntries) && _deepEquals(addedEntries, other.addedEntries) && _deepEquals(removedEntries, other.removedEntries) && _deepEquals(updatedEntries, other.updatedEntries) && _deepEquals(dbIssue, other.dbIssue);
+    return _deepEquals(account, other.account) && _deepEquals(forcedScope, other.forcedScope);
   }
 
   @override
@@ -175,7 +165,53 @@ class SyncResult {
 
   @override
   String toString() {
-    return 'SyncResult(result: $result, totalEntries: $totalEntries, addedEntries: $addedEntries, removedEntries: $removedEntries, updatedEntries: $updatedEntries, dbIssue: $dbIssue)';
+    return 'SyncRequest(account: $account, forcedScope: $forcedScope)';
+  }
+}
+
+class SyncResponse {
+  SyncResponse({
+    required this.result,
+  });
+
+  /// The result for the sync task.
+  SyncResultType result;
+
+  List<Object?> _toList() {
+    return <Object?>[
+      result,
+    ];
+  }
+
+  Object encode() {
+    return _toList();  }
+
+  static SyncResponse decode(Object result) {
+    result as List<Object?>;
+    return SyncResponse(
+      result: result[0]! as SyncResultType,
+    );
+  }
+
+  @override
+  // ignore: avoid_equals_and_hash_code_on_mutable_classes
+  bool operator ==(Object other) {
+    if (other is! SyncResponse || other.runtimeType != runtimeType) {
+      return false;
+    }
+    if (identical(this, other)) {
+      return true;
+    }
+    return _deepEquals(result, other.result);
+  }
+
+  @override
+  // ignore: avoid_equals_and_hash_code_on_mutable_classes
+  int get hashCode => _deepHash(<Object?>[runtimeType, ..._toList()]);
+
+  @override
+  String toString() {
+    return 'SyncResponse(result: $result)';
   }
 }
 
@@ -190,8 +226,11 @@ class _PigeonCodec extends StandardMessageCodec {
     }    else if (value is SyncResultType) {
       buffer.putUint8(129);
       writeValue(buffer, value.index);
-    }    else if (value is SyncResult) {
+    }    else if (value is SyncRequest) {
       buffer.putUint8(130);
+      writeValue(buffer, value.encode());
+    }    else if (value is SyncResponse) {
+      buffer.putUint8(131);
       writeValue(buffer, value.encode());
     } else {
       super.writeValue(buffer, value);
@@ -205,7 +244,9 @@ class _PigeonCodec extends StandardMessageCodec {
         final value = readValue(buffer) as int?;
         return value == null ? null : SyncResultType.values[value];
       case 130:
-        return SyncResult.decode(readValue(buffer)!);
+        return SyncRequest.decode(readValue(buffer)!);
+      case 131:
+        return SyncResponse.decode(readValue(buffer)!);
       default:
         return super.readValueOfType(type, buffer);
     }
@@ -225,7 +266,7 @@ class NativeSyncManager {
 
   final String pigeonVar_messageChannelSuffix;
 
-  Future<void> syncFinished(SyncResult result) async {
+  Future<void> syncFinished(SyncResponse result) async {
     final pigeonVar_channelName = 'dev.flutter.pigeon.antinote_app.NativeSyncManager.syncFinished$pigeonVar_messageChannelSuffix';
     final pigeonVar_channel = BasicMessageChannel<Object?>(
       pigeonVar_channelName,
@@ -241,5 +282,36 @@ class NativeSyncManager {
         isNullValid: true,
     )
     ;
+  }
+}
+
+abstract class SyncManager {
+  static const MessageCodec<Object?> pigeonChannelCodec = _PigeonCodec();
+
+  Future<SyncResponse> sendRequest(SyncRequest request);
+
+  static void setUp(SyncManager? api, {BinaryMessenger? binaryMessenger, String messageChannelSuffix = '',}) {
+    messageChannelSuffix = messageChannelSuffix.isNotEmpty ? '.$messageChannelSuffix' : '';
+    {
+      final pigeonVar_channel = BasicMessageChannel<Object?>(
+          'dev.flutter.pigeon.antinote_app.SyncManager.sendRequest$messageChannelSuffix', pigeonChannelCodec,
+          binaryMessenger: binaryMessenger);
+      if (api == null) {
+        pigeonVar_channel.setMessageHandler(null);
+      } else {
+        pigeonVar_channel.setMessageHandler((Object? message) async {
+          final List<Object?> args = message! as List<Object?>;
+          final SyncRequest arg_request = args[0]! as SyncRequest;
+          try {
+            final SyncResponse output = await api.sendRequest(arg_request);
+            return wrapResponse(result: output);
+          } on PlatformException catch (e) {
+            return wrapResponse(error: e);
+          }          catch (e) {
+            return wrapResponse(error: PlatformException(code: 'error', message: e.toString()));
+          }
+        });
+      }
+    }
   }
 }

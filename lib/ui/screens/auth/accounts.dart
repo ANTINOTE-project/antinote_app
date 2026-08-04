@@ -1,5 +1,7 @@
+import 'package:antinote/antinote.dart';
 import 'package:antinote_app/data/protos/account.pb.dart';
 import 'package:antinote_app/ui/routing/routes.dart';
+import 'package:antinote_app/ui/screens/shell/tab.dart';
 import 'package:antinote_app/ui/utils/utils.dart';
 import 'package:antinote_app/ui/widgets/customs/app_bar.dart';
 import 'package:antinote_app/ui/widgets/customs/button.dart';
@@ -17,34 +19,18 @@ class AccountsScreen extends StatefulWidget {
 }
 
 class _AccountsScreenState extends State<AccountsScreen>
-    with WidgetsBindingObserver {
-  static final List<AntinoteAccount> _fakeAccounts = List.filled(
-    5,
-    AntinoteAccount(
-      name: 'fake account name',
-      establishmentName: 'fake establishment',
-      workspaceName: 'fake workspace',
-    ),
-  );
-
-  List<AntinoteAccount>? _accounts;
+    with WidgetsBindingObserver, PageMixin<AccountsScreen> {
+  late List<AntinoteAccount> _accounts;
 
   String? _defaultUid;
   String? _loggingUid;
 
-  bool _loaded = false;
+  @override
+  Stream<double?> loadPage() async* {
+    final ar = context.ar;
 
-  Future<void> _load() async {
-    final accounts = await context.ar.storage.listAccounts();
-
-    if (mounted) {
-      final defaultAccount = await context.ar.storage.getDefaultAccount();
-
-      setState(() {
-        _accounts = accounts;
-        _defaultUid = defaultAccount?.uid;
-      });
-    }
+    _accounts = await ar.storage.listAccounts();
+    _defaultUid = (await ar.storage.getDefaultAccount())?.uid;
   }
 
   @override
@@ -61,26 +47,29 @@ class _AccountsScreenState extends State<AccountsScreen>
     super.dispose();
   }
 
-  @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-
-    if (!_loaded) {
-      _loaded = true;
-      _load();
-    }
-  }
-
   Future<void> _onAccountPressed(AntinoteAccount account) async {
     if (_loggingUid != null) return;
+
+    final ar = context.ar;
+
+    if (ar.accountPicked) {
+      if (ar.curAccountUid == account.uid) {
+        context.pop();
+        return;
+      }
+
+      ar.unpickAccount();
+    }
 
     setState(() {
       _loggingUid = account.uid;
     });
 
-    final result = await context.ar.pickAccount(account.uid);
+    final result = await ar.pickAccount(account.uid);
 
     if (!result && context.mounted) {
+      libLog.warning('Failed to pick account...');
+
       setState(() {
         _loggingUid = null;
       });
@@ -97,46 +86,54 @@ class _AccountsScreenState extends State<AccountsScreen>
   Widget build(BuildContext context) {
     return PopScope(
       canPop: context.ar.accountPicked,
+      child: super.build(context),
+    );
+  }
 
-      child: Scaffold(
-        appBar: AppBarWidget(
-          title: Text(context.l10n.choseAnAccount),
-          backButton: false,
-        ),
+  @override
+  Widget buildLoaded(
+    BuildContext context,
+    RefreshIndicatorBuilder buildRefreshIndicator,
+    bool partial,
+  ) {
+    return Scaffold(
+      appBar: AppBarWidget(
+        title: Text(context.l10n.choseAnAccount),
+        backButton: false,
+      ),
 
-        floatingActionButtonLocation: .centerFloat,
-        floatingActionButton: Align(
-          alignment: Alignment.bottomCenter,
+      floatingActionButtonLocation: .centerFloat,
+      floatingActionButton: Align(
+        alignment: Alignment.bottomCenter,
 
-          child: SafeArea(
-            child: Padding(
-              padding: const EdgeInsets.only(left: 12, right: 12),
+        child: SafeArea(
+          child: Padding(
+            padding: const EdgeInsets.only(left: 12, right: 12),
 
-              child: ButtonWidget(
-                onPressed: () async {
-                  final result = await context.push(Routes.auth.methods);
+            child: ButtonWidget(
+              onPressed: () async {
+                await context.push(Routes.auth.methods);
 
-                  if (result != null && mounted) {
-                    await _load();
-                  }
-                },
+                if (mounted) {
+                  await reload();
+                }
+              },
 
-                icon: HugeIconsSolid.add02,
-                label: context.l10n.addAnAccount,
-              ),
+              icon: HugeIconsSolid.add02,
+              label: context.l10n.addAnAccount,
             ),
           ),
         ),
+      ),
 
-        body: Padding(
+      body: buildRefreshIndicator(
+        child: Padding(
           padding: const EdgeInsets.only(left: 12, right: 12, bottom: 70),
 
           child: CustomScrollView(
             slivers: [
               ListWidget(
-                items: _accounts == null ? _fakeAccounts : _accounts!,
-                isLoading: _accounts == null,
-
+                items: _accounts,
                 itemBuilder: (context, account, borderRadius) {
                   return ItemWidget(
                     borderRadius: borderRadius,
@@ -169,7 +166,7 @@ class _AccountsScreenState extends State<AccountsScreen>
                                           await context.ar.storage.setDefault(
                                             null,
                                           );
-                                          await _load();
+                                          await reload();
 
                                           if (context.mounted) {
                                             context.pop();
@@ -184,7 +181,7 @@ class _AccountsScreenState extends State<AccountsScreen>
                                           await context.ar.storage.setDefault(
                                             account.uid,
                                           );
-                                          await _load();
+                                          await reload();
 
                                           if (context.mounted) {
                                             context.pop();
@@ -199,7 +196,7 @@ class _AccountsScreenState extends State<AccountsScreen>
                                         await context.ar.storage.deleteAccount(
                                           account.uid,
                                         );
-                                        await _load();
+                                        await reload();
 
                                         if (context.mounted) {
                                           context.pop();

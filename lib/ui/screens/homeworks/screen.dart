@@ -23,7 +23,7 @@ class HomeworksScreen extends StatefulWidget {
 }
 
 class _HomeworksScreenState extends State<HomeworksScreen>
-    with TabMixin<HomeworksScreen> {
+    with PageMixin<HomeworksScreen>, TabMixin<HomeworksScreen> {
   late Map<int, GlobalKey<SliverAnimatedListState>> _weeks;
   late SpecificInstanceParameters _data;
   final Homeworks _homeworks = {};

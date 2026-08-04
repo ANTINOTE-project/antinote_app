@@ -118,6 +118,25 @@ class SessionManager(val context: Context, binaryMessenger: BinaryMessenger) :
                     )
                 }
 
+                MSG_POLLING_UPDATED -> {
+                    val accountUid = msg.data.getString("account")
+                    val pollingState = msg.data.getInt("polling_state")
+                    val serverSignature = msg.data.getString("server_signature")
+
+                    manager.flutterApi.pollingUpdated(
+                        accountUid!!,
+                        PollingState.ofRaw(pollingState)!!
+                    ) {
+
+                    }
+
+                    if (serverSignature != null) {
+                        manager.flutterApi.serverSignatureChanged(accountUid, serverSignature) {
+
+                        }
+                    }
+                }
+
                 MSG_GET_POLLING_STATE -> {
                     val state = PollingState.ofRaw(msg.data.getInt("state"))!!
                     val accountId = msg.data.getString("account")!!
@@ -188,7 +207,10 @@ class SessionManager(val context: Context, binaryMessenger: BinaryMessenger) :
             try {
                 val msg = Message.obtain(null, MSG_REGISTER_CLIENT)
                 msg.data.putStringArray("accounts", currentAccountUids.toTypedArray())
-                msg.data.putStringArray("alive_accounts", context.accountStore.data.first().accountsList.map { it.uid }.toTypedArray())
+                msg.data.putStringArray(
+                    "alive_accounts",
+                    context.accountStore.data.first().accountsList.map { it.uid }.toTypedArray()
+                )
                 msg.replyTo = this@SessionManager.messenger
                 mService?.send(msg)
             } catch (_: RemoteException) {
@@ -280,7 +302,7 @@ class SessionManager(val context: Context, binaryMessenger: BinaryMessenger) :
         msg.data.putLong("client_id", clientId!!)
         msg.data.putLong("client_task_id", clientTaskId)
 
-        if(debugLabel != null) {
+        if (debugLabel != null) {
             msg.data.putString("debug_label", debugLabel)
         }
 

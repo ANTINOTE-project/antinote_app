@@ -55,6 +55,10 @@ android {
 
     buildTypes {
         release {
+            @Suppress("UnstableApiUsage")
+            optimization {
+                enable = true
+            }
             signingConfig = signingConfigs.getByName("debug")
         }
     }

@@ -362,20 +362,16 @@ class LoginManager(val context: Context, val activity: FragmentActivity?) : Nati
         val manager = AccountManager.get(context)
 
         for (account in manager.getAccountsByType(context.getString(R.string.account_type))) {
-            if (accountList != null && !accountList.contains(
-                    manager.getUserData(
-                        account,
-                        KEY_UID
-                    )
-                )
-            ) {
+            val uid = manager.getUserData(
+                account,
+                KEY_UID
+            )
+
+            if (accountList != null && !accountList.contains(uid)) {
                 continue
             }
 
-            if (account.type == context.getString(R.string.account_type)
-            ) {
-                manager.removeAccountExplicitly(account)
-            }
+            manager.removeAccountExplicitly(account)
         }
 
         context.accountStore.updateData { registry ->
@@ -460,24 +456,20 @@ class LoginManager(val context: Context, val activity: FragmentActivity?) : Nati
 
     override fun listAccounts(callback: (Result<List<ByteArray>>) -> Unit) {
         scope.launch {
+            val accountUids = mutableListOf<String>()
+            val rawAccounts = mutableListOf<ByteArray>()
+
+            for (account in context.accountStore.data.first().accountsList) {
+                accountUids.add(account.uid)
+                rawAccounts.add(account.toByteArray())
+            }
+
             val manager = AccountManager.get(context)
             val nativeAccountUids =
                 manager.getAccountsByType(context.getString(R.string.account_type))
                     .map { manager.getUserData(it, KEY_UID) }
 
-            val accountIdsToDelete = mutableListOf<String>()
-            val rawAccounts = mutableListOf<ByteArray>()
-
-            for (account in context.accountStore.data.first().accountsList) {
-                if (!nativeAccountUids.contains(account.uid)) {
-                    accountIdsToDelete.add(account.uid)
-                    continue
-                }
-
-                rawAccounts.add(account.toByteArray())
-            }
-
-            deleteAccounts(accountIdsToDelete)
+            deleteAccounts(nativeAccountUids.filter { !accountUids.contains(it) })
 
             callback(Result.success(rawAccounts))
         }

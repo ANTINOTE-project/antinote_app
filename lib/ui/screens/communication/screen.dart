@@ -18,7 +18,7 @@ class CommunicationScreen extends StatefulWidget {
 }
 
 class _CommunicationScreenState extends State<CommunicationScreen>
-    with TabMixin<CommunicationScreen> {
+    with PageMixin<CommunicationScreen>, TabMixin<CommunicationScreen> {
   CommunicationFilter filter = CommunicationFilter.defaultFilter;
   late List<CommunicationThreadPreview> threads;
 

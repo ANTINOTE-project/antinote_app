@@ -64,7 +64,8 @@ val Context.sessionStore: DataStore<SessionRegistry> by deviceProtectedDataStore
  * - `accounts` (string list, optional): The list of accounts the client wants to listen to.
  *   Defaults to all.
  * - `alive_accounts` (string list, optional): All accounts UIDs that are still registered both in
- *   [android.accounts.AccountManager] and [fr.antinote.antinote_app.protos.AccountRegistry].
+ *   [android.accounts.AccountManager] and
+ *   [fr.antinote.antinote_app.protos.SerializedAccountRegistry].
  *
  * Returns:
  * - `client_id` (long): The ID of the client that was just registered.
@@ -336,7 +337,6 @@ class SessionManagementService : Service() {
         if (channels.none {
                 manager.busyChannels.contains(it)
             }) {
-            Log.d(TAG, "Starting task $clientTaskId '$debugLabel'")
             manager.busyChannels.addAll(channels)
             manager.lockOwners[taskId] = newTask
             return taskId
@@ -384,8 +384,6 @@ class SessionManagementService : Service() {
             Log.w(TAG, "FinishTask: Task ID $taskId does not own any locks.")
             return Pair(manager.latestVersion, null)
         }
-
-        Log.d(TAG, "Ending task $taskId...")
 
         manager.busyChannels.removeAll(task.channels.toSet())
 
@@ -438,7 +436,7 @@ class SessionManagementService : Service() {
     private suspend fun cleanupDeadAccounts(aliveAccounts: List<String>) {
         this.sessionStore.updateData { registry ->
             registry.copy {
-                for(accountUid in session.keys) {
+                for(accountUid in session.keys.toList()) {
                     if(!aliveAccounts.contains(accountUid)) {
                         session.remove(accountUid)
                     }

@@ -75,7 +75,7 @@ class TimetableDisplay extends StatefulWidget {
 }
 
 class _TimetableDisplayState extends State<TimetableDisplay>
-    with TabMixin<TimetableDisplay> {
+    with PageMixin<TimetableDisplay>, TabMixin<TimetableDisplay> {
   late SpecificInstanceParameters _scheduleDisplayData;
   late WeekMappedViewConfiguration _currentConfiguration;
   late List<DateRange> _currentGroups;

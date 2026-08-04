@@ -37,10 +37,11 @@ class SessionPollingManager extends PollingManager {
     Future.microtask(() async {
       final result = await registry.pickAccount(accountUid);
 
-      if (!result) {
-        await _sessionManager.updatePollingState(accountUid, .dead, null);
-        return;
-      }
+      await _sessionManager.updatePollingState(
+        accountUid,
+        result ? .alive : .dead,
+        null,
+      );
 
       await registry.runRawTask(
         callback: (session) async {
@@ -115,15 +116,30 @@ class SessionPollingManager extends PollingManager {
   void serverSignatureChanged(String accountUid, String newServerSignature) {
     if (registry.managesAccount(accountUid)) {
       Future.microtask(() async {
-        final result = await registry.pickAccount(accountUid);
-        if (!result) return;
+        final result = registry.specificSession(accountUid);
+        if (result == null) return;
 
-        await registry.runRawTask(
+        await result.runTask(
+          storage: registry.storage,
+          options: registry.settings.sessionOptions,
           callback: (session) {
             session.stack.updateServerSignature(jsonDecode(newServerSignature));
           },
+          channels: const {},
           debugLabel: 'Updating server signature',
         );
+      });
+    }
+  }
+
+  @override
+  void pollingUpdated(String accountUid, PollingState newState) {
+    if (registry.managesAccount(accountUid)) {
+      Future.microtask(() async {
+        final result = registry.specificSession(accountUid);
+        if (result == null) return;
+
+        result.updatePollingState(newState);
       });
     }
   }

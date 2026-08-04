@@ -26,7 +26,8 @@ class NewsScreen extends StatefulWidget {
   State<NewsScreen> createState() => _NewsScreenState();
 }
 
-class _NewsScreenState extends State<NewsScreen> with TabMixin<NewsScreen> {
+class _NewsScreenState extends State<NewsScreen>
+    with PageMixin<NewsScreen>, TabMixin<NewsScreen> {
   final Map<String, NewsQuestionAnswer> _overriddenAnswers = {};
 
   Future<void> _sendCompleted() async {

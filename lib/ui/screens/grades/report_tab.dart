@@ -25,7 +25,8 @@ class ReportTab extends StatefulWidget {
   State<ReportTab> createState() => _ReportTabState();
 }
 
-class _ReportTabState extends State<ReportTab> with TabMixin<ReportTab> {
+class _ReportTabState extends State<ReportTab>
+    with PageMixin<ReportTab>, TabMixin<ReportTab> {
   late BaseReport _data;
 
   @override

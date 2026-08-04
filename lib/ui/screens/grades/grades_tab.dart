@@ -171,7 +171,8 @@ class GradesTab extends StatefulWidget {
   State<GradesTab> createState() => _GradesTabState();
 }
 
-class _GradesTabState extends State<GradesTab> with TabMixin<GradesTab> {
+class _GradesTabState extends State<GradesTab>
+    with PageMixin<GradesTab>, TabMixin<GradesTab> {
   late LatestGradesPage _data;
 
   @override

@@ -19,6 +19,7 @@ class _GradesScreenState extends State<GradesScreen>
     with
         TickerProviderStateMixin<GradesScreen>,
         AutomaticKeepAliveClientMixin<GradesScreen>,
+        PageMixin<GradesScreen>,
         TabMixin<GradesScreen> {
   late List<Period> _periods;
   late Period _selectedPeriod;

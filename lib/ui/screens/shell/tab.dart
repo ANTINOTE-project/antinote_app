@@ -10,52 +10,11 @@ typedef RefreshIndicatorBuilder = Widget Function({
   bool pullable,
 });
 
-mixin TabMixin<T extends StatefulWidget> on State<T> {
-  Set<String> get loadChannels => {'communication'};
-  Stream<double?> load(RemoteSession session);
+mixin PageMixin<T extends StatefulWidget> on State<T> {
+  Stream<double?> loadPage();
 
   bool loaded = false;
   Stream<double?>? _loader;
-
-  // SessionManager? manager;
-  void _sessionUpdateCallback() {
-    if (!mounted) return;
-
-    // manager?.unsubscribeSession(callback: reload);
-
-    try {
-      final controller = StreamController<double?>.broadcast();
-      _loader = controller.stream;
-
-      context.ar.runTask(
-        context: context,
-        channels: loadChannels,
-        callback: (session) async {
-          libLog.info('Loading page $runtimeType...');
-
-          await for (final event in load(session)) {
-            controller.add(event);
-          }
-
-          controller.close();
-
-          // if (mounted) {
-          //   manager?.subscribeSession(callback: reload);
-          // }
-
-          if (mounted) {
-            setState(() {
-              loaded = true;
-              _loader = null;
-            });
-          }
-        },
-        debugLabel: 'Reload page $runtimeType',
-      );
-    } on SessionException {
-      // manager?.subscribeSession(callback: reload);
-    }
-  }
 
   @override
   Future<void> didChangeDependencies() async {
@@ -64,12 +23,6 @@ mixin TabMixin<T extends StatefulWidget> on State<T> {
     if (!loaded && _loader == null) {
       await reload();
     }
-  }
-
-  @override
-  void dispose() {
-    // manager?.unsubscribeSession(callback: reload);
-    super.dispose();
   }
 
   // We put two distinct refresh indicators because both can be visible at the
@@ -96,6 +49,32 @@ mixin TabMixin<T extends StatefulWidget> on State<T> {
     Object? error,
   ) => buildLoading(context, buildRefreshIndicator, .5);
 
+  void _updateCallback() {
+    final controller = StreamController<double?>.broadcast();
+    _loader = controller.stream;
+
+    libLog.info('Loading page $runtimeType...');
+
+    () async {
+      try {
+        await for (final event in loadPage()) {
+          controller.add(event);
+        }
+      } catch (e, st) {
+        controller.addError(e, st);
+      }
+
+      controller.close();
+    }().whenComplete(() {
+      if (mounted) {
+        setState(() {
+          loaded = true;
+          _loader = null;
+        });
+      }
+    });
+  }
+
   Future<void> reload({bool fromRefreshIndicator = false}) async {
     if (_loader != null) {
       await _loader!.length;
@@ -110,9 +89,13 @@ mixin TabMixin<T extends StatefulWidget> on State<T> {
       }
     }
 
-    _sessionUpdateCallback();
+    _updateCallback();
 
-    await _loader?.length;
+    try {
+      await _loader?.length;
+    } catch (_) {
+      /* We log errors in the builder directly. */
+    }
   }
 
   @override
@@ -157,6 +140,24 @@ mixin TabMixin<T extends StatefulWidget> on State<T> {
           child: child,
         );
       },
+    );
+  }
+}
+
+mixin TabMixin<T extends StatefulWidget> on PageMixin<T> {
+  Set<String> get loadChannels => {'communication'};
+  Stream<double?> load(RemoteSession session);
+
+  @override
+  Stream<double?> loadPage() async* {
+    yield* await context.ar.runTask(
+      context: context,
+      channels: loadChannels,
+      callback: (session) async* {
+        yield* load(session);
+      },
+      debugLabel: 'Reload page $runtimeType',
+      retry: true,
     );
   }
 }

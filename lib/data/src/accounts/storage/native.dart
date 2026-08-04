@@ -15,21 +15,21 @@ class NativeAccountStorage implements AccountStorage {
   @override
   Future<List<AntinoteAccount>> listAccounts() async =>
       (await _receiver.listAccounts()).mapL(
-        (e) => AntinoteAccount.fromBuffer(e),
+        (e) => AntinoteAccount.fromBuffer(e)..freeze(),
       );
 
   @override
   Future<AntinoteAccount?> borrowAccountWithCredentials(String uid) async {
     final res = await _receiver.getAccountWithCredentials(uid);
     if (res == null) return null;
-    return AntinoteAccount.fromBuffer(res);
+    return AntinoteAccount.fromBuffer(res)..freeze();
   }
 
   @override
   Future<AntinoteAccount?> getDefaultAccount() async {
     final res = await _receiver.getDefaultAccount();
     if (res == null) return null;
-    return AntinoteAccount.fromBuffer(res);
+    return AntinoteAccount.fromBuffer(res)..freeze();
   }
 
   @override
