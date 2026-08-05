@@ -25,6 +25,8 @@ class const TimetableDayWidgetSliver({
             baseDate: state.overrideArguments.get(TimetableDayArgument.day),
             transparent: true,
             updateBlocks: (session, days, businessDays) async {
+              // TODO: Add check whether the day is already loaded inside value
+
               final manager = HomePageScope.of(context).manager;
 
               if (businessDays.isNotEmpty) {
@@ -49,6 +51,5 @@ class const TimetableDayWidgetSliver({
         ),
       ),
     );
-    // return SliverToBoxAdapter(child: Text('Timetable day ${value.length}'));
   }
 }

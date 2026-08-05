@@ -80,6 +80,8 @@
     }
   },
 
+  "fieldNotFilled": "Non renseigné",
+
   "classTiming": "{startTime} - {endTime}",
   "@classTiming": {
     "placeholders": {
@@ -145,7 +147,7 @@
   "gradeMax": "Max.",
 
   "noCourseToday": "Tu n'as pas de cours,\nprofite bien !",
-  "holidayDay": "C'est les vacances,\n amuse toi bien !",
+  "holidayDay": "C'est les vacances,\namuse toi bien !",
   "weekend": "C'est le weekend !",
   "lunch": "Bon appétit !",
   "gap": "{duration} de libre",
@@ -270,5 +272,20 @@
         "type": "String"
       }
     }
-  }
+  },
+
+  "no": "Non",
+  "yes": "Oui",
+
+  "veryFavorable": "Très favorable",
+  "veryFavorableAbbr": "T. fav.",
+  "favorable": "Favorable",
+  "favorableAbbr": "Fav.",
+  "reserved": "Réservé",
+  "reservedAbbr": "Rés.",
+  "unfavorable": "Défavorable",
+  "unfavorableAbbr": "Déf.",
+  "none": "Aucun",
+
+  "boardOpinion": "Avis du conseil de classe"
 }

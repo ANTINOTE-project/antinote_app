@@ -1,5 +1,5 @@
-import 'package:antinote_app/ui/widgets/pressable.dart';
 import 'package:antinote_app/ui/utils/utils.dart';
+import 'package:antinote_app/ui/widgets/pressable.dart';
 import 'package:flutter/material.dart';
 import 'package:skeletonizer/skeletonizer.dart';
 
@@ -202,7 +202,7 @@ class ItemWidget extends StatelessWidget {
     this.title,
     this.titleMaxLines = 1,
     this.subtitle,
-    this.subtitleMaxLines = 1,
+    this.subtitleMaxLines,
 
     this.leading,
     this.trailing,
@@ -276,8 +276,7 @@ class ItemWidget extends StatelessWidget {
 
                   if (subtitle != null)
                     DefaultTextStyle.merge(
-                      style: TextStyle(
-                        fontSize: 12,
+                      style: TextTheme.of(context).bodyMedium?.copyWith(
                         fontWeight: .bold,
                         fontFamily: 'SNPro',
 

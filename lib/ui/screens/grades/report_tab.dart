@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:antinote/antinote.dart';
+import 'package:antinote_app/data/backend.dart';
 import 'package:antinote_app/ui/screens/shell/tab.dart';
 import 'package:antinote_app/ui/utils/utils.dart';
 import 'package:antinote_app/ui/widgets/bottom_padding.dart';
@@ -54,6 +55,7 @@ class _ReportTabState extends State<ReportTab>
             _Categories(report: report),
             _Attendance(report: report),
             _GeneralAppreciations(report: report),
+            _Orientation(report: report),
 
             const BottomPadding(padding: 10),
           ],
@@ -201,6 +203,31 @@ class _Categories extends StatelessWidget {
 
     return SliverMainAxisGroup(
       slivers: [
+        if (uncategorized.isNotEmpty) ...[
+          SliverToBoxAdapter(
+            child: Padding(
+              padding: const .only(left: 12),
+              child: _SectionText(label: context.l10n.reportOtherSubjects),
+            ),
+          ),
+
+          SliverPadding(
+            padding: const .symmetric(horizontal: 12),
+
+            sliver: ListWidget(
+              items: uncategorized,
+
+              itemBuilder: (context, service, borderRadius) {
+                return _ServiceWidget(
+                  borderRadius: borderRadius,
+                  service: service,
+                  report: report,
+                );
+              },
+            ),
+          ),
+        ],
+
         ...report.serviceCategories.map((category) {
           final services = report.services
               .where((e) => e.category?.id == category.id)
@@ -245,31 +272,6 @@ class _Categories extends StatelessWidget {
             ],
           );
         }),
-
-        if (uncategorized.isNotEmpty) ...[
-          SliverToBoxAdapter(
-            child: Padding(
-              padding: const .only(left: 12),
-              child: _SectionText(label: context.l10n.reportOtherSubjects),
-            ),
-          ),
-
-          SliverPadding(
-            padding: const .symmetric(horizontal: 12),
-
-            sliver: ListWidget(
-              items: uncategorized,
-
-              itemBuilder: (context, service, borderRadius) {
-                return _ServiceWidget(
-                  borderRadius: borderRadius,
-                  service: service,
-                  report: report,
-                );
-              },
-            ),
-          ),
-        ],
       ],
     );
   }
@@ -494,12 +496,16 @@ class _ServiceWidget extends StatelessWidget {
 
             if (hasAppreciations)
               ListWidget(
-                items: appreciations,
+                items: appreciations.indexed.toList(growable: false),
                 isSliver: false,
                 isColumn: true,
 
-                itemBuilder: (context, a, borderRadius) {
-                  final trimmed = a.name?.trim() ?? '';
+                itemBuilder: (context, appreciationData, borderRadius) {
+                  final (index, appreciation) = appreciationData;
+
+                  final title =
+                      report.displayInformation.appreciationLabels[index];
+                  final trimmed = appreciation.name?.trim() ?? '';
 
                   return ItemWidget(
                     backgroundColor: scheme.surfaceContainer,
@@ -509,16 +515,14 @@ class _ServiceWidget extends StatelessWidget {
                       Clipboard.setData(ClipboardData(text: trimmed));
                     },
 
-                    title: Text(
+                    title: Text(title.label),
+                    subtitle: Text(
                       trimmed,
-
-                      maxLines: 999,
 
                       style: TextStyle(
                         color: context.c.onSurface,
                         fontStyle: .italic,
                         fontWeight: .bold,
-                        fontSize: 13,
                       ),
                     ),
                   );
@@ -532,10 +536,10 @@ class _ServiceWidget extends StatelessWidget {
                   final section = service.sections[index];
 
                   final hasTeachers = section.teachers?.isNotEmpty ?? false;
-                  final actualAppreciations = section.appreciations
+                  final actualAppreciations = section.appreciations.indexed
                       .where(
                         (element) =>
-                            (element.name ?? element.title)?.isNotEmpty ??
+                            (element.$2.name ?? element.$2.title)?.isNotEmpty ??
                             false,
                       )
                       .toList(growable: false);
@@ -572,29 +576,39 @@ class _ServiceWidget extends StatelessWidget {
                           isSliver: false,
                           isColumn: true,
 
-                          itemBuilder: (context, a, borderRadius) {
-                            final trimmed = (a.name ?? a.title)?.trim() ?? '';
+                          itemBuilder:
+                              (context, appreciationData, borderRadius) {
+                                final (index, appreciation) = appreciationData;
 
-                            return ItemWidget(
-                              backgroundColor: scheme.surfaceContainer,
-                              borderRadius: borderRadius,
+                                final title = report
+                                    .displayInformation
+                                    .appreciationLabels[index];
+                                final trimmed =
+                                    (appreciation.name ?? appreciation.title)
+                                        ?.trim() ??
+                                    '';
 
-                              onPressed: () {
-                                Clipboard.setData(ClipboardData(text: trimmed));
+                                return ItemWidget(
+                                  backgroundColor: scheme.surfaceContainer,
+                                  borderRadius: borderRadius,
+
+                                  onPressed: () {
+                                    Clipboard.setData(
+                                      ClipboardData(text: trimmed),
+                                    );
+                                  },
+
+                                  title: Text(title.label),
+                                  subtitle: Text(
+                                    trimmed,
+                                    style: TextStyle(
+                                      color: context.c.onSurface,
+                                      fontStyle: .italic,
+                                      fontWeight: .bold,
+                                    ),
+                                  ),
+                                );
                               },
-
-                              title: Text(
-                                trimmed,
-                                maxLines: 999,
-                                style: TextStyle(
-                                  color: context.c.onSurface,
-                                  fontStyle: .italic,
-                                  fontWeight: .bold,
-                                  fontSize: 13,
-                                ),
-                              ),
-                            );
-                          },
                         ),
 
                       if (index != service.sections.length - 1)
@@ -621,12 +635,16 @@ class _Attendance extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final items = [
-      report.tardnessString,
-      report.absenceString,
+      ?report.latenessString,
+      ?report.absenceString,
 
-      if (report.punitionsString.isNotEmpty) report.punitionsString,
-      if (report.sanctionsString.isNotEmpty) report.sanctionsString,
+      if (report.punitionsString?.isNotEmpty ?? false) report.punitionsString!,
+      if (report.sanctionsString?.isNotEmpty ?? false) report.sanctionsString!,
     ];
+
+    if (items.isEmpty) {
+      return const SliverToBoxAdapter();
+    }
 
     return SliverToBoxAdapter(
       child: Padding(
@@ -646,9 +664,199 @@ class _Attendance extends StatelessWidget {
               itemBuilder: (context, item, borderRadius) {
                 return ItemWidget(
                   borderRadius: borderRadius,
-                  title: Text(item, maxLines: 999),
+                  title: Text(item),
+                  titleMaxLines: null,
                 );
               },
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _Orientation extends StatelessWidget {
+  final PublishedReport report;
+
+  const _Orientation({required this.report});
+
+  @override
+  Widget build(BuildContext context) {
+    return switch (report.orientationData) {
+      ClassOrientationData data => buildClass(context, data),
+      StudentOrientationData data => buildStudent(context, data),
+      null => const SliverToBoxAdapter(child: SizedBox.shrink()),
+    };
+  }
+
+  Widget buildStudent(BuildContext context, StudentOrientationData data) {
+    return SliverToBoxAdapter(
+      child: Padding(
+        padding: const .symmetric(horizontal: 12, vertical: 6),
+        child: Column(
+          crossAxisAlignment: .start,
+          children: [
+            for (final section in data.sections.where(
+              (element) => element.wishes?.isNotEmpty ?? false,
+            )) ...[
+              _SectionText(label: section.label),
+
+              for (final wish in section.wishes!)
+                ListWidget.list(
+                  items: [
+                    ItemWidgetData(
+                      title: Text('${wish.rank}) ${wish.stat.label}'),
+                      subtitle: Text.rich(
+                        TextSpan(
+                          children:
+                              <InlineSpan>[
+                                    for (final option in wish.options)
+                                      WidgetSpan(
+                                        child: Tooltip(
+                                          message: option.code,
+                                          child: Text('- ${option.label}'),
+                                        ),
+                                      ),
+                                  ]
+                                  .superJoin(const TextSpan(text: '\n'))
+                                  .toList(growable: false),
+                        ),
+                      ),
+                    ),
+                    ItemWidgetData(
+                      title: Text(context.l10n.boardOpinion),
+                      subtitle: Text(switch (wish.boardResponse) {
+                        .none => context.l10n.none,
+                        .veryFavorable => context.l10n.veryFavorable,
+                        .favorable => context.l10n.favorable,
+                        .reserved => context.l10n.reserved,
+                        .unfavorable => context.l10n.unfavorable,
+                      }), // TODO: Add comments and other data
+                    ),
+                  ],
+                  isColumn: true,
+                  isSliver: false,
+                ),
+            ],
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget buildClass(BuildContext context, ClassOrientationData data) {
+    final bool yesNoMode = data.section.type.yesNoMode;
+
+    return SliverToBoxAdapter(
+      child: Padding(
+        padding: const .symmetric(horizontal: 12, vertical: 6),
+        child: Column(
+          crossAxisAlignment: .start,
+          children: [
+            _SectionText(label: data.section.label),
+            DefaultTextStyle(
+              style: DefaultTextStyle.of(context).style,
+              textAlign: .center,
+              child: Table(
+                columnWidths: {
+                  if (yesNoMode) ...{
+                    0: const FractionColumnWidth(.75),
+                    1: const FractionColumnWidth(.125),
+                    2: const FractionColumnWidth(.125),
+                  } else ...{
+                    0: const FractionColumnWidth(.4),
+                    for (int i = 1; i < 5; i++)
+                      i: const FractionColumnWidth(.6 / 4),
+                  },
+                },
+                children: [
+                  TableRow(
+                    decoration: BoxDecoration(
+                      border: .fromSTEB(
+                        bottom: BorderSide(color: context.c.onSurface),
+                      ),
+                    ),
+                    children: [
+                      TableCell(
+                        child: DecoratedBox(
+                          decoration: BoxDecoration(
+                            border: .fromSTEB(
+                              end: BorderSide(color: context.c.onSurface),
+                            ),
+                          ),
+                          child: const SizedBox(
+                            width: double.infinity,
+                            child: Text(' '),
+                          ),
+                        ),
+                      ),
+                      if (yesNoMode) ...[
+                        TableCell(child: Text(context.l10n.yes)),
+                        TableCell(child: Text(context.l10n.no)),
+                      ] else ...[
+                        TableCell(
+                          child: Tooltip(
+                            message: context.l10n.veryFavorable,
+                            child: Text(context.l10n.veryFavorableAbbr),
+                          ),
+                        ),
+                        TableCell(
+                          child: Tooltip(
+                            message: context.l10n.favorable,
+                            child: Text(context.l10n.favorableAbbr),
+                          ),
+                        ),
+                        TableCell(
+                          child: Tooltip(
+                            message: context.l10n.reserved,
+                            child: Text(context.l10n.reservedAbbr),
+                          ),
+                        ),
+                        TableCell(
+                          child: Tooltip(
+                            message: context.l10n.unfavorable,
+                            child: Text(context.l10n.unfavorableAbbr),
+                          ),
+                        ),
+                      ],
+                    ],
+                  ),
+                  for (final stat in data.orientations)
+                    TableRow(
+                      children: [
+                        TableCell(
+                          child: DecoratedBox(
+                            decoration: BoxDecoration(
+                              border: .fromSTEB(
+                                end: BorderSide(color: context.c.onSurface),
+                              ),
+                            ),
+                            child: Text(stat.label),
+                          ),
+                        ),
+
+                        if (yesNoMode) ...[
+                          TableCell(child: Text(stat.yesCount.toString())),
+                          TableCell(child: Text(stat.noCount.toString())),
+                        ] else ...[
+                          TableCell(
+                            child: Text(stat.count(.veryFavorable).toString()),
+                          ),
+                          TableCell(
+                            child: Text(stat.count(.favorable).toString()),
+                          ),
+                          TableCell(
+                            child: Text(stat.count(.reserved).toString()),
+                          ),
+                          TableCell(
+                            child: Text(stat.count(.unfavorable).toString()),
+                          ),
+                        ],
+                      ],
+                    ),
+                ],
+              ),
             ),
           ],
         ),
@@ -693,16 +901,17 @@ class _GeneralAppreciations extends StatelessWidget {
                 return ItemWidget(
                   borderRadius: borderRadius,
 
-                  onPressed: () {
-                    if (hasName) {
-                      Clipboard.setData(ClipboardData(text: name));
-                    }
-                  },
+                  onPressed: hasName
+                      ? () {
+                          if (hasName) {
+                            Clipboard.setData(ClipboardData(text: name));
+                          }
+                        }
+                      : null,
 
                   title: hasTitle
                       ? Text(
                           title,
-                          maxLines: 999,
                           style: TextStyle(
                             color: context.c.primary,
                             fontWeight: .w800,
@@ -710,17 +919,23 @@ class _GeneralAppreciations extends StatelessWidget {
                           ),
                         )
                       : null,
+                  titleMaxLines: 3,
 
                   subtitle: hasName
                       ? Text(
                           name,
-                          maxLines: 999,
                           style: TextStyle(
                             fontSize: 15,
                             color: context.c.onSurface,
                           ),
                         )
-                      : null,
+                      : Text(
+                          context.l10n.fieldNotFilled,
+                          style: TextStyle(
+                            fontStyle: .italic,
+                            color: context.c.onSurface,
+                          ),
+                        ),
                 );
               },
             ),

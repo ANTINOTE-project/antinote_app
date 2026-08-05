@@ -565,20 +565,22 @@ class _LatestGrades extends StatelessWidget {
           flexWeights: const [6, 3, 1],
           itemSnapping: true,
           infinite: exams == null,
-          padding: const .only(left: 8),
           itemBuilder: (context, index) {
             final exam = exams == null
                 ? fakeExams[index % fakeExams.length]
                 : exams![index];
 
-            return ClipPath(
-              clipper: ShapeBorderClipper(
-                shape: RoundedRectangleBorder(borderRadius: .circular(28)),
-              ),
-              child: GradeCard(
-                exam: exam,
-                isLoading: exams == null,
-                width: maxItemWidth,
+            return Padding(
+              padding: const .symmetric(horizontal: 4),
+              child: ClipPath(
+                clipper: ShapeBorderClipper(
+                  shape: RoundedRectangleBorder(borderRadius: .circular(28)),
+                ),
+                child: GradeCard(
+                  exam: exam,
+                  isLoading: exams == null,
+                  width: maxItemWidth,
+                ),
               ),
             );
           },

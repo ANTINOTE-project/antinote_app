@@ -418,6 +418,12 @@ abstract class AppLocalizations {
   /// **'{date} de {startTime} à {endTime}'**
   String absenceDuration(DateTime date, DateTime startTime, DateTime endTime);
 
+  /// No description provided for @fieldNotFilled.
+  ///
+  /// In fr, this message translates to:
+  /// **'Non renseigné'**
+  String get fieldNotFilled;
+
   /// No description provided for @classTiming.
   ///
   /// In fr, this message translates to:
@@ -611,7 +617,7 @@ abstract class AppLocalizations {
   /// No description provided for @holidayDay.
   ///
   /// In fr, this message translates to:
-  /// **'C\'est les vacances,\n amuse toi bien !'**
+  /// **'C\'est les vacances,\namuse toi bien !'**
   String get holidayDay;
 
   /// No description provided for @weekend.
@@ -991,6 +997,78 @@ abstract class AppLocalizations {
   /// In fr, this message translates to:
   /// **'Vous êtes en mode \"{mode}\"'**
   String explainCurrentConfig(String mode);
+
+  /// No description provided for @no.
+  ///
+  /// In fr, this message translates to:
+  /// **'Non'**
+  String get no;
+
+  /// No description provided for @yes.
+  ///
+  /// In fr, this message translates to:
+  /// **'Oui'**
+  String get yes;
+
+  /// No description provided for @veryFavorable.
+  ///
+  /// In fr, this message translates to:
+  /// **'Très favorable'**
+  String get veryFavorable;
+
+  /// No description provided for @veryFavorableAbbr.
+  ///
+  /// In fr, this message translates to:
+  /// **'T. fav.'**
+  String get veryFavorableAbbr;
+
+  /// No description provided for @favorable.
+  ///
+  /// In fr, this message translates to:
+  /// **'Favorable'**
+  String get favorable;
+
+  /// No description provided for @favorableAbbr.
+  ///
+  /// In fr, this message translates to:
+  /// **'Fav.'**
+  String get favorableAbbr;
+
+  /// No description provided for @reserved.
+  ///
+  /// In fr, this message translates to:
+  /// **'Réservé'**
+  String get reserved;
+
+  /// No description provided for @reservedAbbr.
+  ///
+  /// In fr, this message translates to:
+  /// **'Rés.'**
+  String get reservedAbbr;
+
+  /// No description provided for @unfavorable.
+  ///
+  /// In fr, this message translates to:
+  /// **'Défavorable'**
+  String get unfavorable;
+
+  /// No description provided for @unfavorableAbbr.
+  ///
+  /// In fr, this message translates to:
+  /// **'Déf.'**
+  String get unfavorableAbbr;
+
+  /// No description provided for @none.
+  ///
+  /// In fr, this message translates to:
+  /// **'Aucun'**
+  String get none;
+
+  /// No description provided for @boardOpinion.
+  ///
+  /// In fr, this message translates to:
+  /// **'Avis du conseil de classe'**
+  String get boardOpinion;
 }
 
 class _AppLocalizationsDelegate

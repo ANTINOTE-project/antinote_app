@@ -193,6 +193,9 @@ class AppLocalizationsFr extends AppLocalizations {
   }
 
   @override
+  String get fieldNotFilled => 'Non renseigné';
+
+  @override
   String classTiming(DateTime startTime, DateTime endTime) {
     final intl.DateFormat startTimeDateFormat = intl.DateFormat(
       'HH\'h\'mm',
@@ -320,7 +323,7 @@ class AppLocalizationsFr extends AppLocalizations {
   String get noCourseToday => 'Tu n\'as pas de cours,\nprofite bien !';
 
   @override
-  String get holidayDay => 'C\'est les vacances,\n amuse toi bien !';
+  String get holidayDay => 'C\'est les vacances,\namuse toi bien !';
 
   @override
   String get weekend => 'C\'est le weekend !';
@@ -559,4 +562,40 @@ class AppLocalizationsFr extends AppLocalizations {
   String explainCurrentConfig(String mode) {
     return 'Vous êtes en mode \"$mode\"';
   }
+
+  @override
+  String get no => 'Non';
+
+  @override
+  String get yes => 'Oui';
+
+  @override
+  String get veryFavorable => 'Très favorable';
+
+  @override
+  String get veryFavorableAbbr => 'T. fav.';
+
+  @override
+  String get favorable => 'Favorable';
+
+  @override
+  String get favorableAbbr => 'Fav.';
+
+  @override
+  String get reserved => 'Réservé';
+
+  @override
+  String get reservedAbbr => 'Rés.';
+
+  @override
+  String get unfavorable => 'Défavorable';
+
+  @override
+  String get unfavorableAbbr => 'Déf.';
+
+  @override
+  String get none => 'Aucun';
+
+  @override
+  String get boardOpinion => 'Avis du conseil de classe';
 }

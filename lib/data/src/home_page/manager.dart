@@ -61,8 +61,8 @@ final class HomePageCache {
 
   late final DateTime anchorTime;
 
-  new({required this.sessionId})
-    : anchorTime = DateTime.now().copyWith(isUtc: true);
+  new({required this.sessionId, DateTime? anchorTime})
+    : anchorTime = anchorTime ?? DateTime.now().copyWith(isUtc: true);
 
   new recycle({required this.sessionId, required HomePageCache existing})
     : anchorTime = existing.anchorTime;
@@ -252,7 +252,10 @@ final class HomePageManager() {
       return widget;
     }
 
-    final tempCache = HomePageCache(sessionId: session.stack.sessionId);
+    final tempCache = HomePageCache.recycle(
+      sessionId: session.stack.sessionId,
+      existing: _cache,
+    );
 
     final loaded = (await _loadWidgetConfigurations(
       session: session,
@@ -281,7 +284,10 @@ final class HomePageManager() {
     final l10n = context.l10n;
     final settings = context.s;
 
-    _cache = HomePageCache(sessionId: session.stack.sessionId);
+    _cache = HomePageCache(
+      sessionId: session.stack.sessionId,
+      anchorTime: session.stack.demo ? session.instance.demoDateTime : null,
+    );
 
     final config =
         (await _findConfiguration(
