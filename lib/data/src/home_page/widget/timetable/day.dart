@@ -143,6 +143,9 @@ final class const TimetableDayWidget()
   }
 
   @override
-  Widget buildSliver(BuildContext context, DayBlocks value) =>
-      TimetableDayWidgetSliver(value: value);
+  Widget buildSliver(
+    BuildContext context,
+    HomePageWidgetState state,
+    DayBlocks value,
+  ) => TimetableDayWidgetSliver(state: state, value: value);
 }

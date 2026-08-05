@@ -298,7 +298,6 @@ class _BlockWidgetState extends State<BlockWidget> {
             duration: const Duration(milliseconds: 300),
             reverseDuration: const Duration(milliseconds: 50),
             switchInCurve: Curves.fastOutSlowIn,
-            switchOutCurve: const ReversedCurve(Curves.fastOutSlowIn),
             transitionBuilder: (child, animation) {
               return FadeTransition(opacity: animation, child: child);
             },

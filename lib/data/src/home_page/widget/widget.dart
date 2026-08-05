@@ -54,7 +54,11 @@ sealed class const WidgetDescriptor<
 
   /// This should only be redirecting to a widget in the front end, no fancy
   /// widget manipulation in the back end.
-  Widget buildSliver(BuildContext context, V value);
+  Widget buildSliver(
+    BuildContext context,
+    HomePageWidgetState<V, A, P> state,
+    V value,
+  );
 }
 
 final class WidgetParameterEntry<E extends WidgetParameter> {
@@ -76,6 +80,11 @@ final class const WidgetArguments<T extends WidgetArgument>({
   required final Map<T, dynamic> _args,
 }) {
   P get<P>(WidgetArgument<P> key) => _args[key] as P;
+  void set<P>(WidgetArgument<P> key, P value) => _args[key as T] = value;
+  bool has(T key) => _args.containsKey(key);
+
+  WidgetArguments<T> mergeWith(WidgetArguments<WidgetArgument> arguments) =>
+      WidgetArguments<T>(args: {..._args, ...(arguments._args as dynamic)});
 }
 
 final class const WidgetArgumentEntry<

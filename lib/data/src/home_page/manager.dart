@@ -201,12 +201,29 @@ final class HomePageWidgetState<
 
   WidgetDescriptor<V, A, P> get descriptor => configuration.descriptor;
 
+  /// The parameters contain the raw settings as saved on disk that are used
+  /// customise the behavior of the widget as per user preferences.
   WidgetParameters<P> get parameters =>
       descriptor.arguments.firstOrNull?.createParameters(
         configuration.rawParameters,
       ) ??
       .new(params: configuration.rawParameters);
-  WidgetArguments<A> get arguments => descriptor.createArguments(rawArguments);
+
+  /// This contains the arguments as loaded by the initialisation of the home
+  /// page.
+  WidgetArguments<A> get baseArguments =>
+      descriptor.createArguments(rawArguments);
+
+  /// This contains the arguments that are changed after initialisation so that
+  /// when reloading a widget, those arguments will be taken into account.
+  final WidgetArguments<A> overrideArguments = WidgetArguments(
+    args: <A, dynamic>{},
+  );
+
+  /// This contains the base arguments with the ones edited for reload, if there
+  /// are any.
+  WidgetArguments<A> get reloadArguments =>
+      baseArguments.mergeWith(overrideArguments);
 }
 
 /// This manager is "short-lived". A new one should be created on each reload.
@@ -217,7 +234,6 @@ final class HomePageManager() {
 
   late HomePageCache _cache;
 
-  late final List<HomePageWidgetConfiguration> _loadedWidgetConfigurations;
   late final List<HomePageWidgetState> loadedWidgets;
 
   /// If a loaded home page widget is returned it is [identical] as the one
@@ -226,43 +242,31 @@ final class HomePageManager() {
   /// When [force] is [false], the widget will update only if the session is
   /// different. Else, the widget will always update.
   Future<HomePageWidgetState?> reloadWidget(
-    BuildContext context,
+    RemoteSession session,
     HomePageWidgetState widget, {
     required bool force,
   }) async {
-    assert(
-      context.mounted,
-      'Tried to reload a widget with an unmounted context.',
-    );
     assert(loadedWidgets.contains(widget));
 
-    final config = _loadedWidgetConfigurations[widget.index];
+    if (!force && _cache.sessionId != session.stack.sessionId) {
+      return widget;
+    }
 
-    return await context.ar.runTask(
-      context: context,
-      callback: (session) async {
-        if (!force && _cache.sessionId != session.stack.sessionId) {
-          return widget;
-        }
+    final tempCache = HomePageCache(sessionId: session.stack.sessionId);
 
-        final tempCache = HomePageCache(sessionId: session.stack.sessionId);
+    final loaded = (await _loadWidgetConfigurations(
+      session: session,
+      widgets: [widget],
+      cache: tempCache,
+    )).singleOrNull;
 
-        final loaded = (await _loadWidgetConfigurations(
-          session: session,
-          widgets: [config],
-          cache: tempCache,
-        )).singleOrNull;
+    _cache.applyCache(tempCache);
 
-        _cache.applyCache(tempCache);
+    if (loaded == null) return null;
 
-        if (loaded == null) return null;
+    widget.value = loaded.value;
 
-        widget.value = loaded.value;
-
-        return widget;
-      },
-      debugLabel: 'Fetching new data to reload a home page widget',
-    );
+    return widget;
   }
 
   Future<void> initialize(BuildContext context, RemoteSession session) async {
@@ -286,12 +290,12 @@ final class HomePageManager() {
         )) ??
         await settings.homePage.getBaseConfiguration(l10n);
 
-    _loadedWidgetConfigurations = config.widgets.toList();
+    final loadedWidgetConfigurations = config.widgets.toList();
     if (!config.exclusive) {
       final baseWidgets = (await settings.homePage.getBaseConfiguration(l10n))
           .widgets
           .toList();
-      for (final widget in _loadedWidgetConfigurations) {
+      for (final widget in loadedWidgetConfigurations) {
         final duplicate = baseWidgets.firstWhereOrNull(
           (element) => element.descriptor.id == widget.descriptor.id,
         );
@@ -300,12 +304,16 @@ final class HomePageManager() {
         }
       }
 
-      _loadedWidgetConfigurations.addAll(baseWidgets);
+      loadedWidgetConfigurations.addAll(baseWidgets);
     }
+
+    final entries = loadedWidgetConfigurations
+        .mapIndexed((i, e) => e.createState(i))
+        .toList();
 
     loadedWidgets = await _loadWidgetConfigurations(
       session: session,
-      widgets: _loadedWidgetConfigurations,
+      widgets: entries,
       cache: _cache,
     );
   }
@@ -352,14 +360,12 @@ final class HomePageManager() {
 
   Future<List<HomePageWidgetState>> _loadWidgetConfigurations({
     required RemoteSession session,
-    required List<HomePageWidgetConfiguration> widgets,
+    required List<HomePageWidgetState> widgets,
     required HomePageCache cache,
   }) async {
     final Map<int, HomePageWidgetState> loaded = {};
 
-    final List<HomePageWidgetState> entries = widgets
-        .mapIndexed((index, element) => element.createState(index))
-        .toList();
+    final List<HomePageWidgetState> entries = widgets;
     while (entries.isNotEmpty) {
       final requests = <HomePageRequest>[];
       final newEntries = <HomePageWidgetState>[];
@@ -369,7 +375,7 @@ final class HomePageManager() {
         final curRequests = <HomePageRequest>[];
 
         for (final argument in entry.descriptor.arguments) {
-          if (entry.rawArguments.containsKey(argument.id)) continue;
+          if (entry.reloadArguments.has(argument.id)) continue;
 
           final required = argument.requiredUntilCompute(
             session,
@@ -398,7 +404,7 @@ final class HomePageManager() {
           continue;
         }
 
-        final arguments = WidgetArguments(args: entry.rawArguments);
+        final arguments = entry.reloadArguments;
 
         final widgetRequests = entry.configuration.descriptor
             .requiredUntilCompute(session, cache, arguments);
@@ -420,7 +426,7 @@ final class HomePageManager() {
       entries.clear();
       entries.addAll(newEntries);
 
-      await _cache.runBestRequest(session, requests);
+      await cache.runBestRequest(session, requests);
     }
 
     return loaded.entries

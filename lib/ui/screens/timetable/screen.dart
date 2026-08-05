@@ -58,6 +58,8 @@ class TimetableDisplay extends StatefulWidget {
     required this.updateBlocks,
     this.configurations = WeekMappedViewConfiguration.defaultConfigs,
     this.scrollable = true,
+    this.transparent = false,
+    this.baseDate,
   });
 
   final List<WeekMappedViewConfiguration> configurations;
@@ -68,7 +70,10 @@ class TimetableDisplay extends StatefulWidget {
   )
   updateBlocks;
 
+  final DateTime? baseDate;
+
   final bool scrollable;
+  final bool transparent;
 
   @override
   State<TimetableDisplay> createState() => _TimetableDisplayState();
@@ -184,6 +189,7 @@ class _TimetableDisplayState extends State<TimetableDisplay>
           final slots = findRelevantSlots(days);
 
           return Scaffold(
+            backgroundColor: widget.transparent ? Colors.transparent : null,
             appBar: _buildAppBar(dayGroup, context),
 
             body: RefreshIndicator(
@@ -291,7 +297,6 @@ class _TimetableDisplayState extends State<TimetableDisplay>
                   return AnimatedSwitcher(
                     duration: const Duration(milliseconds: 300),
                     switchInCurve: Curves.fastOutSlowIn,
-                    switchOutCurve: const ReversedCurve(Curves.fastOutSlowIn),
                     child: partialChild,
                   );
                 },
@@ -305,6 +310,8 @@ class _TimetableDisplayState extends State<TimetableDisplay>
 
   AppBar _buildAppBar(DateRange dayGroup, BuildContext context) {
     return AppBar(
+      backgroundColor: widget.transparent ? Colors.transparent : null,
+      surfaceTintColor: widget.transparent ? Colors.transparent : null,
       title: TextButton.icon(
         label: Text(
           dayGroup.pprint(context),
@@ -413,28 +420,36 @@ class _TimetableDisplayState extends State<TimetableDisplay>
             child: Column(
               children: [
                 if (curSlot.active)
-                  Text(
-                    curSlot.label,
-                    maxLines: 1,
-                    textAlign: .center,
-                    style: TextStyle(
-                      color: context.c.outline,
-                      fontWeight: .w800,
-                      overflow: .visible,
+                  FittedBox(
+                    fit: .scaleDown,
+                    alignment: .topCenter,
+                    child: Text(
+                      curSlot.label,
+                      maxLines: 1,
+                      textAlign: .center,
+                      style: TextStyle(
+                        color: context.c.outline,
+                        fontWeight: .w800,
+                        overflow: .clip,
+                      ),
                     ),
                   ),
 
                 const Spacer(),
 
                 if (curEndSlot.active)
-                  Text(
-                    curEndSlot.label,
-                    maxLines: 1,
-                    textAlign: .center,
-                    style: TextStyle(
-                      color: context.c.outline,
-                      fontWeight: .w800,
-                      overflow: .visible,
+                  FittedBox(
+                    fit: .scaleDown,
+                    alignment: .bottomCenter,
+                    child: Text(
+                      curEndSlot.label,
+                      maxLines: 1,
+                      textAlign: .center,
+                      style: TextStyle(
+                        color: context.c.outline,
+                        fontWeight: .w800,
+                        overflow: .clip,
+                      ),
                     ),
                   ),
               ],
@@ -521,14 +536,15 @@ class _TimetableDisplayState extends State<TimetableDisplay>
       _currentConfiguration = daysConfiguration;
       _currentGroups = newGroups;
 
+      final selectedBaseDate =
+          widget.baseDate ?? _scheduleDisplayData.nextBusinessDay;
+
       currentGroupIndex = _currentGroups.indexWhere((element) {
-        return element.contains(_scheduleDisplayData.nextBusinessDay);
+        return element.contains(selectedBaseDate);
       });
 
       if (currentGroupIndex == -1) {
-        if (DateTime.now()
-            .copyWith(isUtc: true)
-            .isBefore(_scheduleDisplayData.firstDate)) {
+        if (!selectedBaseDate.isAfter(_scheduleDisplayData.firstDate)) {
           currentGroupIndex = 0;
         } else {
           currentGroupIndex = _currentGroups.length - 1;

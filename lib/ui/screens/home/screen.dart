@@ -53,7 +53,11 @@ class _HomeScreenState extends State<HomeScreen>
                 sliver: ValueListenableBuilder(
                   valueListenable: widget,
                   builder: (context, value, child) {
-                    return widget.descriptor.buildSliver(context, value);
+                    return widget.descriptor.buildSliver(
+                      context,
+                      widget,
+                      value,
+                    );
                   },
                 ),
               ),

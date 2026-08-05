@@ -90,6 +90,9 @@ final class const MenuWidget()
   }
 
   @override
-  Widget buildSliver(BuildContext context, Menu value) =>
-      MenuWidgetSliver(value: value);
+  Widget buildSliver(
+    BuildContext context,
+    HomePageWidgetState state,
+    Menu value,
+  ) => MenuWidgetSliver(value: value);
 }

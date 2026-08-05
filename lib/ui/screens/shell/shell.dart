@@ -158,7 +158,6 @@ class _AppShellState extends State<AppShell> {
                     duration: const Duration(milliseconds: 300),
 
                     switchInCurve: Curves.fastOutSlowIn,
-                    switchOutCurve: const ReversedCurve(Curves.fastOutSlowIn),
 
                     child: _tabs[currentPage].screen,
                   ),

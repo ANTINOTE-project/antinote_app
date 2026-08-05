@@ -154,7 +154,6 @@ mixin PageMixin<T extends StatefulWidget> on State<T> {
         return AnimatedSwitcher(
           duration: const Duration(milliseconds: 300),
           switchInCurve: Curves.fastOutSlowIn,
-          switchOutCurve: const ReversedCurve(Curves.fastOutSlowIn),
           child: child,
         );
       },
