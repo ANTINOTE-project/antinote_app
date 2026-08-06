@@ -158,7 +158,7 @@ class AppLocalizationsFr extends AppLocalizations {
   String get homeShowMore => 'Voir plus';
 
   @override
-  String get homeAttendance => 'Vie scolaire';
+  String get homeAttendance => 'Vie Scolaire';
 
   @override
   String get homeNews => 'Actualités';
