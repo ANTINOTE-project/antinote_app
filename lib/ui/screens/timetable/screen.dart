@@ -539,6 +539,8 @@ class _TimetableDisplayState extends State<TimetableDisplay>
       final selectedBaseDate =
           widget.baseDate ?? _scheduleDisplayData.nextBusinessDay;
 
+      libLog.info('Initializing timetable with base date $selectedBaseDate');
+
       currentGroupIndex = _currentGroups.indexWhere((element) {
         return element.contains(selectedBaseDate);
       });

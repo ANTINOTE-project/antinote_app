@@ -91,6 +91,8 @@ final class const TimetableDayWidget()
                   .toDay()
             : anchorDate;
 
+        libLog.info('Selected dates are $anchorDate -> $selectedDate');
+
         if (params.get(TimetableDayParameter.decayAfterClass) &&
             selectedDate.isAtSameMomentAs(cache.anchorDate) &&
             session.instance.isBusinessDay(selectedDate) &&

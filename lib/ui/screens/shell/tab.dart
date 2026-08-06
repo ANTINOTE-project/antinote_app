@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:antinote/antinote.dart';
+import 'package:antinote_app/data/src/accounts/registry.dart';
 import 'package:antinote_app/ui/utils/utils.dart';
 import 'package:antinote_app/ui/widgets/customs/button.dart';
 import 'package:antinote_app/ui/widgets/customs/loading.dart';
@@ -163,16 +164,28 @@ mixin PageMixin<T extends StatefulWidget> on State<T> {
 
 mixin TabMixin<T extends StatefulWidget> on PageMixin<T> {
   Set<String> get loadChannels => {'communication'};
+  bool get registerHook => true;
   Future<void> load(RemoteSession session);
+
+  AccountRegistry? _curRegistry;
 
   @override
   Future<void> loadPage() async {
-    await context.ar.runTask(
+    _curRegistry = context.ar;
+    await _curRegistry!.runTask(
       context: context,
       channels: loadChannels,
       callback: load,
       debugLabel: 'Reload page $runtimeType',
       retry: true,
+      registerHook: registerHook,
     );
+  }
+
+  @override
+  void dispose() {
+    _curRegistry?.unregisterHook(load);
+
+    super.dispose();
   }
 }

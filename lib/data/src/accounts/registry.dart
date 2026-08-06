@@ -140,6 +140,7 @@ final class AccountRegistry({
     Set<String> channels = const {'communication'},
     required String? debugLabel,
     bool retry = false,
+    bool registerHook = false,
   }) async {
     await ensureAccountPicked(context: context);
 
@@ -148,6 +149,7 @@ final class AccountRegistry({
       channels: channels,
       debugLabel: debugLabel,
       retry: retry,
+      registerHook: registerHook,
     );
   }
 
@@ -158,6 +160,7 @@ final class AccountRegistry({
     Set<String> channels = const {'communication'},
     required String? debugLabel,
     bool retry = false,
+    bool registerHook = false,
   }) async {
     return curSession!.runTask(
       callback: callback,
@@ -166,6 +169,13 @@ final class AccountRegistry({
       storage: _storage,
       options: settings.sessionOptions,
       retry: retry,
+      registerHook: registerHook,
     );
+  }
+
+  void unregisterHook(SessionTaskCallback callback) {
+    for (final wrapper in _sessions.values) {
+      wrapper.unregisterHook(callback);
+    }
   }
 }

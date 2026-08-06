@@ -1,5 +1,5 @@
 import 'package:antinote/antinote.dart';
-import 'package:antinote_app/data/backend.dart';
+import 'package:antinote_app/data/data.dart';
 import 'package:antinote_app/data/protos/account.pb.dart';
 import 'package:antinote_app/data/src/accounts/registry.dart';
 import 'package:antinote_app/data/src/accounts/storage/widget.dart';

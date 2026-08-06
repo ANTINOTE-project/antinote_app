@@ -25,11 +25,52 @@ final class const RegisterableAccount({
   required final AntinoteAccount account,
 });
 
+final class const _SessionHook({
+  required final SessionTaskCallback callback,
+  required final int lastRanSessionVersion,
+  required final String? debugLabel,
+
+  required final Set<String> channels,
+}) {
+  _SessionHook copyWith({
+    SessionTaskCallback? callback,
+
+    int? lastRanSessionVersion,
+
+    String? debugLabel,
+    bool clearDebugLabel = false,
+
+    Set<String>? channels,
+  }) => _SessionHook(
+    callback: callback ?? this.callback,
+    lastRanSessionVersion: lastRanSessionVersion ?? this.lastRanSessionVersion,
+    debugLabel: clearDebugLabel ? null : debugLabel ?? this.debugLabel,
+    channels: channels ?? this.channels,
+  );
+}
+
 final class const _SessionState({
   required final RemoteSession session,
   required final PollingState polling,
   required final int? version,
-});
+
+  /// The same list should always be kept (and should be growable).
+  required final List<_SessionHook> hooks,
+}) {
+  _SessionState copyWith({
+    RemoteSession? session,
+    PollingState? polling,
+    int? version,
+    bool clearVersion = false,
+
+    List<_SessionHook>? hooks,
+  }) => _SessionState(
+    session: session ?? this.session,
+    polling: polling ?? this.polling,
+    version: clearVersion ? null : version ?? this.version,
+    hooks: hooks ?? this.hooks,
+  );
+}
 
 final class SessionWrapper({required final String accountUid}) {
   Completer<void>? _loginLock;
@@ -52,6 +93,7 @@ final class SessionWrapper({required final String accountUid}) {
       session: result.session,
       polling: .unavailable,
       version: null,
+      hooks: [],
     );
 
     return .new(wrapper: wrapper, account: account);
@@ -149,6 +191,7 @@ final class SessionWrapper({required final String accountUid}) {
         session: newSession,
         polling: .unavailable,
         version: version,
+        hooks: _state?.hooks ?? [],
       );
 
       return newSession;
@@ -158,14 +201,72 @@ final class SessionWrapper({required final String accountUid}) {
     }
   }
 
+  void _registerHook(_SessionHook hook) {
+    if (_state == null) return;
+
+    for (final existingHook in _state!.hooks) {
+      if (existingHook.callback == hook.callback) return;
+    }
+
+    _state!.hooks.add(hook);
+  }
+
+  Future<void> _updateHooks({
+    required Set<String> alreadyOwnedChannels,
+    required AccountStorage storage,
+    required SessionOptions options,
+  }) async {
+    if (_state == null || _state!.hooks.isEmpty) return;
+
+    bool ranHook = false;
+    do {
+      List<int> hooksToDelete = [];
+
+      for (final (index, hook) in _state!.hooks.indexed) {
+        if (hook.lastRanSessionVersion != _state!.session.stack.sessionId) {
+          ranHook = true;
+
+          try {
+            await runTask(
+              callback: hook.callback,
+              storage: storage,
+              options: options,
+              channels: hook.channels.difference(alreadyOwnedChannels),
+              debugLabel: hook.debugLabel,
+              runHooks: false,
+            );
+
+            _state!.hooks[index] = hook.copyWith(
+              lastRanSessionVersion: _state!.session.stack.sessionId,
+            );
+          } catch (e, st) {
+            libLog.severe(
+              'Failed to run hook "${hook.debugLabel}" upon session change, '
+              'deleting the hook...',
+              e,
+              st,
+            );
+            hooksToDelete.add(index);
+          }
+        }
+      }
+
+      for (final toDelete in hooksToDelete.reversed) {
+        _state!.hooks.removeAt(toDelete);
+      }
+    } while (ranHook);
+  }
+
+  void unregisterHook(SessionTaskCallback callback) {
+    if (_state == null) return;
+
+    _state!.hooks.removeWhere((element) => element.callback == callback);
+  }
+
   void updatePollingState(PollingState newState) {
     if (_state == null) return;
 
-    _state = .new(
-      session: _state!.session,
-      polling: newState,
-      version: _state!.version,
-    );
+    _state = _state!.copyWith(polling: newState);
   }
 
   Future<T> runTask<T>({
@@ -176,6 +277,9 @@ final class SessionWrapper({required final String accountUid}) {
     String? debugLabel,
     bool retry = false,
     bool sendSession = true,
+
+    bool runHooks = true,
+    bool registerHook = false,
   }) async {
     ScheduledTask? task;
     Completer<void>? createdLock;
@@ -197,13 +301,10 @@ final class SessionWrapper({required final String accountUid}) {
             ),
             polling: _state?.polling ?? .unavailable,
             version: task.sessionVersion,
+            hooks: _state?.hooks ?? [],
           );
         } else if (_state != null && _state!.version != task.sessionVersion) {
-          _state = .new(
-            session: _state!.session,
-            polling: _state!.polling,
-            version: task.sessionVersion,
-          );
+          _state = _state!.copyWith(version: task.sessionVersion);
         }
       } else {
         task = null;
@@ -239,14 +340,29 @@ final class SessionWrapper({required final String accountUid}) {
             options: options,
           );
 
+          if (runHooks) {
+            await _updateHooks(
+              alreadyOwnedChannels: channels,
+              storage: storage,
+              options: options,
+            );
+          }
+
           final result = await callback(session);
 
           if (_state != null) {
-            _state = .new(
-              session: _state!.session,
-              polling: .alive,
-              version: _state!.version,
-            );
+            _state = _state!.copyWith(polling: .alive);
+
+            if (registerHook) {
+              _registerHook(
+                _SessionHook(
+                  callback: callback,
+                  lastRanSessionVersion: session.stack.sessionId,
+                  debugLabel: debugLabel,
+                  channels: channels,
+                ),
+              );
+            }
           }
 
           if (channels.isNotEmpty &&
@@ -276,11 +392,7 @@ final class SessionWrapper({required final String accountUid}) {
           }
 
           if (_state != null) {
-            _state = .new(
-              session: _state!.session,
-              polling: .dead,
-              version: _state!.version,
-            );
+            _state = _state!.copyWith(polling: .dead);
           }
 
           if (_nativeSessionManagerSupported) {
@@ -309,11 +421,7 @@ final class SessionWrapper({required final String accountUid}) {
           );
 
           if (newVersion != null && _state != null) {
-            _state = .new(
-              session: _state!.session,
-              polling: _state!.polling,
-              version: newVersion,
-            );
+            _state = _state!.copyWith(version: newVersion);
           }
         }
       } else if (createdLock != null) {
