@@ -309,22 +309,26 @@ class _HomeworkListState extends State<_HomeworkList> {
 
       headerBuilder: (context, animation) {
         return Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
+          padding: const .symmetric(horizontal: 8, vertical: 6),
 
           child: Pressable(
             onPressed: controller.toggle,
             hasVisuals: false,
 
             child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              mainAxisAlignment: .spaceBetween,
 
               children: [
-                Text(
-                  widget.day.asRelativeDate(context),
-                  style: TextStyle(
-                    color: context.c.outline,
-                    fontWeight: FontWeight.bold,
-                    fontSize: 16,
+                Padding(
+                  padding: const .only(left: 2, bottom: 2),
+
+                  child: Text(
+                    widget.day.asRelativeDate(context),
+                    style: TextStyle(
+                      color: context.c.outline,
+                      fontWeight: .bold,
+                      fontSize: 16,
+                    ),
                   ),
                 ),
 
@@ -344,7 +348,7 @@ class _HomeworkListState extends State<_HomeworkList> {
 
       bodyBuilder: (BuildContext context, Animation<double> animation) {
         return Padding(
-          padding: const .symmetric(horizontal: 8),
+          padding: const .fromLTRB(8, 0, 8, 16),
 
           child: Column(
             spacing: 8,
