@@ -52,7 +52,7 @@ class ButtonWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Pressable(
-      borderRadius: const .all(.circular(16)),
+      borderRadius: const .all(.circular(999)),
 
       onPressed: () => _onPressed(context),
       hasFeedback: isEnabled || isLoading,
@@ -61,11 +61,11 @@ class ButtonWidget extends StatelessWidget {
         padding: const .symmetric(horizontal: 16, vertical: 8),
 
         width: double.infinity,
-        height: 48,
+        height: 52,
 
         decoration: BoxDecoration(
           color: _getButtonColor(context),
-          borderRadius: const .all(.circular(16)),
+          borderRadius: const .all(.circular(999)),
         ),
 
         child: Center(

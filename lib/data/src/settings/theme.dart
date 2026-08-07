@@ -35,7 +35,6 @@ class ThemeSettings extends SettingsCategory {
       seedColor: seedColor,
       brightness: brightness,
       contrastLevel: contrastLevel,
-      dynamicSchemeVariant: .vibrant,
     );
   }
 

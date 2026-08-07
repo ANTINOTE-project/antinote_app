@@ -59,8 +59,8 @@ class ListWidget<T> extends StatelessWidget {
     );
   }
 
-  static const radius = Radius.circular(16);
-  static const defaultRadius = Radius.circular(6);
+  static const radius = Radius.circular(12);
+  static const defaultRadius = Radius.circular(4);
 
   BorderRadius _getBorderRadius(int index, int length) {
     final isFirst = index == 0 && !gotBefore;

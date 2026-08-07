@@ -4,7 +4,9 @@ import 'package:antinote/antinote.dart';
 import 'package:antinote_app/main.dart';
 import 'package:antinote_app/ui/routing/routes.dart';
 import 'package:antinote_app/ui/utils/utils.dart';
+import 'package:antinote_app/ui/widgets/bottom_padding.dart';
 import 'package:antinote_app/ui/widgets/customs/app_bar.dart';
+import 'package:antinote_app/ui/widgets/customs/field.dart';
 import 'package:antinote_app/ui/widgets/customs/list.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
@@ -26,6 +28,8 @@ class LoginSelectSchoolScreen extends StatefulWidget {
 }
 
 class _LoginSelectSchoolScreenState extends State<LoginSelectSchoolScreen> {
+  final _controller = TextEditingController();
+
   final List<GeolocatedInstance> _mockInstances = List.generate(20, (i) {
     final r = Random(i);
 
@@ -44,20 +48,34 @@ class _LoginSelectSchoolScreenState extends State<LoginSelectSchoolScreen> {
     );
   });
 
+  List<GeolocatedInstance>? _filteredInstances;
   List<GeolocatedInstance>? _instances;
 
-  Future<void> geolocateInstances() async {
+  Future<void> _geolocateInstances() async {
     final instances = await findNearbyInstances(widget.lat, widget.long);
 
     setState(() {
+      _filteredInstances = instances;
       _instances = instances;
+    });
+  }
+
+  void _onSearch(String query) {
+    setState(() {
+      _filteredInstances = _instances
+          ?.where(
+            (element) => element.name.toLowerCase().trim().contains(
+              query.trim().toLowerCase(),
+            ),
+          )
+          .toList(growable: false);
     });
   }
 
   @override
   void initState() {
     super.initState();
-    geolocateInstances();
+    _geolocateInstances();
   }
 
   @override
@@ -66,52 +84,81 @@ class _LoginSelectSchoolScreenState extends State<LoginSelectSchoolScreen> {
       appBar: AppBarWidget(title: Text(context.l10n.loginSchool)),
 
       body: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 12),
+        padding: const .symmetric(horizontal: 12),
 
-        child: CustomScrollView(
-          slivers: [
-            ListWidget(
-              items: _instances == null ? _mockInstances : _instances!,
-              isLoading: _instances == null,
+        child: Column(
+          crossAxisAlignment: .start,
 
-              itemBuilder: (context, instance, borderRadius) {
-                return ItemWidget(
-                  borderRadius: borderRadius,
+          children: [
+            Padding(
+              padding: const .only(bottom: 12),
 
-                  onPressed: () async {
-                    try {
-                      final parameters = await MobileInstanceParameters.fetch(
-                        instance.baseUrl,
+              child: FieldWidget(
+                controller: _controller,
+                hintText: context.l10n.loginCitySubtitle,
+                onChanged: _onSearch,
+              ),
+            ),
+
+            Expanded(
+              child: CustomScrollView(
+                slivers: [
+                  ListWidget(
+                    items: _filteredInstances == null
+                        ? _mockInstances
+                        : _filteredInstances!,
+                    isLoading: _filteredInstances == null,
+
+                    itemBuilder: (context, instance, borderRadius) {
+                      return ItemWidget(
+                        borderRadius: borderRadius,
+
+                        onPressed: () async {
+                          try {
+                            final parameters =
+                                await MobileInstanceParameters.fetch(
+                                  instance.baseUrl,
+                                );
+
+                            if (!context.mounted) return;
+
+                            final result = await context.push<LoginResult>(
+                              Routes.auth.workspace,
+                              extra: {'parameters': parameters},
+                            );
+
+                            if (result != null && context.mounted) {
+                              context.pop(result);
+                            }
+
+                            // catch
+                          } catch (e, st) {
+                            talker.error(
+                              'Error during fetch of parameters',
+                              e,
+                              st,
+                            );
+                          }
+                        },
+
+                        leading: const Icon(HugeIconsSolid.school),
+
+                        title: Text(instance.name),
+                        subtitle: Text(
+                          '${instance.distance.toStringAsFixed(2)} km',
+                        ),
+
+                        trailing: Icon(
+                          HugeIconsSolid.arrowRight01,
+                          color: context.c.outline,
+                        ),
                       );
-
-                      if (!context.mounted) return;
-
-                      final result = await context.push<LoginResult>(
-                        Routes.auth.workspace,
-                        extra: {'parameters': parameters},
-                      );
-
-                      if (result != null && context.mounted) {
-                        context.pop(result);
-                      }
-
-                      // catch
-                    } catch (e, st) {
-                      talker.error('Error during fetch of parameters', e, st);
-                    }
-                  },
-
-                  leading: const Icon(HugeIconsSolid.school),
-
-                  title: Text(instance.name),
-                  subtitle: Text('${instance.distance.toStringAsFixed(2)} km'),
-
-                  trailing: Icon(
-                    HugeIconsSolid.arrowRight01,
-                    color: context.c.outline,
+                    },
                   ),
-                );
-              },
+
+                  const BottomPadding(padding: 10),
+                ],
+              ),
             ),
           ],
         ),
