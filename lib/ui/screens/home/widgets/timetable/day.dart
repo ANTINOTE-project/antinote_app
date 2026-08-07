@@ -20,10 +20,12 @@ class const TimetableDayWidgetSliver({
         icon: HugeIconsSolid.calendar01,
         title: Text(context.l10n.timetable),
         child: ConstrainedBox(
-          constraints: .new(maxHeight: MediaQuery.heightOf(context) * .65),
+          constraints: .new(maxHeight: MediaQuery.heightOf(context) * .6),
           child: TimetableDisplay(
             baseDate: state.overrideArguments.get(TimetableDayArgument.day),
+            normalPicker: false,
             transparent: true,
+
             updateBlocks: (session, days, businessDays) async {
               // TODO: Add check whether the day is already loaded inside value
 

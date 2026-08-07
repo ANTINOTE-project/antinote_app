@@ -13,8 +13,8 @@ dependencies:
     sdk: flutter
 
   antinote:
-#    path: ../antinote
-    git: https://github.com/ANTINOTE-project/antinote.git
+    #    path: ../antinote
+    git: https://github.com/ANTINOTE-project/antinote_api.git
 
   # Logging
   logging: ^1.3.0

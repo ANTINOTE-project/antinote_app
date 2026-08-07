@@ -52,29 +52,24 @@ class _TimetableScreenState extends State<TimetableScreen> {
   }
 }
 
-class TimetableDisplay extends StatefulWidget {
-  const TimetableDisplay({
-    super.key,
-    required this.updateBlocks,
-    this.configurations = WeekMappedViewConfiguration.defaultConfigs,
-    this.scrollable = true,
-    this.transparent = false,
-    this.baseDate,
-  });
+class const TimetableDisplay({
+  super.key,
+  final List<WeekMappedViewConfiguration> configurations =
+      WeekMappedViewConfiguration.defaultConfigs,
 
-  final List<WeekMappedViewConfiguration> configurations;
-  final Future<Map<DateTime, DayBlocks>> Function(
+  required final Future<Map<DateTime, DayBlocks>> Function(
     RemoteSession session,
     DateRange days,
     List<DateTime> businessDays,
   )
-  updateBlocks;
+  updateBlocks,
 
-  final DateTime? baseDate;
+  final DateTime? baseDate,
 
-  final bool scrollable;
-  final bool transparent;
-
+  final bool scrollable = true,
+  final bool transparent = false,
+  final bool normalPicker = true,
+}) extends StatefulWidget {
   @override
   State<TimetableDisplay> createState() => _TimetableDisplayState();
 }
@@ -312,13 +307,17 @@ class _TimetableDisplayState extends State<TimetableDisplay>
     return AppBar(
       backgroundColor: widget.transparent ? Colors.transparent : null,
       surfaceTintColor: widget.transparent ? Colors.transparent : null,
+
+      centerTitle: !widget.normalPicker,
       title: TextButton.icon(
         label: Text(
           dayGroup.pprint(context),
           style: const TextStyle(fontWeight: .bold, fontSize: 16),
         ),
 
-        icon: const Icon(HugeIconsSolid.calendar03, size: 22),
+        icon: widget.normalPicker
+            ? const Icon(HugeIconsSolid.calendar03, size: 22)
+            : null,
 
         onPressed: () async {
           final selected = await showDatePicker(

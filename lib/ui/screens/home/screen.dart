@@ -46,22 +46,27 @@ class _HomeScreenState extends State<HomeScreen>
     return buildRefreshIndicator(
       child: HomePageScope(
         manager: homePageManager,
-        child: CustomScrollView(
-          slivers: [
-            for (final widget in homePageManager.loadedWidgets)
-              SliverSafeArea(
-                sliver: ValueListenableBuilder(
-                  valueListenable: widget,
-                  builder: (context, value, child) {
-                    return widget.descriptor.buildSliver(
-                      context,
-                      widget,
-                      value,
-                    );
-                  },
+
+        child: Padding(
+          padding: const .all(12),
+
+          child: CustomScrollView(
+            slivers: [
+              for (final widget in homePageManager.loadedWidgets)
+                SliverSafeArea(
+                  sliver: ValueListenableBuilder(
+                    valueListenable: widget,
+                    builder: (context, value, child) {
+                      return widget.descriptor.buildSliver(
+                        context,
+                        widget,
+                        value,
+                      );
+                    },
+                  ),
                 ),
-              ),
-          ],
+            ],
+          ),
         ),
       ),
     );
@@ -91,14 +96,14 @@ class const HomeWidget({
   @override
   Widget build(BuildContext context) {
     return Column(
-      spacing: 2,
+      spacing: 4,
       children: [
         ItemWidget(
           borderRadius: .vertical(
             top: ListWidget.radius,
             bottom: onShowMore == null
-                ? ListWidget.defaultRadius
-                : ListWidget.radius,
+                ? ListWidget.radius
+                : ListWidget.defaultRadius,
           ),
           title: Row(spacing: 8, children: [Icon(icon), title]),
           subtitle: child,
