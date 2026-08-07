@@ -1,7 +1,8 @@
 import 'package:antinote_app/ui/utils/utils.dart';
-import 'package:antinote_app/ui/widgets/customs/loading.dart';
 import 'package:antinote_app/ui/widgets/pressable.dart';
 import 'package:flutter/material.dart';
+
+enum ButtonVariant { primary, secondary, tertiary, dangerous }
 
 class ButtonWidget extends StatelessWidget {
   final VoidCallback onPressed;
@@ -9,10 +10,8 @@ class ButtonWidget extends StatelessWidget {
   final String? label;
   final IconData? icon;
 
-  final bool isSecondary;
-  final bool isDangerous;
-  final bool isLoading;
-  final bool isEnabled;
+  final ButtonVariant variant;
+  final bool enabled;
 
   const ButtonWidget({
     super.key,
@@ -21,79 +20,94 @@ class ButtonWidget extends StatelessWidget {
     this.label,
     this.icon,
 
-    this.isSecondary = false,
-    this.isDangerous = false,
-    this.isLoading = false,
-    this.isEnabled = true,
+    this.variant = .primary,
+    this.enabled = true,
   });
 
-  Future<void> _onPressed(BuildContext context) async {
-    if (!isEnabled || isLoading) return;
+  bool get notEnabled => !enabled;
+
+  Future<void> _onPressed() async {
+    if (notEnabled) return;
     onPressed.call();
   }
 
   Color _getButtonColor(BuildContext context) {
-    return switch ((isEnabled, isDangerous, isSecondary)) {
-      (false, _, _) => context.c.onInverseSurface,
-      (_, true, _) => context.c.errorContainer,
-      (_, _, true) => context.c.surfaceContainerHigh,
-      _ => context.c.primary,
+    if (notEnabled) return context.c.onInverseSurface;
+
+    return switch (variant) {
+      .dangerous => context.c.errorContainer,
+      .tertiary => context.c.tertiaryContainer,
+      .secondary => context.c.secondaryContainer,
+      .primary => context.c.primaryContainer,
+    };
+  }
+
+  Color _getBorderColor(BuildContext context) {
+    if (notEnabled) return context.c.outlineVariant;
+
+    return switch (variant) {
+      .dangerous => context.c.onError,
+      .secondary => context.c.onSecondary,
+      .tertiary => context.c.onTertiary,
+      .primary => context.c.onPrimary,
     };
   }
 
   Color _getTextColor(BuildContext context) {
-    return switch ((isEnabled, isDangerous)) {
-      (false, _) => context.c.outline,
-      (_, true) => context.c.error,
-      _ => context.c.onPrimary,
+    if (notEnabled) return context.c.outline;
+
+    return switch (variant) {
+      .dangerous => context.c.error,
+      .secondary => context.c.onSecondaryContainer,
+      .tertiary => context.c.onTertiaryContainer,
+      .primary => context.c.onPrimaryContainer,
     };
   }
 
   @override
   Widget build(BuildContext context) {
     return Pressable(
-      borderRadius: const .all(.circular(999)),
+      onPressed: _onPressed,
 
-      onPressed: () => _onPressed(context),
-      hasFeedback: isEnabled || isLoading,
+      borderRadius: .circular(8),
+      hasFeedback: enabled,
 
       child: Ink(
         padding: const .symmetric(horizontal: 16, vertical: 8),
 
         width: double.infinity,
-        height: 52,
+        height: 50,
 
         decoration: BoxDecoration(
+          border: .all(color: _getBorderColor(context)),
           color: _getButtonColor(context),
-          borderRadius: const .all(.circular(999)),
+          borderRadius: .circular(8),
         ),
 
         child: Center(
-          child: isLoading
-              ? const LoadingWidget(size: 24)
-              : Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  spacing: 6,
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            spacing: 6,
 
-                  children: [
-                    if (icon != null)
-                      Icon(icon!, color: _getTextColor(context), size: 24)
-                    else
-                      const SizedBox.shrink(),
+            children: [
+              if (icon != null)
+                Icon(icon!, color: _getTextColor(context), size: 24)
+              else
+                const SizedBox.shrink(),
 
-                    if (label != null)
-                      Text(
-                        label!,
-                        style: TextStyle(
-                          color: _getTextColor(context),
-                          fontSize: 16,
-                          fontWeight: FontWeight.w800,
-                        ),
-                      )
-                    else
-                      const SizedBox.shrink(),
-                  ],
-                ),
+              if (label != null)
+                Text(
+                  label!,
+                  style: TextStyle(
+                    color: _getTextColor(context),
+                    fontSize: 16,
+                    fontWeight: FontWeight.w800,
+                  ),
+                )
+              else
+                const SizedBox.shrink(),
+            ],
+          ),
         ),
       ),
     );

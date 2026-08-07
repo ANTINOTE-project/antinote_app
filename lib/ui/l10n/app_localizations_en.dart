@@ -116,6 +116,9 @@ class AppLocalizationsEn extends AppLocalizations {
       'Scan a QR Code from your computer that\'s already logged into PRONOTE';
 
   @override
+  String get loginQrCodeFromGallery => 'Scanner depuis une image';
+
+  @override
   String get loginCity => 'Find your city';
 
   @override
@@ -159,6 +162,13 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get loginPinCodeSubtitle =>
       'Please enter your PIN code to connect to your PRONOTE account';
+
+  @override
+  String get loginDemo => 'Compte de démo';
+
+  @override
+  String get loginDemoSubtitle =>
+      'Connecte toi au compte de démo pour explorer l\'application et ses fonctionnalités';
 
   @override
   String get homeShowMore => 'Show more';

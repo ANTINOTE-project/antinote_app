@@ -308,6 +308,12 @@ abstract class AppLocalizations {
   /// **'Scanne un QR code depuis un ordinateur déjà connecté à PRONOTE'**
   String get loginQrCodeSubtitle;
 
+  /// No description provided for @loginQrCodeFromGallery.
+  ///
+  /// In fr, this message translates to:
+  /// **'Scanner depuis une image'**
+  String get loginQrCodeFromGallery;
+
   /// No description provided for @loginCity.
   ///
   /// In fr, this message translates to:
@@ -391,6 +397,18 @@ abstract class AppLocalizations {
   /// In fr, this message translates to:
   /// **'Veuillez rentrer votre code PIN vous connecter à votre compte PRONOTE'**
   String get loginPinCodeSubtitle;
+
+  /// No description provided for @loginDemo.
+  ///
+  /// In fr, this message translates to:
+  /// **'Compte de démo'**
+  String get loginDemo;
+
+  /// No description provided for @loginDemoSubtitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Connecte toi au compte de démo pour explorer l\'application et ses fonctionnalités'**
+  String get loginDemoSubtitle;
 
   /// No description provided for @homeShowMore.
   ///

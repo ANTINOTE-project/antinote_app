@@ -9,6 +9,7 @@ import 'package:antinote_app/ui/widgets/customs/loading.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hugeicons_pro/hugeicons.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:mobile_scanner/mobile_scanner.dart';
 
 class LoginQrCodeScreen extends StatefulWidget {
@@ -39,139 +40,182 @@ class _LoginQrCodeScreenState extends State<LoginQrCodeScreen> {
     return QrCodeCredentials.loginFromQrCode(qrCodeContent, pinCode);
   }
 
+  Future<void> _scanFromGallery() async {
+    if (_isProcessing) return;
+
+    final XFile? image = await ImagePicker().pickImage(source: .gallery);
+    if (image == null) return;
+
+    _isProcessing = true;
+
+    final capture = await _scanController.analyzeImage(image.path);
+    final readValue = capture?.barcodes.firstOrNull?.rawValue;
+
+    if (readValue == null) {
+      _isProcessing = false;
+      return;
+    }
+
+    final createdCredentials = await _askForPin(readValue);
+
+    if (createdCredentials != null && mounted) {
+      context.pop(createdCredentials);
+    }
+
+    _isProcessing = false;
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBarWidget(title: Text(context.l10n.loginQrCode)),
 
-      body: Padding(
-        padding: const EdgeInsets.all(16),
+      body: SafeArea(
+        child: Padding(
+          padding: const .fromLTRB(16, 0, 16, 16),
 
-        child: LayoutBuilder(
-          builder: (context, constraints) {
-            final size = constraints.biggest;
+          child: Column(
+            spacing: 8,
 
-            final scanWindow = Rect.fromCenter(
-              center: size.center(Offset.zero),
-              width: 250,
-              height: 250,
-            );
+            children: [
+              Expanded(
+                child: LayoutBuilder(
+                  builder: (context, constraints) {
+                    final size = constraints.biggest;
 
-            return ClipRRect(
-              borderRadius: BorderRadius.circular(24),
+                    final scanWindow = Rect.fromCenter(
+                      center: size.center(Offset.zero),
+                      width: 250,
+                      height: 250,
+                    );
 
-              child: MobileScanner(
-                controller: _scanController,
-                scanWindow: scanWindow,
-                tapToFocus: true,
+                    return ClipRRect(
+                      borderRadius: BorderRadius.circular(12),
 
-                errorBuilder: (context, _) {
-                  return Center(
-                    child: Column(
-                      mainAxisAlignment: .center,
-                      spacing: 6,
+                      child: MobileScanner(
+                        controller: _scanController,
+                        scanWindow: scanWindow,
+                        tapToFocus: true,
 
-                      children: [
-                        Icon(
-                          HugeIconsSolid.securityWarning,
-                          color: context.c.errorContainer,
-                          size: 32,
-                        ),
+                        errorBuilder: (context, _) {
+                          return Center(
+                            child: Column(
+                              mainAxisAlignment: .center,
+                              spacing: 6,
 
-                        Text(
-                          context.l10n.anErrorOccurred,
+                              children: [
+                                Icon(
+                                  HugeIconsSolid.securityWarning,
+                                  color: context.c.errorContainer,
+                                  size: 32,
+                                ),
 
-                          style: TextStyle(
-                            fontWeight: .w800,
-                            color: context.c.errorContainer,
-                            fontSize: 17,
-                          ),
-                        ),
+                                Text(
+                                  context.l10n.anErrorOccurred,
 
-                        const SizedBox(height: 10),
+                                  style: TextStyle(
+                                    fontWeight: .w800,
+                                    color: context.c.errorContainer,
+                                    fontSize: 17,
+                                  ),
+                                ),
 
-                        ButtonWidget(
-                          onPressed: () => _scanController.start(),
-                          label: context.l10n.retry,
-                        ),
-                      ],
-                    ),
-                  );
-                },
+                                const SizedBox(height: 10),
 
-                overlayBuilder: (context, _) {
-                  return Stack(
-                    children: [
-                      ColorFiltered(
-                        colorFilter: ColorFilter.mode(
-                          context.c.scrim.withAlpha(128),
-                          BlendMode.srcOut,
-                        ),
-
-                        child: Stack(
-                          children: [
-                            Container(
-                              decoration: BoxDecoration(
-                                backgroundBlendMode: BlendMode.dstOut,
-                                color: context.c.surface,
-                              ),
+                                ButtonWidget(
+                                  onPressed: () => _scanController.start(),
+                                  label: context.l10n.retry,
+                                ),
+                              ],
                             ),
+                          );
+                        },
 
-                            Center(
-                              child: Container(
-                                height: 250,
-                                width: 250,
+                        overlayBuilder: (context, _) {
+                          return Stack(
+                            children: [
+                              ColorFiltered(
+                                colorFilter: ColorFilter.mode(
+                                  context.c.scrim.withAlpha(128),
+                                  BlendMode.srcOut,
+                                ),
 
-                                decoration: BoxDecoration(
-                                  borderRadius: .circular(20),
-                                  color: context.c.surface,
+                                child: Stack(
+                                  children: [
+                                    Container(
+                                      decoration: BoxDecoration(
+                                        backgroundBlendMode: BlendMode.dstOut,
+                                        color: context.c.surface,
+                                      ),
+                                    ),
+
+                                    Center(
+                                      child: Container(
+                                        height: 250,
+                                        width: 250,
+
+                                        decoration: BoxDecoration(
+                                          borderRadius: .circular(20),
+                                          color: context.c.surface,
+                                        ),
+                                      ),
+                                    ),
+                                  ],
                                 ),
                               ),
-                            ),
-                          ],
-                        ),
+
+                              Align(
+                                child: CustomPaint(
+                                  size: const Size(250, 250),
+
+                                  painter: _ScannerOverlayPainter(
+                                    borderColor: context.c.primary,
+                                    borderRadius: 20,
+                                  ),
+                                ),
+                              ),
+                            ],
+                          );
+                        },
+
+                        placeholderBuilder: (context) {
+                          return const LoadingWidget();
+                        },
+
+                        onDetect: (result) async {
+                          if (_isProcessing) return;
+                          _isProcessing = true;
+
+                          final readValue = result.barcodes.first.rawValue;
+
+                          if (readValue == null) {
+                            _isProcessing = false;
+                            return;
+                          }
+
+                          final createdCredentials = await _askForPin(
+                            readValue,
+                          );
+
+                          if (createdCredentials != null && context.mounted) {
+                            context.pop(createdCredentials);
+                          }
+
+                          _isProcessing = false;
+                        },
                       ),
-
-                      Align(
-                        child: CustomPaint(
-                          size: const Size(250, 250),
-
-                          painter: _ScannerOverlayPainter(
-                            borderColor: context.c.primary,
-                            borderRadius: 20,
-                          ),
-                        ),
-                      ),
-                    ],
-                  );
-                },
-
-                placeholderBuilder: (context) {
-                  return const LoadingWidget();
-                },
-
-                onDetect: (result) async {
-                  if (_isProcessing) return;
-                  _isProcessing = true;
-
-                  final readValue = result.barcodes.first.rawValue;
-
-                  if (readValue == null) {
-                    _isProcessing = false;
-                    return;
-                  }
-
-                  final createdCredentials = await _askForPin(readValue);
-
-                  if (createdCredentials != null && context.mounted) {
-                    context.pop(createdCredentials);
-                  }
-
-                  _isProcessing = false;
-                },
+                    );
+                  },
+                ),
               ),
-            );
-          },
+
+              ButtonWidget(
+                label: context.l10n.loginQrCodeFromGallery,
+                onPressed: _scanFromGallery,
+                variant: .secondary,
+              ),
+            ],
+          ),
         ),
       ),
     );

@@ -227,7 +227,7 @@ class _AccountsScreenState extends State<AccountsScreen>
                                         }
                                       },
 
-                                      isDangerous: true,
+                                      variant: .dangerous,
                                       icon: HugeIconsSolid.delete02,
                                       label: context.l10n.deleteAccount,
                                     ),
@@ -250,6 +250,13 @@ class _AccountsScreenState extends State<AccountsScreen>
                             style: const TextStyle(fontSize: 20),
                           ),
                         ),
+
+                        if (account.invalid)
+                          Icon(
+                            HugeIconsSolid.cancel02,
+                            size: 20,
+                            color: context.c.error,
+                          ),
 
                         if (account.storeSecurely)
                           Icon(
