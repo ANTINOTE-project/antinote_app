@@ -308,6 +308,12 @@ abstract class AppLocalizations {
   /// **'Scanne un QR code depuis un ordinateur déjà connecté à PRONOTE'**
   String get loginQrCodeSubtitle;
 
+  /// No description provided for @loginQrCodeFromGallery.
+  ///
+  /// In fr, this message translates to:
+  /// **'Scanner depuis une image'**
+  String get loginQrCodeFromGallery;
+
   /// No description provided for @loginCity.
   ///
   /// In fr, this message translates to:

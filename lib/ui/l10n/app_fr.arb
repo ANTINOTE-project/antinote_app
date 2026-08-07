@@ -41,6 +41,7 @@
   "accounts": "Comptes",
   "loginQrCode": "QR Code",
   "loginQrCodeSubtitle": "Scanne un QR code depuis un ordinateur déjà connecté à PRONOTE",
+  "loginQrCodeFromGallery": "Scanner depuis une image",
   "loginCity": "Recherche ta ville",
   "loginCitySubtitle": "Entre le nom de ta ville et choisis ton établissement",
   "loginUrl": "URL de ton établissement",

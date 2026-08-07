@@ -116,6 +116,9 @@ class AppLocalizationsEn extends AppLocalizations {
       'Scan a QR Code from your computer that\'s already logged into PRONOTE';
 
   @override
+  String get loginQrCodeFromGallery => 'Scanner depuis une image';
+
+  @override
   String get loginCity => 'Find your city';
 
   @override

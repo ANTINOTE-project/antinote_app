@@ -41,6 +41,7 @@ dependencies:
   uuid: ^4.5.3
   http: ^1.6.0
   collection: ^1.19.1
+  image_picker: ^1.2.3
   # Disabled because it doesn't play nicely with R8
   #  cryptography_flutter_plus: ^3.0.2 # So that cryptography_plus in antinote is faster.
 
