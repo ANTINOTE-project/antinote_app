@@ -1,1 +1,16 @@
--keep class fr.antinote.antinote_app.protos.** { *; }
+-keepclassmembers class * extends com.google.protobuf.GeneratedMessageLite {
+    <fields>;
+    static <fields>;
+}
+-keepclassmembers enum * extends com.google.protobuf.Internal$EnumLite {
+    public static **[] values();
+    public static ** valueOf(java.lang.String);
+    public static ** forNumber(int);
+}
+
+-keepclassmembers class * extends com.google.protobuf.GeneratedMessageLite$Builder {
+    <fields>;
+}
+
+-dontwarn com.google.protobuf.**
+-keep class com.google.protobuf.** { *; }

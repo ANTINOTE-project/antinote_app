@@ -6,7 +6,6 @@ import 'package:antinote_app/ui/routing/routes.dart';
 import 'package:antinote_app/ui/utils/utils.dart';
 import 'package:antinote_app/ui/widgets/customs/app_bar.dart';
 import 'package:antinote_app/ui/widgets/customs/list.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hugeicons_pro/hugeicons.dart';
@@ -89,37 +88,35 @@ class MethodsScreen extends StatelessWidget with WidgetsBindingObserver {
         title: Text(context.l10n.addAnAccount),
 
         actions: [
-          if (kDebugMode)
-            IconButton(
-              onPressed: () async {
-                final credentials = PasswordCredentials(
-                  username: 'demonstration',
-                  password: 'pronotevs',
+          // if (kDebugMode)
+          IconButton(
+            onPressed: () async {
+              final credentials = PasswordCredentials(
+                username: 'demonstration',
+                password: 'pronotevs',
 
-                  workspace: const Workspace(
-                    type: WorkspaceType.mobileEleve,
-                    label: '',
-                    pathSegment: 'mobile.eleve.html',
-                  ),
+                workspace: const Workspace(
+                  type: WorkspaceType.mobileEleve,
+                  label: '',
+                  pathSegment: 'mobile.eleve.html',
+                ),
 
-                  deviceUuid: Credentials.generateDeviceUuid(),
-                  baseUrl: Uri.parse(
-                    'https://demo.index-education.net/pronote',
-                  ),
-                  cookies: [],
-                );
-                final result = await credentials.login(
-                  options: context.s.networking.sessionOptions,
-                );
+                deviceUuid: Credentials.generateDeviceUuid(),
+                baseUrl: Uri.parse('https://demo.index-education.net/pronote'),
+                cookies: [],
+              );
+              final result = await credentials.login(
+                options: context.s.networking.sessionOptions,
+              );
 
-                if (!context.mounted) return;
+              if (!context.mounted) return;
 
-                final entry = SessionWrapper.register(result, credentials);
-                await sendResultIfLoggedIn(context, entry);
-              },
+              final entry = SessionWrapper.register(result, credentials);
+              await sendResultIfLoggedIn(context, entry);
+            },
 
-              icon: const Icon(HugeIconsSolid.developer),
-            ),
+            icon: const Icon(HugeIconsSolid.developer),
+          ),
         ],
       ),
 
