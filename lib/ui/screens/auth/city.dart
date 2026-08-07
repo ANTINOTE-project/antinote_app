@@ -5,6 +5,7 @@ import 'package:antinote/antinote.dart';
 import 'package:antinote_app/data/src/accounts/place.dart';
 import 'package:antinote_app/ui/routing/routes.dart';
 import 'package:antinote_app/ui/utils/utils.dart';
+import 'package:antinote_app/ui/widgets/bottom_padding.dart';
 import 'package:antinote_app/ui/widgets/customs/app_bar.dart';
 import 'package:antinote_app/ui/widgets/customs/field.dart';
 import 'package:antinote_app/ui/widgets/customs/list.dart';
@@ -83,25 +84,25 @@ class _LoginFindCityScreenState extends State<LoginFindCityScreen> {
     return Scaffold(
       appBar: AppBarWidget(title: Text(context.l10n.loginCity)),
 
-      body: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
+      body: Padding(
+        padding: const .symmetric(horizontal: 12),
 
-        children: [
-          Padding(
-            padding: const .all(12),
+        child: Column(
+          crossAxisAlignment: .start,
 
-            // TODO: Faire en sorte que ça n'overflow pas.
-            child: FieldWidget(
-              controller: _controller,
-              hintText: context.l10n.loginCitySubtitle,
-              onChanged: (_) => _onQueryChanged(),
+          children: [
+            Padding(
+              padding: const .only(bottom: 12),
+
+              // TODO: Faire en sorte que ça n'overflow pas.
+              child: FieldWidget(
+                controller: _controller,
+                hintText: context.l10n.loginCitySubtitle,
+                onChanged: (_) => _onQueryChanged(),
+              ),
             ),
-          ),
 
-          Expanded(
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 12),
-
+            Expanded(
               child: FutureBuilder(
                 future: _cities,
 
@@ -181,13 +182,15 @@ class _LoginFindCityScreenState extends State<LoginFindCityScreen> {
                           );
                         },
                       ),
+
+                      const BottomPadding(padding: 10),
                     ],
                   );
                 },
               ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }

@@ -1,5 +1,4 @@
 import 'package:antinote/antinote.dart';
-import 'package:antinote_app/main.dart';
 import 'package:antinote_app/ui/routing/routes.dart';
 import 'package:antinote_app/ui/utils/utils.dart';
 import 'package:antinote_app/ui/widgets/customs/app_bar.dart';
@@ -27,6 +26,7 @@ class _LoginSelectWorkspaceScreenState
     .mobileParent: HugeIconsSolid.manWoman,
     .mobileAccompagnant: HugeIconsSolid.userGroup,
     .mobileEleve: HugeIconsSolid.student,
+    .mobileEntreprise: HugeIconsSolid.corporate,
   };
 
   late List<Workspace> _workspaces;
@@ -104,15 +104,9 @@ class _LoginSelectWorkspaceScreenState
                 return ItemWidget(
                   borderRadius: borderRadius,
 
-                  onPressed: () async {
-                    if (isNotStudent) {
-                      return talker.warning(
-                        'Login with an account that is not a student one is not implemented',
-                      );
-                    }
-
-                    await onSelected(context, workspace);
-                  },
+                  onPressed: isNotStudent
+                      ? null
+                      : () => onSelected(context, workspace),
 
                   leading: Icon(
                     _iconMap[workspace.type],
