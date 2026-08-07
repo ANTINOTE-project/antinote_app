@@ -560,7 +560,7 @@ class _LatestGrades extends StatelessWidget {
     return SliverToBoxAdapter(
       child: Container(
         height: 170,
-        padding: const .symmetric(horizontal: 16, vertical: 8),
+        padding: const .symmetric(horizontal: 8, vertical: 8),
         child: CarouselView.weightedBuilder(
           flexWeights: const [6, 3, 1],
           itemSnapping: true,
@@ -618,16 +618,15 @@ class GradeCard extends StatelessWidget {
         child: Ink(
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(28),
-
             border: Border.all(color: scheme.inversePrimary),
-
             color: scheme.primaryContainer,
           ),
+
           child: OverflowBox(
             minWidth: width,
             maxWidth: width,
             child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
               child: Stack(
                 children: [
                   Column(
@@ -665,7 +664,11 @@ class GradeCard extends StatelessWidget {
                     child: Column(
                       mainAxisSize: .min,
                       children: [
-                        Divider(color: scheme.outlineVariant),
+                        Divider(
+                          color: scheme.inversePrimary,
+                          radius: .circular(999),
+                          thickness: 3,
+                        ),
 
                         Row(
                           children: [
