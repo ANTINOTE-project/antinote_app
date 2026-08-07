@@ -29,9 +29,9 @@ import com.google.protobuf.InvalidProtocolBufferException
 import com.google.protobuf.kotlin.toByteString
 import fr.antinote.antinote_app.R
 import fr.antinote.antinote_app.pigeon_posts.NativeLoginManager
-import fr.antinote.antinote_app.protos.SerializedAccountRegistry
 import fr.antinote.antinote_app.protos.AntinoteAccount
 import fr.antinote.antinote_app.protos.EncryptedCredentials
+import fr.antinote.antinote_app.protos.SerializedAccountRegistry
 import fr.antinote.antinote_app.protos.copy
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -52,7 +52,8 @@ import javax.crypto.spec.SecretKeySpec
 import kotlin.io.encoding.Base64
 
 object AccountStoreSerializer : Serializer<SerializedAccountRegistry> {
-    override val defaultValue: SerializedAccountRegistry = SerializedAccountRegistry.getDefaultInstance()
+    override val defaultValue: SerializedAccountRegistry =
+        SerializedAccountRegistry.getDefaultInstance()
 
     override suspend fun readFrom(input: InputStream): SerializedAccountRegistry {
         try {
@@ -89,9 +90,9 @@ class LoginManager(val context: Context, val activity: FragmentActivity?) : Nati
         private const val TAG = "LoginManager"
         const val KEY_UID = "uid"
         private const val AUTHENTICATORS =
-            BiometricManager.Authenticators.BIOMETRIC_WEAK or BiometricManager.Authenticators.BIOMETRIC_STRONG or BiometricManager.Authenticators.DEVICE_CREDENTIAL
+            BiometricManager.Authenticators.BIOMETRIC_STRONG or BiometricManager.Authenticators.DEVICE_CREDENTIAL
         private const val CIPHER =
-            "${KeyProperties.KEY_ALGORITHM_AES}/${KeyProperties.BLOCK_MODE_GCM}/${KeyProperties.ENCRYPTION_PADDING_PKCS7}"
+            "${KeyProperties.KEY_ALGORITHM_AES}/${KeyProperties.BLOCK_MODE_GCM}/${KeyProperties.ENCRYPTION_PADDING_NONE}"
 
         fun accountKeyAlias(uid: String): String = "TOKEN / $uid"
 
@@ -428,24 +429,24 @@ class LoginManager(val context: Context, val activity: FragmentActivity?) : Nati
                         return@updateData registry
                     }
 
-                        val oldAccount = accounts[accIndex]
-                        accounts[accIndex] = newAccount.copy {
-                            if (hasTokenCredentials() && newAccount.storeSecurely) {
-                                val newCredentials = encryptCredentials(
-                                    uid, newAccount.tokenCredentials.toByteArray(),
-                                    if (oldAccount.storeSecurely) {
-                                        EncryptedCredentials.parseFrom(oldAccount.tokenCredentials.toByteArray())
-                                    } else null
-                                )
+                    val oldAccount = accounts[accIndex]
+                    accounts[accIndex] = newAccount.copy {
+                        if (hasTokenCredentials() && newAccount.storeSecurely) {
+                            val newCredentials = encryptCredentials(
+                                uid, newAccount.tokenCredentials.toByteArray(),
+                                if (oldAccount.storeSecurely) {
+                                    EncryptedCredentials.parseFrom(oldAccount.tokenCredentials.toByteArray())
+                                } else null
+                            )
 
-                                if (newCredentials == null) {
-                                    callback(Result.success(false))
-                                    return@updateData registry
-                                }
-
-                                tokenCredentials = Any.parseFrom(newCredentials.toByteArray())
+                            if (newCredentials == null) {
+                                callback(Result.success(false))
+                                return@updateData registry
                             }
+
+                            tokenCredentials = Any.parseFrom(newCredentials.toByteArray())
                         }
+                    }
 
                     callback(Result.success(true))
 

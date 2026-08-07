@@ -1,4 +1,4 @@
-import 'package:antinote/antinote.dart';
+import 'package:antinote_api/antinote_api.dart';
 import 'package:antinote_app/data/protos/account.pb.dart';
 import 'package:protobuf/well_known_types/google/protobuf/any.pb.dart';
 import 'package:uuid/v4.dart';

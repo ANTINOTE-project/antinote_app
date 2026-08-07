@@ -2,7 +2,7 @@ import 'dart:convert';
 import 'dart:io';
 import 'dart:math';
 
-import 'package:antinote/antinote.dart';
+import 'package:antinote_api/antinote_api.dart';
 import 'package:antinote_app/data/src/accounts/registry.dart';
 import 'package:antinote_app/data/src/pigeon_posts/native_session.g.dart';
 import 'package:antinote_app/main.dart';

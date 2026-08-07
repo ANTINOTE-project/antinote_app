@@ -1,6 +1,6 @@
 import 'dart:async';
 
-import 'package:antinote/antinote.dart';
+import 'package:antinote_api/antinote_api.dart';
 import 'package:antinote_app/data/src/accounts/registry.dart';
 import 'package:antinote_app/ui/utils/utils.dart';
 import 'package:antinote_app/ui/widgets/customs/button.dart';
@@ -18,6 +18,7 @@ mixin PageMixin<T extends StatefulWidget> on State<T> {
   Future<void> loadPage();
 
   bool loaded = false;
+
   // TODO: Bring back stream loader when we figure out how to pass exceptions.
   Future<void>? _loader;
 
@@ -164,7 +165,9 @@ mixin PageMixin<T extends StatefulWidget> on State<T> {
 
 mixin TabMixin<T extends StatefulWidget> on PageMixin<T> {
   Set<String> get loadChannels => {'communication'};
+
   bool get registerHook => true;
+
   Future<void> load(RemoteSession session);
 
   AccountRegistry? _curRegistry;

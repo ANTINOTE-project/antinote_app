@@ -1,4 +1,4 @@
-import 'package:antinote/antinote.dart';
+import 'package:antinote_api/antinote_api.dart';
 import 'package:antinote_app/data/data.dart';
 import 'package:antinote_app/data/src/pigeon_posts/native_calendar.g.dart';
 import 'package:antinote_app/ui/utils/src/class.dart';

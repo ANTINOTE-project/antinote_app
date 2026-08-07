@@ -1,6 +1,6 @@
 import 'dart:io';
 
-import 'package:antinote/antinote.dart';
+import 'package:antinote_api/antinote_api.dart';
 import 'package:antinote_app/data/protos/account.pb.dart';
 
 import '../../pigeon_posts/native_login.g.dart';

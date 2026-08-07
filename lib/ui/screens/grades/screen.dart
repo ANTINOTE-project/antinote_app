@@ -1,6 +1,6 @@
 import 'dart:async';
 
-import 'package:antinote/antinote.dart' hide Tab;
+import 'package:antinote_api/antinote_api.dart' hide Tab;
 import 'package:antinote_app/ui/screens/grades/grades_tab.dart';
 import 'package:antinote_app/ui/screens/grades/report_tab.dart';
 import 'package:antinote_app/ui/screens/shell/tab.dart';

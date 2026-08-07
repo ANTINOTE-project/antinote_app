@@ -1,6 +1,6 @@
 import 'dart:async';
 
-import 'package:antinote/antinote.dart';
+import 'package:antinote_api/antinote_api.dart';
 import 'package:antinote_app/data/src/home_page/configuration.dart';
 import 'package:antinote_app/data/src/home_page/widget/configuration.dart';
 import 'package:antinote_app/data/src/home_page/widget/parameters.dart';
@@ -19,10 +19,15 @@ final class HomePageRequest {
   final Date? date;
 
   const new schedules(this.date) : type = .schedules;
+
   const new menu(this.date) : type = .menu;
+
   const new grades() : type = .grades, date = null;
+
   const new schoolLife() : type = .schoolLife, date = null;
+
   const new news() : type = .news, date = null;
+
   const new homework() : type = .homework, date = null;
 
   HomePageModule get module => switch (type) {
@@ -74,12 +79,16 @@ final class HomePageCache {
 
   /// Ensures at least events for the day and the app states are loaded.
   bool hasDayBaseSchedules(Date day) => _daySchedules.containsKey(day);
+
   List<Event> dayEvents(Date day) => _daySchedules[day]!.events;
+
   List<AppStateEntry> dayAppStates(Date day) => _daySchedules[day]!.appStates;
+
   List<Block> dayBlocks(Date day) => _daySchedules[day]!.blocks;
 
   /// Ensures the menu for a day is loaded.
   bool hasMenuForDay(Date day) => _dayMenus.containsKey(day);
+
   Menu dayMenu(Date day) => _dayMenus[day] ?? Menu(time: day, meals: []);
 
   /// We expect the most important requests to be put at the start.

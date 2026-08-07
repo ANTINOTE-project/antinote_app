@@ -1,6 +1,6 @@
 import 'dart:async';
 
-import 'package:antinote/antinote.dart';
+import 'package:antinote_api/antinote_api.dart';
 import 'package:antinote_app/data/src/home_page/manager.dart';
 import 'package:antinote_app/data/src/home_page/widget/parameters.dart';
 import 'package:antinote_app/ui/screens/home/widgets/menu.dart';
@@ -11,6 +11,7 @@ import 'package:collection/collection.dart';
 import 'package:flutter/widgets.dart';
 
 part 'menu.dart';
+
 part 'timetable/day.dart';
 
 typedef WidgetUpgradeTask = FutureOr<void> Function(Map<String, dynamic> prev);
@@ -80,7 +81,9 @@ final class const WidgetArguments<T extends WidgetArgument>({
   required final Map<T, dynamic> _args,
 }) {
   P get<P>(WidgetArgument<P> key) => _args[key] as P;
+
   void set<P>(WidgetArgument<P> key, P value) => _args[key as T] = value;
+
   bool has(T key) => _args.containsKey(key);
 
   WidgetArguments<T> mergeWith(WidgetArguments<WidgetArgument> arguments) =>

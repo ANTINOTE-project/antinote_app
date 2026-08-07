@@ -1,4 +1,4 @@
-import 'package:antinote/antinote.dart';
+import 'package:antinote_api/antinote_api.dart';
 import 'package:antinote_app/data/src/utils/various.dart';
 import 'package:antinote_app/ui/screens/timetable/events/block.dart';
 
@@ -29,6 +29,7 @@ final class const AppStateEntry({
   required final AppState state,
   required final TimeRelation classRelation,
 });
+
 typedef _Marker = ({DateTime time, Event? event, bool isTransfer, bool start});
 
 class AppStateScheduler {

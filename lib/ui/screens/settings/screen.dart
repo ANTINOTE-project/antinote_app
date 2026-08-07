@@ -3,6 +3,7 @@ import 'package:antinote_app/ui/routing/routes.dart';
 import 'package:antinote_app/ui/screens/settings/networking.dart';
 import 'package:antinote_app/ui/screens/settings/theme.dart';
 import 'package:antinote_app/ui/utils/utils.dart';
+import 'package:antinote_app/ui/widgets/bottom_padding.dart';
 import 'package:antinote_app/ui/widgets/customs/app_bar.dart';
 import 'package:antinote_app/ui/widgets/customs/button.dart';
 import 'package:antinote_app/ui/widgets/text_icon.dart';
@@ -19,6 +20,7 @@ enum AppColor {
   teal(Color(0xFF00897B));
 
   const AppColor(this.color);
+
   final Color color;
 
   String label(AppLocalizations l10n) => switch (this) {
@@ -63,12 +65,15 @@ class SettingsScreen extends StatelessWidget {
               icon: HugeIconsSolid.userAccount,
               label: context.l10n.accounts,
             ),
+
             SliverToBoxAdapter(
               child: ButtonWidget(
                 onPressed: () => context.push(Routes.auth.accounts),
                 label: context.l10n.choseAnAccount,
               ),
             ),
+
+            const BottomPadding(padding: 20),
           ],
         ),
       ),

@@ -1,4 +1,4 @@
-import 'package:antinote/antinote.dart';
+import 'package:antinote_api/antinote_api.dart';
 import 'package:antinote_app/data/src/pigeon_posts/native_sync.g.dart';
 import 'package:antinote_app/ui/entrypoints/login.dart';
 import 'package:antinote_app/ui/entrypoints/main.dart';

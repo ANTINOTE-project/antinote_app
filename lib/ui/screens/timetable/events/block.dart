@@ -1,6 +1,6 @@
 import 'dart:math';
 
-import 'package:antinote/antinote.dart';
+import 'package:antinote_api/antinote_api.dart';
 import 'package:antinote_app/data/src/state.dart';
 import 'package:antinote_app/ui/screens/timetable/events/class/widget.dart';
 import 'package:antinote_app/ui/screens/timetable/events/meal/widget.dart';
@@ -13,15 +13,20 @@ import 'package:flutter/material.dart';
 import '../../../utils/utils.dart';
 
 part 'class/event.dart';
+
 part 'meal/event.dart';
+
 part 'pause/event.dart';
 
 typedef DayBlocks = List<Block>;
 
 sealed class Event {
   int get startSlot;
+
   DateTime get startTime;
+
   int get endSlot;
+
   DateTime get endTime;
 
   int get priority;

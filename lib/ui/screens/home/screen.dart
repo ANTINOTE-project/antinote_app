@@ -1,9 +1,12 @@
-import 'package:antinote/antinote.dart';
+import 'package:antinote_api/antinote_api.dart';
 import 'package:antinote_app/data/src/home_page/manager.dart';
+import 'package:antinote_app/ui/routing/routes.dart';
 import 'package:antinote_app/ui/screens/shell/tab.dart';
 import 'package:antinote_app/ui/utils/utils.dart';
+import 'package:antinote_app/ui/widgets/customs/button.dart';
 import 'package:antinote_app/ui/widgets/customs/list.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:hugeicons_pro/hugeicons.dart';
 
 class HomePageScope extends InheritedWidget {
@@ -65,6 +68,14 @@ class _HomeScreenState extends State<HomeScreen>
                     },
                   ),
                 ),
+
+              SliverToBoxAdapter(
+                child: ButtonWidget(
+                  onPressed: () async {
+                    await context.push(Routes.settings);
+                  },
+                ),
+              ),
             ],
           ),
         ),

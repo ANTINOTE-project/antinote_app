@@ -33,6 +33,8 @@
 
   "disableAutoLogin": "Désactiver la connexion automatique",
   "enableAutoLogin": "Activer la connexion automatique",
+  "disableSecureStore": "Désactiver le chiffrage",
+  "enableSecureStore": "Activer le chiffrage",
   "choseAnAccount": "Choisir un compte",
   "addAnAccount": "Ajouter un compte",
   "deleteAccount": "Supprimer",

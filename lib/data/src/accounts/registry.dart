@@ -1,7 +1,7 @@
 import 'dart:async';
 import 'dart:io';
 
-import 'package:antinote/antinote.dart';
+import 'package:antinote_api/antinote_api.dart';
 import 'package:antinote_app/data/src/accounts/storage/base.dart';
 import 'package:antinote_app/data/src/pigeon_posts/native_session.g.dart';
 import 'package:antinote_app/ui/routing/routes.dart';
@@ -21,12 +21,14 @@ final class AccountRegistry({
   AccountStorage get storage => _storage;
 
   final Map<String, SessionWrapper> _sessions = {};
+
   SessionWrapper? get curSession =>
       _curAccount == null ? null : _sessions[_curAccount];
 
   SessionWrapper? specificSession(String accountUid) => _sessions[accountUid];
 
   String? _curAccount;
+
   String? get curAccountUid => _curAccount;
 
   bool get accountPicked => _curAccount != null;

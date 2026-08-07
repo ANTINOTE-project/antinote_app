@@ -1,4 +1,4 @@
-import 'package:antinote/antinote.dart';
+import 'package:antinote_api/antinote_api.dart';
 import 'package:antinote_app/data/src/home_page/manager.dart';
 import 'package:antinote_app/data/src/home_page/widget/widget.dart';
 import 'package:antinote_app/ui/screens/home/screen.dart';

@@ -1,6 +1,6 @@
 import 'dart:async';
 
-import 'package:antinote/antinote.dart';
+import 'package:antinote_api/antinote_api.dart';
 import 'package:antinote_app/data/src/home_page/manager.dart';
 import 'package:antinote_app/data/src/home_page/widget/configuration.dart';
 import 'package:antinote_app/data/src/state.dart';
@@ -75,6 +75,7 @@ enum HomePageConfigurationCriterionType(final String id) {
 
 sealed class const HomePageConfigurationCriterion() {
   List<HomePageRequest> requestsUntilRequirements(HomePageCache cache);
+
   FutureOr<bool> meetsRequirement(HomePageCache cache);
 
   Map<String, dynamic> toJson() => {'id': id.id, ..._jsonProperties()};

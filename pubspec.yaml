@@ -12,7 +12,7 @@ dependencies:
   flutter_localizations:
     sdk: flutter
 
-  antinote:
+  antinote_api:
     #    path: ../antinote
     git: https://github.com/ANTINOTE-project/antinote_api.git
 

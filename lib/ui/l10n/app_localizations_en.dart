@@ -91,6 +91,12 @@ class AppLocalizationsEn extends AppLocalizations {
   String get enableAutoLogin => 'Enable auto-login';
 
   @override
+  String get disableSecureStore => 'Désactiver le chiffrage';
+
+  @override
+  String get enableSecureStore => 'Activer le chiffrage';
+
+  @override
   String get choseAnAccount => 'Pick an account';
 
   @override

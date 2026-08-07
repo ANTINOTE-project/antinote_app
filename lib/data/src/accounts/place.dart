@@ -1,6 +1,6 @@
 import 'dart:convert';
 
-import 'package:antinote/antinote.dart';
+import 'package:antinote_api/antinote_api.dart';
 import 'package:http/http.dart' as http;
 
 enum PlaceType {

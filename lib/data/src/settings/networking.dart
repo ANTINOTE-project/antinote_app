@@ -1,6 +1,6 @@
 import 'dart:convert';
 
-import 'package:antinote/antinote.dart';
+import 'package:antinote_api/antinote_api.dart';
 import 'package:antinote_app/data/src/settings/category.dart';
 
 class NetworkingSettings extends SettingsCategory {

@@ -1,4 +1,4 @@
-import 'package:antinote/antinote.dart';
+import 'package:antinote_api/antinote_api.dart';
 
 const fakeGrade = Grade.defaultUnknownGrade;
 

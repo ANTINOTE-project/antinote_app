@@ -1,4 +1,4 @@
-import 'package:antinote/antinote.dart';
+import 'package:antinote_api/antinote_api.dart';
 import 'package:antinote_app/data/protos/account.pb.dart';
 import 'package:antinote_app/ui/routing/routes.dart';
 import 'package:antinote_app/ui/screens/shell/tab.dart';
@@ -190,6 +190,29 @@ class _AccountsScreenState extends State<AccountsScreen>
 
                                         label: context.l10n.enableAutoLogin,
                                       ),
+
+                                    ButtonWidget(
+                                      onPressed: () async {
+                                        await context.ar.storage.updateAccount(
+                                          account.rebuild(
+                                            (acc) => acc
+                                              ..storeSecurely =
+                                                  !acc.storeSecurely,
+                                          ),
+                                          account.uid,
+                                        );
+                                        await reload();
+
+                                        if (context.mounted) {
+                                          context.pop();
+                                        }
+                                      },
+
+                                      icon: HugeIconsSolid.biometricAccess,
+                                      label: account.storeSecurely
+                                          ? context.l10n.disableSecureStore
+                                          : context.l10n.enableSecureStore,
+                                    ),
 
                                     ButtonWidget(
                                       onPressed: () async {

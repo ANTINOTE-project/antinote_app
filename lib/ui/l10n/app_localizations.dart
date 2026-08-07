@@ -260,6 +260,18 @@ abstract class AppLocalizations {
   /// **'Activer la connexion automatique'**
   String get enableAutoLogin;
 
+  /// No description provided for @disableSecureStore.
+  ///
+  /// In fr, this message translates to:
+  /// **'Désactiver le chiffrage'**
+  String get disableSecureStore;
+
+  /// No description provided for @enableSecureStore.
+  ///
+  /// In fr, this message translates to:
+  /// **'Activer le chiffrage'**
+  String get enableSecureStore;
+
   /// No description provided for @choseAnAccount.
   ///
   /// In fr, this message translates to:
