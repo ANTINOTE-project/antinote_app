@@ -62,6 +62,38 @@ class MethodsScreen extends StatelessWidget with WidgetsBindingObserver {
           );
         },
       ),
+      (
+        icon: HugeIconsSolid.testTube02,
+
+        title: context.l10n.loginDemo,
+        subtitle: context.l10n.loginDemoSubtitle,
+
+        onPressed: () async {
+          final credentials = PasswordCredentials(
+            username: 'demonstration',
+            password: 'pronotevs',
+
+            workspace: const Workspace(
+              type: WorkspaceType.mobileEleve,
+              label: '',
+              pathSegment: 'mobile.eleve.html',
+            ),
+
+            deviceUuid: Credentials.generateDeviceUuid(),
+            baseUrl: Uri.parse('https://demo.index-education.net/pronote'),
+            cookies: [],
+          );
+
+          final result = await credentials.login(
+            options: context.s.networking.sessionOptions,
+          );
+
+          if (!context.mounted) return;
+
+          final entry = SessionWrapper.register(result, credentials);
+          await sendResultIfLoggedIn(context, entry);
+        },
+      ),
     ];
   }
 
@@ -84,41 +116,7 @@ class MethodsScreen extends StatelessWidget with WidgetsBindingObserver {
     final options = buildOptions(context);
 
     return Scaffold(
-      appBar: AppBarWidget(
-        title: Text(context.l10n.addAnAccount),
-
-        actions: [
-          // if (kDebugMode)
-          IconButton(
-            onPressed: () async {
-              final credentials = PasswordCredentials(
-                username: 'demonstration',
-                password: 'pronotevs',
-
-                workspace: const Workspace(
-                  type: WorkspaceType.mobileEleve,
-                  label: '',
-                  pathSegment: 'mobile.eleve.html',
-                ),
-
-                deviceUuid: Credentials.generateDeviceUuid(),
-                baseUrl: Uri.parse('https://demo.index-education.net/pronote'),
-                cookies: [],
-              );
-              final result = await credentials.login(
-                options: context.s.networking.sessionOptions,
-              );
-
-              if (!context.mounted) return;
-
-              final entry = SessionWrapper.register(result, credentials);
-              await sendResultIfLoggedIn(context, entry);
-            },
-
-            icon: const Icon(HugeIconsSolid.developer),
-          ),
-        ],
-      ),
+      appBar: AppBarWidget(title: Text(context.l10n.addAnAccount)),
 
       body: Padding(
         padding: const EdgeInsets.all(12),

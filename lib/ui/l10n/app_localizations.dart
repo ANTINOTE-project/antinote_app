@@ -392,6 +392,18 @@ abstract class AppLocalizations {
   /// **'Veuillez rentrer votre code PIN vous connecter à votre compte PRONOTE'**
   String get loginPinCodeSubtitle;
 
+  /// No description provided for @loginDemo.
+  ///
+  /// In fr, this message translates to:
+  /// **'Compte de démo'**
+  String get loginDemo;
+
+  /// No description provided for @loginDemoSubtitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Connecte toi au compte de démo pour explorer l\'application et ses fonctionnalités'**
+  String get loginDemoSubtitle;
+
   /// No description provided for @homeShowMore.
   ///
   /// In fr, this message translates to:

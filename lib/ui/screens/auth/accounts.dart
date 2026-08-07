@@ -251,6 +251,13 @@ class _AccountsScreenState extends State<AccountsScreen>
                           ),
                         ),
 
+                        if (account.invalid)
+                          Icon(
+                            HugeIconsSolid.cancel02,
+                            size: 20,
+                            color: context.c.error,
+                          ),
+
                         if (account.storeSecurely)
                           Icon(
                             HugeIconsSolid.biometricAccess,

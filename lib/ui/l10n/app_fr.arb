@@ -55,6 +55,8 @@
   "loginPassword": "Mot de passe",
   "loginPinCode": "Code PIN",
   "loginPinCodeSubtitle": "Veuillez rentrer votre code PIN vous connecter à votre compte PRONOTE",
+  "loginDemo": "Compte de démo",
+  "loginDemoSubtitle": "Connecte toi au compte de démo pour explorer l'application et ses fonctionnalités",
 
   "homeShowMore": "Voir plus",
   "homeAttendance": "Vie Scolaire",
