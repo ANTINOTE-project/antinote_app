@@ -136,9 +136,8 @@ class _AccountsScreenState extends State<AccountsScreen>
                 items: _accounts,
                 itemBuilder: (context, account, borderRadius) {
                   return ItemWidget(
-                    borderRadius: borderRadius,
-
                     onPressed: () => _onAccountPressed(account),
+                    borderRadius: borderRadius,
 
                     onLongPress: () async {
                       await showModalBottomSheet(
@@ -174,6 +173,7 @@ class _AccountsScreenState extends State<AccountsScreen>
                                         },
 
                                         label: context.l10n.disableAutoLogin,
+                                        icon: HugeIconsSolid.starOff,
                                       )
                                     else
                                       ButtonWidget(
@@ -189,6 +189,7 @@ class _AccountsScreenState extends State<AccountsScreen>
                                         },
 
                                         label: context.l10n.enableAutoLogin,
+                                        icon: HugeIconsSolid.star,
                                       ),
 
                                     ButtonWidget(
@@ -250,11 +251,18 @@ class _AccountsScreenState extends State<AccountsScreen>
                           ),
                         ),
 
+                        if (account.storeSecurely)
+                          Icon(
+                            HugeIconsSolid.biometricAccess,
+                            size: 20,
+                            color: context.c.primary,
+                          ),
+
                         if (_defaultUid == account.uid)
                           Icon(
                             HugeIconsSolid.star,
                             size: 18,
-                            color: context.c.primary,
+                            color: context.c.secondary,
                           ),
                       ],
                     ),
