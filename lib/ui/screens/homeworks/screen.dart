@@ -376,7 +376,7 @@ class _HomeworkCard extends StatelessWidget {
     final date = homework.deadlineDate.asLongNumericDate();
 
     return Pressable(
-      borderRadius: .circular(20),
+      borderRadius: .circular(12),
 
       onPressed: () async {
         await Navigator.push(
@@ -396,7 +396,7 @@ class _HomeworkCard extends StatelessWidget {
       child: Ink(
         decoration: BoxDecoration(
           border: .all(color: scheme.inversePrimary),
-          borderRadius: .circular(16),
+          borderRadius: .circular(12),
           color: scheme.primaryContainer,
         ),
 
