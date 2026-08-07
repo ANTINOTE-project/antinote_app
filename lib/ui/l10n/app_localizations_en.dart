@@ -183,6 +183,11 @@ class AppLocalizationsEn extends AppLocalizations {
   String get homeExams => 'Exams';
 
   @override
+  String homeHiName(Object name) {
+    return 'Salut, $name !';
+  }
+
+  @override
   String get absenceNotJustified => 'Unjustified absence';
 
   @override

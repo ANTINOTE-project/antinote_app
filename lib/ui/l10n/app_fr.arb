@@ -63,6 +63,7 @@
   "homeAttendance": "Vie Scolaire",
   "homeNews": "Actualités",
   "homeExams": "Évaluations",
+  "homeHiName": "Salut, {name} !",
   "absenceNotJustified": "Absence non justifiée",
   "absenceJustified": "Absence justifiée",
   "absenceDuration": "{date} de {startTime} à {endTime}",
