@@ -29,7 +29,7 @@ extension LoadCredentials on AntinoteAccount {
         };
 }
 
-const _prefix = 'antinote';
+const _prefix = 'type.antinote.fr';
 
 extension SetCredentials on AntinoteAccount {
   AntinoteAccount setCredentials(Credentials credentials) => rebuild(

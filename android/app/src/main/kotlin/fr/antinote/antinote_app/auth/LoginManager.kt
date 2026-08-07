@@ -94,6 +94,8 @@ class LoginManager(val context: Context, val activity: FragmentActivity?) : Nati
         private const val CIPHER =
             "${KeyProperties.KEY_ALGORITHM_AES}/${KeyProperties.BLOCK_MODE_GCM}/${KeyProperties.ENCRYPTION_PADDING_NONE}"
 
+        private const val TYPE_PREFIX = "type.antinote.fr"
+
         fun accountKeyAlias(uid: String): String = "TOKEN / $uid"
 
         fun accountForUid(context: Context, accountKey: String): Account {
@@ -127,7 +129,8 @@ class LoginManager(val context: Context, val activity: FragmentActivity?) : Nati
             CIPHER
         )
         cipher.init(Cipher.ENCRYPT_MODE, dek)
-        val ciphertext = cipher.doFinal(data)
+        val iv = cipher.iv.toByteString()
+        val ciphertext = cipher.doFinal(data).toByteString()
 
 
         val encryptedDek: ByteString
@@ -138,21 +141,22 @@ class LoginManager(val context: Context, val activity: FragmentActivity?) : Nati
             dekIv = oldCredentials.dekIv
         } else {
             val hwKey = getOrCreateSecretKey(accountKeyAlias(uid))
-            val hwCipher = Cipher.getInstance(CIPHER)
-            hwCipher.init(Cipher.ENCRYPT_MODE, hwKey)
+            cipher.init(Cipher.ENCRYPT_MODE, hwKey)
 
-            if (!getStoreKeyForAccount(hwCipher)) return null
+            if (!getStoreKeyForAccount(cipher)) return null
 
-            encryptedDek = hwCipher.doFinal(dek.encoded).toByteString()
-            dekIv = hwCipher.iv.toByteString()
+            dekIv = cipher.iv.toByteString()
+            encryptedDek = cipher.doFinal(dek.encoded).toByteString()
         }
 
         return EncryptedCredentials.newBuilder().run {
-            setCredentialData(ciphertext.toByteString())
-            setCredentialIv(cipher.iv.toByteString())
+            setCredentialData(ciphertext)
+            setCredentialIv(iv)
+            Log.i(TAG, "Creds IV len : ${iv.size()}")
 
             setDekData(encryptedDek)
             setDekIv(dekIv)
+            Log.i(TAG, "DEK IV len : ${dekIv.size()}")
 
             build()
         }
@@ -179,6 +183,7 @@ class LoginManager(val context: Context, val activity: FragmentActivity?) : Nati
 
         val dekBytes = hwCipher.doFinal(credentials.dekData.toByteArray())
         val dek = SecretKeySpec(dekBytes, "AES")
+
         dekStore[uid] = dek
 
         val dataCipher = Cipher.getInstance(CIPHER)
@@ -281,8 +286,12 @@ class LoginManager(val context: Context, val activity: FragmentActivity?) : Nati
             val account = AntinoteAccount.parseFrom(rawAccount)
 
             val credentials: Any? = if (account.storeSecurely) {
-                encryptCredentials(account.uid, account.tokenCredentials.toByteArray(), null)?.run {
-                    Any.parseFrom(toByteArray())
+                encryptCredentials(account.uid, account.tokenCredentials.value.toByteArray(), null)?.run {
+                    Any.newBuilder().run {
+                        setTypeUrl("$TYPE_PREFIX/${javaClass.name}")
+                        setValue(toByteString())
+                        build()
+                    }
                 }
             } else {
                 account.tokenCredentials
@@ -311,7 +320,7 @@ class LoginManager(val context: Context, val activity: FragmentActivity?) : Nati
             val nativeAccount = Account(account.name, context.getString(R.string.account_type))
             val nativeResult = manager.addAccountExplicitly(
                 nativeAccount,
-                Base64.encode(account.tokenCredentials!!.toByteArray()),
+                null,
                 Bundle().apply {
                     putString(KEY_UID, account.uid)
                 }
@@ -433,9 +442,9 @@ class LoginManager(val context: Context, val activity: FragmentActivity?) : Nati
                     accounts[accIndex] = newAccount.copy {
                         if (hasTokenCredentials() && newAccount.storeSecurely) {
                             val newCredentials = encryptCredentials(
-                                uid, newAccount.tokenCredentials.toByteArray(),
+                                uid, newAccount.tokenCredentials.value.toByteArray(),
                                 if (oldAccount.storeSecurely) {
-                                    EncryptedCredentials.parseFrom(oldAccount.tokenCredentials.toByteArray())
+                                    EncryptedCredentials.parseFrom(oldAccount.tokenCredentials.value)
                                 } else null
                             )
 
@@ -444,7 +453,11 @@ class LoginManager(val context: Context, val activity: FragmentActivity?) : Nati
                                 return@updateData registry
                             }
 
-                            tokenCredentials = Any.parseFrom(newCredentials.toByteArray())
+                            tokenCredentials = Any.newBuilder().run {
+                                setValue(newCredentials.toByteString())
+                                setTypeUrl("${TYPE_PREFIX}/${newCredentials.javaClass.name}")
+                                build()
+                            }
                         }
                     }
 
@@ -491,9 +504,14 @@ class LoginManager(val context: Context, val activity: FragmentActivity?) : Nati
                 return@launch
             }
 
+            if(!account.hasTokenCredentials() || account.tokenCredentials.typeUrl != "$TYPE_PREFIX/${EncryptedCredentials::class.java.name}") {
+                callback(Result.success(null))
+                return@launch
+            }
+
             val decrypted = decryptCredentials(
                 uid,
-                EncryptedCredentials.parseFrom(account.tokenCredentials.toByteArray())
+                EncryptedCredentials.parseFrom(account.tokenCredentials.value)
             )
 
             if (decrypted == null) {
@@ -504,7 +522,11 @@ class LoginManager(val context: Context, val activity: FragmentActivity?) : Nati
             callback(
                 Result.success(
                     account.copy {
-                        tokenCredentials = Any.parseFrom(decrypted.toByteString())
+                        tokenCredentials = Any.newBuilder().run {
+                            setValue(decrypted.toByteString())
+//                            setTypeUrl("$TYPE_PREFIX/${decrypted.}") TODO: This is horrible, we need to keep the type for the credentials, completely remake but better
+                            build()
+                        }
                     }.toByteArray()
                 )
             )
