@@ -7,7 +7,6 @@ import 'package:antinote_app/ui/widgets/customs/button.dart';
 import 'package:antinote_app/ui/widgets/customs/field.dart';
 import 'package:antinote_app/ui/widgets/customs/loading.dart';
 import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
 import 'package:hugeicons_pro/hugeicons.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:mobile_scanner/mobile_scanner.dart';
@@ -59,7 +58,7 @@ class _QRCodeMethodScreenState extends State<QRCodeMethodScreen> {
     final createdCredentials = await _askForPin(readValue);
 
     if (createdCredentials != null && mounted) {
-      context.pop(createdCredentials);
+      Navigator.pop(context, createdCredentials);
     }
 
     _isProcessing = false;
@@ -198,7 +197,7 @@ class _QRCodeMethodScreenState extends State<QRCodeMethodScreen> {
                           );
 
                           if (createdCredentials != null && context.mounted) {
-                            context.pop(createdCredentials);
+                            Navigator.pop(context, createdCredentials);
                           }
 
                           _isProcessing = false;
@@ -383,7 +382,7 @@ class _PinCodeDialogState extends State<_PinCodeDialog> {
               children: [
                 Expanded(
                   child: TextButton(
-                    onPressed: context.pop,
+                    onPressed: () => Navigator.pop(context),
 
                     child: Text(
                       context.l10n.cancel,
@@ -398,7 +397,7 @@ class _PinCodeDialogState extends State<_PinCodeDialog> {
                       final text = _pinCodeController.text.trim();
 
                       if (text.length == 4) {
-                        context.pop(text);
+                        Navigator.pop(context, text);
                       }
                     },
 

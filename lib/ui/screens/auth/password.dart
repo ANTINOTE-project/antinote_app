@@ -5,7 +5,6 @@ import 'package:antinote_app/ui/widgets/customs/button.dart';
 import 'package:antinote_app/ui/widgets/customs/field.dart';
 import 'package:antinote_app/ui/widgets/customs/icon.dart';
 import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
 import 'package:hugeicons_pro/hugeicons.dart';
 
 class PasswordLoginScreen extends StatefulWidget {
@@ -98,18 +97,22 @@ class _PasswordLoginScreenState extends State<PasswordLoginScreen> {
                     final result = credentials.login(
                       options: context.s.networking.sessionOptions,
                     );
-                    context.pop(() async {
-                      final loginResult = await result;
+                    Navigator.popUntilWithResult(
+                      context,
+                      (route) => route.popDisposition == .doNotPop,
+                      () async {
+                        final loginResult = await result;
 
-                      if (loginResult.session.stack.demo) {
-                        return (
-                          session: loginResult.session,
-                          credentials: credentials,
-                        );
-                      }
+                        if (loginResult.session.stack.demo) {
+                          return (
+                            session: loginResult.session,
+                            credentials: credentials,
+                          );
+                        }
 
-                      return loginResult;
-                    }());
+                        return loginResult;
+                      }(),
+                    );
                   },
 
                   label: context.l10n.loginButton,

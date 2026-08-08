@@ -147,7 +147,7 @@ class _SearchCitiesMethodScreenState extends State<SearchCitiesMethodScreen> {
                             borderRadius: borderRadius,
 
                             onPressed: () async {
-                              Navigator.push(
+                              await Navigator.push(
                                 context,
                                 MaterialPageRoute(
                                   builder: (context) {

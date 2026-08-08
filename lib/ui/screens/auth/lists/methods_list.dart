@@ -1,5 +1,3 @@
-import 'dart:async';
-
 import 'package:antinote_api/antinote_api.dart';
 import 'package:antinote_app/data/src/session/wrapper.dart';
 import 'package:antinote_app/ui/screens/auth/methods/qr_code.dart';
@@ -31,15 +29,12 @@ class MethodsListScreen extends StatelessWidget with WidgetsBindingObserver {
         subtitle: context.l10n.loginCitySubtitle,
 
         onPressed: () async {
-          await sendResultIfLoggedIn(
+          await Navigator.push(
             context,
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (context) {
-                  return const SearchCitiesMethodScreen();
-                },
-              ),
+            MaterialPageRoute(
+              builder: (context) {
+                return const SearchCitiesMethodScreen();
+              },
             ),
           );
         },
@@ -51,15 +46,12 @@ class MethodsListScreen extends StatelessWidget with WidgetsBindingObserver {
         subtitle: context.l10n.loginQrCodeSubtitle,
 
         onPressed: () async {
-          await sendResultIfLoggedIn(
+          await Navigator.push(
             context,
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (context) {
-                  return const QRCodeMethodScreen();
-                },
-              ),
+            MaterialPageRoute(
+              builder: (context) {
+                return const QRCodeMethodScreen();
+              },
             ),
           );
         },
@@ -71,15 +63,12 @@ class MethodsListScreen extends StatelessWidget with WidgetsBindingObserver {
         subtitle: context.l10n.loginUrlSubtitle,
 
         onPressed: () async {
-          await sendResultIfLoggedIn(
+          await Navigator.push(
             context,
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (context) {
-                  return const UrlMethodScreen();
-                },
-              ),
+            MaterialPageRoute(
+              builder: (context) {
+                return const UrlMethodScreen();
+              },
             ),
           );
         },
@@ -113,24 +102,10 @@ class MethodsListScreen extends StatelessWidget with WidgetsBindingObserver {
           if (!context.mounted) return;
 
           final entry = SessionWrapper.register(result, credentials);
-          await sendResultIfLoggedIn(context, entry);
+          Navigator.pop(context, entry);
         },
       ),
     ];
-  }
-
-  Future<void> sendResultIfLoggedIn(
-    BuildContext context,
-    FutureOr<RegisterableAccount?> pushed,
-  ) async {
-    final entry = await pushed;
-    if (entry == null || !context.mounted) return;
-
-    final result = await context.ar.registerAccount(entry);
-
-    if (!result || !context.mounted) return;
-
-    Navigator.pop(context);
   }
 
   @override

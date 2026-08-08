@@ -45,7 +45,7 @@ class _WorkspacesListScreenState extends State<WorkspacesListScreen> {
 
   Future<void> onSelected(BuildContext context, Workspace workspace) async {
     if (_casLoginActive) {
-      Navigator.push(
+      await Navigator.push(
         context,
         MaterialPageRoute(
           builder: (context) {
@@ -57,7 +57,7 @@ class _WorkspacesListScreenState extends State<WorkspacesListScreen> {
         ),
       );
     } else {
-      Navigator.push(
+      await Navigator.push(
         context,
         MaterialPageRoute(
           builder: (context) {

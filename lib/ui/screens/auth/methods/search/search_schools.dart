@@ -118,18 +118,18 @@ class _SearchSchoolsMethodScreenState extends State<SearchSchoolsMethodScreen> {
                                   instance.baseUrl,
                                 );
 
-                            if (!context.mounted) return;
-
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) {
-                                  return WorkspacesListScreen(
-                                    parameters: parameters!,
-                                  );
-                                },
-                              ),
-                            );
+                            if (context.mounted) {
+                              await Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) {
+                                    return WorkspacesListScreen(
+                                      parameters: parameters!,
+                                    );
+                                  },
+                                ),
+                              );
+                            }
 
                             // catch
                           } catch (e, st) {

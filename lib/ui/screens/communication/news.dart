@@ -5,7 +5,6 @@ import 'package:antinote_app/ui/widgets/customs/attachment.dart';
 import 'package:antinote_app/ui/widgets/customs/list.dart';
 import 'package:antinote_app/ui/widgets/remote_html.dart';
 import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
 import 'package:hugeicons_pro/hugeicons.dart';
 import 'package:intl/intl.dart';
 
@@ -66,7 +65,7 @@ class _NewsScreenState extends State<NewsScreen>
         slivers: [
           SliverAppBar(
             leading: IconButton(
-              onPressed: context.pop,
+              onPressed: () => Navigator.pop(context),
               icon: const Icon(HugeIconsSolid.arrowLeft01, size: 22),
             ),
 

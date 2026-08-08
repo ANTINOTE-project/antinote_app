@@ -28,6 +28,12 @@ class _UrlMethodScreenState extends State<UrlMethodScreen> {
   Uri? instanceUrl;
 
   @override
+  void didChangeDependencies() {
+    _onQueryChanged();
+    super.didChangeDependencies();
+  }
+
+  @override
   void dispose() {
     _controller.dispose();
     _debounce?.cancel();

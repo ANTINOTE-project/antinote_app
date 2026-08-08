@@ -2,7 +2,6 @@ import 'package:antinote_api/antinote_api.dart';
 import 'package:antinote_app/ui/utils/utils.dart';
 import 'package:antinote_app/ui/widgets/customs/app_bar.dart';
 import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 
 class WebviewLoginScreen extends StatefulWidget {
@@ -66,7 +65,11 @@ class _WebviewLoginScreenState extends State<WebviewLoginScreen> {
                 );
 
                 if (mounted) {
-                  context.pop(result);
+                  Navigator.popUntilWithResult(
+                    context,
+                    (route) => route.popDisposition == .doNotPop,
+                    result,
+                  );
                 } else {
                   return NavigationDecision.navigate;
                 }

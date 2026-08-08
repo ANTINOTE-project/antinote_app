@@ -1,6 +1,5 @@
 import 'package:antinote_app/ui/utils/utils.dart';
 import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
 import 'package:hugeicons_pro/hugeicons.dart';
 
 class AppBarWidget extends StatelessWidget implements PreferredSizeWidget {
@@ -29,7 +28,7 @@ class AppBarWidget extends StatelessWidget implements PreferredSizeWidget {
 
     final Widget? defaultBackButton = shouldShowBackButton
         ? IconButton(
-            onPressed: context.pop,
+            onPressed: () => Navigator.pop(context),
             icon: const Icon(HugeIconsSolid.arrowLeft01, size: 22),
           )
         : null;

@@ -1,5 +1,6 @@
 import 'package:antinote_api/antinote_api.dart';
 import 'package:antinote_app/data/protos/account.pb.dart';
+import 'package:antinote_app/data/src/session/wrapper.dart';
 import 'package:antinote_app/ui/screens/auth/lists/methods_list.dart';
 import 'package:antinote_app/ui/screens/shell/tab.dart';
 import 'package:antinote_app/ui/utils/utils.dart';
@@ -85,6 +86,8 @@ class _AccountsListScreenState extends State<AccountsListScreen>
   Widget build(BuildContext context) {
     return PopScope(
       canPop: context.ar.accountPicked,
+      onPopInvokedWithResult: (didPop, result) =>
+          libLog.info('Salut $didPop ${context.ar.curAccountUid}'),
       child: super.build(context),
     );
   }
@@ -111,7 +114,7 @@ class _AccountsListScreenState extends State<AccountsListScreen>
 
             child: ButtonWidget(
               onPressed: () async {
-                await Navigator.push(
+                final result = await Navigator.push<RegisterableAccount>(
                   context,
                   MaterialPageRoute(
                     builder: (context) {
@@ -120,9 +123,10 @@ class _AccountsListScreenState extends State<AccountsListScreen>
                   ),
                 );
 
-                if (mounted) {
-                  await reload();
-                }
+                if (!context.mounted || result == null) return;
+                await context.ar.registerAccount(result);
+
+                if (mounted) await reload();
               },
 
               icon: HugeIconsSolid.add02,
@@ -147,6 +151,7 @@ class _AccountsListScreenState extends State<AccountsListScreen>
 
                     onLongPress: () async {
                       await showModalBottomSheet(
+                        showDragHandle: true,
                         context: context,
 
                         builder: (context) {
