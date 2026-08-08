@@ -218,12 +218,13 @@ class _HomeworkDetailScreenState extends State<HomeworkDetailScreen> {
                       ),
 
                       leading: renderIcon != null
-                          ? Icon(renderIcon, color: scheme.onSurface, size: 21)
+                          ? Icon(renderIcon, color: scheme.onSurface, size: 19)
                           : null,
 
                       title: Text(
                         renderLabel,
-                        style: TextStyle(color: scheme.onSurface),
+                        maxLines: 999,
+                        style: TextStyle(color: scheme.onSurface, fontSize: 15),
                       ),
                     ),
                 ],

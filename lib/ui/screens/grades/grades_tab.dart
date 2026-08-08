@@ -552,150 +552,163 @@ class _LatestGrades extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // rebuild when theme mode changes TODO: Get rid of that
+    // rebuild when theme mode changes
     final _ = Theme.of(context);
-    final totalWidth = MediaQuery.sizeOf(context).width;
-    final maxItemWidth = totalWidth / 10 * 6;
 
     return SliverToBoxAdapter(
-      child: Container(
-        height: 170,
-        padding: const .symmetric(horizontal: 8, vertical: 8),
-        child: CarouselView.weightedBuilder(
-          flexWeights: const [6, 3, 1],
-          itemSnapping: true,
-          infinite: exams == null,
-          itemBuilder: (context, index) {
-            final exam = exams == null
-                ? fakeExams[index % fakeExams.length]
-                : exams![index];
+      child: Skeletonizer.zone(
+        enabled: exams == null,
 
-            return Padding(
-              padding: const .symmetric(horizontal: 4),
-              child: ClipPath(
-                clipper: ShapeBorderClipper(
-                  shape: RoundedRectangleBorder(borderRadius: .circular(28)),
-                ),
-                child: GradeCard(
-                  exam: exam,
-                  isLoading: exams == null,
-                  width: maxItemWidth,
-                ),
-              ),
-            );
-          },
-          itemCount: exams?.length ?? fakeExams.length,
-        ),
-      ),
-    );
-  }
-}
+        child: SizedBox(
+          height: 170,
 
-class GradeCard extends StatelessWidget {
-  const GradeCard({
-    super.key,
-    required this.exam,
-    required this.isLoading,
-    required this.width,
-  });
+          child: ListView.builder(
+            physics: const BouncingScrollPhysics(
+              parent: AlwaysScrollableScrollPhysics(),
+            ),
+            padding: const .all(12),
 
-  final Exam exam;
-  final bool isLoading;
-  final double width;
+            scrollDirection: .horizontal,
+            itemCount: exams == null ? fakeExams.length : exams!.length,
 
-  @override
-  Widget build(BuildContext context) {
-    final scheme = Utils.buildColorScheme(context, exam.service.color);
+            itemBuilder: (context, index) {
+              final exam = exams == null ? fakeExams[index] : exams![index];
 
-    final date = DateFormat('dd/MM/yyyy').format(exam.date);
-    final title = Utils.getExamComment(context, exam);
-    final subject = exam.service.name;
+              final scheme = Utils.buildColorScheme(
+                context,
+                exam.service.color,
+              );
 
-    return Skeletonizer(
-      enabled: isLoading,
-      child: Pressable(
-        onPressed: () async => await showExamDetails(context, exam),
-        child: Ink(
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(28),
-            border: Border.all(color: scheme.inversePrimary),
-            color: scheme.primaryContainer,
-          ),
+              final date = DateFormat('dd/MM/yyyy').format(exam.date);
+              final title = Utils.getExamComment(context, exam);
+              final subject = exam.service.name;
 
-          child: OverflowBox(
-            minWidth: width,
-            maxWidth: width,
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
-              child: Stack(
-                children: [
-                  Column(
-                    crossAxisAlignment: .start,
-                    mainAxisSize: .min,
-                    children: [
-                      Text(
-                        subject,
+              return Padding(
+                padding: const .only(right: 8),
 
-                        overflow: .ellipsis,
-                        maxLines: 1,
+                child: Pressable(
+                  onPressed: () => showExamDetails(context, exam),
+                  borderRadius: .circular(12),
 
-                        style: TextStyle(
-                          fontSize: 20,
-                          fontWeight: .w800,
-                          color: scheme.primary,
-                        ),
+                  child: IntrinsicWidth(
+                    child: ConstrainedBox(
+                      constraints: const BoxConstraints(
+                        minWidth: 200,
+                        maxWidth: 250,
                       ),
 
-                      Text(
-                        title,
+                      child: Ink(
+                        decoration: BoxDecoration(
+                          borderRadius: .circular(12),
 
-                        overflow: .ellipsis,
-                        maxLines: 2,
+                          border: .all(
+                            color: exams == null
+                                ? context.c.outlineVariant
+                                : scheme.inversePrimary,
+                          ),
 
-                        style: const TextStyle(fontSize: 16, fontWeight: .w600),
+                          color: exams == null
+                              ? context.c.surfaceContainerHigh
+                              : scheme.primaryContainer,
+                        ),
+
+                        padding: const .symmetric(horizontal: 10, vertical: 6),
+
+                        child: Column(
+                          crossAxisAlignment: .start,
+                          spacing: 12,
+
+                          children: exams == null
+                              ? [
+                                  const Bone.text(
+                                    width: 200,
+
+                                    style: TextStyle(
+                                      fontSize: 20,
+                                      fontWeight: .w800,
+                                    ),
+                                  ),
+
+                                  const Bone.text(
+                                    width: 100,
+
+                                    style: TextStyle(
+                                      fontSize: 16,
+                                      fontWeight: .w600,
+                                    ),
+                                  ),
+
+                                  const Spacer(),
+
+                                  const Row(
+                                    children: [
+                                      Bone.text(
+                                        width: 75,
+                                        style: TextStyle(fontWeight: .bold),
+                                      ),
+
+                                      Spacer(),
+
+                                      Bone.text(width: 75, fontSize: 22),
+                                    ],
+                                  ),
+                                ]
+                              : [
+                                  Text(
+                                    subject,
+
+                                    overflow: TextOverflow.ellipsis,
+                                    maxLines: 1,
+
+                                    style: TextStyle(
+                                      fontSize: 20,
+                                      fontWeight: .w800,
+                                      color: scheme.primary,
+                                    ),
+                                  ),
+
+                                  Expanded(
+                                    child: Text(
+                                      title,
+
+                                      overflow: TextOverflow.ellipsis,
+                                      maxLines: 2,
+
+                                      style: const TextStyle(
+                                        fontSize: 16,
+                                        fontWeight: .w600,
+                                      ),
+                                    ),
+                                  ),
+
+                                  Row(
+                                    children: [
+                                      Text(
+                                        date,
+                                        style: TextStyle(
+                                          fontWeight: FontWeight.bold,
+                                          color: scheme.onSurfaceVariant,
+                                        ),
+                                      ),
+
+                                      const Spacer(),
+
+                                      GradeText(
+                                        selfGrade: exam.selfGrade,
+                                        maxGrade: exam.theoreticalMaxGrade,
+                                        defaultMaxGrade: exam.defaultMaxGrade,
+                                        color: scheme.primary,
+                                      ),
+                                    ],
+                                  ),
+                                ],
+                        ),
                       ),
-                    ],
-                  ),
-
-                  Positioned(
-                    bottom: 0,
-                    left: 0,
-                    right: 0,
-                    child: Column(
-                      mainAxisSize: .min,
-                      children: [
-                        Divider(
-                          color: scheme.inversePrimary,
-                          radius: .circular(999),
-                          thickness: 3,
-                        ),
-
-                        Row(
-                          children: [
-                            Text(
-                              date,
-                              style: TextStyle(
-                                fontWeight: FontWeight.bold,
-                                color: scheme.onSurfaceVariant,
-                              ),
-                            ),
-
-                            const Spacer(),
-
-                            GradeText(
-                              selfGrade: exam.selfGrade,
-                              maxGrade: exam.theoreticalMaxGrade,
-                              defaultMaxGrade: exam.defaultMaxGrade,
-                              color: scheme.primary,
-                            ),
-                          ],
-                        ),
-                      ],
                     ),
                   ),
-                ],
-              ),
-            ),
+                ),
+              );
+            },
           ),
         ),
       ),

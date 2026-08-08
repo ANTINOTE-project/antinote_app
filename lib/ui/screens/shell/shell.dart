@@ -102,53 +102,45 @@ class _AppShellState extends State<AppShell> {
                   SafeArea(
                     right: false,
                     left: false,
+                    top: false,
 
                     child: Padding(
                       padding: const .only(right: 6),
 
-                      child: ClipRRect(
-                        borderRadius: const .only(
-                          topRight: .circular(24),
-                          bottomRight: .circular(24),
-                        ),
+                      child: NavigationRail(
+                        destinations: _tabs.mapL((e) {
+                          final notificationCount = e.tabs
+                              .map((e) => notifications[e] ?? 0)
+                              .fold(
+                                0,
+                                (previousValue, element) =>
+                                    previousValue + element,
+                              );
 
-                        child: NavigationRail(
-                          backgroundColor: context.c.surfaceContainerHigh,
+                          return NavigationRailDestination(
+                            label: Text(e.label),
 
-                          destinations: _tabs.mapL((e) {
-                            final notificationCount = e.tabs
-                                .map((e) => notifications[e] ?? 0)
-                                .fold(
-                                  0,
-                                  (previousValue, element) =>
-                                      previousValue + element,
-                                );
+                            icon: Badge.count(
+                              count: notificationCount,
+                              isLabelVisible: notificationCount > 0,
+                              child: Icon(e.icon),
+                            ),
 
-                            return NavigationRailDestination(
-                              label: Text(e.label),
+                            selectedIcon: Badge.count(
+                              count: notificationCount,
+                              isLabelVisible: notificationCount > 0,
+                              child: Icon(e.icon, fill: 1),
+                            ),
+                          );
+                        }),
 
-                              icon: Badge.count(
-                                count: notificationCount,
-                                isLabelVisible: notificationCount > 0,
-                                child: Icon(e.icon),
-                              ),
+                        selectedIndex: currentPage,
+                        onDestinationSelected: (value) => setState(() {
+                          currentPage = value;
+                        }),
 
-                              selectedIcon: Badge.count(
-                                count: notificationCount,
-                                isLabelVisible: notificationCount > 0,
-                                child: Icon(e.icon, fill: 1),
-                              ),
-                            );
-                          }),
-
-                          selectedIndex: currentPage,
-                          onDestinationSelected: (value) => setState(() {
-                            currentPage = value;
-                          }),
-
-                          labelType: .all,
-                          scrollable: true,
-                        ),
+                        labelType: .all,
+                        scrollable: true,
                       ),
                     ),
                   ),
@@ -156,7 +148,6 @@ class _AppShellState extends State<AppShell> {
                 Expanded(
                   child: AnimatedSwitcher(
                     duration: const Duration(milliseconds: 300),
-
                     switchInCurve: Curves.fastOutSlowIn,
 
                     child: _tabs[currentPage].screen,
@@ -167,47 +158,27 @@ class _AppShellState extends State<AppShell> {
 
             bottomNavigationBar: screenSize.width > screenSize.height
                 ? null
-                : Container(
-                    margin: const .symmetric(horizontal: 6),
-                    padding: const .symmetric(horizontal: 6),
+                : NavigationBar(
+                    destinations: _tabs
+                        .map((e) {
+                          final notificationCount = e.tabs
+                              .map((e) => notifications[e] ?? 0)
+                              .fold(
+                                0,
+                                (previousValue, element) =>
+                                    previousValue + element,
+                              );
 
-                    clipBehavior: .antiAlias,
+                          return _buildDestination(e, notificationCount);
+                        })
+                        .toList(growable: false),
 
-                    decoration: BoxDecoration(
-                      color: context.c.surfaceContainer,
-                      borderRadius: const .only(
-                        topLeft: .circular(24),
-                        topRight: .circular(24),
-                      ),
-                    ),
+                    onDestinationSelected: (value) => setState(() {
+                      currentPage = value;
+                    }),
 
-                    child: SafeArea(
-                      left: false,
-                      right: false,
-
-                      child: NavigationBar(
-                        destinations: _tabs
-                            .map((e) {
-                              final notificationCount = e.tabs
-                                  .map((e) => notifications[e] ?? 0)
-                                  .fold(
-                                    0,
-                                    (previousValue, element) =>
-                                        previousValue + element,
-                                  );
-
-                              return _buildDestination(e, notificationCount);
-                            })
-                            .toList(growable: false),
-
-                        onDestinationSelected: (value) => setState(() {
-                          currentPage = value;
-                        }),
-
-                        selectedIndex: currentPage,
-                        height: 70,
-                      ),
-                    ),
+                    selectedIndex: currentPage,
+                    height: 70,
                   ),
           ),
         );

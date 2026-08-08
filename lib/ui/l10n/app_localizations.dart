@@ -434,6 +434,12 @@ abstract class AppLocalizations {
   /// **'Évaluations'**
   String get homeExams;
 
+  /// No description provided for @homeHiName.
+  ///
+  /// In fr, this message translates to:
+  /// **'Salut, {name} !'**
+  String homeHiName(Object name);
+
   /// No description provided for @absenceNotJustified.
   ///
   /// In fr, this message translates to:

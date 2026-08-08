@@ -3,7 +3,6 @@ import 'package:antinote_app/data/src/home_page/manager.dart';
 import 'package:antinote_app/ui/routing/routes.dart';
 import 'package:antinote_app/ui/screens/shell/tab.dart';
 import 'package:antinote_app/ui/utils/utils.dart';
-import 'package:antinote_app/ui/widgets/customs/button.dart';
 import 'package:antinote_app/ui/widgets/customs/list.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
@@ -46,37 +45,48 @@ class _HomeScreenState extends State<HomeScreen>
   ) {
     assert(!partial, 'This loaded page does not support partial loading yet.');
 
-    return buildRefreshIndicator(
-      child: HomePageScope(
-        manager: homePageManager,
+    return Scaffold(
+      appBar: AppBar(
+        title: Text(
+          context.l10n.homeHiName('example'),
+          style: const TextStyle(fontWeight: .bold),
+        ),
 
-        child: Padding(
-          padding: const .all(12),
+        actionsPadding: const .only(right: 8),
+        actions: [
+          IconButton(
+            icon: const Icon(HugeIconsSolid.settings02),
+            onPressed: () async {
+              await context.push(Routes.settings);
+            },
+          ),
+        ],
+      ),
 
-          child: CustomScrollView(
-            slivers: [
-              for (final widget in homePageManager.loadedWidgets)
-                SliverSafeArea(
-                  sliver: ValueListenableBuilder(
-                    valueListenable: widget,
-                    builder: (context, value, child) {
-                      return widget.descriptor.buildSliver(
-                        context,
-                        widget,
-                        value,
-                      );
-                    },
+      body: buildRefreshIndicator(
+        child: HomePageScope(
+          manager: homePageManager,
+
+          child: Padding(
+            padding: const .all(12),
+
+            child: CustomScrollView(
+              slivers: [
+                for (final widget in homePageManager.loadedWidgets)
+                  SliverSafeArea(
+                    sliver: ValueListenableBuilder(
+                      valueListenable: widget,
+                      builder: (context, value, child) {
+                        return widget.descriptor.buildSliver(
+                          context,
+                          widget,
+                          value,
+                        );
+                      },
+                    ),
                   ),
-                ),
-
-              SliverToBoxAdapter(
-                child: ButtonWidget(
-                  onPressed: () async {
-                    await context.push(Routes.settings);
-                  },
-                ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
       ),
