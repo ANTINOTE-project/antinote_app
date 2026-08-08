@@ -1,9 +1,9 @@
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:antinote_api/antinote_api.dart';
 import 'package:antinote_app/data/protos/account.pb.dart';
 import 'package:antinote_app/data/src/accounts/storage/base.dart';
-import 'package:antinote_app/main.dart';
 import 'package:flutter/foundation.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -28,7 +28,7 @@ class PreferencesAccountStorage implements AccountStorage {
     try {
       return SerializedAccountRegistry.fromBuffer(base64Decode(registry));
     } catch (e, st) {
-      talker.error(
+      libLog.severe(
         'Failed to load account registry, creating a new one...',
         e,
         st,

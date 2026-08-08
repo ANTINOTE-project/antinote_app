@@ -5,7 +5,6 @@ import 'dart:math';
 import 'package:antinote_api/antinote_api.dart';
 import 'package:antinote_app/data/src/accounts/registry.dart';
 import 'package:antinote_app/data/src/pigeon_posts/native_session.g.dart';
-import 'package:antinote_app/main.dart';
 import 'package:flutter/foundation.dart';
 
 final NativeSessionManager _sessionManager = NativeSessionManager();
@@ -21,7 +20,7 @@ class SessionPollingManager extends PollingManager {
   @override
   bool askToTakePolling(String accountUid) {
     final answer = registry.curAccountUid == accountUid;
-    talker.info('Got asked whether to take polling job... Answered $answer');
+    libLog.info('Got asked whether to take polling job... Answered $answer');
     return answer;
   }
 
@@ -32,7 +31,7 @@ class SessionPollingManager extends PollingManager {
 
   @override
   void startPolling(String accountUid) {
-    talker.info('Starting polling...');
+    libLog.info('Starting polling...');
 
     Future.microtask(() async {
       var wrapper = registry.specificSession(accountUid);
@@ -92,7 +91,7 @@ class SessionPollingManager extends PollingManager {
               break;
             } on IOException {
               restartCount += 1;
-              talker.info('Polling just failed for the ${restartCount}th time');
+              libLog.info('Polling just failed for the ${restartCount}th time');
 
               if (restartCount >= _maxRetries) {
                 await _sessionManager.updatePollingState(

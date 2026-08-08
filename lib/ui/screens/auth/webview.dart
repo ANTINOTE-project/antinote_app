@@ -1,5 +1,4 @@
 import 'package:antinote_api/antinote_api.dart';
-import 'package:antinote_app/main.dart';
 import 'package:antinote_app/ui/utils/utils.dart';
 import 'package:antinote_app/ui/widgets/customs/app_bar.dart';
 import 'package:flutter/material.dart';
@@ -73,7 +72,7 @@ class _LoginWebviewScreenState extends State<LoginWebviewScreen> {
                 }
               } catch (e, st) {
                 _loginHandled = false;
-                talker.error(
+                libLog.severe(
                   'Failed to login although matched criterion',
                   e,
                   st,

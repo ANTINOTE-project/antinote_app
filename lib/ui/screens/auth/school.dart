@@ -1,7 +1,6 @@
 import 'dart:math';
 
 import 'package:antinote_api/antinote_api.dart';
-import 'package:antinote_app/main.dart';
 import 'package:antinote_app/ui/routing/routes.dart';
 import 'package:antinote_app/ui/utils/utils.dart';
 import 'package:antinote_app/ui/widgets/bottom_padding.dart';
@@ -133,7 +132,7 @@ class _LoginSelectSchoolScreenState extends State<LoginSelectSchoolScreen> {
 
                             // catch
                           } catch (e, st) {
-                            talker.error(
+                            libLog.severe(
                               'Error during fetch of parameters',
                               e,
                               st,

@@ -4,9 +4,6 @@ import 'package:antinote_app/ui/entrypoints/login.dart';
 import 'package:antinote_app/ui/entrypoints/main.dart';
 import 'package:flutter/material.dart';
 import 'package:logging/logging.dart';
-import 'package:talker/talker.dart';
-
-final talker = Talker();
 
 @pragma('vm:entry-point')
 void main() => mainEntrypoint();

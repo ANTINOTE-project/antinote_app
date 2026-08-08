@@ -11,15 +11,15 @@ import 'package:go_router/go_router.dart';
 import 'package:hugeicons_pro/hugeicons.dart';
 import 'package:skeletonizer/skeletonizer.dart';
 
-class AccountsScreen extends StatefulWidget {
-  const AccountsScreen({super.key});
+class AccountsListScreen extends StatefulWidget {
+  const AccountsListScreen({super.key});
 
   @override
-  State<AccountsScreen> createState() => _AccountsScreenState();
+  State<AccountsListScreen> createState() => _AccountsListScreenState();
 }
 
-class _AccountsScreenState extends State<AccountsScreen>
-    with WidgetsBindingObserver, PageMixin<AccountsScreen> {
+class _AccountsListScreenState extends State<AccountsListScreen>
+    with WidgetsBindingObserver, PageMixin<AccountsListScreen> {
   late List<AntinoteAccount> _accounts;
 
   String? _defaultUid;

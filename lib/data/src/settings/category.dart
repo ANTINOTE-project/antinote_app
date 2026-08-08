@@ -1,6 +1,6 @@
 import 'dart:async';
 
-import 'package:antinote_app/main.dart';
+import 'package:antinote_api/antinote_api.dart';
 import 'package:flutter/foundation.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -12,6 +12,7 @@ enum _SettingsMode { none, registering, filling }
 
 abstract class SettingsCategory extends ChangeNotifier {
   String get name;
+
   int get latestVersion;
 
   /// To upgrade to version `n` from version `n-1`, add the following :
@@ -25,6 +26,7 @@ abstract class SettingsCategory extends ChangeNotifier {
   late final SharedPreferencesWithCache _prefs;
 
   final Map<String, dynamic> _registered = {};
+
   Set<String> get fieldNames => _registered.keys.toSet();
   final Set<String> allFieldNames = {};
   _SettingsMode _mode = .none;
@@ -68,15 +70,17 @@ abstract class SettingsCategory extends ChangeNotifier {
   }
 
   List<dynamic> get registeredFields;
+
   List<SettingsCategory> get registeredChildren => [];
 
   Completer<bool>? initializationState;
+
   Future<bool> initialize() async {
     if (initializationState != null) return initializationState!.future;
 
     initializationState = Completer();
 
-    talker.info('Registering $name...');
+    libLog.info('Registering $name...');
 
     try {
       _mode = .registering;
@@ -189,5 +193,6 @@ abstract class SettingsCategory extends ChangeNotifier {
   }
 
   String get _versionFieldName => '${name}_version';
+
   int get version => get(_versionFieldName, writtenDefault: latestVersion)!;
 }

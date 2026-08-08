@@ -1,6 +1,6 @@
 import 'package:antinote_api/antinote_api.dart';
 import 'package:antinote_app/ui/routing/routes.dart';
-import 'package:antinote_app/ui/screens/auth/accounts.dart';
+import 'package:antinote_app/ui/screens/auth/accounts_list.dart';
 import 'package:antinote_app/ui/screens/auth/city.dart';
 import 'package:antinote_app/ui/screens/auth/methods.dart';
 import 'package:antinote_app/ui/screens/auth/password.dart';
@@ -30,7 +30,7 @@ GoRouter makeRouter({String initialLocation = Routes.appShell}) => GoRouter(
     // Auth routes
     GoRoute(
       path: Routes.auth.accounts,
-      builder: (context, state) => const AccountsScreen(),
+      builder: (context, state) => const AccountsListScreen(),
     ),
     GoRoute(
       path: Routes.auth.methods,

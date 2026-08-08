@@ -1,7 +1,6 @@
 import 'dart:async';
 
 import 'package:antinote_api/antinote_api.dart';
-import 'package:antinote_app/main.dart';
 import 'package:antinote_app/ui/screens/shell/tab.dart';
 import 'package:antinote_app/ui/screens/timetable/events/block.dart';
 import 'package:antinote_app/ui/utils/utils.dart';
@@ -377,7 +376,7 @@ class _TimetableDisplayState extends State<TimetableDisplay>
             to.timing.minute -
             from.timing.minute;
 
-        talker.info('${from.timing} -> ${to.timing} : $value');
+        libLog.info('${from.timing} -> ${to.timing} : $value');
         displays.add(Expanded(flex: value, child: const SizedBox.shrink()));
       }
 

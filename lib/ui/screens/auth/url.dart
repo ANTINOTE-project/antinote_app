@@ -1,7 +1,6 @@
 import 'dart:async';
 
 import 'package:antinote_api/antinote_api.dart';
-import 'package:antinote_app/main.dart';
 import 'package:antinote_app/ui/routing/routes.dart';
 import 'package:antinote_app/ui/utils/utils.dart';
 import 'package:antinote_app/ui/widgets/customs/app_bar.dart';
@@ -76,7 +75,7 @@ class _LoginUrlScreenState extends State<LoginUrlScreen> {
             // catch
           } catch (e, st) {
             if (kDebugMode) {
-              talker.error(
+              libLog.severe(
                 'Could not start ${workspace.label} session at $instanceUrl',
                 e,
                 st,
@@ -181,7 +180,6 @@ class _LoginUrlScreenState extends State<LoginUrlScreen> {
 
                             titleMaxLines: null,
                             title: Text(item.title),
-                            subtitleMaxLines: null,
                             subtitle: Text(item.subtitle),
                           );
                         },
@@ -208,7 +206,7 @@ class _LoginUrlScreenState extends State<LoginUrlScreen> {
 
                             // catch
                           } catch (e, st) {
-                            talker.error(
+                            libLog.severe(
                               'Error during fetch of parameters',
                               e,
                               st,
