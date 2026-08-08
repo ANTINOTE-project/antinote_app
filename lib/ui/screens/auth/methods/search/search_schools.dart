@@ -1,32 +1,31 @@
 import 'dart:math';
 
 import 'package:antinote_api/antinote_api.dart';
-import 'package:antinote_app/ui/routing/routes.dart';
+import 'package:antinote_app/ui/screens/auth/lists/workspaces_list.dart';
 import 'package:antinote_app/ui/utils/utils.dart';
 import 'package:antinote_app/ui/widgets/bottom_padding.dart';
 import 'package:antinote_app/ui/widgets/customs/app_bar.dart';
 import 'package:antinote_app/ui/widgets/customs/field.dart';
 import 'package:antinote_app/ui/widgets/customs/list.dart';
 import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
 import 'package:hugeicons_pro/hugeicons.dart';
 
-class LoginSelectSchoolScreen extends StatefulWidget {
+class SearchSchoolsMethodScreen extends StatefulWidget {
   final double lat;
   final double long;
 
-  const LoginSelectSchoolScreen({
+  const SearchSchoolsMethodScreen({
     super.key,
     required this.lat,
     required this.long,
   });
 
   @override
-  State<LoginSelectSchoolScreen> createState() =>
-      _LoginSelectSchoolScreenState();
+  State<SearchSchoolsMethodScreen> createState() =>
+      _SearchSchoolsMethodScreenState();
 }
 
-class _LoginSelectSchoolScreenState extends State<LoginSelectSchoolScreen> {
+class _SearchSchoolsMethodScreenState extends State<SearchSchoolsMethodScreen> {
   final _controller = TextEditingController();
 
   final List<GeolocatedInstance> _mockInstances = List.generate(20, (i) {
@@ -121,14 +120,16 @@ class _LoginSelectSchoolScreenState extends State<LoginSelectSchoolScreen> {
 
                             if (!context.mounted) return;
 
-                            final result = await context.push<LoginResult>(
-                              Routes.auth.workspace,
-                              extra: {'parameters': parameters},
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) {
+                                  return WorkspacesListScreen(
+                                    parameters: parameters!,
+                                  );
+                                },
+                              ),
                             );
-
-                            if (result != null && context.mounted) {
-                              context.pop(result);
-                            }
 
                             // catch
                           } catch (e, st) {

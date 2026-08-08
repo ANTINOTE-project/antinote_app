@@ -1,5 +1,5 @@
 import 'package:antinote_app/ui/l10n/app_localizations.dart';
-import 'package:antinote_app/ui/routing/routes.dart';
+import 'package:antinote_app/ui/screens/auth/lists/accounts_list.dart';
 import 'package:antinote_app/ui/screens/settings/networking.dart';
 import 'package:antinote_app/ui/screens/settings/theme.dart';
 import 'package:antinote_app/ui/utils/utils.dart';
@@ -8,7 +8,6 @@ import 'package:antinote_app/ui/widgets/customs/app_bar.dart';
 import 'package:antinote_app/ui/widgets/customs/button.dart';
 import 'package:antinote_app/ui/widgets/text_icon.dart';
 import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
 import 'package:hugeicons_pro/hugeicons.dart';
 
 enum AppColor {
@@ -68,7 +67,14 @@ class SettingsScreen extends StatelessWidget {
 
             SliverToBoxAdapter(
               child: ButtonWidget(
-                onPressed: () => context.push(Routes.auth.accounts),
+                onPressed: () => Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) {
+                      return const AccountsListScreen();
+                    },
+                  ),
+                ),
                 label: context.l10n.choseAnAccount,
               ),
             ),

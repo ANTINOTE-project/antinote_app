@@ -4,9 +4,8 @@ import 'dart:io';
 import 'package:antinote_api/antinote_api.dart';
 import 'package:antinote_app/data/src/accounts/storage/base.dart';
 import 'package:antinote_app/data/src/pigeon_posts/native_session.g.dart';
-import 'package:antinote_app/ui/routing/routes.dart';
+import 'package:antinote_app/ui/screens/auth/lists/accounts_list.dart';
 import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
 
 import '../session/wrapper.dart';
 import '../settings/networking.dart';
@@ -42,8 +41,6 @@ final class AccountRegistry({
       'Tried to ensure the account is picked with an unmounted context',
     );
 
-    final router = GoRouter.of(context);
-
     if (pickLock != null) {
       await pickLock!.future;
     }
@@ -62,7 +59,16 @@ final class AccountRegistry({
       libLog.info('Sent user to account pick screen');
 
       // This never returns until [accountPicked] is true.
-      await router.push(Routes.auth.accounts);
+      if (context.mounted) {
+        await Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) {
+              return const AccountsListScreen();
+            },
+          ),
+        );
+      }
 
       assert(accountPicked);
     } finally {

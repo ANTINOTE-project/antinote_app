@@ -1,6 +1,7 @@
-# ANTINOTE
+# ANTINOTE App
 
-> Le projet ANTINOTE n'est en aucun cas lié à Index-Education. L'utilisation de ce logiciel est régie par la licence
+> Le projet ANTINOTE n'est en aucun cas lié à Index-Education. L'utilisation de ce logiciel est
+> régie par la licence
 > MIT ; il est fourni "en l'état", sans garantie d'aucune sorte quant à son utilisation.
 
 Votre emploi du temps, vos notes, vos travaux à faire et vos messages à portée de main, c'est
@@ -9,6 +10,7 @@ possible avec ANTINOTE !
 Nous connectons vos comptes PRONOTE à votre téléphone d'une façon jamais vue auparavant, grâce à
 notre intégration profonde au système d'exploitation, nous sommes capables de vous proposer des
 fonctionnalités poussées :
+
 - [x] Comptes chiffrés et sécurisée biométrie
 - [x] Mise à jour des données en arrière-plan (quand non-chiffré)
 - [x] Calendrier dans l'application du téléphone (quand non-chiffré)
@@ -16,6 +18,7 @@ fonctionnalités poussées :
 - [ ] Widgets (quand non-chiffré, Coming *less* Soon ™)
 
 Nous supportons également les fonctionnalités principales de PRONOTE dans l'application :
+
 - [x] Page d'accueil
 - [x] Emploi du Temps
 - [x] Notes

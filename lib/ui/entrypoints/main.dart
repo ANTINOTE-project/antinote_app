@@ -5,7 +5,7 @@ import 'package:antinote_app/data/src/accounts/registry.dart';
 import 'package:antinote_app/data/src/accounts/storage/widget.dart';
 import 'package:antinote_app/data/src/settings/registry.dart';
 import 'package:antinote_app/ui/app.dart';
-import 'package:antinote_app/ui/routing/routes.dart';
+import 'package:antinote_app/ui/screens/shell/shell.dart';
 import 'package:flutter/material.dart';
 import 'package:logging/logging.dart';
 
@@ -59,10 +59,7 @@ class _MainAppState extends State<MainApp> {
   Widget build(BuildContext context) {
     return AccountScope(
       registry: registry,
-      child: App(
-        initialLocation: Routes.appShell,
-        registry: widget.settingsRegistry,
-      ),
+      child: App(home: const AppShell(), registry: widget.settingsRegistry),
     );
   }
 }

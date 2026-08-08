@@ -26,7 +26,6 @@ dependencies:
   intl: any
 
   # Frontend - useful
-  go_router: ^17.2.3
   url_launcher: ^6.3.2
   webview_flutter: ^4.13.1
   mobile_scanner: ^7.2.0

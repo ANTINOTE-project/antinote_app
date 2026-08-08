@@ -8,21 +8,21 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hugeicons_pro/hugeicons.dart';
 
-class LoginPasswordScreen extends StatefulWidget {
+class PasswordLoginScreen extends StatefulWidget {
   final Workspace workspace;
   final Uri baseUrl;
 
-  const LoginPasswordScreen({
+  const PasswordLoginScreen({
     super.key,
     required this.workspace,
     required this.baseUrl,
   });
 
   @override
-  State<LoginPasswordScreen> createState() => _LoginPasswordScreenState();
+  State<PasswordLoginScreen> createState() => _PasswordLoginScreenState();
 }
 
-class _LoginPasswordScreenState extends State<LoginPasswordScreen> {
+class _PasswordLoginScreenState extends State<PasswordLoginScreen> {
   final _usernameController = TextEditingController();
   final _passwordController = TextEditingController();
 

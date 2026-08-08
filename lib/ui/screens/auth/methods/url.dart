@@ -1,7 +1,7 @@
 import 'dart:async';
 
 import 'package:antinote_api/antinote_api.dart';
-import 'package:antinote_app/ui/routing/routes.dart';
+import 'package:antinote_app/ui/screens/auth/lists/workspaces_list.dart';
 import 'package:antinote_app/ui/utils/utils.dart';
 import 'package:antinote_app/ui/widgets/customs/app_bar.dart';
 import 'package:antinote_app/ui/widgets/customs/button.dart';
@@ -10,16 +10,15 @@ import 'package:antinote_app/ui/widgets/customs/list.dart';
 import 'package:antinote_app/ui/widgets/customs/loading.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
 
-class LoginUrlScreen extends StatefulWidget {
-  const LoginUrlScreen({super.key});
+class UrlMethodScreen extends StatefulWidget {
+  const UrlMethodScreen({super.key});
 
   @override
-  State<LoginUrlScreen> createState() => _LoginUrlScreenState();
+  State<UrlMethodScreen> createState() => _UrlMethodScreenState();
 }
 
-class _LoginUrlScreenState extends State<LoginUrlScreen> {
+class _UrlMethodScreenState extends State<UrlMethodScreen> {
   final _controller = TextEditingController(
     text: kDebugMode ? 'https://demo.index-education.net/pronote' : null,
   );
@@ -195,14 +194,16 @@ class _LoginUrlScreenState extends State<LoginUrlScreen> {
 
                             if (!context.mounted) return;
 
-                            final result = await context.push<LoginResult>(
-                              Routes.auth.workspace,
-                              extra: {'parameters': parameters},
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) {
+                                  return WorkspacesListScreen(
+                                    parameters: parameters!,
+                                  );
+                                },
+                              ),
                             );
-
-                            if (result != null && context.mounted) {
-                              context.pop(result);
-                            }
 
                             // catch
                           } catch (e, st) {

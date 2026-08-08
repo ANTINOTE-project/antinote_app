@@ -1,26 +1,25 @@
 import 'dart:async';
 import 'dart:math';
 
-import 'package:antinote_api/antinote_api.dart';
 import 'package:antinote_app/data/src/accounts/place.dart';
-import 'package:antinote_app/ui/routing/routes.dart';
+import 'package:antinote_app/ui/screens/auth/methods/search/search_schools.dart';
 import 'package:antinote_app/ui/utils/utils.dart';
 import 'package:antinote_app/ui/widgets/bottom_padding.dart';
 import 'package:antinote_app/ui/widgets/customs/app_bar.dart';
 import 'package:antinote_app/ui/widgets/customs/field.dart';
 import 'package:antinote_app/ui/widgets/customs/list.dart';
 import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
 import 'package:hugeicons_pro/hugeicons.dart';
 
-class LoginFindCityScreen extends StatefulWidget {
-  const LoginFindCityScreen({super.key});
+class SearchCitiesMethodScreen extends StatefulWidget {
+  const SearchCitiesMethodScreen({super.key});
 
   @override
-  State<LoginFindCityScreen> createState() => _LoginFindCityScreenState();
+  State<SearchCitiesMethodScreen> createState() =>
+      _SearchCitiesMethodScreenState();
 }
 
-class _LoginFindCityScreenState extends State<LoginFindCityScreen> {
+class _SearchCitiesMethodScreenState extends State<SearchCitiesMethodScreen> {
   final List<City> _mockCities = List.generate(15, (i) {
     final r = Random(i);
 
@@ -148,18 +147,17 @@ class _LoginFindCityScreenState extends State<LoginFindCityScreen> {
                             borderRadius: borderRadius,
 
                             onPressed: () async {
-                              final result = await context.push<LoginResult>(
-                                Routes.auth.school,
-
-                                extra: {
-                                  'lat': city.latitude,
-                                  'long': city.longitude,
-                                },
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) {
+                                    return SearchSchoolsMethodScreen(
+                                      lat: city.latitude,
+                                      long: city.longitude,
+                                    );
+                                  },
+                                ),
                               );
-
-                              if (result != null && context.mounted) {
-                                context.pop(result);
-                              }
                             },
 
                             leading: Icon(switch (city.placeType) {

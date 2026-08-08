@@ -5,7 +5,7 @@ import 'package:antinote_app/data/src/accounts/storage/base.dart';
 import 'package:antinote_app/data/src/accounts/storage/widget.dart';
 import 'package:antinote_app/data/src/settings/registry.dart';
 import 'package:antinote_app/ui/app.dart';
-import 'package:antinote_app/ui/routing/routes.dart';
+import 'package:antinote_app/ui/screens/auth/lists/methods_list.dart';
 import 'package:flutter/material.dart';
 import 'package:logging/logging.dart';
 
@@ -49,8 +49,9 @@ class _LoginAppState extends State<LoginApp> {
         storage: AccountStorage.create(_accountsRegistry),
         settings: widget.settingsRegistry.networking,
       ),
+
       child: App(
-        initialLocation: Routes.auth.methods,
+        home: const MethodsListScreen(),
         registry: widget.settingsRegistry,
       ),
     );

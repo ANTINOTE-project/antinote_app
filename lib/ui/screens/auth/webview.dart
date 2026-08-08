@@ -5,21 +5,21 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 
-class LoginWebviewScreen extends StatefulWidget {
+class WebviewLoginScreen extends StatefulWidget {
   final MobileInstanceParameters parameters;
   final Workspace workspace;
 
-  const LoginWebviewScreen({
+  const WebviewLoginScreen({
     super.key,
     required this.parameters,
     required this.workspace,
   });
 
   @override
-  State<LoginWebviewScreen> createState() => _LoginWebviewScreenState();
+  State<WebviewLoginScreen> createState() => _WebviewLoginScreenState();
 }
 
-class _LoginWebviewScreenState extends State<LoginWebviewScreen> {
+class _WebviewLoginScreenState extends State<WebviewLoginScreen> {
   late final WebViewController _controller;
   double _loadingProgress = 0;
   bool _loginHandled = false;
@@ -99,7 +99,7 @@ class _LoginWebviewScreenState extends State<LoginWebviewScreen> {
           WebViewWidget(controller: _controller),
 
           if (_loadingProgress < 1)
-            LinearProgressIndicator(value: _loadingProgress, year2023: false),
+            LinearProgressIndicator(value: _loadingProgress),
         ],
       ),
     );

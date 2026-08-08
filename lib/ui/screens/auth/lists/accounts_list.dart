@@ -1,13 +1,12 @@
 import 'package:antinote_api/antinote_api.dart';
 import 'package:antinote_app/data/protos/account.pb.dart';
-import 'package:antinote_app/ui/routing/routes.dart';
+import 'package:antinote_app/ui/screens/auth/lists/methods_list.dart';
 import 'package:antinote_app/ui/screens/shell/tab.dart';
 import 'package:antinote_app/ui/utils/utils.dart';
 import 'package:antinote_app/ui/widgets/customs/app_bar.dart';
 import 'package:antinote_app/ui/widgets/customs/button.dart';
 import 'package:antinote_app/ui/widgets/customs/list.dart';
 import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
 import 'package:hugeicons_pro/hugeicons.dart';
 import 'package:skeletonizer/skeletonizer.dart';
 
@@ -54,7 +53,7 @@ class _AccountsListScreenState extends State<AccountsListScreen>
 
     if (ar.accountPicked) {
       if (ar.curAccountUid == account.uid) {
-        context.pop();
+        Navigator.pop(context);
         return;
       }
 
@@ -77,7 +76,7 @@ class _AccountsListScreenState extends State<AccountsListScreen>
 
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
       if (context.mounted) {
-        context.pop();
+        Navigator.pop(context);
       }
     });
   }
@@ -112,7 +111,14 @@ class _AccountsListScreenState extends State<AccountsListScreen>
 
             child: ButtonWidget(
               onPressed: () async {
-                await context.push(Routes.auth.methods);
+                await Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) {
+                      return const MethodsListScreen();
+                    },
+                  ),
+                );
 
                 if (mounted) {
                   await reload();
@@ -156,56 +162,44 @@ class _AccountsListScreenState extends State<AccountsListScreen>
 
                                 child: Column(
                                   mainAxisSize: .min,
-                                  spacing: 8,
+                                  spacing: 4,
 
                                   children: [
-                                    if (_defaultUid == account.uid)
-                                      ButtonWidget(
-                                        onPressed: () async {
-                                          await context.ar.storage.setDefault(
-                                            null,
-                                          );
-                                          await reload();
+                                    ButtonWidget(
+                                      onPressed: () async {
+                                        await context.ar.storage.setDefault(
+                                          _defaultUid == account.uid
+                                              ? null
+                                              : account.uid,
+                                        );
+                                        await reload();
 
-                                          if (context.mounted) {
-                                            context.pop();
-                                          }
-                                        },
+                                        if (context.mounted) {
+                                          Navigator.pop(context);
+                                        }
+                                      },
 
-                                        label: context.l10n.disableAutoLogin,
-                                        icon: HugeIconsSolid.starOff,
-                                      )
-                                    else
-                                      ButtonWidget(
-                                        onPressed: () async {
-                                          await context.ar.storage.setDefault(
-                                            account.uid,
-                                          );
-                                          await reload();
-
-                                          if (context.mounted) {
-                                            context.pop();
-                                          }
-                                        },
-
-                                        label: context.l10n.enableAutoLogin,
-                                        icon: HugeIconsSolid.star,
-                                      ),
+                                      label: _defaultUid == account.uid
+                                          ? context.l10n.disableAutoLogin
+                                          : context.l10n.enableAutoLogin,
+                                      icon: _defaultUid == account.uid
+                                          ? HugeIconsSolid.starOff
+                                          : HugeIconsSolid.star,
+                                    ),
 
                                     ButtonWidget(
                                       onPressed: () async {
                                         await context.ar.storage.updateAccount(
-                                          account.rebuild(
-                                            (acc) => acc
-                                              ..storeSecurely =
-                                                  !acc.storeSecurely,
-                                          ),
+                                          account.rebuild((acc) {
+                                            acc.storeSecurely =
+                                                !acc.storeSecurely;
+                                          }),
                                           account.uid,
                                         );
                                         await reload();
 
                                         if (context.mounted) {
-                                          context.pop();
+                                          Navigator.pop(context);
                                         }
                                       },
 
@@ -213,6 +207,7 @@ class _AccountsListScreenState extends State<AccountsListScreen>
                                       label: account.storeSecurely
                                           ? context.l10n.disableSecureStore
                                           : context.l10n.enableSecureStore,
+                                      variant: .secondary,
                                     ),
 
                                     ButtonWidget(
@@ -223,7 +218,7 @@ class _AccountsListScreenState extends State<AccountsListScreen>
                                         await reload();
 
                                         if (context.mounted) {
-                                          context.pop();
+                                          Navigator.pop(context);
                                         }
                                       },
 

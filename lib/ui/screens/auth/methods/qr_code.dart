@@ -12,14 +12,14 @@ import 'package:hugeicons_pro/hugeicons.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:mobile_scanner/mobile_scanner.dart';
 
-class LoginQrCodeScreen extends StatefulWidget {
-  const LoginQrCodeScreen({super.key});
+class QRCodeMethodScreen extends StatefulWidget {
+  const QRCodeMethodScreen({super.key});
 
   @override
-  State<LoginQrCodeScreen> createState() => _LoginQrCodeScreenState();
+  State<QRCodeMethodScreen> createState() => _QRCodeMethodScreenState();
 }
 
-class _LoginQrCodeScreenState extends State<LoginQrCodeScreen> {
+class _QRCodeMethodScreenState extends State<QRCodeMethodScreen> {
   final _scanController = MobileScannerController();
   bool _isProcessing = false;
 

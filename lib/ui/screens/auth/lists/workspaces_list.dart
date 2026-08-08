@@ -1,24 +1,22 @@
 import 'package:antinote_api/antinote_api.dart';
-import 'package:antinote_app/ui/routing/routes.dart';
+import 'package:antinote_app/ui/screens/auth/password.dart';
+import 'package:antinote_app/ui/screens/auth/webview.dart';
 import 'package:antinote_app/ui/utils/utils.dart';
 import 'package:antinote_app/ui/widgets/customs/app_bar.dart';
 import 'package:antinote_app/ui/widgets/customs/list.dart';
 import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
 import 'package:hugeicons_pro/hugeicons.dart';
 
-class LoginSelectWorkspaceScreen extends StatefulWidget {
+class WorkspacesListScreen extends StatefulWidget {
   final MobileInstanceParameters parameters;
 
-  const LoginSelectWorkspaceScreen({super.key, required this.parameters});
+  const WorkspacesListScreen({super.key, required this.parameters});
 
   @override
-  State<LoginSelectWorkspaceScreen> createState() =>
-      _LoginSelectWorkspaceScreenState();
+  State<WorkspacesListScreen> createState() => _WorkspacesListScreenState();
 }
 
-class _LoginSelectWorkspaceScreenState
-    extends State<LoginSelectWorkspaceScreen> {
+class _WorkspacesListScreenState extends State<WorkspacesListScreen> {
   static const _iconMap = <WorkspaceType, IconData>{
     .mobileAdministrateur: HugeIconsSolid.manager,
     .mobileProfesseur: HugeIconsSolid.teacher,
@@ -46,22 +44,30 @@ class _LoginSelectWorkspaceScreenState
   }
 
   Future<void> onSelected(BuildContext context, Workspace workspace) async {
-    final LoginResult? result;
-
     if (_casLoginActive) {
-      result = await context.push<LoginResult>(
-        Routes.auth.webview,
-        extra: {'parameters': widget.parameters, 'workspace': workspace},
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) {
+            return WebviewLoginScreen(
+              parameters: widget.parameters,
+              workspace: workspace,
+            );
+          },
+        ),
       );
     } else {
-      result = await context.push<LoginResult>(
-        Routes.auth.password,
-        extra: {'workspace': workspace, 'baseUrl': widget.parameters.baseUrl},
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) {
+            return PasswordLoginScreen(
+              workspace: workspace,
+              baseUrl: widget.parameters.baseUrl,
+            );
+          },
+        ),
       );
-    }
-
-    if (result != null && context.mounted) {
-      context.pop(result);
     }
   }
 
