@@ -4,18 +4,21 @@
 > régie par la licence
 > MIT ; il est fourni "en l'état", sans garantie d'aucune sorte quant à son utilisation.
 
-Votre emploi du temps, vos notes, vos travaux à faire et vos messages à portée de main, c'est
+Votre emploi du temps, vos notes, vos devoirs et vos messages à portée de main, c'est
 possible avec ANTINOTE !
 
 Nous connectons vos comptes PRONOTE à votre téléphone d'une façon jamais vue auparavant, grâce à
 notre intégration profonde au système d'exploitation, nous sommes capables de vous proposer des
 fonctionnalités poussées :
 
-- [x] Comptes chiffrés et sécurisée biométrie
-- [x] Mise à jour des données en arrière-plan (quand non-chiffré)
-- [x] Calendrier dans l'application du téléphone (quand non-chiffré)
-- [ ] Notifications (quand non-chiffré, Coming Soon™️)
-- [ ] Widgets (quand non-chiffré, Coming *less* Soon ™)
+- [x] Comptes chiffrés et sécurisés par biométrie
+- [x] Mise à jour des données en arrière-plan <b>*</b>
+- [x] Calendrier dans l'application du téléphone <b>*</b>
+- [ ] Notifications <b>*</b> (Coming Soon™️)
+- [ ] Widgets <b>*</b> (Coming *less* Soon ™)
+
+> [!INFO]
+> <b>*</b> quand non-chiffré
 
 Nous supportons également les fonctionnalités principales de PRONOTE dans l'application :
 
