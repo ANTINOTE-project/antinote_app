@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:math';
 
 import 'package:antinote_api/antinote_api.dart';
 import 'package:antinote_app/data/src/home_page/manager.dart';
@@ -10,8 +11,8 @@ import 'package:antinote_app/ui/utils/utils.dart';
 import 'package:collection/collection.dart';
 import 'package:flutter/widgets.dart';
 
+part 'homework/list.dart';
 part 'menu.dart';
-
 part 'timetable/day.dart';
 
 typedef WidgetUpgradeTask = FutureOr<void> Function(Map<String, dynamic> prev);

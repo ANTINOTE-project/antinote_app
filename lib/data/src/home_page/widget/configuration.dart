@@ -9,6 +9,7 @@ const descriptors = <WidgetDescriptor>[MenuWidget(), TimetableDayWidget()];
 
 const defaultDescriptors = <WidgetDescriptor>[
   TimetableDayWidget(),
+  HomeworkListWidget(),
   MenuWidget(),
 ];
 
@@ -51,7 +52,7 @@ List<HomePageConfiguration> createDefaultConfigurations(
       ),
     ),
     widgets: [
-      // HomeworkWidget(),
+      .new(descriptor: const HomeworkListWidget(), rawParameters: {}),
       .new(descriptor: const TimetableDayWidget(), rawParameters: {}),
       // GradesWidget(),
     ],
@@ -95,7 +96,7 @@ List<HomePageConfiguration> createDefaultConfigurations(
       state: .pause,
     ),
     widgets: [
-      // HomeworkWidget(),
+      .new(descriptor: const HomeworkListWidget(), rawParameters: {}),
       // SchoolLifeWidget(),
       // TODO: Add parameter to hide menu widget when after lunch.
       .new(descriptor: const MenuWidget(), rawParameters: {}),

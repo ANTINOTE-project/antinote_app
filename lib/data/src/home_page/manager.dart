@@ -91,6 +91,12 @@ final class HomePageCache {
 
   Menu dayMenu(Date day) => _dayMenus[day] ?? Menu(time: day, meals: []);
 
+  final Map<Date, List<Homework>> _dayHomeworks = {};
+
+  bool hasHomeworksForDay(Date day) => _dayHomeworks.containsKey(day);
+
+  List<Homework> dayHomeworks(Date day) => _dayHomeworks[day]!;
+
   /// We expect the most important requests to be put at the start.
   ///
   /// We create the request with the most modules possible and update the object
