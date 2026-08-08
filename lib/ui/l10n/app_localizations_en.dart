@@ -164,11 +164,11 @@ class AppLocalizationsEn extends AppLocalizations {
       'Please enter your PIN code to connect to your PRONOTE account';
 
   @override
-  String get loginDemo => 'Compte de démo';
+  String get loginDemo => 'Compte de démonstration';
 
   @override
   String get loginDemoSubtitle =>
-      'Connecte toi au compte de démo pour explorer l\'application et ses fonctionnalités';
+      'Connecte toi à un compte de test pour explorer l\'application et ses fonctionnalités';
 
   @override
   String get homeShowMore => 'Show more';

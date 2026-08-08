@@ -401,13 +401,13 @@ abstract class AppLocalizations {
   /// No description provided for @loginDemo.
   ///
   /// In fr, this message translates to:
-  /// **'Compte de démo'**
+  /// **'Compte de démonstration'**
   String get loginDemo;
 
   /// No description provided for @loginDemoSubtitle.
   ///
   /// In fr, this message translates to:
-  /// **'Connecte toi au compte de démo pour explorer l\'application et ses fonctionnalités'**
+  /// **'Connecte toi à un compte de test pour explorer l\'application et ses fonctionnalités'**
   String get loginDemoSubtitle;
 
   /// No description provided for @homeShowMore.
