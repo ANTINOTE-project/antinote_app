@@ -132,7 +132,6 @@ class LoginManager(val context: Context, val activity: FragmentActivity?) : Nati
         val iv = cipher.iv.toByteString()
         val ciphertext = cipher.doFinal(data).toByteString()
 
-
         val encryptedDek: ByteString
         val dekIv: ByteString
 
@@ -193,7 +192,7 @@ class LoginManager(val context: Context, val activity: FragmentActivity?) : Nati
             GCMParameterSpec(128, credentials.credentialIv.toByteArray())
         )
 
-        return dataCipher.doFinal(credentials.dekData.toByteArray())
+        return dataCipher.doFinal(credentials.credentialData.toByteArray())
     }
 
     private suspend fun getStoreKeyForAccount(
@@ -286,7 +285,7 @@ class LoginManager(val context: Context, val activity: FragmentActivity?) : Nati
             val account = AntinoteAccount.parseFrom(rawAccount)
 
             val credentials: Any? = if (account.storeSecurely) {
-                encryptCredentials(account.uid, account.tokenCredentials.value.toByteArray(), null)?.run {
+                encryptCredentials(account.uid, account.tokenCredentials.toByteArray(), null)?.run {
                     Any.newBuilder().run {
                         setTypeUrl("$TYPE_PREFIX/${javaClass.name}")
                         setValue(toByteString())
@@ -441,8 +440,9 @@ class LoginManager(val context: Context, val activity: FragmentActivity?) : Nati
                     val oldAccount = accounts[accIndex]
                     accounts[accIndex] = newAccount.copy {
                         if (hasTokenCredentials() && newAccount.storeSecurely) {
+                            Log.i(TAG, "Storing a ${tokenCredentials.typeUrl}")
                             val newCredentials = encryptCredentials(
-                                uid, newAccount.tokenCredentials.value.toByteArray(),
+                                uid, newAccount.tokenCredentials.toByteArray(),
                                 if (oldAccount.storeSecurely) {
                                     EncryptedCredentials.parseFrom(oldAccount.tokenCredentials.value)
                                 } else null
@@ -522,11 +522,8 @@ class LoginManager(val context: Context, val activity: FragmentActivity?) : Nati
             callback(
                 Result.success(
                     account.copy {
-                        tokenCredentials = Any.newBuilder().run {
-                            setValue(decrypted.toByteString())
-//                            setTypeUrl("$TYPE_PREFIX/${decrypted.}") TODO: This is horrible, we need to keep the type for the credentials, completely remake but better
-                            build()
-                        }
+                        tokenCredentials = Any.parseFrom(decrypted)
+                        Log.i(TAG, "tokenCredentials is a ${tokenCredentials.typeUrl}")
                     }.toByteArray()
                 )
             )
