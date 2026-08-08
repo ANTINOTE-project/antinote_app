@@ -17,7 +17,7 @@ fonctionnalités poussées :
 - [ ] Notifications <b>*</b> (Coming Soon™️)
 - [ ] Widgets <b>*</b> (Coming *less* Soon ™)
 
-> [!INFORMATION]
+> [!NOTE]
 > <b>*</b> quand non-chiffré
 
 Nous supportons également les fonctionnalités principales de PRONOTE dans l'application :
