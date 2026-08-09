@@ -244,6 +244,8 @@ final class SessionWrapper({required final String accountUid}) {
     do {
       List<int> hooksToDelete = [];
 
+      ranHook = false;
+
       for (final (index, hook) in _state!.hooks.indexed) {
         if (hook.lastRanSessionVersion != _state!.session.stack.sessionId) {
           ranHook = true;

@@ -123,7 +123,7 @@ class SyncWorker(appContext: Context, workerParams: WorkerParameters) :
 
             var curResponseLevel: SyncResultType = SyncResultType.SUCCESS
 
-            val accounts = loginManager.getAccounts(uidFilter = validUids)
+            val accounts = loginManager.scanAndGetAccounts(uidFilter = validUids)
             for(account in accounts) {
                 val completer = CompletableDeferred<SyncResponse>()
 

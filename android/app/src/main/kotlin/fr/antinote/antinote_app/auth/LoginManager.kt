@@ -44,6 +44,7 @@ import java.io.File
 import java.io.InputStream
 import java.io.OutputStream
 import java.security.KeyStore
+import java.util.concurrent.ConcurrentHashMap
 import javax.crypto.Cipher
 import javax.crypto.KeyGenerator
 import javax.crypto.SecretKey
@@ -106,11 +107,11 @@ class LoginManager(val context: Context, val activity: FragmentActivity?) : Nati
 
     private val scope = CoroutineScope(Dispatchers.IO + SupervisorJob())
 
-    val dekStore: MutableMap<String, SecretKey> = mutableMapOf()
+    val dekStore: MutableMap<String, SecretKey> = ConcurrentHashMap()
 
     suspend fun encryptCredentials(
         uid: String,
-        data: ByteArray,
+        data: Any,
         oldCredentials: EncryptedCredentials?
     ): EncryptedCredentials? {
         var dek = dekStore[uid]
@@ -129,7 +130,7 @@ class LoginManager(val context: Context, val activity: FragmentActivity?) : Nati
         )
         cipher.init(Cipher.ENCRYPT_MODE, dek)
         val iv = cipher.iv.toByteString()
-        val ciphertext = cipher.doFinal(data).toByteString()
+        val ciphertext = cipher.doFinal(data.toByteArray()).toByteString()
 
         val encryptedDek: ByteString
         val dekIv: ByteString
@@ -150,11 +151,9 @@ class LoginManager(val context: Context, val activity: FragmentActivity?) : Nati
         return EncryptedCredentials.newBuilder().run {
             setCredentialData(ciphertext)
             setCredentialIv(iv)
-            Log.i(TAG, "Creds IV len : ${iv.size()}")
 
             setDekData(encryptedDek)
             setDekIv(dekIv)
-            Log.i(TAG, "DEK IV len : ${dekIv.size()}")
 
             build()
         }
@@ -163,7 +162,7 @@ class LoginManager(val context: Context, val activity: FragmentActivity?) : Nati
     suspend fun decryptCredentials(
         uid: String,
         credentials: EncryptedCredentials
-    ): ByteArray? {
+    ): Any? {
         val hwKey = getOrCreateSecretKey(accountKeyAlias(uid))
         val hwCipher = Cipher.getInstance(
             CIPHER
@@ -191,7 +190,7 @@ class LoginManager(val context: Context, val activity: FragmentActivity?) : Nati
             GCMParameterSpec(128, credentials.credentialIv.toByteArray())
         )
 
-        return dataCipher.doFinal(credentials.credentialData.toByteArray())
+        return Any.parseFrom(dataCipher.doFinal(credentials.credentialData.toByteArray()))
     }
 
     private suspend fun getStoreKeyForAccount(
@@ -284,7 +283,7 @@ class LoginManager(val context: Context, val activity: FragmentActivity?) : Nati
             val account = AntinoteAccount.parseFrom(rawAccount)
 
             val credentials: Any? = if (account.storeSecurely) {
-                encryptCredentials(account.uid, account.tokenCredentials.toByteArray(), null)?.run {
+                encryptCredentials(account.uid, account.tokenCredentials, null)?.run {
                     Any.newBuilder().run {
                         setTypeUrl("$TYPE_PREFIX/${javaClass.name}")
                         setValue(toByteString())
@@ -438,10 +437,35 @@ class LoginManager(val context: Context, val activity: FragmentActivity?) : Nati
 
                     val oldAccount = accounts[accIndex]
                     accounts[accIndex] = newAccount.copy {
-                        if (hasTokenCredentials() && newAccount.storeSecurely) {
-                            Log.i(TAG, "Storing a ${tokenCredentials.typeUrl}")
+                        if(newAccount.storeSecurely != oldAccount.storeSecurely) {
+                            if(newAccount.storeSecurely) {
+                                val newCredentials = encryptCredentials(uid, oldAccount.tokenCredentials, null)
+
+                                if(newCredentials == null) {
+                                    Log.i(TAG, "Could not encrypt credentials for the first time, probably canceled.")
+                                    callback(Result.success(false))
+                                    return@updateData registry
+                                }
+
+                                tokenCredentials = Any.newBuilder().run {
+                                    setValue(newCredentials.toByteString())
+                                    setTypeUrl("${TYPE_PREFIX}/${newCredentials.javaClass.name}")
+                                    build()
+                                }
+                            } else {
+                                val newCredentials = decryptCredentials(uid, EncryptedCredentials.parseFrom(oldAccount.tokenCredentials.value))
+
+                                if(newCredentials == null) {
+                                    Log.i(TAG, "Could not decrypt credentials for the first time, probably canceled.")
+                                    callback(Result.success(false))
+                                    return@updateData registry
+                                }
+
+                                tokenCredentials = newCredentials
+                            }
+                        } else if (hasTokenCredentials() && newAccount.storeSecurely) {
                             val newCredentials = encryptCredentials(
-                                uid, newAccount.tokenCredentials.toByteArray(),
+                                uid, newAccount.tokenCredentials,
                                 if (oldAccount.storeSecurely) {
                                     EncryptedCredentials.parseFrom(oldAccount.tokenCredentials.value)
                                 } else null
@@ -461,7 +485,6 @@ class LoginManager(val context: Context, val activity: FragmentActivity?) : Nati
                     }
 
                     callback(Result.success(true))
-
                 }
             }
         }
@@ -469,16 +492,19 @@ class LoginManager(val context: Context, val activity: FragmentActivity?) : Nati
 
     override fun listAccounts(callback: (Result<List<ByteArray>>) -> Unit) {
         scope.launch {
-            callback(Result.success(getAccounts(null).map { it.toByteArray() }))
+            callback(Result.success(scanAndGetAccounts(null).map { it.toByteArray() }))
         }
     }
 
-    suspend fun getAccounts(uidFilter: List<String>?): List<AntinoteAccount> {
+    suspend fun scanAndGetAccounts(uidFilter: List<String>?): List<AntinoteAccount> {
         val accounts = mutableListOf<AntinoteAccount>()
         val manager = AccountManager.get(context)
-        val remainingAccountUids =
-            manager.getAccountsByType(context.getString(R.string.account_type))
-                .map { manager.getUserData(it, KEY_UID) }.toMutableList()
+
+        val remainingAccountUids = manager.getAccountsByType(context.getString(R.string.account_type))
+            .mapNotNull { manager.getUserData(it, KEY_UID) }
+            .toMutableSet()
+        val filterSet = uidFilter?.toSet()
+
         val accountsToDelete = mutableListOf<String>()
 
         for (account in context.accountStore.data.first().accountsList) {
@@ -489,12 +515,12 @@ class LoginManager(val context: Context, val activity: FragmentActivity?) : Nati
                 continue
             }
 
-            if(uidFilter != null && !uidFilter.contains(account.uid)) continue
+            if(filterSet != null && !filterSet.contains(account.uid)) continue
 
             accounts.add(account.copy { clearTokenCredentials() })
         }
 
-        deleteAccounts(remainingAccountUids + accountsToDelete)
+        deleteAccounts((remainingAccountUids + accountsToDelete).toList())
 
         return accounts.toList()
     }
@@ -505,6 +531,7 @@ class LoginManager(val context: Context, val activity: FragmentActivity?) : Nati
                 context.accountStore.data.first().accountsList.firstOrNull { it.uid == uid }
 
             if (account == null) {
+                Log.w(TAG, "Could not find any account with uid $uid")
                 callback(Result.success(null))
                 return@launch
             }
@@ -515,6 +542,7 @@ class LoginManager(val context: Context, val activity: FragmentActivity?) : Nati
             }
 
             if(!account.hasTokenCredentials() || account.tokenCredentials.typeUrl != "$TYPE_PREFIX/${EncryptedCredentials::class.java.name}") {
+                Log.e(TAG, "Secure account $uid strangely does not contain any token credentials")
                 callback(Result.success(null))
                 return@launch
             }
@@ -532,8 +560,7 @@ class LoginManager(val context: Context, val activity: FragmentActivity?) : Nati
             callback(
                 Result.success(
                     account.copy {
-                        tokenCredentials = Any.parseFrom(decrypted)
-                        Log.i(TAG, "tokenCredentials is a ${tokenCredentials.typeUrl}")
+                        tokenCredentials = decrypted
                     }.toByteArray()
                 )
             )
@@ -544,7 +571,7 @@ class LoginManager(val context: Context, val activity: FragmentActivity?) : Nati
         scope.launch {
             val registry = context.accountStore.data.first()
 
-            if (registry.defaultAccountId == null) {
+            if (!registry.hasDefaultAccountId()) {
                 callback(Result.success(null))
                 return@launch
             }
@@ -556,7 +583,7 @@ class LoginManager(val context: Context, val activity: FragmentActivity?) : Nati
                 return@launch
             }
 
-            callback(Result.success(account.toByteArray()))
+            callback(Result.success(account.copy { clearTokenCredentials() }.toByteArray()))
 
         }
     }
