@@ -49,7 +49,6 @@ import javax.crypto.KeyGenerator
 import javax.crypto.SecretKey
 import javax.crypto.spec.GCMParameterSpec
 import javax.crypto.spec.SecretKeySpec
-import kotlin.io.encoding.Base64
 
 object AccountStoreSerializer : Serializer<SerializedAccountRegistry> {
     override val defaultValue: SerializedAccountRegistry =
@@ -470,23 +469,34 @@ class LoginManager(val context: Context, val activity: FragmentActivity?) : Nati
 
     override fun listAccounts(callback: (Result<List<ByteArray>>) -> Unit) {
         scope.launch {
-            val accountUids = mutableListOf<String>()
-            val rawAccounts = mutableListOf<ByteArray>()
+            callback(Result.success(getAccounts(null).map { it.toByteArray() }))
+        }
+    }
 
-            for (account in context.accountStore.data.first().accountsList) {
-                accountUids.add(account.uid)
-                rawAccounts.add(account.toByteArray())
+    suspend fun getAccounts(uidFilter: List<String>?): List<AntinoteAccount> {
+        val accounts = mutableListOf<AntinoteAccount>()
+        val manager = AccountManager.get(context)
+        val remainingAccountUids =
+            manager.getAccountsByType(context.getString(R.string.account_type))
+                .map { manager.getUserData(it, KEY_UID) }.toMutableList()
+        val accountsToDelete = mutableListOf<String>()
+
+        for (account in context.accountStore.data.first().accountsList) {
+            if(remainingAccountUids.contains(account.uid)) {
+                remainingAccountUids.remove(account.uid)
+            } else {
+                accountsToDelete.add(account.uid)
+                continue
             }
 
-            val manager = AccountManager.get(context)
-            val nativeAccountUids =
-                manager.getAccountsByType(context.getString(R.string.account_type))
-                    .map { manager.getUserData(it, KEY_UID) }
+            if(uidFilter != null && !uidFilter.contains(account.uid)) continue
 
-            deleteAccounts(nativeAccountUids.filter { !accountUids.contains(it) })
-
-            callback(Result.success(rawAccounts))
+            accounts.add(account.copy { clearTokenCredentials() })
         }
+
+        deleteAccounts(remainingAccountUids + accountsToDelete)
+
+        return accounts.toList()
     }
 
     override fun getAccountWithCredentials(uid: String, callback: (Result<ByteArray?>) -> Unit) {

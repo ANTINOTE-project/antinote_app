@@ -14,11 +14,6 @@ import 'package:pigeon/pigeon.dart';
 )
 //
 //
-@HostApi()
-abstract class NativeSyncManager {
-  void syncFinished(SyncResponse result);
-}
-
 enum SyncResultType {
   /// When the sync completes successfully.
   success,
@@ -36,7 +31,7 @@ final class SyncRequest {
 
   /// The ID of the sync request type that may be forced (although it is may be
   /// disabled).
-  final int? forcedScope;
+  final List<int>? forcedScope;
 
   const SyncRequest({required this.account, required this.forcedScope});
 }
@@ -51,5 +46,5 @@ final class SyncResponse {
 @FlutterApi()
 abstract class SyncManager {
   @async
-  SyncResponse sendRequest(SyncRequest request);
+  SyncResponse syncAccount(SyncRequest request);
 }

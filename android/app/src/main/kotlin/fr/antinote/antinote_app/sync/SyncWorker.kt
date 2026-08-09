@@ -19,7 +19,8 @@ import fr.antinote.antinote_app.protos.SyncTaskType
 import fr.antinote.antinote_app.session.SessionManager
 import fr.antinote.studies_management.antinote_app.pigeon_posts.NativeCalendarManager
 import fr.antinote.studies_management.antinote_app.pigeon_posts.NativeSessionManager
-import fr.antinote.studies_management.antinote_app.pigeon_posts.NativeSyncManager
+import fr.antinote.studies_management.antinote_app.pigeon_posts.SyncManager
+import fr.antinote.studies_management.antinote_app.pigeon_posts.SyncRequest
 import fr.antinote.studies_management.antinote_app.pigeon_posts.SyncResponse
 import fr.antinote.studies_management.antinote_app.pigeon_posts.SyncResultType
 import io.flutter.FlutterInjector
@@ -33,6 +34,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.TimeoutCancellationException
+import kotlinx.coroutines.completeWith
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withTimeout
@@ -96,7 +98,6 @@ class SyncWorker(appContext: Context, workerParams: WorkerParameters) :
             val options = FlutterEngineGroup.Options(applicationContext).run {
                 setAutomaticallyRegisterPlugins(false)
                 setDartEntrypoint(entrypoint)
-                setDartEntrypointArgs(validUids)
             }
 
             data.engine = app.engineGroup.createAndRunEngine(options)
@@ -104,32 +105,52 @@ class SyncWorker(appContext: Context, workerParams: WorkerParameters) :
             data.sessionManager =
                 SessionManager(applicationContext, data.engine!!.dartExecutor.binaryMessenger)
 
-            NativeSyncManager.setUp(
-                data.engine!!.dartExecutor.binaryMessenger,
-                object : NativeSyncManager {
-                    override fun syncFinished(result: SyncResponse) {
-                        data.workResult = when (result.result) {
-                            SyncResultType.SUCCESS -> Result.success()
-                            SyncResultType.RETRY -> Result.retry()
-                            SyncResultType.FAILURE -> Result.failure()
-                        }
+            val syncManager = SyncManager(data.engine!!.dartExecutor.binaryMessenger)
+            val loginManager = LoginManager(applicationContext, null)
 
-                        syncLock.complete(Unit)
-                    }
-                }
-            )
             NativeCalendarManager.setUp(
                 data.engine!!.dartExecutor.binaryMessenger,
                 CalendarManager(applicationContext)
             )
             NativeLoginManager.setUp(
                 data.engine!!.dartExecutor.binaryMessenger,
-                LoginManager(applicationContext, null)
+                loginManager
             )
             NativeSessionManager.setUp(
                 data.engine!!.dartExecutor.binaryMessenger,
                 data.sessionManager
             )
+
+            var curResponseLevel: SyncResultType = SyncResultType.SUCCESS
+
+            val accounts = loginManager.getAccounts(uidFilter = validUids)
+            for(account in accounts) {
+                val completer = CompletableDeferred<SyncResponse>()
+
+                syncManager.syncAccount(
+                    SyncRequest(
+                        account = account.toByteArray(),
+                        forcedScope = forcedTasks?.map { it.number.toLong() }
+                    )
+                ) { res ->
+                    completer.completeWith(res)
+                }
+
+                val res = completer.await()
+
+                if(res.result == SyncResultType.RETRY) {
+                    curResponseLevel = res.result
+                } else if(res.result == SyncResultType.FAILURE && curResponseLevel == SyncResultType.SUCCESS) {
+                    curResponseLevel = res.result
+                }
+            }
+
+            data.workResult = when (curResponseLevel) {
+                SyncResultType.SUCCESS -> Result.success()
+                SyncResultType.RETRY -> Result.retry()
+                SyncResultType.FAILURE -> Result.failure()
+            }
+            syncLock.complete(Unit)
         }
 
         var result: Result
@@ -168,7 +189,7 @@ class SyncWorker(appContext: Context, workerParams: WorkerParameters) :
                 setContentTitle(applicationContext.getString(R.string.syncing))
                 setSmallIcon(R.drawable.rounded_sync_arrow_down_24)
 
-                // TODO: Make sync have a progress indicator using the NativeSyncManager.
+                // TODO: Make sync have a progress indicator using the SyncManager.
 
                 build()
             }

@@ -9,32 +9,6 @@ import 'dart:typed_data' show Float64List, Int32List, Int64List;
 import 'package:flutter/services.dart';
 import 'package:meta/meta.dart' show immutable, protected, visibleForTesting;
 
-Object? _extractReplyValueOrThrow(
-    List<Object?>? replyList,
-    String channelName, {
-    required bool isNullValid,
-}) {
-  if (replyList == null) {
-    throw PlatformException(
-      code: 'channel-error',
-      message: 'Unable to establish connection on channel: "$channelName".',
-    );
-  } else if (replyList.length > 1) {
-    throw PlatformException(
-      code: replyList[0]! as String,
-      message: replyList[1] as String?,
-      details: replyList[2],
-    );
-  } else if (!isNullValid && (replyList.isNotEmpty && replyList[0] == null)) {
-    throw PlatformException(
-      code: 'null-error',
-      message: 'Host platform returned null value for non-null return value.',
-    );
-  }
-  return replyList.firstOrNull;
-}
-
-
 List<Object?> wrapResponse({Object? result, PlatformException? error, bool empty = false}) {
   if (empty) {
     return <Object?>[];
@@ -127,7 +101,7 @@ class SyncRequest {
 
   /// The ID of the sync request type that may be forced (although it is may be
   /// disabled).
-  int? forcedScope;
+  List<int>? forcedScope;
 
   List<Object?> _toList() {
     return <Object?>[
@@ -143,7 +117,7 @@ class SyncRequest {
     result as List<Object?>;
     return SyncRequest(
       account: result[0]! as Uint8List,
-      forcedScope: result[1] as int?,
+      forcedScope: (result[1] as List<Object?>?)?.cast<int>(),
     );
   }
 
@@ -253,48 +227,16 @@ class _PigeonCodec extends StandardMessageCodec {
   }
 }
 
-class NativeSyncManager {
-  /// Constructor for [NativeSyncManager]. The [binaryMessenger] named argument is
-  /// available for dependency injection. If it is left null, the default
-  /// BinaryMessenger will be used which routes to the host platform.
-  NativeSyncManager({BinaryMessenger? binaryMessenger, String messageChannelSuffix = ''})
-      : pigeonVar_binaryMessenger = binaryMessenger,
-        pigeonVar_messageChannelSuffix = messageChannelSuffix.isNotEmpty ? '.$messageChannelSuffix' : '';
-  final BinaryMessenger? pigeonVar_binaryMessenger;
-
-  static const MessageCodec<Object?> pigeonChannelCodec = _PigeonCodec();
-
-  final String pigeonVar_messageChannelSuffix;
-
-  Future<void> syncFinished(SyncResponse result) async {
-    final pigeonVar_channelName = 'dev.flutter.pigeon.antinote_app.NativeSyncManager.syncFinished$pigeonVar_messageChannelSuffix';
-    final pigeonVar_channel = BasicMessageChannel<Object?>(
-      pigeonVar_channelName,
-      pigeonChannelCodec,
-      binaryMessenger: pigeonVar_binaryMessenger,
-    );
-    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[result]);
-    final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
-
-    _extractReplyValueOrThrow(
-        pigeonVar_replyList,
-        pigeonVar_channelName,
-        isNullValid: true,
-    )
-    ;
-  }
-}
-
 abstract class SyncManager {
   static const MessageCodec<Object?> pigeonChannelCodec = _PigeonCodec();
 
-  Future<SyncResponse> sendRequest(SyncRequest request);
+  Future<SyncResponse> syncAccount(SyncRequest request);
 
   static void setUp(SyncManager? api, {BinaryMessenger? binaryMessenger, String messageChannelSuffix = '',}) {
     messageChannelSuffix = messageChannelSuffix.isNotEmpty ? '.$messageChannelSuffix' : '';
     {
       final pigeonVar_channel = BasicMessageChannel<Object?>(
-          'dev.flutter.pigeon.antinote_app.SyncManager.sendRequest$messageChannelSuffix', pigeonChannelCodec,
+          'dev.flutter.pigeon.antinote_app.SyncManager.syncAccount$messageChannelSuffix', pigeonChannelCodec,
           binaryMessenger: binaryMessenger);
       if (api == null) {
         pigeonVar_channel.setMessageHandler(null);
@@ -303,7 +245,7 @@ abstract class SyncManager {
           final List<Object?> args = message! as List<Object?>;
           final SyncRequest arg_request = args[0]! as SyncRequest;
           try {
-            final SyncResponse output = await api.sendRequest(arg_request);
+            final SyncResponse output = await api.syncAccount(arg_request);
             return wrapResponse(result: output);
           } on PlatformException catch (e) {
             return wrapResponse(error: e);

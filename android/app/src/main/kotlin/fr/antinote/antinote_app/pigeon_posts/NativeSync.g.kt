@@ -17,26 +17,6 @@ private object NativeSyncPigeonUtils {
 
   fun createConnectionError(channelName: String): SyncManagerError {
     return SyncManagerError("channel-error",  "Unable to establish connection on channel: '$channelName'.", "")  }
-
-  fun wrapResult(result: Any?): List<Any?> {
-    return listOf(result)
-  }
-
-  fun wrapError(exception: Throwable): List<Any?> {
-    return if (exception is SyncManagerError) {
-      listOf(
-        exception.code,
-        exception.message,
-        exception.details
-      )
-    } else {
-      listOf(
-        exception.javaClass.simpleName,
-        exception.toString(),
-        "Cause: " + exception.cause + ", Stacktrace: " + Log.getStackTraceString(exception)
-      )
-    }
-  }
   fun doubleEquals(a: Double, b: Double): Boolean {
     // Normalize -0.0 to 0.0 and handle NaN equality.
     return (if (a == 0.0) 0.0 else a) == (if (b == 0.0) 0.0 else b) || (a.isNaN() && b.isNaN())
@@ -218,13 +198,13 @@ data class SyncRequest (
    * The ID of the sync request type that may be forced (although it is may be
    * disabled).
    */
-  val forcedScope: Long? = null
+  val forcedScope: List<Long>? = null
 )
  {
   companion object {
     fun fromList(pigeonVar_list: List<Any?>): SyncRequest {
       val account = pigeonVar_list[0] as ByteArray
-      val forcedScope = pigeonVar_list[1] as Long?
+      val forcedScope = pigeonVar_list[1] as List<Long>?
       return SyncRequest(account, forcedScope)
     }
   }
@@ -333,40 +313,6 @@ private open class NativeSyncPigeonCodec : StandardMessageCodec() {
   }
 }
 
-/** Generated interface from Pigeon that represents a handler of messages from Flutter. */
-interface NativeSyncManager {
-  fun syncFinished(result: SyncResponse)
-
-  companion object {
-    /** The codec used by NativeSyncManager. */
-    val codec: MessageCodec<Any?> by lazy {
-      NativeSyncPigeonCodec()
-    }
-    /** Sets up an instance of `NativeSyncManager` to handle messages through the `binaryMessenger`. */
-    @JvmOverloads
-    fun setUp(binaryMessenger: BinaryMessenger, api: NativeSyncManager?, messageChannelSuffix: String = "") {
-      val separatedMessageChannelSuffix = if (messageChannelSuffix.isNotEmpty()) ".$messageChannelSuffix" else ""
-      run {
-        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.antinote_app.NativeSyncManager.syncFinished$separatedMessageChannelSuffix", codec)
-        if (api != null) {
-          channel.setMessageHandler { message, reply ->
-            val args = message as List<Any?>
-            val resultArg = args[0] as SyncResponse
-            val wrapped: List<Any?> = try {
-              api.syncFinished(resultArg)
-              listOf(null)
-            } catch (exception: Throwable) {
-              NativeSyncPigeonUtils.wrapError(exception)
-            }
-            reply.reply(wrapped)
-          }
-        } else {
-          channel.setMessageHandler(null)
-        }
-      }
-    }
-  }
-}
 /** Generated class from Pigeon that represents Flutter messages that can be called from Kotlin. */
 class SyncManager(private val binaryMessenger: BinaryMessenger, private val messageChannelSuffix: String = "") {
   companion object {
@@ -375,10 +321,10 @@ class SyncManager(private val binaryMessenger: BinaryMessenger, private val mess
       NativeSyncPigeonCodec()
     }
   }
-  fun sendRequest(requestArg: SyncRequest, callback: (Result<SyncResponse>) -> Unit)
+  fun syncAccount(requestArg: SyncRequest, callback: (Result<SyncResponse>) -> Unit)
 {
     val separatedMessageChannelSuffix = if (messageChannelSuffix.isNotEmpty()) ".$messageChannelSuffix" else ""
-    val channelName = "dev.flutter.pigeon.antinote_app.SyncManager.sendRequest$separatedMessageChannelSuffix"
+    val channelName = "dev.flutter.pigeon.antinote_app.SyncManager.syncAccount$separatedMessageChannelSuffix"
     val channel = BasicMessageChannel<Any?>(binaryMessenger, channelName, codec)
     channel.send(listOf(requestArg)) {
       if (it is List<*>) {
