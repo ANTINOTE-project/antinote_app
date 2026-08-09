@@ -120,13 +120,7 @@ final class AccountRegistry({
     try {
       await _storage.addAccount(entry.account);
 
-      final session = entry.wrapper.unsafeSession;
-      if (_nativeSessionManagerSupported && session != null) {
-        await _sessionManager.registerSession(
-          entry.account.uid,
-          session.exportBinary(),
-        );
-      }
+      await entry.wrapper.tryRegisterSession();
 
       _sessions[entry.account.uid] = entry.wrapper;
 

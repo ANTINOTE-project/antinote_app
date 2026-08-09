@@ -99,6 +99,28 @@ final class SessionWrapper({required final String accountUid}) {
     return .new(wrapper: wrapper, account: account);
   }
 
+  Future<void> tryRegisterSession() async {
+    if (_state == null) return;
+
+    final sessionVersion = _nativeSessionManagerSupported
+        ? await _sessionManager.registerSession(
+            accountUid,
+            _state!.session.exportBinary(),
+          )
+        : null;
+
+    if (_state == null) {
+      _state = _SessionState(
+        session: _state!.session,
+        polling: .unavailable,
+        version: sessionVersion,
+        hooks: [],
+      );
+    } else {
+      _state = _state!.copyWith(version: sessionVersion);
+    }
+  }
+
   Future<RemoteSession> ensureSession({
     required AccountStorage storage,
     required SessionOptions options,
