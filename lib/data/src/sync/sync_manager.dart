@@ -39,7 +39,7 @@ final class SyncRequestManager extends SyncManager {
 
   Completer<bool>? _initializer;
 
-  bool get initialized => _initializer?.isCompleted == false;
+  bool get initialized => _initializer?.isCompleted == true;
 
   Future<bool> initialize() async {
     if (_initializer != null) return await _initializer!.future;
@@ -59,6 +59,8 @@ final class SyncRequestManager extends SyncManager {
   }
 
   Future<bool> _doInitialization() async {
+    WidgetsFlutterBinding.ensureInitialized();
+
     var settings = NetworkingSettings();
     if (!(await settings.initialize())) {
       libLog.warning('Failed to initialize settings, recreating.');
@@ -95,9 +97,17 @@ final class SyncRequestManager extends SyncManager {
 
   @override
   Future<SyncResponse> syncAccount(SyncRequest request) async {
-    if (!initialized) throw UnimplementedError();
+    if (_initializer != null) {
+      await _initializer!.future;
+    }
 
-    var account = AntinoteAccount.fromBuffer(request.account);
+    if (!initialized) {
+      throw UnimplementedError(
+        'Tried to sync account but initialization failed.',
+      );
+    }
+
+    var account = AntinoteAccount.fromBuffer(request.account)..freeze();
 
     final tasks = request.forcedScope != null
         ? request.forcedScope!.map((e) => SyncTaskType.valueOf(e)!).toSet()

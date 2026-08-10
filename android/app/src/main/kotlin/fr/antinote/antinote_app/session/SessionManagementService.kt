@@ -1,7 +1,6 @@
 package fr.antinote.antinote_app.session
 
 import android.app.Service
-import android.content.Context
 import android.content.Intent
 import android.os.Handler
 import android.os.HandlerThread
@@ -12,50 +11,15 @@ import android.os.Messenger
 import android.os.Process
 import android.os.RemoteException
 import android.util.Log
-import androidx.datastore.core.CorruptionException
-import androidx.datastore.core.DataStore
-import androidx.datastore.core.Serializer
-import androidx.datastore.core.handlers.ReplaceFileCorruptionHandler
-import androidx.datastore.deviceProtectedDataStore
-import com.google.protobuf.InvalidProtocolBufferException
 import com.google.protobuf.kotlin.toByteString
-import fr.antinote.antinote_app.protos.SessionRegistry
+import fr.antinote.antinote_app.App
 import fr.antinote.antinote_app.protos.copy
 import fr.antinote.studies_management.antinote_app.pigeon_posts.PollingState
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.runBlocking
-import java.io.InputStream
-import java.io.OutputStream
 import java.lang.ref.WeakReference
 import java.util.LinkedList
 import java.util.Queue
-
-
-object SessionRegistrySerializer : Serializer<SessionRegistry> {
-    override val defaultValue: SessionRegistry = SessionRegistry.getDefaultInstance()
-
-    override suspend fun readFrom(input: InputStream): SessionRegistry {
-        try {
-            return SessionRegistry.parseFrom(input)
-        } catch (exception: InvalidProtocolBufferException) {
-            throw CorruptionException("Cannot read proto.", exception)
-        }
-    }
-
-    override suspend fun writeTo(t: SessionRegistry, output: OutputStream) {
-        return t.writeTo(output)
-    }
-}
-
-val Context.sessionStore: DataStore<SessionRegistry> by deviceProtectedDataStore(
-    fileName = "session.pb",
-    serializer = SessionRegistrySerializer,
-    corruptionHandler = ReplaceFileCorruptionHandler {
-        Log.e("SessionRegistry", "Could not read accounts, recreating...", it)
-
-        SessionRegistry.getDefaultInstance()
-    }
-)
 
 /**
  * Registers a new client to receive updates on the different accounts.
@@ -343,9 +307,12 @@ class SessionManagementService : Service() {
             manager.lockOwners[taskId] = newTask
             return taskId
         } else {
-            Log.d(TAG, "Task got scheduled, waiting for the following tasks to end to start task $clientTaskId:")
-            for(task in manager.taskQueue) {
-                if(channels.none { task.channels.contains(it) }) continue
+            Log.d(
+                TAG,
+                "Task got scheduled, waiting for the following tasks to end to start task $clientTaskId:"
+            )
+            for (task in manager.taskQueue) {
+                if (channels.none { task.channels.contains(it) }) continue
                 Log.d(TAG, "- ${task.clientTaskId} (${task.channels.joinToString(", ")})")
             }
             Log.d(TAG, "Label: '$debugLabel'")
@@ -359,8 +326,9 @@ class SessionManagementService : Service() {
 
     private suspend fun updateSession(accountId: String, newSession: ByteArray): Long {
         val manager = createOrGetManager(accountId)
+        val app = applicationContext as App
 
-        this.sessionStore.updateData { registry ->
+        app.sessionStore.updateData { registry ->
             registry.copy {
                 session[accountId] = newSession.toByteString()
             }
@@ -436,10 +404,12 @@ class SessionManagementService : Service() {
     }
 
     private suspend fun cleanupDeadAccounts(aliveAccounts: List<String>) {
-        this.sessionStore.updateData { registry ->
+        val app = applicationContext as App
+
+        app.sessionStore.updateData { registry ->
             registry.copy {
-                for(accountUid in session.keys.toList()) {
-                    if(!aliveAccounts.contains(accountUid)) {
+                for (accountUid in session.keys.toList()) {
+                    if (!aliveAccounts.contains(accountUid)) {
                         session.remove(accountUid)
                     }
                 }
@@ -497,9 +467,11 @@ class SessionManagementService : Service() {
             val manager = svc.accountSessionManagers[accountId]!!
 
             if (lastSessionVersion < manager.latestVersion) {
-                val rawSession = svc.sessionStore.data.first().sessionMap[accountId]?.toByteArray()
+                val app = svc.applicationContext as App
 
-                if(rawSession != null) {
+                val rawSession = app.sessionStore.data.first().sessionMap[accountId]?.toByteArray()
+
+                if (rawSession != null) {
                     msg.data.putByteArray(
                         "session",
                         rawSession
@@ -540,7 +512,7 @@ class SessionManagementService : Service() {
                             dest = msg.replyTo
                         )
 
-                        if(aliveAccounts != null) {
+                        if (aliveAccounts != null) {
                             svc.cleanupDeadAccounts(aliveAccounts)
                         }
 

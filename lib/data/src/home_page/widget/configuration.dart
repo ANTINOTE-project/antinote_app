@@ -5,7 +5,11 @@ import 'package:antinote_app/data/src/home_page/widget/parameters.dart';
 import 'package:antinote_app/data/src/home_page/widget/widget.dart';
 import 'package:antinote_app/ui/l10n/app_localizations.dart';
 
-const descriptors = <WidgetDescriptor>[MenuWidget(), TimetableDayWidget()];
+const descriptors = <WidgetDescriptor>[
+  MenuWidget(),
+  HomeworkListWidget(),
+  TimetableDayWidget(),
+];
 
 const defaultDescriptors = <WidgetDescriptor>[
   TimetableDayWidget(),

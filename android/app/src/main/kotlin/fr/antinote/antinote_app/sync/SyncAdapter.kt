@@ -40,14 +40,19 @@ class SyncAdapter @JvmOverloads constructor(
         syncResult: SyncResult
     ) {
         val isManual = extras.getBoolean(ContentResolver.SYNC_EXTRAS_MANUAL, false)
-        if (!isManual) {
-            ContentResolver.setSyncAutomatically(account, authority, false)
+        val isInitialization = extras.getBoolean(ContentResolver.SYNC_EXTRAS_INITIALIZE, false)
+        val isExpedited = extras.getBoolean(ContentResolver.SYNC_EXTRAS_EXPEDITED, false)
+        if (!isManual && !isInitialization && !isExpedited) {
+//            ContentResolver.setSyncAutomatically(account, authority, false)
+            Log.i(TAG, "OS tried to sync calendar using the legacy sync adapter.")
             return
         }
 
-        Log.i(TAG, "Redirecting sync to worker...")
+        Log.i(TAG, "Redirecting sync adapter task to worker...")
         val manager = AccountManager.get(context)
         val uid = manager.getUserData(account, LoginManager.KEY_UID)
+
+        Log.i(TAG, "The UID we should perform sync on is $uid")
 
         val request = OneTimeWorkRequest.Builder(SyncWorker::class).run {
             setExpedited(

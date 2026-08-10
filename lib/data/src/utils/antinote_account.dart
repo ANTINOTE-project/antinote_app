@@ -33,7 +33,7 @@ const _prefix = 'type.antinote.fr';
 
 extension SetCredentials on AntinoteAccount {
   AntinoteAccount setCredentials(Credentials credentials) => rebuild(
-    (p0) => p0.tokenCredentials = Any.pack(
+    (acc) => acc.tokenCredentials = Any.pack(
       (credentials as SerializableObject).serialize(),
       typeUrlPrefix: _prefix,
     ),

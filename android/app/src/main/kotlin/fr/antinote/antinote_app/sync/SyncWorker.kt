@@ -11,7 +11,6 @@ import androidx.work.WorkerParameters
 import fr.antinote.antinote_app.App
 import fr.antinote.antinote_app.R
 import fr.antinote.antinote_app.auth.LoginManager
-import fr.antinote.antinote_app.auth.accountStore
 import fr.antinote.antinote_app.calendar.CalendarManager
 import fr.antinote.antinote_app.pigeon_posts.NativeLoginManager
 import fr.antinote.antinote_app.protos.AntinoteAccount
@@ -71,14 +70,26 @@ class SyncWorker(appContext: Context, workerParams: WorkerParameters) :
         val forcedTasks =
             inputData.getIntArray(KEY_FORCED_TASKS)?.map { SyncTaskType.forNumber(it) }
 
-        for (account in applicationContext.accountStore.data.first().accountsList) {
-            if (!shouldDoSync(account) || (!account.storeSecurely && forcedTasks?.isNotEmpty() ?: false)) continue
-            if (uids != null && !uids.contains(account.uid)) continue
+        for (account in app.accountStore.data.first().accountsList) {
+            Log.i(TAG, "Checking whether we should sync ${account.uid}...")
+
+            if(account.storeSecurely) continue
+            if(!shouldDoSync(account) && uids == null) {
+                Log.i(TAG, "We skip sync for account ${account.uid} because it doesn't have any task to run.")
+                continue
+            }
+            if (uids != null && !uids.contains(account.uid)) {
+                Log.i(TAG, "We skip sync for account ${account.uid} for now to focus on provided accounts.")
+                continue
+            }
 
             validUids.add(account.uid)
         }
 
-        if (validUids.isEmpty()) return Result.failure()
+        if (validUids.isEmpty()) {
+            Log.i(TAG, "Sync finished because no UIDs with applicable run tasks were found.")
+            return Result.failure()
+        }
 
         val data = JobData()
 
@@ -101,7 +112,8 @@ class SyncWorker(appContext: Context, workerParams: WorkerParameters) :
             }
 
             data.engine = app.engineGroup.createAndRunEngine(options)
-            data.engine?.plugins?.add(SharedPreferencesPlugin())
+            data.engine!!.plugins.add(SharedPreferencesPlugin())
+
             data.sessionManager =
                 SessionManager(applicationContext, data.engine!!.dartExecutor.binaryMessenger)
 

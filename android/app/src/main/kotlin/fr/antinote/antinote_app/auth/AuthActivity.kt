@@ -2,15 +2,11 @@ package fr.antinote.antinote_app.auth
 
 import android.accounts.AccountAuthenticatorResponse
 import android.accounts.AccountManager
-import android.content.Context
 import android.os.Build
 import android.os.Bundle
-import fr.antinote.antinote_app.App
 import fr.antinote.antinote_app.GroupedFlutterFragmentActivity
 import fr.antinote.antinote_app.pigeon_posts.NativeLoginManager
 import io.flutter.embedding.engine.FlutterEngine
-import io.flutter.embedding.engine.FlutterEngineGroup
-import io.flutter.embedding.engine.dart.DartExecutor
 
 class AuthActivity : GroupedFlutterFragmentActivity() {
     private var mAccountAuthenticatorResponse: AccountAuthenticatorResponse? = null
@@ -50,20 +46,6 @@ class AuthActivity : GroupedFlutterFragmentActivity() {
         if (mAccountAuthenticatorResponse != null) {
             mAccountAuthenticatorResponse!!.onRequestContinued()
         }
-    }
-
-    override fun provideFlutterEngine(context: Context): FlutterEngine? {
-        val app = context.applicationContext as App
-
-        val entrypoint = DartExecutor.DartEntrypoint(
-            appBundlePath,
-            dartEntrypointFunctionName
-        )
-
-        return app.engineGroup.createAndRunEngine(
-            FlutterEngineGroup.Options(context).setDartEntrypoint(entrypoint)
-                .setDartEntrypointArgs(dartEntrypointArgs).setInitialRoute(initialRoute)
-        )
     }
 
     override fun configureFlutterEngine(flutterEngine: FlutterEngine) {

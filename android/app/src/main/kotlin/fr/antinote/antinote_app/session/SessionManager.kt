@@ -11,17 +11,19 @@ import android.os.Message
 import android.os.Messenger
 import android.os.RemoteException
 import android.util.Log
-import fr.antinote.antinote_app.auth.accountStore
+import fr.antinote.antinote_app.App
 import fr.antinote.studies_management.antinote_app.pigeon_posts.NativeSessionManager
 import fr.antinote.studies_management.antinote_app.pigeon_posts.PollingManager
 import fr.antinote.studies_management.antinote_app.pigeon_posts.PollingState
 import fr.antinote.studies_management.antinote_app.pigeon_posts.ScheduledTask
 import io.flutter.plugin.common.BinaryMessenger
+import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 
 class SessionManager(val context: Context, binaryMessenger: BinaryMessenger) :
     NativeSessionManager, ServiceConnection {
@@ -45,16 +47,22 @@ class SessionManager(val context: Context, binaryMessenger: BinaryMessenger) :
     private val messenger = Messenger(IncomingHandler(this))
     private val flutterApi = PollingManager(binaryMessenger)
 
+    var clientRegistered = CompletableDeferred<Unit>()
+
     internal class IncomingHandler(val manager: SessionManager) :
         Handler(Looper.myLooper() ?: Looper.getMainLooper()) {
         override fun handleMessage(msg: Message) {
             when (msg.what) {
                 MSG_REGISTER_CLIENT -> {
                     manager.clientId = msg.data.getLong("client_id")
+                    if(manager.clientRegistered.isActive) {
+                        manager.clientRegistered.complete(Unit)
+                    }
                 }
 
                 MSG_UNREGISTER_CLIENT -> {
                     manager.clientId = null
+                    manager.clientRegistered = CompletableDeferred()
                 }
 
                 MSG_SCHEDULE_TASK -> {
@@ -201,13 +209,15 @@ class SessionManager(val context: Context, binaryMessenger: BinaryMessenger) :
     ) {
         mService = Messenger(service!!)
 
+        val app = context.applicationContext as App
+
         scope.launch {
             try {
                 val msg = Message.obtain(null, MSG_REGISTER_CLIENT)
                 msg.data.putStringArray("accounts", currentAccountUids.toTypedArray())
                 msg.data.putStringArray(
                     "alive_accounts",
-                    context.accountStore.data.first().accountsList.map { it.uid }.toTypedArray()
+                    app.accountStore.data.first().accountsList.map { it.uid }.toTypedArray()
                 )
                 msg.replyTo = this@SessionManager.messenger
                 mService?.send(msg)
@@ -219,6 +229,9 @@ class SessionManager(val context: Context, binaryMessenger: BinaryMessenger) :
     override fun onServiceDisconnected(name: ComponentName?) {
         mService = null
         clientId = null
+        if(!clientRegistered.isActive) {
+            clientRegistered = CompletableDeferred()
+        }
 
         val e = RemoteException("Got disconnected from service before we got a response.")
 
@@ -264,7 +277,7 @@ class SessionManager(val context: Context, binaryMessenger: BinaryMessenger) :
 
     override fun setCurrentAccountsListener(accountUid: List<String>) {
         currentAccountUids = accountUid
-        if (!isBound) {
+        if (!isBound || clientRegistered.isActive) {
             doBindService()
         } else {
             val msg = Message.obtain(null, MSG_EDIT_CLIENT)
@@ -288,6 +301,12 @@ class SessionManager(val context: Context, binaryMessenger: BinaryMessenger) :
         callback: (Result<ScheduledTask>) -> Unit
     ) {
         if (!isBound) doBindService()
+
+        if(clientRegistered.isActive) {
+            runBlocking {
+                clientRegistered.await()
+            }
+        }
 
         val clientTaskId = nextClientTaskId++
         val msg = Message.obtain(null, MSG_SCHEDULE_TASK)

@@ -189,8 +189,17 @@ final class HomePageCache {
         // TODO: Handle this case.
         throw UnimplementedError();
       case .homework:
-        // TODO: Handle this case.
-        throw UnimplementedError();
+        final homeworks = res as List<Homework>;
+
+        for (final homework in homeworks) {
+          final date = homework.deadlineDate.toDay();
+
+          if (!hasHomeworksForDay(date)) {
+            _dayHomeworks[date] = [];
+          }
+
+          _dayHomeworks[date]!.add(homework);
+        }
     }
   }
 
