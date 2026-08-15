@@ -3,6 +3,7 @@
 > [!IMPORTANT]
 > Le projet ANTINOTE n'est en aucun cas lié à Index-Education.
  
+> [!NOTE]
 > L'utilisation de ce logiciel est régie par la licence
 > MIT ; il est fourni "en l'état", sans garantie d'aucune sorte quant à son utilisation.
 
