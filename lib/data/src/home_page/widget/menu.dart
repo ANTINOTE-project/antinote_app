@@ -77,7 +77,11 @@ final class const MenuWidget()
     final day = args.get(MenuArgument.day);
     if (cache.hasMenuForDay(day)) return [];
 
-    return [.menu(day)];
+    return [
+      MenuHomePageRequest(
+        dates: DateRange(start: day, end: day),
+      ),
+    ];
   }
 
   @override

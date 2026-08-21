@@ -47,7 +47,7 @@ android {
 
     defaultConfig {
         applicationId = "fr.antinote.antinote_app"
-        minSdk = 24
+        minSdk = flutter.minSdkVersion
         targetSdk = flutter.targetSdkVersion
         versionCode = flutter.versionCode
         versionName = flutter.versionName
@@ -59,6 +59,7 @@ android {
             optimization {
                 enable = true
             }
+
             signingConfig = signingConfigs.getByName("debug")
         }
     }
@@ -71,7 +72,9 @@ android {
             applicationIdSuffix = ".dev"
             versionNameSuffix = "-dev"
             resValue("string", "app_name", "ANTINOTE Dev")
+            resValue("string", "account_type", "fr.antinote.antinote_app.dev.account")
         }
+
         create("prod") {
             dimension = "default"
             resValue("string", "app_name", "ANTINOTE")

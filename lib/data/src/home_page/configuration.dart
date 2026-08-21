@@ -163,7 +163,11 @@ final class RelativeHomePageConfigurationCriterion
   List<HomePageRequest> requestsUntilRequirements(HomePageCache cache) {
     if (cache.hasDayBaseSchedules(cache.anchorDate)) return [];
 
-    return [.schedules(cache.anchorDate)];
+    return [
+      TimetableHomePageRequest(
+        dates: DateRange(start: cache.anchorDate, end: cache.anchorDate),
+      ),
+    ];
   }
 
   @override
@@ -293,7 +297,11 @@ final class const StaticHomePageConfigurationCriterion({
   List<HomePageRequest> requestsUntilRequirements(HomePageCache cache) {
     if (cache.hasDayBaseSchedules(cache.anchorDate)) return [];
 
-    return [.schedules(cache.anchorDate)];
+    return [
+      TimetableHomePageRequest(
+        dates: DateRange(start: cache.anchorDate, end: cache.anchorDate),
+      ),
+    ];
   }
 
   @override
@@ -341,7 +349,11 @@ final class const ClassRelativeHomePageConfigurationCriterion({
   List<HomePageRequest> requestsUntilRequirements(HomePageCache cache) {
     if (cache.hasDayBaseSchedules(cache.anchorDate)) return const [];
 
-    return [.schedules(cache.anchorDate)];
+    return [
+      TimetableHomePageRequest(
+        dates: DateRange(start: cache.anchorDate, end: cache.anchorDate),
+      ),
+    ];
   }
 
   @override

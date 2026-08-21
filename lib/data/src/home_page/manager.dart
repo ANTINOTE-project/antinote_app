@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:math';
 
 import 'package:antinote_api/antinote_api.dart';
 import 'package:antinote_app/data/src/home_page/configuration.dart';
@@ -9,49 +10,423 @@ import 'package:antinote_app/data/src/state.dart';
 import 'package:antinote_app/ui/screens/timetable/events/block.dart';
 import 'package:antinote_app/ui/utils/utils.dart';
 import 'package:collection/collection.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart';
 
-enum HomePageRequestType { schedules, menu, grades, schoolLife, news, homework }
+typedef HomePageModuleRequestCallback = void Function(
+  HomePage page,
+  RemoteSession session,
+  HomePageCache cache,
+);
 
-final class HomePageRequest {
-  final HomePageRequestType type;
+final class HomePageModuleRequest._merge({
+  /// The module to add to the home page request that will be processed in
+  /// [callback].
+  required final HomePageModule module,
 
-  final Date? date;
+  /// Applies the data to the [cache].
+  required final HomePageModuleRequestCallback applyCallback,
 
-  const new schedules(this.date) : type = .schedules;
+  /// The value attached to the request, we use it to know whether to use
+  /// modules or direct request to fetch the data.
+  required final num value,
+}) {
+  new({
+    required HomePageModule module,
+    required HomePageModuleRequestCallback applyCallback,
+    required num value,
+  }) : this._merge(module: module, applyCallback: applyCallback, value: value);
 
-  const new menu(this.date) : type = .menu;
+  HomePageModuleRequest merge(HomePageModuleRequest other) {
+    assert(this == other);
 
-  const new grades() : type = .grades, date = null;
+    return ._merge(
+      module: module,
+      applyCallback: applyCallback,
+      value: value + other.value,
+    );
+  }
 
-  const new schoolLife() : type = .schoolLife, date = null;
+  bool mergeable(HomePageModuleRequest other, RemoteSession session) =>
+      identical(this, other) ||
+      (module.widget == other.module.widget &&
+          mapEquals(module.data(session), other.module.data(session)));
+}
 
-  const new news() : type = .news, date = null;
+sealed class const HomePageRequest() {
+  bool checkIfAvailable(RemoteSession session);
 
-  const new homework() : type = .homework, date = null;
+  /// Used to write obvious data to cache, which does not need network requests.
+  void preApply(RemoteSession session, HomePageCache cache) {}
 
-  HomePageModule get module => switch (type) {
-    .schedules => EDT.module(date!),
-    .menu => MenuDeLaCantine.module(date!),
-    .grades => Notes.module(),
-    .schoolLife => VieScolaire.module(),
-    .news => Actualites.module(),
-    .homework => TravailAFaire.module(),
-  };
+  /// Return all the home page modules required to get all the data this request
+  /// wants. We do a calculation using the values inputted to determine which
+  /// is more efficient between [modules] and [requestDirectly]. The values
+  /// should sum up to 1.
+  List<HomePageModuleRequest>? listModules(RemoteSession session);
 
-  dynamic extractResult(HomePage page) {
-    return switch (type) {
-      .schedules => page.widgets.whereType<EDT>().firstOrNull?.timetable,
-      .menu => <Menu>[
-        ?page.widgets.whereType<MenuDeLaCantine>().firstOrNull?.currentMenu,
-      ],
-      .grades => page.widgets.whereType<Notes>().firstOrNull?.page,
-      .schoolLife =>
-        page.widgets.whereType<VieScolaire>().firstOrNull?.absences,
-      .news => page.widgets.whereType<Actualites>().firstOrNull?.news,
-      .homework =>
-        page.widgets.whereType<TravailAFaire>().firstOrNull?.homeworks,
+  /// Directly navigate to the relevant page and try to get the requested data
+  /// directly from there.
+  FutureOr<void> requestDirectly(RemoteSession session, HomePageCache cache);
+
+  HomePageRequest? merge(RemoteSession session, HomePageRequest other);
+}
+
+mixin DatesHomePageRequestMixin<T> on HomePageRequest {
+  abstract final DateRange dates;
+
+  bool checkDay(Date day, RemoteSession session);
+  HomePageModuleRequest createModule(Date day, num value);
+
+  @override
+  void preApply(RemoteSession session, HomePageCache cache) {
+    apply(
+      [],
+      dates.listDays().whereNot((day) => checkDay(day, session)).toSet(),
+      session,
+      cache,
+    );
+  }
+
+  @override
+  List<HomePageModuleRequest>? listModules(RemoteSession session) {
+    final days = dates.listDays().where((day) => checkDay(day, session));
+    return [for (final day in days) createModule(day, 1 / days.length)];
+  }
+
+  DateRange? mergeDays(RemoteSession session, DatesHomePageRequestMixin other) {
+    final newStart = DateTime.fromMillisecondsSinceEpoch(
+      min(
+        other.dates.start.millisecondsSinceEpoch,
+        dates.start.millisecondsSinceEpoch,
+      ),
+      isUtc: true,
+    ).toDay();
+    final newEnd = DateTime.fromMillisecondsSinceEpoch(
+      max(
+        other.dates.end.millisecondsSinceEpoch,
+        dates.end.millisecondsSinceEpoch,
+      ),
+      isUtc: true,
+    ).toDay();
+
+    final newDays = DateRange(start: newStart, end: newEnd);
+    final newDaysCount = newDays
+        .listDays()
+        .where((day) => checkDay(day, session))
+        .length;
+
+    final oldDaysCount = dates
+        .listDays()
+        .where((day) => checkDay(day, session))
+        .length;
+
+    // If we didn't request more days than we requested in the final response,
+    // we consider this inefficient.
+    if ((newDaysCount << 1) < oldDaysCount) return null;
+
+    return newDays;
+  }
+
+  void apply(
+    List<T> elements,
+    Set<Date> minimumDates,
+    RemoteSession session,
+    HomePageCache cache,
+  );
+}
+
+final class const TimetableHomePageRequest({
+  @override required final DateRange dates,
+}) extends HomePageRequest with DatesHomePageRequestMixin<Class> {
+  static const _applicableWorkspaces = <WorkspaceType>[
+    .parent,
+    .eleve,
+    .accompagnant,
+    .mobileParent,
+    .mobileEleve,
+    .mobileAccompagnant,
+    .mobileProfesseur,
+  ];
+
+  @override
+  bool checkIfAvailable(RemoteSession session) =>
+      _applicableWorkspaces.contains(session.instance.workspace.type) ||
+      session.user.hasAccessToTab(TimetableAccessor.pageId);
+
+  @override
+  bool checkDay(Date day, RemoteSession session) =>
+      session.instance.isBusinessDay(day);
+
+  @override
+  HomePageModuleRequest createModule(Date day, num value) =>
+      HomePageModuleRequest(
+        module: EDT.module(day),
+        applyCallback: (page, session, cache) => apply(
+          page.widgets.whereType<EDT>().singleOrNull?.timetable.classes ?? [],
+          {day},
+          session,
+          cache,
+        ),
+        value: value,
+      );
+
+  @override
+  FutureOr<bool> requestDirectly(
+    RemoteSession session,
+    HomePageCache cache,
+  ) async {
+    final timetable = await session.access(
+      TimetableAccessor.forRange(
+        resource: session.userResource,
+        from: dates.start,
+        to: dates.end,
+      ),
+    );
+
+    return apply(timetable.classes, dates.listDays().toSet(), session, cache);
+  }
+
+  @override
+  bool apply(
+    List<Class> classes,
+    Set<Date> minimumDates,
+    RemoteSession session,
+    HomePageCache cache,
+  ) {
+    final scheduleDays = minimumDates.union({
+      for (final clazz in classes) clazz.startDate.toDay(),
+    });
+
+    for (final day in scheduleDays) {
+      final relevant = classes
+          .where((clazz) => clazz.startDate.toDay().isAtSameMomentAs(day))
+          .toList(growable: false);
+
+      final events = eventsForDay(relevant, session.instance);
+      cache._daySchedules[day.toDay()] = (
+        events: events,
+        appStates: AppStateScheduler.scheduleForDay(
+          day.toDay(),
+          events: events,
+          params: session.instance,
+        ),
+        blocks: blocksForDay(events, session.instance),
+      );
+    }
+
+    return true;
+  }
+
+  @override
+  HomePageRequest? merge(RemoteSession session, HomePageRequest other) {
+    if (other is! TimetableHomePageRequest) return null;
+
+    final newRange = mergeDays(session, other);
+    if (newRange == null) return null;
+
+    return TimetableHomePageRequest(dates: newRange);
+  }
+}
+
+final class const MenuHomePageRequest({
+  @override required final DateRange dates,
+}) extends HomePageRequest with DatesHomePageRequestMixin<Menu> {
+  @override
+  bool checkIfAvailable(RemoteSession session) =>
+      session.user.hasAccessToTab(MenuPageAccessor.pageId) &&
+      session.instance.lunchDays.isNotEmpty &&
+      session.instance.lunchActivation;
+
+  @override
+  bool checkDay(Date day, RemoteSession session) =>
+      session.instance.lunchDays.contains(day.weekday - 1);
+  @override
+  HomePageModuleRequest createModule(
+    Date day,
+    num value,
+  ) => HomePageModuleRequest(
+    module: MenuDeLaCantine.module(day),
+    applyCallback: (page, session, cache) => apply(
+      [?page.widgets.whereType<MenuDeLaCantine>().singleOrNull?.currentMenu],
+      {day},
+      session,
+      cache,
+    ),
+    value: value,
+  );
+
+  @override
+  List<HomePageModuleRequest>? listModules(RemoteSession session) {
+    if (session.instance.workspace.type.categories.contains(
+      WorkspaceCategory.mobile,
+    )) {
+      return null;
+    }
+
+    return super.listModules(session);
+  }
+
+  @override
+  FutureOr<void> requestDirectly(
+    RemoteSession session,
+    HomePageCache cache,
+  ) async {
+    final daysPerWeek = <int, List<Date>>{};
+    for (final day in dates.listDays().where((day) => checkDay(day, session))) {
+      final weekNumber = session.instance.getWeekNumberForDate(day);
+      if (!daysPerWeek.containsKey(weekNumber)) {
+        daysPerWeek[weekNumber] = [day];
+      } else {
+        daysPerWeek[weekNumber]!.add(day);
+      }
+    }
+
+    for (final MapEntry(key: weekNumber, value: days) in daysPerWeek.entries) {
+      if (days.length > 1) {
+        apply(
+          (await session.access(
+            MenuPageAccessor(
+              date: session.instance.getDateForWeekNumber(weekNumber),
+            ),
+          )).menus,
+          session.instance.getDaysForWeekNumber(weekNumber).toSet(),
+          session,
+          cache,
+        );
+      } else {
+        apply(
+          (await session.access(MenuPageAccessor(date: days.single))).menus,
+          {days.single},
+          session,
+          cache,
+        );
+      }
+    }
+  }
+
+  @override
+  void apply(
+    List<Menu> menus,
+    Set<Date> minimumDates,
+    RemoteSession session,
+    HomePageCache cache,
+  ) {
+    final menuDays = minimumDates.union({
+      for (final menu in menus) menu.time.toDay(),
+    });
+
+    for (final day in menuDays) {
+      final menu = menus.firstWhereOrNull(
+        (menu) => menu.time.toDay().isAtSameMomentAs(day),
+      );
+
+      cache._dayMenus[day] = menu;
+    }
+  }
+
+  @override
+  HomePageRequest? merge(RemoteSession session, HomePageRequest other) {
+    if (other is! MenuHomePageRequest) return null;
+
+    final newRange = mergeDays(session, other);
+    if (newRange == null) return null;
+
+    return MenuHomePageRequest(dates: newRange);
+  }
+}
+
+final class const HomeworkHomePageRequest({
+  @override required final DateRange dates,
+}) extends HomePageRequest with DatesHomePageRequestMixin<Homework> {
+  @override
+  bool checkIfAvailable(RemoteSession session) =>
+      session.user.hasAccessToTab(NotebookSection.homework.pageId);
+
+  @override
+  bool checkDay(Date day, RemoteSession session) => true;
+
+  @override
+  HomePageModuleRequest createModule(Date day, num value) =>
+      HomePageModuleRequest(
+        module: TravailAFaire.module(),
+        applyCallback: (page, session, cache) => apply(
+          page.widgets.whereType<TravailAFaire>().singleOrNull?.homeworks ?? [],
+          {day},
+          session,
+          cache,
+        ),
+        value: value,
+      );
+
+  @override
+  List<HomePageModuleRequest>? listModules(RemoteSession session) {
+    final today = DateTime.now().toDay(true);
+
+    if (dates.start.isBefore(today) ||
+        dates.end.isAfter(today.add(const Duration(days: 6)))) {
+      // The widget only returns the homeworks for the next 7 days, we can't use
+      // home page modules if we try to get homeworks outside that range.
+      return null;
+    }
+
+    return super.listModules(session);
+  }
+
+  @override
+  FutureOr<void> requestDirectly(
+    RemoteSession session,
+    HomePageCache cache,
+  ) async {
+    final weeks = <int>{
+      for (final day in dates.listDays())
+        session.instance.getWeekNumberForDate(day),
     };
+
+    final result = await session.access(
+      NotebookPageAccessor(section: .homework, weeks: weeks),
+    );
+    final homeworks = result.homeworkSet?.homeworks;
+
+    if (homeworks == null) return;
+
+    apply(
+      homeworks,
+      {
+        for (final week in weeks)
+          ...session.instance.getDaysForWeekNumber(week),
+      },
+      session,
+      cache,
+    );
+  }
+
+  @override
+  void apply(
+    List<Homework> homeworks,
+    Set<Date> minimumDates,
+    RemoteSession session,
+    HomePageCache cache,
+  ) {
+    final homeworkDays = minimumDates.union({
+      for (final homework in homeworks) homework.deadlineDate,
+    });
+
+    for (final day in homeworkDays) {
+      cache._dayHomeworks[day] = homeworks
+          .where((homework) => homework.deadlineDate.isAtSameMomentAs(day))
+          .toList(growable: false);
+    }
+  }
+
+  @override
+  HomePageRequest? merge(RemoteSession session, HomePageRequest other) {
+    if (other is! HomeworkHomePageRequest) return null;
+
+    final newRange = mergeDays(session, other);
+    if (newRange == null) return null;
+
+    return HomeworkHomePageRequest(dates: newRange);
   }
 }
 
@@ -76,137 +451,92 @@ final class HomePageCache {
 
   final Map<Date, _SchedulesEntry> _daySchedules = {};
   final Map<Date, Menu?> _dayMenus = {};
+  final Map<Date, List<Homework>> _dayHomeworks = {};
 
   /// Ensures at least events for the day and the app states are loaded.
   bool hasDayBaseSchedules(Date day) => _daySchedules.containsKey(day);
-
   List<Event> dayEvents(Date day) => _daySchedules[day]!.events;
-
   List<AppStateEntry> dayAppStates(Date day) => _daySchedules[day]!.appStates;
-
   List<Block> dayBlocks(Date day) => _daySchedules[day]!.blocks;
 
   /// Ensures the menu for a day is loaded.
   bool hasMenuForDay(Date day) => _dayMenus.containsKey(day);
-
   Menu dayMenu(Date day) => _dayMenus[day] ?? Menu(time: day, meals: []);
 
-  final Map<Date, List<Homework>> _dayHomeworks = {};
-
   bool hasHomeworksForDay(Date day) => _dayHomeworks.containsKey(day);
-
   List<Homework> dayHomeworks(Date day) => _dayHomeworks[day]!;
 
   /// We expect the most important requests to be put at the start.
-  ///
-  /// We create the request with the most modules possible and update the object
-  /// accordingly.
-  ///
-  /// We may use other requests than the home page if we have only a single
-  /// module and [session.options.saveNavigationRequests] is [true].
   Future<void> runBestRequest(
     RemoteSession session,
     List<HomePageRequest> requests,
   ) async {
     if (requests.isEmpty) return;
 
-    final keptModules = <({HomePageRequest req, HomePageModule mod})>[];
+    final shortRequests = <HomePageRequest>[];
+    final shortModules = <HomePageModuleRequest>[];
 
+    requestLoop:
     for (final request in requests) {
-      final module = request.module;
-      if (keptModules.any((element) => element.mod.widget == module.widget)) {
-        continue;
+      if (!request.checkIfAvailable(session)) continue;
+
+      final modules = request.listModules(session);
+
+      moduleLoop:
+      for (final module in modules ?? []) {
+        for (int i = 0; i < shortModules.length; i++) {
+          if (!shortModules[i].mergeable(module, session)) continue;
+
+          shortModules[i] = shortModules[i].merge(module);
+          continue moduleLoop;
+        }
+        shortModules.add(module);
       }
 
-      keptModules.add((req: request, mod: module));
+      for (int i = 0; i < shortRequests.length; i++) {
+        final merged = shortRequests[i].merge(session, request);
+        if (merged == null) continue;
+
+        shortRequests[i] = merged;
+        continue requestLoop;
+      }
+      shortRequests.add(request);
     }
 
-    final result = await session.access(
-      HomePageAccessor(modules: keptModules.mapL((e) => e.mod)),
-    );
+    shortModules.sort((a, b) => b.value.compareTo(a.value));
 
-    // TODO: Do some grouping optimization (like do a timetable request when
-    // TODO: there are 7 days to fetch and other useful home page requests are
-    // TODO: consumed).
-
-    for (final (req: request, mod: _) in keptModules) {
-      _applyResponse(session, request, request.extractResult(result));
+    for (final request in shortRequests) {
+      request.preApply(session, this);
     }
-  }
 
-  void _applyResponse(RemoteSession session, HomePageRequest req, dynamic res) {
-    switch (req.type) {
-      case .schedules:
-        final schedule = res as Timetable?;
+    final bestHomePage = <HomePageModuleRequest>[];
+    final appliedWidgetTypes = <HomePageWidgetType>{};
+    num totalHomePageValue = 0;
+    for (final module in shortModules) {
+      if (appliedWidgetTypes.add(module.module.widget)) {
+        bestHomePage.add(module);
+        totalHomePageValue += module.value;
+      }
+    }
 
-        // TODO: Make this into a range so that not only the requested day (if
-        // TODO: empty) is asserted as class-free.
-        final scheduleDays = (schedule?.dayList() ?? <DateTime>{}).union({
-          req.date!,
-        });
-
-        for (final day in scheduleDays) {
-          final relevant =
-              schedule?.classes
-                  .where(
-                    (element) =>
-                        element.startDate.toDay().isAtSameMomentAs(day),
-                  )
-                  .toList(growable: false) ??
-              [];
-
-          final events = eventsForDay(relevant, session.instance);
-          _daySchedules[day.toDay()] = (
-            events: events,
-            appStates: AppStateScheduler.scheduleForDay(
-              day.toDay(),
-              events: events,
-              params: session.instance,
-            ),
-            blocks: blocksForDay(events, session.instance),
-          );
-        }
-      case .menu:
-        // TODO: When the first day of the week is selected in the menu page
-        // TODO: (only), all menus for the week are returned, do the same change
-        // TODO: as in the schedules above.
-        final menus = res as List<Menu>;
-        bool foundRequested = false;
-
-        for (final menu in menus) {
-          if (menu.time.isAtSameMomentAs(req.date!)) foundRequested = true;
-          _dayMenus[menu.time.toDay()] = menu;
-        }
-
-        if (!foundRequested) _dayMenus[req.date!.toDay()] = null;
-      case .grades:
-        // TODO: Handle this case.
-        throw UnimplementedError();
-      case .schoolLife:
-        // TODO: Handle this case.
-        throw UnimplementedError();
-      case .news:
-        // TODO: Handle this case.
-        throw UnimplementedError();
-      case .homework:
-        final homeworks = res as List<Homework>;
-
-        for (final homework in homeworks) {
-          final date = homework.deadlineDate.toDay();
-
-          if (!hasHomeworksForDay(date)) {
-            _dayHomeworks[date] = [];
-          }
-
-          _dayHomeworks[date]!.add(homework);
-        }
+    if (totalHomePageValue >= 1) {
+      final result = await session.access(
+        HomePageAccessor(
+          modules: bestHomePage.map((e) => e.module).toList(growable: false),
+        ),
+      );
+      for (final module in bestHomePage) {
+        module.applyCallback(result, session, this);
+      }
+    } else {
+      await shortRequests.first.requestDirectly(session, this);
     }
   }
 
   void applyCache(HomePageCache other) {
     _daySchedules.addAll(other._daySchedules);
     _dayMenus.addAll(other._dayMenus);
-    // TODO: Handle other cases.
+    _dayHomeworks.addAll(other._dayHomeworks);
   }
 }
 

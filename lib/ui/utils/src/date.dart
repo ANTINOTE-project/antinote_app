@@ -1,8 +1,9 @@
+import 'package:antinote_api/antinote_api.dart';
 import 'package:antinote_app/ui/utils/utils.dart';
 import 'package:flutter/material.dart';
 
 /// Both dates are inclusive.
-typedef DateRange = DateTimeRange<DateTime>;
+typedef DateRange = DateTimeRange<Date>;
 
 extension DateRangeUtils on DateRange {
   String pprint(BuildContext context) {
@@ -12,21 +13,23 @@ extension DateRangeUtils on DateRange {
   }
 }
 
-extension DateTimeInDateRange on DateRange {
-  List<DateTime> listDays() {
-    List<DateTime> days = [];
+extension DaysInDateRange on DateRange {
+  List<Date> listDays() {
+    List<Date> days = [];
 
     for (
-      DateTime date = start.copyWith();
+      Date date = start.toDay(true);
       !date.isAfter(end);
-      date = date.add(const Duration(days: 1))
+      date = date.add(const Duration(days: 1)).toDay()
     ) {
       days.add(date);
     }
 
     return days;
   }
+}
 
+extension DateTimeInDateTimeRange on DateTimeRange {
   bool contains(DateTime time) {
     return !time.isBefore(start) && !time.isAfter(end);
   }

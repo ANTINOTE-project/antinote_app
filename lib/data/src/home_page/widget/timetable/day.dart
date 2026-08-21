@@ -71,7 +71,11 @@ final class const TimetableDayWidget()
               session.instance.endings.last.timing,
             ) &&
             !cache.hasDayBaseSchedules(selectedDate)) {
-          return [.schedules(selectedDate)];
+          return [
+            TimetableHomePageRequest(
+              dates: DateRange(start: selectedDate, end: selectedDate),
+            ),
+          ];
         }
 
         return [];
@@ -130,7 +134,13 @@ final class const TimetableDayWidget()
     WidgetArguments<WidgetArgument> args,
   ) {
     final day = args.get(TimetableDayArgument.day);
-    if (!cache.hasDayBaseSchedules(day)) return [.schedules(day)];
+    if (!cache.hasDayBaseSchedules(day)) {
+      return [
+        TimetableHomePageRequest(
+          dates: DateRange(start: day, end: day),
+        ),
+      ];
+    }
 
     return [];
   }

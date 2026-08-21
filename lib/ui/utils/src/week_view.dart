@@ -50,7 +50,7 @@ final class WeekMappedViewConfiguration {
   ];
 
   List<DateRange> daysToRangeList(
-    List<DateTime> days,
+    List<Date> days,
     SpecificInstanceParameters parameters,
   ) {
     // We need to align the groups by week in this case.

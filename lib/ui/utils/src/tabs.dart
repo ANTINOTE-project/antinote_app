@@ -1,3 +1,4 @@
+import 'package:antinote_api/antinote_api.dart';
 import 'package:antinote_app/ui/screens/communication/screen.dart';
 import 'package:antinote_app/ui/screens/grades/screen.dart';
 import 'package:antinote_app/ui/screens/home/screen.dart';
@@ -31,28 +32,32 @@ List<TabDestination> buildTabs(BuildContext context) {
       label: context.l10n.timetable,
       screen: const TimetableScreen(),
       category: .timetable,
-      tabs: [16, 88, 89],
+      tabs: [TimetableAccessor.pageId],
     ),
     (
       icon: HugeIconsSolid.graduateMale,
       label: context.l10n.grades,
       screen: const GradesScreen(),
       category: .grades,
-      tabs: [13, 41, 198],
+      tabs: [
+        LatestGradesPageAccessor.pageId,
+        ReportSection.clazz.pageId,
+        ReportSection.student.pageId,
+      ],
     ),
     (
       icon: HugeIconsSolid.task01,
       label: context.l10n.homeworks,
       screen: const HomeworksScreen(),
       category: .homeworks,
-      tabs: [88],
+      tabs: [NotebookSection.homework.pageId, NotebookSection.resources.pageId],
     ),
     (
       icon: HugeIconsSolid.inbox,
       label: context.l10n.communication,
       screen: const CommunicationScreen(),
       category: .communication,
-      tabs: [8, 131],
+      tabs: [NewsPageAccessor.pageId, DiscussionPageAccessor.pageId],
     ),
   ];
 }

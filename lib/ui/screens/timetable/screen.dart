@@ -516,8 +516,8 @@ class _TimetableDisplayState extends State<TimetableDisplay>
 
   int ensureCorrectConfiguration() {
     final days = DateRange(
-      start: _scheduleDisplayData.firstDate,
-      end: _scheduleDisplayData.lastDate,
+      start: _scheduleDisplayData.firstDate.toDay(),
+      end: _scheduleDisplayData.lastDate.toDay(),
     ).listDays();
 
     final daysConfiguration = widget.configurations.pickConfig(context);

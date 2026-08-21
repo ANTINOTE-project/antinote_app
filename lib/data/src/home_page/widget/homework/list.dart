@@ -62,7 +62,11 @@ final class const HomeworkListWidget()
           final day = today.add(Duration(days: i)).toDay();
 
           if (!cache.hasHomeworksForDay(day)) {
-            return const [HomePageRequest.homework()];
+            return [
+              HomeworkHomePageRequest(
+                dates: DateRange(start: day, end: day),
+              ),
+            ];
           }
         }
 
@@ -136,7 +140,11 @@ final class const HomeworkListWidget()
       final day = today.add(Duration(days: i)).toDay();
 
       if (!cache.hasHomeworksForDay(day)) {
-        return const [HomePageRequest.homework()];
+        return [
+          HomeworkHomePageRequest(
+            dates: DateRange(start: day, end: day),
+          ),
+        ];
       }
     }
 
@@ -153,14 +161,14 @@ final class const HomeworkListWidget()
   Widget buildSliver(
     BuildContext context,
     HomePageWidgetState<
-      Map<Date, List<Homework>>,
-      HomeworkListArgument<dynamic>,
-      HomeworkListParameter<dynamic>
+      dynamic,
+      WidgetArgument<dynamic>,
+      WidgetParameter<dynamic>
     >
     state,
     Map<Date, List<Homework>> value,
   ) {
-    return Text(value.length.toString());
+    return SliverToBoxAdapter(child: Text(value.length.toString()));
   }
 
   @override

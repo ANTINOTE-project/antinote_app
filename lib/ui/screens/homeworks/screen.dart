@@ -47,7 +47,7 @@ class _HomeworksScreenState extends State<HomeworksScreen>
   Future<void> _updateHomeworks(int week, {RemoteSession? session}) async {
     Future<void> update(RemoteSession session) async {
       final weekStart = session.instance.getDateForWeekNumber(week);
-      final weekEnd = weekStart.add(const Duration(days: 6));
+      final weekEnd = weekStart.add(const Duration(days: 6)).toDay();
       final days = DateRange(start: weekStart, end: weekEnd).listDays();
 
       for (final day in days) {
@@ -135,7 +135,7 @@ class _HomeworksScreenState extends State<HomeworksScreen>
                 weekEnd.millisecondsSinceEpoch,
               ),
               isUtc: true,
-            ),
+            ).toDay(),
           ).listDays();
 
           final bool loaded = days.every(
@@ -245,8 +245,8 @@ class _HomeworksScreenState extends State<HomeworksScreen>
 
     if (_pageController == null) {
       for (final day in DateRange(
-        start: session.instance.firstDate,
-        end: session.instance.lastDate,
+        start: session.instance.firstDate.toDay(),
+        end: session.instance.lastDate.toDay(),
       ).listDays()) {
         _homeworks[day] = ValueNotifier(null);
       }
