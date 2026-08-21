@@ -1,10 +1,6 @@
 # ANTINOTE App
 
-> [!IMPORTANT]
-> Le projet ANTINOTE n'est en aucun cas lié à Index-Education.
- 
-> [!NOTE]
-> L'utilisation de ce logiciel est régie par la licence
+> Le projet ANTINOTE n'est en aucun cas lié à Index-Education. L'utilisation de ce logiciel est régie par la licence
 > MIT ; il est fourni "en l'état", sans garantie d'aucune sorte quant à son utilisation.
 
 Votre emploi du temps, vos notes, vos devoirs et vos messages à portée de main, c'est
@@ -15,19 +11,18 @@ notre intégration profonde au système d'exploitation, nous sommes capables de 
 fonctionnalités poussées :
 
 - [x] Comptes chiffrés et sécurisés par biométrie
-- [x] Mise à jour des données en arrière-plan <b>*</b>
-- [x] Calendrier dans l'application du téléphone <b>*</b>
-- [ ] Notifications <b>*</b> (Coming Soon™)
-- [ ] Widgets <b>*</b> (Coming *less* Soon™)
+- [x] Mise à jour des données en arrière-plan*
+- [x] Calendrier dans l'application du téléphone*
+- [ ] Notifications* (Coming Soon™)
+- [ ] Widgets* (Coming *less* Soon™)
 
-> [!NOTE]
-> <b>*</b> quand non-chiffré
+_* quand compte non-chiffré_
 
 Nous supportons également les fonctionnalités principales de PRONOTE dans l'application :
 
-- [x] Page d'accueil
-- [x] Emploi du Temps
-- [x] Notes
+- [x] Page d'accueil (avec widgets personnalisables selon les événements de la journée)
+- [x] Emploi du Temps (vue multi-jours sur plus grands écrans)
+- [x] Notes (avec bulletins)
 - [x] Travail à Faire
 - [x] Discussions
 - [x] Informations et Sondages (problèmes de stabilité liés à la version 2026...)
