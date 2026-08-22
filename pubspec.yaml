@@ -9,6 +9,7 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
+
   flutter_localizations:
     sdk: flutter
 
@@ -43,9 +44,8 @@ dependencies:
   #  cryptography_flutter_plus: ^3.0.2 # So that cryptography_plus in antinote is faster.
 
   material_ui: any
+
 dependency_overrides:
-  antinote_api:
-    path: ../antinote
   dynamic_color:
     git:
       url: "https://github.com/helomri/flutter-packages.git"
@@ -55,8 +55,8 @@ dependency_overrides:
 dev_dependencies:
   flutter_test:
     sdk: flutter
-  flutter_lints: ^6.0.0
 
+  flutter_lints: ^6.0.0
   pigeon: ^27.1.0
 
 flutter:
