@@ -142,9 +142,11 @@ final class SyncRequestManager extends SyncManager {
         } on SessionException {
           return SyncResponse(result: .failure);
         } finally {
-          final newData = data
-            ..lastSynced = Timestamp.fromDateTime(DateTime.timestamp())
-            ..freeze();
+          final newData = data.rebuild(
+            (oldData) => oldData.lastSynced = Timestamp.fromDateTime(
+              DateTime.timestamp(),
+            ),
+          );
           if (index != -1) {
             account = account.rebuild((acc) => acc..syncData[index] = newData);
           } else {

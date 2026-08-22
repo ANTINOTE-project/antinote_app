@@ -218,14 +218,14 @@ class SessionManagementService : Service() {
     private fun advertisePollingJob(accountId: String) {
         Log.i(TAG, "Advertising polling job...")
 
-        val msg = Message.obtain(null, MSG_ASK_TO_TAKE_POLLING)
-        msg.data.putBoolean("confirmed", false)
-        msg.data.putString("account", accountId)
-        msg.replyTo = messenger
-
         for (client in clients) {
             if (client.value.listenedAccounts?.contains(accountId) ?: false) {
                 Log.i(TAG, "Sending ad to client ${client.key}")
+                val msg = Message.obtain(null, MSG_ASK_TO_TAKE_POLLING)
+                msg.data.putBoolean("confirmed", false)
+                msg.data.putString("account", accountId)
+                msg.replyTo = messenger
+
                 client.value.dest.send(msg)
             }
         }
@@ -248,15 +248,15 @@ class SessionManagementService : Service() {
     private fun sendAccountUpdate(accountId: String, newServerSignature: String?) {
         val manager = createOrGetManager(accountId)
 
-        val msg = Message.obtain(null, MSG_POLLING_UPDATED)
-        msg.data.putString("account", accountId)
-        msg.data.putInt("polling_state", manager.pollingState.raw)
-        if (newServerSignature != null) {
-            msg.data.putString("server_signature", newServerSignature)
-        }
-
         for (client in clients) {
             if (client.value.listenedAccounts?.contains(accountId) ?: false) {
+                val msg = Message.obtain(null, MSG_POLLING_UPDATED)
+                msg.data.putString("account", accountId)
+                msg.data.putInt("polling_state", manager.pollingState.raw)
+                if (newServerSignature != null) {
+                    msg.data.putString("server_signature", newServerSignature)
+                }
+
                 client.value.dest.send(msg)
             }
         }
