@@ -12,8 +12,8 @@ import 'package:antinote_app/data/src/session/wrapper.dart';
 import 'package:antinote_app/data/src/settings/networking.dart';
 import 'package:antinote_app/data/src/sync/polling_manager.dart';
 import 'package:flutter/foundation.dart';
-import 'package:material_ui/material_ui.dart';
 import 'package:logging/logging.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:protobuf/well_known_types/google/protobuf/any.pb.dart';
 import 'package:protobuf/well_known_types/google/protobuf/timestamp.pb.dart';
 
@@ -142,10 +142,9 @@ final class SyncRequestManager extends SyncManager {
         } on SessionException {
           return SyncResponse(result: .failure);
         } finally {
-          final newData = data.rebuild(
-            (data) =>
-                data..lastSynced = Timestamp.fromDateTime(DateTime.timestamp()),
-          );
+          final newData = data
+            ..lastSynced = Timestamp.fromDateTime(DateTime.timestamp())
+            ..freeze();
           if (index != -1) {
             account = account.rebuild((acc) => acc..syncData[index] = newData);
           } else {
