@@ -1,6 +1,4 @@
 import 'dart:async';
-import 'dart:math' as math;
-import 'dart:ui';
 
 import 'package:antinote_api/antinote_api.dart';
 import 'package:antinote_app/ui/screens/shell/tab.dart';
@@ -363,55 +361,6 @@ class _Averages extends StatelessWidget {
                     ),
                   ],
                 ),
-
-                Column(
-                  spacing: 12,
-
-                  children: data == null
-                      ? [
-                          const SizedBox(height: 58),
-                          const Bone.text(width: 200, style: style),
-                        ]
-                      : [
-                          TweenAnimationBuilder<double>(
-                            key: ValueKey(data!.exams.length),
-                            tween: Tween(begin: 0.5, end: 1.0),
-
-                            duration: const Duration(milliseconds: 1500),
-                            curve: Curves.easeOutExpo,
-
-                            builder: (context, value, _) {
-                              return SizedBox(
-                                height: 40,
-
-                                child: ClipRect(
-                                  child: CustomPaint(
-                                    size: const Size(double.infinity, 40),
-
-                                    painter: _GradesCurvePainter(
-                                      color: context.c.tertiary,
-                                      progress: value,
-
-                                      values: data!.exams
-                                          .where(
-                                            (e) =>
-                                                e.selfGrade.type ==
-                                                GradeType.note,
-                                          )
-                                          .map((e) => e.selfGrade.value)
-                                          .toList()
-                                          .reversed
-                                          .toList(),
-                                    ),
-                                  ),
-                                ),
-                              );
-                            },
-                          ),
-
-                          Text(context.l10n.gradesHistory, style: style),
-                        ],
-                ),
               ],
             ),
           ),
@@ -476,73 +425,6 @@ class _AverageText extends StatelessWidget {
           : [],
     );
   }
-}
-
-class _GradesCurvePainter extends CustomPainter {
-  final List<double> values;
-  final double progress;
-  final Color color;
-
-  const _GradesCurvePainter({
-    required this.values,
-    required this.progress,
-    required this.color,
-  });
-
-  @override
-  void paint(Canvas canvas, Size size) {
-    if (values.length < 2) return;
-
-    final min = values.reduce(math.min);
-    final max = values.reduce(math.max);
-
-    final range = (max - min).clamp(1.0, double.infinity);
-
-    final paint = Paint()
-      ..color = color
-      ..strokeWidth = 4
-      ..style = PaintingStyle.stroke
-      ..strokeCap = StrokeCap.round;
-
-    final path = Path();
-
-    final List<Offset> offsets = [];
-
-    for (var i = 0; i < values.length; i++) {
-      final x = i / (values.length - 1) * size.width;
-
-      final yFinal = size.height - ((values[i] - min) / range * size.height);
-      final y = lerpDouble(size.height, yFinal, progress)!;
-
-      offsets.add(Offset(x, y));
-    }
-
-    for (var i = 0; i < offsets.length; i++) {
-      final offset = offsets[i];
-
-      // first
-      if (i == 0) {
-        path.moveTo(offset.dx, offset.dy);
-
-        // last
-      } else if (i == values.length - 1) {
-        path.lineTo(offset.dx, offset.dy);
-
-        // normal
-      } else {
-        final nextOffset = offsets[i + 1];
-        final center = (offset + nextOffset) / 2;
-
-        path.quadraticBezierTo(offset.dx, offset.dy, center.dx, center.dy);
-      }
-    }
-
-    canvas.drawPath(path, paint);
-  }
-
-  @override
-  bool shouldRepaint(_GradesCurvePainter old) =>
-      old.values != values || old.progress != progress;
 }
 
 class _LatestGrades extends StatelessWidget {
