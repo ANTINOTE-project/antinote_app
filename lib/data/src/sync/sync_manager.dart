@@ -199,6 +199,7 @@ final class SyncRequestManager extends SyncManager {
       storage: registry.storage,
       options: registry.settings.sessionOptions,
       debugLabel: 'Run sync calendar task',
+      retry: true,
     );
 
     final existingCalendars = await _calendarManager.listCalendars(
