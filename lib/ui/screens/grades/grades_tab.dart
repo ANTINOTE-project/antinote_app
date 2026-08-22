@@ -64,7 +64,7 @@ Future<void> showExamDetails(BuildContext context, Exam exam) async {
     if (exam.maxGrade != null)
       (
         label: context.l10n.bestGrade,
-        icon: HugeIconsSolid.plusSign,
+        icon: HugeIconsSolid.crown03,
         grade: exam.maxGrade,
         theoreticalMaxGrade: exam.theoreticalMaxGrade,
         defaultMaxGrade: exam.defaultMaxGrade,
@@ -75,7 +75,7 @@ Future<void> showExamDetails(BuildContext context, Exam exam) async {
     if (exam.minGrade != null)
       (
         label: context.l10n.worstGrade,
-        icon: HugeIconsSolid.minusSign,
+      icon: HugeIconsStroke.crying,
         grade: exam.minGrade,
         theoreticalMaxGrade: exam.theoreticalMaxGrade,
         defaultMaxGrade: exam.defaultMaxGrade,
