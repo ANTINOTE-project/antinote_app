@@ -65,6 +65,7 @@ android {
     }
 
     flavorDimensions.add("default")
+    flavorDimensions.add("store")
 
     productFlavors {
         create("dev") {
@@ -78,6 +79,15 @@ android {
         create("prod") {
             dimension = "default"
             resValue("string", "app_name", "ANTINOTE")
+        }
+
+        create("playstore") {
+            dimension = "store"
+            versionNameSuffix = "-play"
+        }
+
+        create("independent") {
+            dimension = "store"
         }
     }
 }

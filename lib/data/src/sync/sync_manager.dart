@@ -117,7 +117,8 @@ final class SyncRequestManager extends SyncManager {
       for (final task in tasks)
         task: account.syncData.indexed.firstWhere(
           (element) => element.$2.type == task,
-          orElse: () => (-1, SyncTaskData(type: task, enabled: false)),
+          orElse: () =>
+              (-1, SyncTaskData(type: task, enabled: false)..freeze()),
         ),
     };
 

@@ -3,4 +3,7 @@ generate-code:
 	sh pigeons/run.sh
 
 build-release-apk:
-	flutter build apk --flavor=prod --split-per-abi --obfuscate --split-debug-info=./debug-info
+	env ORG_GRADLE_PROJECT_dev.steenbakker.mobile_scanner.useUnbundled=false flutter build apk --flavor=prodindependent --split-per-abi --obfuscate --split-debug-info=./debug-info
+
+build-playstore-release-apk:
+	env ORG_GRADLE_PROJECT_dev.steenbakker.mobile_scanner.useUnbundled=true flutter build apk --flavor=prodplaystore --split-per-abi --obfuscate --split-debug-info=./debug-info
