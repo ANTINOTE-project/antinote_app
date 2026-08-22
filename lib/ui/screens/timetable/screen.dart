@@ -23,7 +23,8 @@ class _TimetableScreenState extends State<TimetableScreen> {
   Future<Map<DateTime, DayBlocks>> update(
     RemoteSession session,
     DateRange days,
-    List<DateTime> dayList,
+    List<Date> dayList,
+    bool forceReload,
   ) async {
     final loadedDays = {for (final day in dayList) day: <Class>[]};
 
@@ -59,7 +60,8 @@ class const TimetableDisplay({
   required final Future<Map<DateTime, DayBlocks>> Function(
     RemoteSession session,
     DateRange days,
-    List<DateTime> businessDays,
+    List<Date> businessDays,
+    bool forceReload,
   )
   updateBlocks,
 
@@ -114,7 +116,11 @@ class _TimetableDisplayState extends State<TimetableDisplay>
     }
   }
 
-  Future<void> _updateClasses(DateRange days, {RemoteSession? session}) async {
+  Future<void> _updateClasses(
+    DateRange days, {
+    RemoteSession? session,
+    required bool forceReload,
+  }) async {
     final dayList = days.listDays();
 
     for (final day in days.listDays()) {
@@ -132,12 +138,12 @@ class _TimetableDisplayState extends State<TimetableDisplay>
 
     try {
       if (session != null) {
-        result = await widget.updateBlocks(session, days, dayList);
+        result = await widget.updateBlocks(session, days, dayList, forceReload);
       } else {
         result = await context.ar.runTask(
           context: context,
           callback: (session) async =>
-              await widget.updateBlocks(session, days, dayList),
+              await widget.updateBlocks(session, days, dayList, forceReload),
           debugLabel: 'Fetch classes for ${days.toString()}',
         );
       }
@@ -535,7 +541,9 @@ class _TimetableDisplayState extends State<TimetableDisplay>
       _currentGroups = newGroups;
 
       final selectedBaseDate =
-          widget.baseDate ?? _scheduleDisplayData.nextBusinessDay;
+          widget.baseDate ??
+          _scheduleDisplayData.demoDateTime?.toDay() ??
+          _scheduleDisplayData.nextBusinessDay;
 
       libLog.info('Initializing timetable with base date $selectedBaseDate');
 
@@ -618,6 +626,10 @@ class _TimetableDisplayState extends State<TimetableDisplay>
 
     final currentGroupIndex = ensureCorrectConfiguration();
 
-    await _updateClasses(_currentGroups[currentGroupIndex], session: session);
+    await _updateClasses(
+      _currentGroups[currentGroupIndex],
+      session: session,
+      forceReload: loaded,
+    );
   }
 }

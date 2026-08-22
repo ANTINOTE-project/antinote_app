@@ -30,32 +30,41 @@ class _AppState extends State<App> {
           registry: widget.registry,
 
           child: DynamicColorBuilder(
-            builder: (dynamicLight, dynamicDark) {
+            customBuilder: (schemes) {
               final dynamic = widget.registry.theme.isDynamic;
 
               final ThemeData light;
+              final ThemeData lightHighContrast;
               final ThemeData dark;
+              final ThemeData darkHighContrast;
 
               if (dynamic) {
                 light = widget.registry.theme.create(
-                  dynamicLight ?? widget.registry.theme.light,
+                  schemes?.light ?? widget.registry.theme.light,
+                );
+                lightHighContrast = widget.registry.theme.create(
+                  schemes?.lightHighContrast ??
+                      widget.registry.theme.lightHighContrast,
                 );
                 dark = widget.registry.theme.create(
-                  dynamicDark ?? widget.registry.theme.dark,
+                  schemes?.dark ?? widget.registry.theme.dark,
+                );
+                darkHighContrast = widget.registry.theme.create(
+                  schemes?.darkHighContrast ??
+                      widget.registry.theme.darkHighContrast,
                 );
               } else {
                 light = widget.registry.theme.create(
                   widget.registry.theme.light,
                 );
+                lightHighContrast = widget.registry.theme.create(
+                  widget.registry.theme.lightHighContrast,
+                );
                 dark = widget.registry.theme.create(widget.registry.theme.dark);
+                darkHighContrast = widget.registry.theme.create(
+                  widget.registry.theme.darkHighContrast,
+                );
               }
-
-              final lightHighContrast = widget.registry.theme.create(
-                widget.registry.theme.lightHighContrast,
-              );
-              final darkHighContrast = widget.registry.theme.create(
-                widget.registry.theme.darkHighContrast,
-              );
 
               return MaterialApp(
                 debugShowCheckedModeBanner: false,

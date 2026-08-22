@@ -361,16 +361,28 @@ final class const HomeworkHomePageRequest({
 
   @override
   List<HomePageModuleRequest>? listModules(RemoteSession session) {
-    final today = DateTime.now().toDay(true);
+    final rangeStart =
+        session.instance.demoDateTime?.toDay() ?? DateTime.now().toDay(true);
+    final rangeEnd = rangeStart.add(const Duration(days: 6)).toDay();
 
-    if (dates.start.isBefore(today) ||
-        dates.end.isAfter(today.add(const Duration(days: 6)))) {
+    if (dates.start.isBefore(rangeStart) || dates.end.isAfter(rangeEnd)) {
       // The widget only returns the homeworks for the next 7 days, we can't use
       // home page modules if we try to get homeworks outside that range.
       return null;
     }
 
-    return super.listModules(session);
+    return [
+      HomePageModuleRequest(
+        module: TravailAFaire.module(),
+        applyCallback: (page, session, cache) => apply(
+          page.widgets.whereType<TravailAFaire>().singleOrNull?.homeworks ?? [],
+          DateRange(start: rangeStart, end: rangeEnd).listDays().toSet(),
+          session,
+          cache,
+        ),
+        value: 1,
+      ),
+    ];
   }
 
   @override
@@ -586,7 +598,7 @@ final class HomePageWidgetState<
 final class HomePageManager() {
   bool initialized = false;
 
-  late HomePageCache _cache;
+  late HomePageCache cache;
 
   late final List<HomePageWidgetState> loadedWidgets;
 
@@ -602,13 +614,13 @@ final class HomePageManager() {
   }) async {
     assert(loadedWidgets.contains(widget));
 
-    if (!force && _cache.sessionId != session.stack.sessionId) {
+    if (!force && cache.sessionId != session.stack.sessionId) {
       return widget;
     }
 
     final tempCache = HomePageCache.recycle(
       sessionId: session.stack.sessionId,
-      existing: _cache,
+      existing: cache,
     );
 
     final loaded = (await _loadWidgetConfigurations(
@@ -617,7 +629,7 @@ final class HomePageManager() {
       cache: tempCache,
     )).singleOrNull;
 
-    _cache.applyCache(tempCache);
+    cache.applyCache(tempCache);
 
     if (loaded == null) return null;
 
@@ -638,7 +650,7 @@ final class HomePageManager() {
     final l10n = context.l10n;
     final settings = context.s;
 
-    _cache = HomePageCache(
+    cache = HomePageCache(
       sessionId: session.stack.sessionId,
       anchorTime: session.stack.demo ? session.instance.demoDateTime : null,
     );
@@ -674,7 +686,7 @@ final class HomePageManager() {
     loadedWidgets = await _loadWidgetConfigurations(
       session: session,
       widgets: entries,
-      cache: _cache,
+      cache: cache,
     );
   }
 
@@ -694,11 +706,11 @@ final class HomePageManager() {
         }
 
         final curRequests = candidate.criterion!.requestsUntilRequirements(
-          _cache,
+          cache,
         );
 
         if (curRequests.isEmpty) {
-          if (await candidate.criterion!.meetsRequirement(_cache)) {
+          if (await candidate.criterion!.meetsRequirement(cache)) {
             return candidate;
           } else {
             continue;
@@ -712,7 +724,7 @@ final class HomePageManager() {
       candidates.clear();
       candidates.addAll(newCandidates);
 
-      await _cache.runBestRequest(session, requests);
+      await cache.runBestRequest(session, requests);
     }
 
     return null;

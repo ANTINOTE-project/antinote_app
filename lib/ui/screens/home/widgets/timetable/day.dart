@@ -1,12 +1,11 @@
-import 'package:antinote_api/antinote_api.dart';
 import 'package:antinote_app/data/src/home_page/manager.dart';
 import 'package:antinote_app/data/src/home_page/widget/widget.dart';
 import 'package:antinote_app/ui/screens/home/screen.dart';
 import 'package:antinote_app/ui/screens/timetable/events/block.dart';
 import 'package:antinote_app/ui/screens/timetable/screen.dart';
 import 'package:antinote_app/ui/utils/utils.dart';
-import 'package:material_ui/material_ui.dart';
 import 'package:hugeicons_pro/hugeicons.dart';
+import 'package:material_ui/material_ui.dart';
 
 class const TimetableDayWidgetSliver({
   super.key,
@@ -22,31 +21,31 @@ class const TimetableDayWidgetSliver({
         child: ConstrainedBox(
           constraints: .new(maxHeight: MediaQuery.heightOf(context) * .6),
           child: TimetableDisplay(
-            baseDate: state.overrideArguments.get(TimetableDayArgument.day),
+            baseDate: state.reloadArguments.get(TimetableDayArgument.day),
             normalPicker: false,
             transparent: true,
 
-            updateBlocks: (session, days, businessDays) async {
-              // TODO: Add check whether the day is already loaded inside value
-
+            updateBlocks: (session, days, businessDays, forceReload) async {
               final manager = HomePageScope.of(context).manager;
 
-              if (businessDays.isNotEmpty) {
-                state.overrideArguments.set(
-                  TimetableDayArgument.day,
-                  businessDays.first.toDay(),
-                );
-
-                final newState = await manager.reloadWidget(
-                  session,
-                  state,
-                  force: true,
-                );
-
-                return {businessDays.first: newState?.value ?? []};
+              final day = businessDays.firstOrNull;
+              if (day == null) {
+                return {};
               }
 
-              return {businessDays.first: []};
+              if (!forceReload && manager.cache.hasDayBaseSchedules(day)) {
+                return {day: manager.cache.dayBlocks(day)};
+              }
+
+              state.overrideArguments.set(TimetableDayArgument.day, day);
+
+              final newState = await manager.reloadWidget(
+                session,
+                state,
+                force: true,
+              );
+
+              return {day: newState?.value ?? []};
             },
             configurations: const [.dayConfig],
           ),
