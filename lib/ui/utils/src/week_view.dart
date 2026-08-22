@@ -1,6 +1,6 @@
 import 'package:antinote_api/antinote_api.dart';
 import 'package:antinote_app/ui/utils/src/date.dart';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 
 typedef Arrangement<T> = Map<DateTime, T>;
 

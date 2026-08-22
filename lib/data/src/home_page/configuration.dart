@@ -6,7 +6,7 @@ import 'package:antinote_app/data/src/home_page/widget/configuration.dart';
 import 'package:antinote_app/data/src/state.dart';
 import 'package:antinote_app/ui/utils/utils.dart';
 import 'package:collection/collection.dart';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:uuid/v4.dart';
 
 final class const HomePageConfiguration({

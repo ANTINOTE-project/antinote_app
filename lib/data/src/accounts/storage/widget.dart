@@ -1,5 +1,5 @@
 import 'package:antinote_app/data/src/accounts/registry.dart';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 
 class AccountScope extends InheritedWidget {
   const AccountScope({super.key, required this.registry, required super.child});

@@ -4,7 +4,7 @@ import 'package:antinote_app/ui/widgets/customs/list.dart';
 import 'package:antinote_app/ui/widgets/customs/loading.dart';
 import 'package:antinote_app/ui/widgets/text_icon.dart';
 import 'package:collection/collection.dart';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 
 Future<void> showMealModal(BuildContext context, DateTime date) async {
   final mealCallback = context.ar.runTask<Menu?>(

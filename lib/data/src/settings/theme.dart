@@ -1,6 +1,6 @@
 import 'package:antinote_app/data/src/settings/category.dart';
 import 'package:antinote_app/ui/screens/settings/screen.dart';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 
 class ThemeSettings extends SettingsCategory {
   @override

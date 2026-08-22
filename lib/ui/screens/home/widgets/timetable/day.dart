@@ -5,7 +5,7 @@ import 'package:antinote_app/ui/screens/home/screen.dart';
 import 'package:antinote_app/ui/screens/timetable/events/block.dart';
 import 'package:antinote_app/ui/screens/timetable/screen.dart';
 import 'package:antinote_app/ui/utils/utils.dart';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:hugeicons_pro/hugeicons.dart';
 
 class const TimetableDayWidgetSliver({

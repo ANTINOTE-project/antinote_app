@@ -1,12 +1,11 @@
 import 'package:antinote_api/antinote_api.dart';
 import 'package:antinote_app/data/data.dart';
-import 'package:antinote_app/data/protos/account.pb.dart';
 import 'package:antinote_app/data/src/accounts/registry.dart';
 import 'package:antinote_app/data/src/accounts/storage/widget.dart';
 import 'package:antinote_app/data/src/settings/registry.dart';
 import 'package:antinote_app/ui/app.dart';
 import 'package:antinote_app/ui/screens/shell/shell.dart';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:logging/logging.dart';
 
 Future<void> mainEntrypoint() async {

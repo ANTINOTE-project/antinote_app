@@ -1,8 +1,7 @@
 import 'package:antinote_app/data/src/settings/registry.dart';
 import 'package:antinote_app/ui/l10n/app_localizations.dart';
 import 'package:dynamic_color/dynamic_color.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:material_ui/material_ui.dart';
 
 class App extends StatefulWidget {
   final SettingsRegistry registry;
@@ -68,14 +67,7 @@ class _AppState extends State<App> {
                 highContrastTheme: lightHighContrast,
                 darkTheme: dark,
                 highContrastDarkTheme: darkHighContrast,
-
-                localizationsDelegates: const [
-                  AppLocalizations.delegate,
-                  GlobalMaterialLocalizations.delegate,
-                  GlobalWidgetsLocalizations.delegate,
-                  GlobalCupertinoLocalizations.delegate,
-                ],
-
+                localizationsDelegates: AppLocalizations.localizationsDelegates,
                 supportedLocales: AppLocalizations.supportedLocales,
               );
             },

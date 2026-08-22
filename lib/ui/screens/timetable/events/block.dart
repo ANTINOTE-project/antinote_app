@@ -8,7 +8,7 @@ import 'package:antinote_app/ui/screens/timetable/events/pause/widget.dart';
 import 'package:antinote_app/ui/widgets/pressable.dart';
 import 'package:collection/collection.dart';
 import 'package:flutter/foundation.dart';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 
 import '../../../utils/utils.dart';
 

@@ -106,7 +106,7 @@ final class const TimetableDayWidget()
           final currentState = cache
               .dayAppStates(selectedDate)
               .firstWhereOrNull(
-                (element) => element.range.contains(cache.anchorTime),
+                (state) => state.range.contains(cache.anchorTime),
               );
 
           if (currentState?.classRelation == .after) {

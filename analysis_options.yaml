@@ -39,5 +39,10 @@ linter:
     use_key_in_widget_constructors: true
     prefer_final_fields: true
 
+    implementation_imports: error
+
+code-style:
+  format: true
+
 formatter:
   page_width: 80

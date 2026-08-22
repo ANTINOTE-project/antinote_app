@@ -1,6 +1,6 @@
 import 'package:antinote_app/ui/utils/utils.dart';
 import 'package:antinote_app/ui/widgets/pressable.dart';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 
 enum ButtonVariant { primary, secondary, tertiary, dangerous }
 

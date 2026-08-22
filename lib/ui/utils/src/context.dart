@@ -3,7 +3,7 @@ import 'package:antinote_app/data/src/accounts/storage/widget.dart';
 import 'package:antinote_app/data/src/settings/registry.dart';
 import 'package:antinote_app/ui/l10n/app_localizations.dart';
 import 'package:antinote_app/ui/screens/shell/shell.dart';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 
 extension BuildContextExtensions on BuildContext {
   ColorScheme get c => ColorScheme.of(this);

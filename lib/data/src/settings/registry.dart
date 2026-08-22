@@ -2,7 +2,7 @@ import 'package:antinote_app/data/src/settings/category.dart';
 import 'package:antinote_app/data/src/settings/home_page.dart';
 import 'package:antinote_app/data/src/settings/networking.dart';
 import 'package:antinote_app/data/src/settings/theme.dart';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 
 class SettingsScope extends InheritedWidget {
   const SettingsScope({

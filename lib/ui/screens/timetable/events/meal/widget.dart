@@ -3,7 +3,7 @@ import 'package:antinote_app/ui/screens/timetable/events/block.dart';
 import 'package:antinote_app/ui/screens/timetable/events/meal/modal.dart';
 import 'package:antinote_app/ui/utils/utils.dart';
 import 'package:antinote_app/ui/widgets/pressable.dart';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:hugeicons_pro/hugeicons.dart';
 
 class MealBlockWidget extends StatelessWidget {

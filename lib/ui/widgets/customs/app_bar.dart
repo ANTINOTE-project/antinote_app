@@ -1,5 +1,5 @@
 import 'package:antinote_app/ui/utils/utils.dart';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:hugeicons_pro/hugeicons.dart';
 
 class AppBarWidget extends StatelessWidget implements PreferredSizeWidget {

@@ -1,6 +1,6 @@
 import 'package:antinote_app/ui/screens/timetable/events/block.dart';
 import 'package:antinote_app/ui/utils/utils.dart';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 
 class PauseBlockWidget extends StatelessWidget {
   const PauseBlockWidget({

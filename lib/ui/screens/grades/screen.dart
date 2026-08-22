@@ -6,7 +6,7 @@ import 'package:antinote_app/ui/screens/grades/report_tab.dart';
 import 'package:antinote_app/ui/screens/shell/tab.dart';
 import 'package:antinote_app/ui/utils/utils.dart';
 import 'package:collection/collection.dart';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 
 class GradesScreen extends StatefulWidget {
   const GradesScreen({super.key});

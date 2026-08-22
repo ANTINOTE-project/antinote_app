@@ -1,7 +1,7 @@
 import 'package:antinote_app/data/src/accounts/storage/native.dart';
 import 'package:antinote_app/data/src/accounts/storage/preferences.dart';
 import 'package:antinote_app/data/protos/account.pb.dart';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 
 abstract class AccountStorage {
   const AccountStorage();

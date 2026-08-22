@@ -1,5 +1,5 @@
 import 'package:antinote_app/ui/utils/utils.dart';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:flutter/services.dart';
 
 class IconWidget extends StatefulWidget {

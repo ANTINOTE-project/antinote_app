@@ -2,7 +2,7 @@ import 'package:antinote_api/antinote_api.dart';
 import 'package:antinote_app/data/data.dart';
 import 'package:antinote_app/data/src/pigeon_posts/native_calendar.g.dart';
 import 'package:antinote_app/ui/utils/src/class.dart';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:rrule/rrule.dart';
 
 final class _ClassInstanceEvent {

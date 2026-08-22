@@ -1,8 +1,8 @@
-// Credit: https://stackoverflow.com/a/68847631 (by Raul Mabe)
 import 'package:intl/intl.dart';
 
-export 'package:flutter/material.dart' show DateTimeRange;
+export 'package:material_ui/material_ui.dart' show DateTimeRange;
 
+/// Credit: https://stackoverflow.com/a/68847631 (by Raul Mabe)
 extension IterableExt<T> on Iterable<T> {
   Iterable<T> superJoin(T separator) {
     final iterator = this.iterator;

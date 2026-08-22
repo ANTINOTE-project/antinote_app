@@ -6,7 +6,7 @@ import 'package:antinote_app/data/src/accounts/storage/widget.dart';
 import 'package:antinote_app/data/src/settings/registry.dart';
 import 'package:antinote_app/ui/app.dart';
 import 'package:antinote_app/ui/screens/auth/lists/methods_list.dart';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:logging/logging.dart';
 
 Future<void> loginEntrypoint() async {

@@ -6,8 +6,8 @@ import 'package:antinote_app/ui/screens/timetable/events/block.dart';
 import 'package:antinote_app/ui/utils/utils.dart';
 import 'package:antinote_app/ui/widgets/customs/loading.dart';
 import 'package:collection/collection.dart';
-import 'package:flutter/material.dart';
 import 'package:hugeicons_pro/hugeicons.dart';
+import 'package:material_ui/material_ui.dart';
 
 typedef RelevantSlots = ({int firstSlot, int lastSlot});
 typedef Classes = Map<DateTime, ValueNotifier<DayBlocks?>>;
@@ -63,7 +63,7 @@ class const TimetableDisplay({
   )
   updateBlocks,
 
-  final DateTime? baseDate,
+  final Date? baseDate,
 
   final bool scrollable = true,
   final bool transparent = false,
@@ -85,7 +85,7 @@ class _TimetableDisplayState extends State<TimetableDisplay>
   bool _animating = false;
   int? _lastPage;
 
-  Future<void> _animateToDay(DateTime day) async {
+  Future<void> _animateToDay(Date day) async {
     final index = _currentGroups.indexWhere((element) => element.contains(day));
 
     _animating = true;

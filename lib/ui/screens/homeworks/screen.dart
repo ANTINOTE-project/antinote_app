@@ -10,7 +10,7 @@ import 'package:antinote_app/ui/widgets/customs/loading.dart';
 import 'package:antinote_app/ui/widgets/pressable.dart';
 import 'package:antinote_app/ui/widgets/remote_html.dart';
 import 'package:collection/collection.dart';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:hugeicons_pro/hugeicons.dart';
 
 typedef Homeworks = Map<DateTime, ValueNotifier<List<Homework>?>>;

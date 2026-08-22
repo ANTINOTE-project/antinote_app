@@ -42,6 +42,7 @@ dependencies:
   # Disabled because it doesn't play nicely with R8
   #  cryptography_flutter_plus: ^3.0.2 # So that cryptography_plus in antinote is faster.
 
+  material_ui: any
 dependency_overrides:
   antinote_api:
     path: ../antinote
