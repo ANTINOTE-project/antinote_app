@@ -33,8 +33,8 @@
 
   "disableAutoLogin": "Disable auto-login",
   "enableAutoLogin": "Enable auto-login",
-  "choseAnAccount": "Pick an account",
-  "addAnAccount": "Add an account",
+  "choseAnAccount": "Pick account",
+  "addAnAccount": "Add account",
   "deleteAccount": "Delete account",
   "accounts": "Accounts",
   "loginQrCode": "QR Code",
@@ -186,5 +186,13 @@
   "unfavorableAbbr": "Unfav.",
   "none": "None",
 
-  "boardOpinion": "Board opinion"
+  "boardOpinion": "Board opinion",
+
+  "disableSecureStore": "Disable secure store",
+  "enableSecureStore": "Enable secure store",
+
+  "loginQrCodeFromGallery": "Pick from gallery",
+  "loginDemo": "Demo account",
+  "loginDemoSubtitle": "Login to a test account to explore the app and its features",
+  "homeHiName": "Hi {name}!"
 }

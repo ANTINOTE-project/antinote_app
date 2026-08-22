@@ -4,9 +4,8 @@ import 'package:antinote_app/ui/utils/utils.dart';
 import 'package:antinote_app/ui/widgets/customs/attachment.dart';
 import 'package:antinote_app/ui/widgets/customs/list.dart';
 import 'package:antinote_app/ui/widgets/remote_html.dart';
-import 'package:material_ui/material_ui.dart';
 import 'package:hugeicons_pro/hugeicons.dart';
-import 'package:intl/intl.dart';
+import 'package:material_ui/material_ui.dart';
 
 class NewsScreen extends StatefulWidget {
   const NewsScreen({
@@ -44,8 +43,6 @@ class _NewsScreenState extends State<NewsScreen>
   News get _news => widget.news.value;
 
   late List<NewsQuestion> questions;
-
-  static final _dateFormat = DateFormat(DateFormat.MONTH_WEEKDAY_DAY);
 
   @override
   Widget buildLoaded(
@@ -118,7 +115,7 @@ class _NewsScreenState extends State<NewsScreen>
                     subtitle: Text(subtitle),
 
                     trailing: Text(
-                      _dateFormat.format(_news.creationTime),
+                      _news.creationTime.asRelativeDate(context),
 
                       style: TextStyle(
                         fontWeight: .w800,

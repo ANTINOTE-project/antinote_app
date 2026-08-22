@@ -127,3 +127,6 @@ android/app/local.properties
 
 # Debug symbols
 **/debug-info
+
+# Translations
+missing-translations.txt

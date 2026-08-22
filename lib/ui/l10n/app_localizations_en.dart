@@ -91,16 +91,16 @@ class AppLocalizationsEn extends AppLocalizations {
   String get enableAutoLogin => 'Enable auto-login';
 
   @override
-  String get disableSecureStore => 'Désactiver le chiffrage';
+  String get disableSecureStore => 'Disable secure store';
 
   @override
-  String get enableSecureStore => 'Activer le chiffrage';
+  String get enableSecureStore => 'Enable secure store';
 
   @override
-  String get choseAnAccount => 'Pick an account';
+  String get choseAnAccount => 'Pick account';
 
   @override
-  String get addAnAccount => 'Add an account';
+  String get addAnAccount => 'Add account';
 
   @override
   String get deleteAccount => 'Delete account';
@@ -116,7 +116,7 @@ class AppLocalizationsEn extends AppLocalizations {
       'Scan a QR Code from your computer that\'s already logged into PRONOTE';
 
   @override
-  String get loginQrCodeFromGallery => 'Scanner depuis une image';
+  String get loginQrCodeFromGallery => 'Pick from gallery';
 
   @override
   String get loginCity => 'Find your city';
@@ -164,11 +164,11 @@ class AppLocalizationsEn extends AppLocalizations {
       'Please enter your PIN code to connect to your PRONOTE account';
 
   @override
-  String get loginDemo => 'Compte de démonstration';
+  String get loginDemo => 'Demo account';
 
   @override
   String get loginDemoSubtitle =>
-      'Connecte toi à un compte de test pour explorer l\'application et ses fonctionnalités';
+      'Login to a test account to explore the app and its features';
 
   @override
   String get homeShowMore => 'Show more';
@@ -184,7 +184,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String homeHiName(Object name) {
-    return 'Salut, $name !';
+    return 'Hi $name!';
   }
 
   @override
@@ -619,4 +619,31 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get boardOpinion => 'Board opinion';
+
+  @override
+  String shortDate(DateTime date) {
+    final intl.DateFormat dateDateFormat = intl.DateFormat(
+      'EEEE dd MMMM',
+      localeName,
+    );
+    final String dateString = dateDateFormat.format(date);
+
+    return '$dateString';
+  }
+
+  @override
+  String shortWeekday(DateTime date) {
+    final intl.DateFormat dateDateFormat = intl.DateFormat.EEEE(localeName);
+    final String dateString = dateDateFormat.format(date);
+
+    return '$dateString';
+  }
+
+  @override
+  String monthDay(DateTime date) {
+    final intl.DateFormat dateDateFormat = intl.DateFormat.MMMMd(localeName);
+    final String dateString = dateDateFormat.format(date);
+
+    return '$dateString';
+  }
 }

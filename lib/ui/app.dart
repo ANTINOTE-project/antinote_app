@@ -69,6 +69,9 @@ class _AppState extends State<App> {
               return MaterialApp(
                 debugShowCheckedModeBanner: false,
 
+                builder: (context, child) {
+                  return MaterialUiCompatibilityBridge(child: child!);
+                },
                 home: widget.home,
                 title: 'ANTINOTE',
 
@@ -76,7 +79,10 @@ class _AppState extends State<App> {
                 highContrastTheme: lightHighContrast,
                 darkTheme: dark,
                 highContrastDarkTheme: darkHighContrast,
-                localizationsDelegates: AppLocalizations.localizationsDelegates,
+                localizationsDelegates: const [
+                  AppLocalizations.delegate,
+                  ...GlobalMaterialLocalizations.delegates,
+                ],
                 supportedLocales: AppLocalizations.supportedLocales,
               );
             },

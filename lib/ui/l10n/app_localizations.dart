@@ -245,7 +245,7 @@ abstract class AppLocalizations {
   /// No description provided for @communication.
   ///
   /// In fr, this message translates to:
-  /// **'Infos'**
+  /// **'Réception'**
   String get communication;
 
   /// No description provided for @disableAutoLogin.
@@ -1109,6 +1109,24 @@ abstract class AppLocalizations {
   /// In fr, this message translates to:
   /// **'Avis du conseil de classe'**
   String get boardOpinion;
+
+  /// No description provided for @shortDate.
+  ///
+  /// In fr, this message translates to:
+  /// **'{date}'**
+  String shortDate(DateTime date);
+
+  /// No description provided for @shortWeekday.
+  ///
+  /// In fr, this message translates to:
+  /// **'{date}'**
+  String shortWeekday(DateTime date);
+
+  /// No description provided for @monthDay.
+  ///
+  /// In fr, this message translates to:
+  /// **'{date}'**
+  String monthDay(DateTime date);
 }
 
 class _AppLocalizationsDelegate

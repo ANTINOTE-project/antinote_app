@@ -6,9 +6,8 @@ import 'package:antinote_app/ui/screens/communication/news.dart';
 import 'package:antinote_app/ui/screens/shell/tab.dart';
 import 'package:antinote_app/ui/utils/utils.dart';
 import 'package:antinote_app/ui/widgets/customs/list.dart';
-import 'package:material_ui/material_ui.dart';
 import 'package:hugeicons_pro/hugeicons.dart';
-import 'package:intl/intl.dart';
+import 'package:material_ui/material_ui.dart';
 
 class CommunicationScreen extends StatefulWidget {
   const CommunicationScreen({super.key});
@@ -21,8 +20,6 @@ class _CommunicationScreenState extends State<CommunicationScreen>
     with PageMixin<CommunicationScreen>, TabMixin<CommunicationScreen> {
   CommunicationFilter filter = CommunicationFilter.defaultFilter;
   late List<CommunicationThreadPreview> threads;
-
-  static final _minimalDateFormat = DateFormat(DateFormat.MONTH_DAY);
 
   @override
   Widget buildLoaded(
@@ -57,7 +54,7 @@ class _CommunicationScreenState extends State<CommunicationScreen>
               ),
 
               trailing: Text(
-                _minimalDateFormat.format(thread.publishDate),
+                context.l10n.monthDay(thread.publishDate),
 
                 style: TextStyle(
                   fontWeight: .w800,

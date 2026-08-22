@@ -29,7 +29,7 @@
   "timetable": "Cours",
   "grades": "Notes",
   "homeworks": "Devoirs",
-  "communication": "Infos",
+  "communication": "Réception",
 
   "disableAutoLogin": "Désactiver la connexion automatique",
   "enableAutoLogin": "Activer la connexion automatique",
@@ -293,5 +293,36 @@
   "unfavorableAbbr": "Déf.",
   "none": "Aucun",
 
-  "boardOpinion": "Avis du conseil de classe"
+  "boardOpinion": "Avis du conseil de classe",
+
+  "shortDate": "{date}",
+  "@shortDate": {
+    "placeholders": {
+      "date": {
+        "type": "DateTime",
+        "isCustomDateFormat": "true",
+        "format": "EEEE dd MMMM"
+      }
+    }
+  },
+  "shortWeekday": "{date}",
+  "@shortWeekday": {
+    "placeholders": {
+      "date": {
+        "type": "DateTime",
+        "isCustomDateFormat": "true",
+        "format": "EEEE"
+      }
+    }
+  },
+
+  "monthDay": "{date}",
+  "@monthDay": {
+    "placeholders": {
+      "date": {
+        "type": "DateTime",
+        "format": "MMMMd"
+      }
+    }
+  }
 }

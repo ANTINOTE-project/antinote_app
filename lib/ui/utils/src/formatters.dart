@@ -1,7 +1,7 @@
 import 'package:antinote_api/antinote_api.dart';
 import 'package:antinote_app/ui/utils/utils.dart';
-import 'package:material_ui/material_ui.dart';
 import 'package:intl/intl.dart';
+import 'package:material_ui/material_ui.dart';
 
 extension StringExt on String {
   String capitalize() {
@@ -10,7 +10,6 @@ extension StringExt on String {
 }
 
 extension AsRelativeDateString on DateTime {
-  static final DateFormat _shortDateFormatter = DateFormat('EEEE, MMMM dd');
   static final DateFormat _numericDateFormatter = DateFormat('dd MMM');
   static final DateFormat _shortTimeFormatter = DateFormat('HH:mm');
   static final DateFormat _longDateFormatter = DateFormat('dd/MM/yy');
@@ -28,7 +27,7 @@ extension AsRelativeDateString on DateTime {
   }
 
   String asRelativeDate(BuildContext context, [bool dayOnly = true]) {
-    var dayTitle = _shortDateFormatter.format(this);
+    var dayTitle = context.l10n.shortDate(this);
 
     final today = DateTime.now().toUtc().toDay();
     final thisDay = toUtc().toDay();
@@ -48,8 +47,6 @@ extension AsRelativeDateString on DateTime {
     return dayTitle;
   }
 
-  static final DateFormat _shortWeekdayFormatter = DateFormat('EEEE');
-
   String asRelativeWeekday(BuildContext context) {
     final today = DateTime.now().toUtc().toDay();
     final thisDay = toUtc().toDay();
@@ -62,7 +59,7 @@ extension AsRelativeDateString on DateTime {
       return context.l10n.yesterday;
     }
 
-    final formatted = _shortWeekdayFormatter.format(this);
+    final formatted = context.l10n.shortWeekday(this);
     return formatted.capitalize();
   }
 }

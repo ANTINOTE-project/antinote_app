@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   width="108"
+   height="108"
+   viewBox="0 0 28.574999 28.575"
+   version="1.1"
+   id="svg1"
+   xml:space="preserve"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg"><defs
+     id="defs1" /><g
+     id="layer1"><rect
+       style="fill:#ffece9;fill-opacity:1;stroke:none;stroke-width:0;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:0.1;stroke-dasharray:none;stroke-dashoffset:25.5118"
+       id="rect3"
+       width="28.574999"
+       height="28.575001"
+       x="1.3427579e-14"
+       y="-1.2629395e-06"
+       rx="0"
+       ry="0" /></g><g
+     id="layer2"><g
+       id="g3"
+       transform="matrix(1.3156172,0,0,1.3156172,-4.5093806,-6.4103231)"
+       style="stroke-width:0.760099"><g
+         style="fill:#e3e3e3;stroke-width:0.416666"
+         id="g4"
+         transform="matrix(0.01206658,0,0,0.01206658,8.4955413,22.975437)"><path
+           d="m 80,-280 v -360 q 0,-33 23.5,-56.5 Q 127,-720 160,-720 h 640 q 33,0 56.5,23.5 23.5,23.5 23.5,56.5 v 360 q 0,17 -11.5,28.5 Q 857,-240 840,-240 823,-240 811.5,-251.5 800,-263 800,-280 v -40 H 640 v 40 q 0,17 -11.5,28.5 Q 617,-240 600,-240 583,-240 571.5,-251.5 560,-263 560,-280 V -640 H 160 v 360 q 0,17 -11.5,28.5 Q 137,-240 120,-240 103,-240 91.5,-251.5 80,-263 80,-280 Z m 560,-280 h 160 v -80 H 640 Z m 0,160 h 160 v -80 H 640 Z"
+           id="path1-6"
+           style="fill:#1a1110;fill-opacity:1;stroke-width:0.416666" /></g><g
+         style="fill:#1a1110;fill-opacity:1;stroke-width:1.26222"
+         id="g5"
+         transform="matrix(0.00398324,0,0,0.00398324,14.776519,14.765488)"><path
+           d="m 560,-120 q -17,0 -28.5,-11.5 Q 520,-143 520,-160 q 0,-17 11.5,-28.5 Q 543,-200 560,-200 h 240 q 17,0 28.5,11.5 11.5,11.5 11.5,28.5 0,17 -11.5,28.5 Q 817,-120 800,-120 Z M 221,-600 h 139 v -160 h -69 z m 459,360 q -17,0 -28.5,-11.5 Q 640,-263 640,-280 v -360 q 0,-17 -11.5,-28.5 Q 617,-680 600,-680 H 440 v 120 q 0,17 -11.5,28.5 Q 417,-520 400,-520 H 160 q -22,0 -34,-18 -12,-18 -3,-38 l 95,-216 q 10,-22 29.5,-35 19.5,-13 43.5,-13 h 69 q 33,0 56.5,23.5 23.5,23.5 23.5,56.5 h 160 q 50,0 85,35 35,35 35,85 v 360 q 0,17 -11.5,28.5 Q 697,-240 680,-240 Z M 221,-600 h 139 z"
+           id="path1"
+           style="fill:#1a1110;fill-opacity:1;stroke-width:1.26222" /></g></g></g></svg>

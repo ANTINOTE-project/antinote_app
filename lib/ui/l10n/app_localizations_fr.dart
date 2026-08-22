@@ -82,7 +82,7 @@ class AppLocalizationsFr extends AppLocalizations {
   String get homeworks => 'Devoirs';
 
   @override
-  String get communication => 'Infos';
+  String get communication => 'Réception';
 
   @override
   String get disableAutoLogin => 'Désactiver la connexion automatique';
@@ -619,4 +619,31 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get boardOpinion => 'Avis du conseil de classe';
+
+  @override
+  String shortDate(DateTime date) {
+    final intl.DateFormat dateDateFormat = intl.DateFormat(
+      'EEEE dd MMMM',
+      localeName,
+    );
+    final String dateString = dateDateFormat.format(date);
+
+    return '$dateString';
+  }
+
+  @override
+  String shortWeekday(DateTime date) {
+    final intl.DateFormat dateDateFormat = intl.DateFormat.EEEE(localeName);
+    final String dateString = dateDateFormat.format(date);
+
+    return '$dateString';
+  }
+
+  @override
+  String monthDay(DateTime date) {
+    final intl.DateFormat dateDateFormat = intl.DateFormat.MMMMd(localeName);
+    final String dateString = dateDateFormat.format(date);
+
+    return '$dateString';
+  }
 }
