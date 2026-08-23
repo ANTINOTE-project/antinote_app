@@ -20,7 +20,6 @@ import fr.antinote.studies_management.antinote_app.pigeon_posts.NativeCalendarMa
 import fr.antinote.studies_management.antinote_app.pigeon_posts.NativeSessionManager
 import fr.antinote.studies_management.antinote_app.pigeon_posts.SyncManager
 import fr.antinote.studies_management.antinote_app.pigeon_posts.SyncRequest
-import fr.antinote.studies_management.antinote_app.pigeon_posts.SyncResponse
 import fr.antinote.studies_management.antinote_app.pigeon_posts.SyncResultType
 import io.flutter.FlutterInjector
 import io.flutter.embedding.engine.FlutterEngine
@@ -33,7 +32,6 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.TimeoutCancellationException
-import kotlinx.coroutines.completeWith
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withTimeout
@@ -137,18 +135,12 @@ class SyncWorker(appContext: Context, workerParams: WorkerParameters) :
 
             val accounts = loginManager.scanAndGetAccounts(uidFilter = validUids)
             for(account in accounts) {
-                val completer = CompletableDeferred<SyncResponse>()
-
-                syncManager.syncAccount(
+                val res = syncManager.syncAccount(
                     SyncRequest(
                         account = account.toByteArray(),
                         forcedScope = forcedTasks?.map { it.number.toLong() }
                     )
-                ) { res ->
-                    completer.completeWith(res)
-                }
-
-                val res = completer.await()
+                )
 
                 if(res.result == SyncResultType.RETRY) {
                     curResponseLevel = res.result

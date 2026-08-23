@@ -9,15 +9,18 @@ class SyncPollingManager extends PollingManager {
   final AccountRegistry registry;
 
   @override
-  bool askToTakePolling(String accountUid) => false;
+  Future<bool> askToTakePolling(String accountUid) async => false;
 
   @override
-  void startPolling(String accountUid) {
+  Future<void> startPolling(String accountUid) {
     throw UnimplementedError();
   }
 
   @override
-  void serverSignatureChanged(String accountUid, String newServerSignature) {
+  Future<void> serverSignatureChanged(
+    String accountUid,
+    String newServerSignature,
+  ) async {
     if (registry.managesAccount(accountUid)) {
       Future.microtask(() async {
         final result = registry.specificSession(accountUid);
@@ -31,7 +34,7 @@ class SyncPollingManager extends PollingManager {
   }
 
   @override
-  void pollingUpdated(String accountUid, PollingState newState) {
+  Future<void> pollingUpdated(String accountUid, PollingState newState) async {
     if (registry.managesAccount(accountUid)) {
       Future.microtask(() async {
         final result = registry.specificSession(accountUid);

@@ -38,10 +38,11 @@ class SessionManager(val context: Context, binaryMessenger: BinaryMessenger) :
     private var clientId: Long? = null
     private var nextClientTaskId = 0L
     var currentAccountUids: List<String> = listOf()
-    private val schedulingTasks: MutableMap<Long, (Result<ScheduledTask>) -> Unit> = mutableMapOf()
-    private val finishingTasks: MutableMap<Long, (Result<Long?>) -> Unit> = mutableMapOf()
-    private val updatingSessions: MutableMap<Long, (Result<Long>) -> Unit> = mutableMapOf()
-    private val gettingPollingState: MutableMap<String, MutableList<(Result<PollingState>) -> Unit>> =
+    private val schedulingTasks: MutableMap<Long, CompletableDeferred<ScheduledTask>> =
+        mutableMapOf()
+    private val finishingTasks: MutableMap<Long, CompletableDeferred<Long?>> = mutableMapOf()
+    private val updatingSessions: MutableMap<Long, CompletableDeferred<Long>> = mutableMapOf()
+    private val gettingPollingState: MutableMap<String, MutableList<CompletableDeferred<PollingState>>> =
         mutableMapOf()
 
     private val messenger = Messenger(IncomingHandler(this))
@@ -52,153 +53,152 @@ class SessionManager(val context: Context, binaryMessenger: BinaryMessenger) :
     internal class IncomingHandler(val manager: SessionManager) :
         Handler(Looper.myLooper() ?: Looper.getMainLooper()) {
         override fun handleMessage(msg: Message) {
-            when (msg.what) {
-                MSG_REGISTER_CLIENT -> {
-                    manager.clientId = msg.data.getLong("client_id")
-                    if(manager.clientRegistered.isActive) {
-                        manager.clientRegistered.complete(Unit)
-                    }
-                }
-
-                MSG_UNREGISTER_CLIENT -> {
-                    manager.clientId = null
-                    manager.clientRegistered = CompletableDeferred()
-                }
-
-                MSG_SCHEDULE_TASK -> {
-                    val session = msg.data.getByteArray("session")
-                    val sessionVersion = msg.data.getLong("session_version")
-                    val clientTaskId = msg.data.getLong("client_task_id")
-                    val taskId = msg.data.getLong("task_id")
-
-                    if (!manager.schedulingTasks.containsKey(clientTaskId)) {
-                        Log.w(
-                            TAG, "Received schedule confirmation for a task we did not " +
-                                    "await."
-                        )
-                        return
+            runBlocking {
+                when (msg.what) {
+                    MSG_REGISTER_CLIENT -> {
+                        manager.clientId = msg.data.getLong("client_id")
+                        if (manager.clientRegistered.isActive) {
+                            manager.clientRegistered.complete(Unit)
+                        }
                     }
 
-                    manager.schedulingTasks.remove(clientTaskId)!!(
-                        Result.success(
+                    MSG_UNREGISTER_CLIENT -> {
+                        manager.clientId = null
+                        manager.clientRegistered = CompletableDeferred()
+                    }
+
+                    MSG_SCHEDULE_TASK -> {
+                        val session = msg.data.getByteArray("session")
+                        val sessionVersion = msg.data.getLong("session_version")
+                        val clientTaskId = msg.data.getLong("client_task_id")
+                        val taskId = msg.data.getLong("task_id")
+
+                        if (!manager.schedulingTasks.containsKey(clientTaskId)) {
+                            Log.w(
+                                TAG, "Received schedule confirmation for a task we did not " +
+                                        "await."
+                            )
+                            return@runBlocking
+                        }
+
+                        manager.schedulingTasks.remove(clientTaskId)!!.complete(
                             ScheduledTask(
                                 session = session,
                                 sessionVersion = sessionVersion,
                                 taskId = taskId
                             )
                         )
-                    )
-                }
+                    }
 
-                MSG_FINISH_TASK -> {
-                    val taskId = msg.data.getLong("task_id")
-                    val newSessionVersion = msg.data.getLong("new_session_version")
+                    MSG_FINISH_TASK -> {
+                        val taskId = msg.data.getLong("task_id")
+                        val newSessionVersion = msg.data.getLong("new_session_version")
 
-                    if (!manager.finishingTasks.containsKey(taskId)) {
-                        Log.w(
-                            TAG, "Received finish confirmation for a task we did not " +
-                                    "await."
+                        if (!manager.finishingTasks.containsKey(taskId)) {
+                            Log.w(
+                                TAG, "Received finish confirmation for a task we did not " +
+                                        "await."
+                            )
+                            return@runBlocking
+                        }
+
+                        manager.finishingTasks.remove(taskId)!!.complete(
+                            newSessionVersion
                         )
-                        return
                     }
 
-                    manager.finishingTasks.remove(taskId)!!(
-                        Result.success(newSessionVersion)
-                    )
-                }
+                    MSG_UPDATE_SESSION -> {
+                        val clientTaskId = msg.data.getLong("client_task_id")
+                        val newSessionVersion = msg.data.getLong("new_session_version")
 
-                MSG_UPDATE_SESSION -> {
-                    val clientTaskId = msg.data.getLong("client_task_id")
-                    val newSessionVersion = msg.data.getLong("new_session_version")
+                        if (!manager.updatingSessions.containsKey(clientTaskId)) {
+                            Log.w(
+                                TAG, "Received update confirmation for a task we did not " +
+                                        "await."
+                            )
+                            return@runBlocking
+                        }
 
-                    if (!manager.updatingSessions.containsKey(clientTaskId)) {
-                        Log.w(
-                            TAG, "Received update confirmation for a task we did not " +
-                                    "await."
+                        manager.updatingSessions.remove(clientTaskId)!!.complete(
+                            newSessionVersion
                         )
-                        return
                     }
 
-                    manager.updatingSessions.remove(clientTaskId)!!(
-                        Result.success(newSessionVersion)
-                    )
-                }
+                    MSG_POLLING_UPDATED -> {
+                        val accountUid = msg.data.getString("account")
+                        val pollingState = msg.data.getInt("polling_state")
+                        val serverSignature = msg.data.getString("server_signature")
 
-                MSG_POLLING_UPDATED -> {
-                    val accountUid = msg.data.getString("account")
-                    val pollingState = msg.data.getInt("polling_state")
-                    val serverSignature = msg.data.getString("server_signature")
+                        manager.flutterApi.pollingUpdated(
+                            accountUid!!,
+                            PollingState.ofRaw(pollingState)!!
+                        ) {}
 
-                    manager.flutterApi.pollingUpdated(
-                        accountUid!!,
-                        PollingState.ofRaw(pollingState)!!
-                    ) {
-
-                    }
-
-                    if (serverSignature != null) {
-                        manager.flutterApi.serverSignatureChanged(accountUid, serverSignature) {
-
+                        if (serverSignature != null) {
+                            manager.flutterApi.serverSignatureChanged(
+                                accountUid,
+                                serverSignature
+                            ) {}
                         }
                     }
-                }
 
-                MSG_GET_POLLING_STATE -> {
-                    val state = PollingState.ofRaw(msg.data.getInt("state"))!!
-                    val accountId = msg.data.getString("account")!!
+                    MSG_GET_POLLING_STATE -> {
+                        val state = PollingState.ofRaw(msg.data.getInt("state"))!!
+                        val accountId = msg.data.getString("account")!!
 
-                    if (manager.gettingPollingState[accountId].isNullOrEmpty()) {
-                        Log.w(
-                            TAG,
-                            "Received polling state fetching results but did not await any..."
-                        )
-                        return
+                        if (manager.gettingPollingState[accountId].isNullOrEmpty()) {
+                            Log.w(
+                                TAG,
+                                "Received polling state fetching results but did not await any..."
+                            )
+                            return@runBlocking
+                        }
+
+                        while (manager.gettingPollingState[accountId]!!.isNotEmpty()) {
+                            manager.gettingPollingState[accountId]!!.removeAt(0).complete(state)
+                        }
                     }
 
-                    manager.gettingPollingState[accountId]!!.forEach {
-                        it.invoke(Result.success(state))
+                    MSG_UPDATE_POLLING_STATE -> {
+                        val successful = msg.data.getBoolean("successful")
+
+                        if (!successful) {
+                            Log.w(TAG, "Invalid polling state update.")
+                        }
                     }
-                }
 
-                MSG_UPDATE_POLLING_STATE -> {
-                    val successful = msg.data.getBoolean("successful")
+                    MSG_ASK_TO_TAKE_POLLING -> {
+                        val confirmed = msg.data.getBoolean("confirmed")
+                        val accountId = msg.data.getString("account")!!
 
-                    if (!successful) {
-                        Log.w(TAG, "Invalid polling state update.")
-                    }
-                }
+                        if (confirmed) {
+                            manager.flutterApi.startPolling(accountId) {
+                                if (it.isFailure) {
+                                    Log.e(
+                                        TAG,
+                                        "Couldn't start polling for account $accountId",
+                                        it.exceptionOrNull()
+                                    )
+                                }
+                            }
+                        } else {
+                            manager.flutterApi.askToTakePolling(accountId) { agree ->
+                                val res = obtainMessage(MSG_ASK_TO_TAKE_POLLING)
+                                res.data.putLong("client_id", manager.clientId!!)
+                                res.data.putString("account", accountId)
+                                res.data.putBoolean("agree", agree.getOrNull() ?: false)
+                                res.replyTo = manager.messenger
 
-                MSG_ASK_TO_TAKE_POLLING -> {
-                    val confirmed = msg.data.getBoolean("confirmed")
-                    val accountId = msg.data.getString("account")!!
-
-                    if (confirmed) {
-                        manager.flutterApi.startPolling(accountId) {
-                            if (it.isFailure) {
-                                Log.e(
-                                    TAG,
-                                    "Couldn't start polling for account $accountId",
-                                    it.exceptionOrNull()
-                                )
+                                try {
+                                    manager.mService?.send(res)
+                                } catch (_: RemoteException) {
+                                }
                             }
                         }
-                    } else {
-                        manager.flutterApi.askToTakePolling(accountId) { agree ->
-                            val res = obtainMessage(MSG_ASK_TO_TAKE_POLLING)
-                            res.data.putLong("client_id", manager.clientId!!)
-                            res.data.putString("account", accountId)
-                            res.data.putBoolean("agree", agree.getOrNull() ?: false)
-                            res.replyTo = manager.messenger
-
-                            try {
-                                manager.mService?.send(res)
-                            } catch (_: RemoteException) {
-                            }
-                        }
                     }
-                }
 
-                else -> super.handleMessage(msg)
+                    else -> super.handleMessage(msg)
+                }
             }
         }
     }
@@ -229,17 +229,17 @@ class SessionManager(val context: Context, binaryMessenger: BinaryMessenger) :
     override fun onServiceDisconnected(name: ComponentName?) {
         mService = null
         clientId = null
-        if(!clientRegistered.isActive) {
+        if (!clientRegistered.isActive) {
             clientRegistered = CompletableDeferred()
         }
 
         val e = RemoteException("Got disconnected from service before we got a response.")
 
         for (entry in finishingTasks.values + updatingSessions.values) {
-            entry.invoke(Result.failure(e))
+            entry.completeExceptionally(e)
         }
         for (entry in schedulingTasks.values) {
-            entry.invoke(Result.failure(e))
+            entry.completeExceptionally(e)
         }
 
         finishingTasks.clear()
@@ -293,19 +293,16 @@ class SessionManager(val context: Context, binaryMessenger: BinaryMessenger) :
         }
     }
 
-    override fun scheduleTask(
+    override suspend fun scheduleTask(
         accountUid: String,
         channels: List<String>,
         lastSessionVersion: Long?,
-        debugLabel: String?,
-        callback: (Result<ScheduledTask>) -> Unit
-    ) {
+        debugLabel: String?
+    ): ScheduledTask {
         if (!isBound) doBindService()
 
-        if(clientRegistered.isActive) {
-            runBlocking {
-                clientRegistered.await()
-            }
+        if (clientRegistered.isActive) {
+            clientRegistered.await()
         }
 
         val clientTaskId = nextClientTaskId++
@@ -325,22 +322,23 @@ class SessionManager(val context: Context, binaryMessenger: BinaryMessenger) :
 
         msg.replyTo = this@SessionManager.messenger
 
-        schedulingTasks[clientTaskId] = callback
+        val completable = CompletableDeferred<ScheduledTask>()
+        schedulingTasks[clientTaskId] = completable
 
         try {
             mService?.send(msg)
+            return completable.await()
         } catch (e: RemoteException) {
             schedulingTasks.remove(clientTaskId)
-            callback(Result.failure(e))
+            throw e
         }
     }
 
-    override fun finishTask(
+    override suspend fun finishTask(
         accountUid: String,
         taskId: Long,
-        newSession: ByteArray?,
-        callback: (Result<Long?>) -> Unit
-    ) {
+        newSession: ByteArray?
+    ): Long? {
         if (!isBound) doBindService()
 
         val msg = Message.obtain(null, MSG_FINISH_TASK)
@@ -352,21 +350,19 @@ class SessionManager(val context: Context, binaryMessenger: BinaryMessenger) :
 
         msg.replyTo = this@SessionManager.messenger
 
-        finishingTasks[taskId] = callback
+        val completable = CompletableDeferred<Long?>()
+        finishingTasks[taskId] = completable
 
         try {
             mService?.send(msg)
+            return completable.await()
         } catch (e: RemoteException) {
             finishingTasks.remove(taskId)
-            callback(Result.failure(e))
+            throw e
         }
     }
 
-    override fun registerSession(
-        accountUid: String,
-        session: ByteArray,
-        callback: (Result<Long>) -> Unit
-    ) {
+    override suspend fun registerSession(accountUid: String, session: ByteArray): Long {
         if (!isBound) doBindService()
 
         val clientTaskId = nextClientTaskId++
@@ -377,20 +373,19 @@ class SessionManager(val context: Context, binaryMessenger: BinaryMessenger) :
 
         msg.replyTo = this@SessionManager.messenger
 
-        updatingSessions[clientTaskId] = callback
+        val completable = CompletableDeferred<Long>()
+        updatingSessions[clientTaskId] = completable
 
         try {
             mService?.send(msg)
+            return completable.await()
         } catch (e: RemoteException) {
             updatingSessions.remove(clientTaskId)
-            callback(Result.failure(e))
+            throw e
         }
     }
 
-    override fun getPollingState(
-        accountUid: String,
-        callback: (Result<PollingState>) -> Unit
-    ) {
+    override suspend fun getPollingState(accountUid: String): PollingState {
         if (!isBound) doBindService()
 
         val msg = Message.obtain(null, MSG_GET_POLLING_STATE)
@@ -398,13 +393,16 @@ class SessionManager(val context: Context, binaryMessenger: BinaryMessenger) :
         msg.replyTo = this@SessionManager.messenger
 
         gettingPollingState.putIfAbsent(accountUid, mutableListOf())
-        gettingPollingState[accountUid]!!.add(callback)
+
+        val completable = CompletableDeferred<PollingState>()
+        gettingPollingState[accountUid]!!.add(completable)
 
         try {
             mService?.send(msg)
+            return completable.await()
         } catch (e: RemoteException) {
-            gettingPollingState[accountUid]!!.remove(callback)
-            callback(Result.failure(e))
+            gettingPollingState[accountUid]!!.remove(completable)
+            throw e
         }
     }
 

@@ -18,7 +18,7 @@ class SessionPollingManager extends PollingManager {
   final Random jitterRandom = Random();
 
   @override
-  bool askToTakePolling(String accountUid) {
+  Future<bool> askToTakePolling(String accountUid) async {
     final answer = registry.curAccountUid == accountUid;
     libLog.info('Got asked whether to take polling job... Answered $answer');
     return answer;
@@ -30,7 +30,7 @@ class SessionPollingManager extends PollingManager {
       11; // This is the max as the session closes after 2 minutes.
 
   @override
-  void startPolling(String accountUid) {
+  Future<void> startPolling(String accountUid) async {
     libLog.info('Starting polling...');
 
     Future.microtask(() async {
@@ -117,7 +117,10 @@ class SessionPollingManager extends PollingManager {
   }
 
   @override
-  void serverSignatureChanged(String accountUid, String newServerSignature) {
+  Future<void> serverSignatureChanged(
+    String accountUid,
+    String newServerSignature,
+  ) async {
     if (registry.managesAccount(accountUid)) {
       Future.microtask(() async {
         final result = registry.specificSession(accountUid);
@@ -131,7 +134,7 @@ class SessionPollingManager extends PollingManager {
   }
 
   @override
-  void pollingUpdated(String accountUid, PollingState newState) {
+  Future<void> pollingUpdated(String accountUid, PollingState newState) async {
     if (registry.managesAccount(accountUid)) {
       Future.microtask(() async {
         final result = registry.specificSession(accountUid);

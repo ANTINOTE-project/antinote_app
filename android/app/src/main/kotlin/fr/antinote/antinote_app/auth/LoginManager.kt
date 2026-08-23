@@ -27,11 +27,8 @@ import fr.antinote.antinote_app.pigeon_posts.NativeLoginManager
 import fr.antinote.antinote_app.protos.AntinoteAccount
 import fr.antinote.antinote_app.protos.EncryptedCredentials
 import fr.antinote.antinote_app.protos.copy
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.launch
 import kotlinx.coroutines.suspendCancellableCoroutine
 import kotlinx.coroutines.withContext
 import java.security.KeyStore
@@ -61,8 +58,6 @@ class LoginManager(val context: Context, val activity: FragmentActivity?) : Nati
                 .first { am.getUserData(it, KEY_UID) == accountKey }
         }
     }
-
-    private val scope = CoroutineScope(Dispatchers.IO + SupervisorJob())
 
     val dekStore: MutableMap<String, SecretKey> = ConcurrentHashMap()
 
@@ -235,93 +230,89 @@ class LoginManager(val context: Context, val activity: FragmentActivity?) : Nati
         return keyGenerator.generateKey()
     }
 
-    override fun addAccount(rawAccount: ByteArray, callback: (Result<Boolean>) -> Unit) {
+    override suspend fun addAccount(rawAccount: ByteArray): Boolean {
         val app = context.applicationContext as App
 
-        scope.launch {
-            val account = AntinoteAccount.parseFrom(rawAccount)
+        val account = AntinoteAccount.parseFrom(rawAccount)
 
-            val credentials: Any? = if (account.storeSecurely) {
-                encryptCredentials(account.uid, account.tokenCredentials, null)?.run {
-                    Any.newBuilder().run {
-                        setTypeUrl("$TYPE_PREFIX/${javaClass.name}")
-                        setValue(toByteString())
-                        build()
-                    }
+        val credentials: Any? = if (account.storeSecurely) {
+            encryptCredentials(account.uid, account.tokenCredentials, null)?.run {
+                Any.newBuilder().run {
+                    setTypeUrl("$TYPE_PREFIX/${javaClass.name}")
+                    setValue(toByteString())
+                    build()
                 }
-            } else {
-                account.tokenCredentials
             }
+        } else {
+            account.tokenCredentials
+        }
 
-            if (credentials == null) {
-                callback(Result.success(false))
-                return@launch
-            }
+        if (credentials == null) {
+            return false
+        }
 
-            val manager = AccountManager.get(context)
+        val manager = AccountManager.get(context)
 
-            Log.i(TAG, "In total, there are ${manager.accounts.size} accounts")
-            for (account in manager.getAccountsByType(context.getString(R.string.account_type))) {
-                Log.d(
-                    TAG,
-                    "-> '${account.name}:${account.type}' (${
-                        manager.getUserData(
-                            account,
-                            KEY_UID
-                        )
-                    })"
-                )
-            }
-
-            val nativeAccount = Account(account.name, context.getString(R.string.account_type))
-            val nativeResult = manager.addAccountExplicitly(
-                nativeAccount,
-                null,
-                Bundle().apply {
-                    putString(KEY_UID, account.uid)
-                }
+        Log.i(TAG, "In total, there are ${manager.accounts.size} accounts")
+        for (account in manager.getAccountsByType(context.getString(R.string.account_type))) {
+            Log.d(
+                TAG,
+                "-> '${account.name}:${account.type}' (${
+                    manager.getUserData(
+                        account,
+                        KEY_UID
+                    )
+                })"
             )
+        }
 
-            if (!nativeResult) {
-                Log.e(TAG, "Account already exists...")
-
-                if (activity is AuthActivity) {
-                    activity.setResult(Activity.RESULT_CANCELED)
-                    activity.finish()
-                }
-
-                callback(Result.success(false))
-                return@launch
+        val nativeAccount = Account(account.name, context.getString(R.string.account_type))
+        val nativeResult = manager.addAccountExplicitly(
+            nativeAccount,
+            null,
+            Bundle().apply {
+                putString(KEY_UID, account.uid)
             }
+        )
 
-            app.accountStore.updateData {
-                it.copy {
-                    accounts.add(account.copy {
-                        tokenCredentials = credentials
-                    })
-                }
-            }
-
-            ContentResolver.setSyncAutomatically(nativeAccount, CalendarContract.AUTHORITY, false)
-
-            Log.d(TAG, "Added account to manager with UID ${account.uid}")
+        if (!nativeResult) {
+            Log.e(TAG, "Account already exists...")
 
             if (activity is AuthActivity) {
-                val resultIntent = Intent().apply {
-                    putExtra(KEY_ACCOUNT_NAME, account.name)
-                    putExtra(
-                        KEY_ACCOUNT_TYPE,
-                        context.getString(R.string.account_type)
-                    )
-                }
-
-                activity.setAccountAuthenticatorResult(resultIntent.extras)
-                activity.setResult(Activity.RESULT_OK, resultIntent)
+                activity.setResult(Activity.RESULT_CANCELED)
                 activity.finish()
             }
 
-            callback(Result.success(true))
+            return false
         }
+
+        app.accountStore.updateData {
+            it.copy {
+                accounts.add(account.copy {
+                    tokenCredentials = credentials
+                })
+            }
+        }
+
+        ContentResolver.setSyncAutomatically(nativeAccount, CalendarContract.AUTHORITY, false)
+
+        Log.d(TAG, "Added account to manager with UID ${account.uid}")
+
+        if (activity is AuthActivity) {
+            val resultIntent = Intent().apply {
+                putExtra(KEY_ACCOUNT_NAME, account.name)
+                putExtra(
+                    KEY_ACCOUNT_TYPE,
+                    context.getString(R.string.account_type)
+                )
+            }
+
+            activity.setAccountAuthenticatorResult(resultIntent.extras)
+            activity.setResult(Activity.RESULT_OK, resultIntent)
+            activity.finish()
+        }
+
+        return true
     }
 
     private suspend fun deleteAccounts(accountList: List<String>? = null) {
@@ -366,86 +357,44 @@ class LoginManager(val context: Context, val activity: FragmentActivity?) : Nati
         }
     }
 
-    override fun deleteAccount(uid: String, callback: (Result<Unit>) -> Unit) {
-        scope.launch {
-            deleteAccounts(listOf(uid))
-            callback(Result.success(Unit))
-        }
+    override suspend fun deleteAccount(uid: String) {
+        deleteAccounts(listOf(uid))
     }
 
-    override fun deleteAllAccounts(callback: (Result<Unit>) -> Unit) {
-        scope.launch {
-            deleteAccounts(null)
-            callback(Result.success(Unit))
-        }
+    override suspend fun deleteAllAccounts() {
+        deleteAccounts(null)
     }
 
-    override fun updateAccount(
+    override suspend fun updateAccount(
         newRawAccount: ByteArray,
         uid: String,
-        callback: (Result<Boolean>) -> Unit
-    ) {
+    ): Boolean {
         val app = context.applicationContext as App
 
-        scope.launch {
-            val newAccount = AntinoteAccount.parseFrom(newRawAccount)
+        val newAccount = AntinoteAccount.parseFrom(newRawAccount)
 
-            app.accountStore.updateData { registry ->
-                registry.copy {
-                    val accIndex = accounts.indexOfFirst { it.uid == uid }
-                    if (accIndex == -1) {
-                        callback(Result.failure(IllegalStateException("Tried to update an account that does not exist")))
-                        return@updateData registry
-                    }
+        var result = true
 
-                    val oldAccount = accounts[accIndex]
-                    accounts[accIndex] = newAccount.copy {
-                        if (newAccount.storeSecurely != oldAccount.storeSecurely) {
-                            if (newAccount.storeSecurely) {
-                                val newCredentials =
-                                    encryptCredentials(uid, oldAccount.tokenCredentials, null)
+        app.accountStore.updateData { registry ->
+            registry.copy {
+                val accIndex = accounts.indexOfFirst { it.uid == uid }
+                if (accIndex == -1) {
+                    throw IllegalStateException("Tried to update an account that does not exist")
+                }
 
-                                if (newCredentials == null) {
-                                    Log.i(
-                                        TAG,
-                                        "Could not encrypt credentials for the first time, probably canceled."
-                                    )
-                                    callback(Result.success(false))
-                                    return@updateData registry
-                                }
-
-                                tokenCredentials = Any.newBuilder().run {
-                                    setValue(newCredentials.toByteString())
-                                    setTypeUrl("${TYPE_PREFIX}/${newCredentials.javaClass.name}")
-                                    build()
-                                }
-                            } else {
-                                val newCredentials = decryptCredentials(
-                                    uid,
-                                    EncryptedCredentials.parseFrom(oldAccount.tokenCredentials.value)
-                                )
-
-                                if (newCredentials == null) {
-                                    Log.i(
-                                        TAG,
-                                        "Could not decrypt credentials for the first time, probably canceled."
-                                    )
-                                    callback(Result.success(false))
-                                    return@updateData registry
-                                }
-
-                                tokenCredentials = newCredentials
-                            }
-                        } else if (hasTokenCredentials() && newAccount.storeSecurely) {
-                            val newCredentials = encryptCredentials(
-                                uid, newAccount.tokenCredentials,
-                                if (oldAccount.storeSecurely) {
-                                    EncryptedCredentials.parseFrom(oldAccount.tokenCredentials.value)
-                                } else null
-                            )
+                val oldAccount = accounts[accIndex]
+                accounts[accIndex] = newAccount.copy {
+                    if (newAccount.storeSecurely != oldAccount.storeSecurely) {
+                        if (newAccount.storeSecurely) {
+                            val newCredentials =
+                                encryptCredentials(uid, oldAccount.tokenCredentials, null)
 
                             if (newCredentials == null) {
-                                callback(Result.success(false))
+                                Log.i(
+                                    TAG,
+                                    "Could not encrypt credentials for the first time, probably canceled."
+                                )
+                                result = false
                                 return@updateData registry
                             }
 
@@ -454,19 +403,51 @@ class LoginManager(val context: Context, val activity: FragmentActivity?) : Nati
                                 setTypeUrl("${TYPE_PREFIX}/${newCredentials.javaClass.name}")
                                 build()
                             }
+                        } else {
+                            val newCredentials = decryptCredentials(
+                                uid,
+                                EncryptedCredentials.parseFrom(oldAccount.tokenCredentials.value)
+                            )
+
+                            if (newCredentials == null) {
+                                Log.i(
+                                    TAG,
+                                    "Could not decrypt credentials for the first time, probably canceled."
+                                )
+                                result = false
+                                return@updateData registry
+                            }
+
+                            tokenCredentials = newCredentials
+                        }
+                    } else if (hasTokenCredentials() && newAccount.storeSecurely) {
+                        val newCredentials = encryptCredentials(
+                            uid, newAccount.tokenCredentials,
+                            if (oldAccount.storeSecurely) {
+                                EncryptedCredentials.parseFrom(oldAccount.tokenCredentials.value)
+                            } else null
+                        )
+
+                        if (newCredentials == null) {
+                            result = false
+                            return@updateData registry
+                        }
+
+                        tokenCredentials = Any.newBuilder().run {
+                            setValue(newCredentials.toByteString())
+                            setTypeUrl("${TYPE_PREFIX}/${newCredentials.javaClass.name}")
+                            build()
                         }
                     }
-
-                    callback(Result.success(true))
                 }
             }
         }
+
+        return result
     }
 
-    override fun listAccounts(callback: (Result<List<ByteArray>>) -> Unit) {
-        scope.launch {
-            callback(Result.success(scanAndGetAccounts(null).map { it.toByteArray() }))
-        }
+    override suspend fun listAccounts(): List<ByteArray> {
+        return scanAndGetAccounts(null).map { it.toByteArray() }
     }
 
     suspend fun scanAndGetAccounts(uidFilter: List<String>?): List<AntinoteAccount> {
@@ -501,88 +482,69 @@ class LoginManager(val context: Context, val activity: FragmentActivity?) : Nati
         return accounts.toList()
     }
 
-    override fun getAccountWithCredentials(uid: String, callback: (Result<ByteArray?>) -> Unit) {
+    override suspend fun getAccountWithCredentials(uid: String): ByteArray? {
         val app = context.applicationContext as App
 
-        scope.launch {
-            val account =
-                app.accountStore.data.first().accountsList.firstOrNull { it.uid == uid }
+        val account =
+            app.accountStore.data.first().accountsList.firstOrNull { it.uid == uid }
 
-            if (account == null) {
-                Log.w(TAG, "Could not find any account with uid $uid")
-                callback(Result.success(null))
-                return@launch
-            }
-
-            if (!account.storeSecurely) {
-                callback(Result.success(account.toByteArray()))
-                return@launch
-            }
-
-            if (!account.hasTokenCredentials() || account.tokenCredentials.typeUrl != "$TYPE_PREFIX/${EncryptedCredentials::class.java.name}") {
-                Log.e(TAG, "Secure account $uid strangely does not contain any token credentials")
-                callback(Result.success(null))
-                return@launch
-            }
-
-            val decrypted = decryptCredentials(
-                uid,
-                EncryptedCredentials.parseFrom(account.tokenCredentials.value)
-            )
-
-            if (decrypted == null) {
-                callback(Result.success(null))
-                return@launch
-            }
-
-            callback(
-                Result.success(
-                    account.copy {
-                        tokenCredentials = decrypted
-                    }.toByteArray()
-                )
-            )
+        if (account == null) {
+            Log.w(TAG, "Could not find any account with uid $uid")
+            return null
         }
+
+        if (!account.storeSecurely) {
+            return account.toByteArray()
+        }
+
+        if (!account.hasTokenCredentials() || account.tokenCredentials.typeUrl != "$TYPE_PREFIX/${EncryptedCredentials::class.java.name}") {
+            Log.e(TAG, "Secure account $uid strangely does not contain any token credentials")
+            return null
+        }
+
+        val decrypted = decryptCredentials(
+            uid,
+            EncryptedCredentials.parseFrom(account.tokenCredentials.value)
+        )
+
+        if (decrypted == null) {
+            return null
+        }
+
+        return account.copy {
+            tokenCredentials = decrypted
+        }.toByteArray()
     }
 
-    override fun getDefaultAccount(callback: (Result<ByteArray?>) -> Unit) {
+    override suspend fun getDefaultAccount(): ByteArray? {
         val app = context.applicationContext as App
+        val registry = app.accountStore.data.first()
 
-        scope.launch {
-            val registry = app.accountStore.data.first()
-
-            if (!registry.hasDefaultAccountId()) {
-                callback(Result.success(null))
-                return@launch
-            }
-
-            val account = registry.accountsList.firstOrNull { it.uid == registry.defaultAccountId }
-
-            if (account == null) {
-                callback(Result.success(null))
-                return@launch
-            }
-
-            callback(Result.success(account.copy { clearTokenCredentials() }.toByteArray()))
-
+        if (!registry.hasDefaultAccountId()) {
+            return null
         }
+
+        val account = registry.accountsList.firstOrNull { it.uid == registry.defaultAccountId }
+
+        if (account == null) {
+            return null
+        }
+
+        return account.copy { clearTokenCredentials() }.toByteArray()
+
     }
 
-    override fun setDefaultAccount(uid: String?, callback: (Result<Unit>) -> Unit) {
+    override suspend fun setDefaultAccount(uid: String?) {
         val app = context.applicationContext as App
 
-        scope.launch {
-            app.accountStore.updateData { registry ->
-                registry.copy {
-                    if (uid == null) {
-                        clearDefaultAccountId()
-                    } else {
-                        defaultAccountId = uid
-                    }
+        app.accountStore.updateData { registry ->
+            registry.copy {
+                if (uid == null) {
+                    clearDefaultAccountId()
+                } else {
+                    defaultAccountId = uid
                 }
             }
-
-            callback(Result.success(Unit))
         }
     }
 }

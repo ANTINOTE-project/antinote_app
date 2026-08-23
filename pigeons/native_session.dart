@@ -78,11 +78,15 @@ abstract class PollingManager {
   /// back the state to the service.
   ///
   /// The return value is whether the client takes the job.
+  @asyncCallback
   bool askToTakePolling(String accountUid);
 
+  @asyncCallback
   void startPolling(String accountUid);
 
+  @asyncCallback
   void serverSignatureChanged(String accountUid, String newServerSignature);
 
+  @asyncCallback
   void pollingUpdated(String accountUid, PollingState newState);
 }
