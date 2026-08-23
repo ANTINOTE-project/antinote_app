@@ -6,7 +6,7 @@ Les données collectées au cours d'une session sur l'application ANTINOTE sont 
 confidentialité de l'établissement. Il existe des exceptions où le traitement d'information est
 confié à un service différent :
 - Durant la connexion à un établissement en fonction d'une adresse, le service libre et gratuit
-  Nominatim d'OpenStreetMaps est utilisé. Voici le lien vers leur politique de confidentialité :
+  Nominatim d'OpenStreetMap est utilisé. Voici le lien vers leur politique de confidentialité :
   https://osmfoundation.org/wiki/Privacy_Policy
 - Pour afficher la liste des établissements autour une adresse, nous faisons appel aux services
   d'Index-Education (éditeur du logiciel PRONOTE), voici leur politique de confidentialité :
