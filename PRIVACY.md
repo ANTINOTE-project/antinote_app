@@ -3,7 +3,7 @@
 
 Les données collectées au cours d'une session sur l'application ANTINOTE sont envoyées exclusivement
 à l'instance choisie par l'utilisateur, dans ces cas-là, veuillez vous référer à la politique de
-confidentialité de l'établissement. Il existe des exceptions où le traitement d'information est
+confidentialité de l'établissement. Il existe des exceptions dont le traitement d'information est
 confié à un service différent :
 - Durant la connexion à un établissement en fonction d'une adresse, le service libre et gratuit
   Nominatim d'OpenStreetMap est utilisé. Voici le lien vers leur politique de confidentialité :
