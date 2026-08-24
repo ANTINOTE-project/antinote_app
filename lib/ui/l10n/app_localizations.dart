@@ -1127,6 +1127,12 @@ abstract class AppLocalizations {
   /// In fr, this message translates to:
   /// **'{date}'**
   String monthDay(DateTime date);
+
+  /// No description provided for @communicationUnavailable.
+  ///
+  /// In fr, this message translates to:
+  /// **'La page de communication sera disponible dans une prochaine mise à jour'**
+  String get communicationUnavailable;
 }
 
 class _AppLocalizationsDelegate

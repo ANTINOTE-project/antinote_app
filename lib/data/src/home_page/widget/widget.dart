@@ -4,6 +4,7 @@ import 'dart:math';
 import 'package:antinote_api/antinote_api.dart';
 import 'package:antinote_app/data/src/home_page/manager.dart';
 import 'package:antinote_app/data/src/home_page/widget/parameters.dart';
+import 'package:antinote_app/ui/screens/home/widgets/homework.dart';
 import 'package:antinote_app/ui/screens/home/widgets/menu.dart';
 import 'package:antinote_app/ui/screens/home/widgets/timetable/day.dart';
 import 'package:antinote_app/ui/screens/timetable/events/block.dart';

@@ -1,6 +1,7 @@
 import 'package:antinote_app/data/src/home_page/manager.dart';
 import 'package:antinote_app/data/src/home_page/widget/widget.dart';
 import 'package:antinote_app/ui/screens/home/screen.dart';
+import 'package:antinote_app/ui/screens/home/widgets.dart';
 import 'package:antinote_app/ui/screens/timetable/events/block.dart';
 import 'package:antinote_app/ui/screens/timetable/screen.dart';
 import 'package:antinote_app/ui/utils/utils.dart';
@@ -16,9 +17,12 @@ class const TimetableDayWidgetSliver({
   Widget build(BuildContext context) {
     return SliverToBoxAdapter(
       child: HomeWidget(
-        icon: HugeIconsSolid.calendar01,
-        title: Text(context.l10n.timetable),
-        child: ConstrainedBox(
+        icon: const Icon(HugeIconsSolid.calendar01),
+        label: Text(context.l10n.timetable),
+        onShowMorePressed: () {
+          context.sc.goToTab(.timetable);
+        },
+        content: ConstrainedBox(
           constraints: .new(maxHeight: MediaQuery.heightOf(context) * .6),
           child: TimetableDisplay(
             baseDate: state.reloadArguments.get(TimetableDayArgument.day),

@@ -79,7 +79,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get grades => 'Grades';
 
   @override
-  String get homeworks => 'Homeworks';
+  String get homeworks => 'Homework';
 
   @override
   String get communication => 'Inbox';
@@ -646,4 +646,8 @@ class AppLocalizationsEn extends AppLocalizations {
 
     return '$dateString';
   }
+
+  @override
+  String get communicationUnavailable =>
+      'The communication page will be available in an upcoming update, stay tuned!';
 }

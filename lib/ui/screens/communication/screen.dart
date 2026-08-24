@@ -2,7 +2,6 @@ import 'dart:async';
 
 import 'package:antinote_api/antinote_api.dart';
 import 'package:antinote_app/ui/screens/communication/models.dart';
-import 'package:antinote_app/ui/screens/communication/news.dart';
 import 'package:antinote_app/ui/screens/shell/tab.dart';
 import 'package:antinote_app/ui/utils/utils.dart';
 import 'package:antinote_app/ui/widgets/customs/list.dart';
@@ -64,49 +63,56 @@ class _CommunicationScreenState extends State<CommunicationScreen>
               ),
 
               onPressed: () async {
-                await context.ar.runTask(
-                  context: context,
-                  channels: const {},
-                  callback: (session) {
-                    switch (thread.commType) {
-                      case .poll:
-                      case .news:
-                        {
-                          if (!context.mounted ||
-                              thread is! InformationThreadPreview) {
-                            return;
-                          }
-
-                          final notifier = ValueNotifier(
-                            session.getCachedValue<News>(
-                              .NEWS,
-                              thread.visualId,
-                            ),
-                          );
-
-                          Navigator.push(
-                            context,
-
-                            MaterialPageRoute(
-                              builder: (context) => NewsScreen(
-                                mode: thread.mode,
-                                news: notifier,
-
-                                deleteNews: () {
-                                  throw UnimplementedError();
-                                },
-                              ),
-                            ),
-                          );
-                        }
-                      case .discussion:
-                        {
-                          throw UnimplementedError();
-                        }
-                    }
-                  },
-                  debugLabel: 'Retrieve news and discussion data from cache.',
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    behavior: .floating,
+                    content: Text(context.l10n.communicationUnavailable),
+                  ),
                 );
+
+                // await context.ar.runTask(
+                //   context: context,
+                //   channels: const {},
+                //   callback: (session) {
+                //     switch (thread.commType) {
+                //       case .poll:
+                //       case .news:
+                //         {
+                //           if (!context.mounted ||
+                //               thread is! InformationThreadPreview) {
+                //             return;
+                //           }
+                //
+                //           final notifier = ValueNotifier(
+                //             session.getCachedValue<News>(
+                //               .NEWS,
+                //               thread.visualId,
+                //             ),
+                //           );
+                //
+                //           Navigator.push(
+                //             context,
+                //
+                //             MaterialPageRoute(
+                //               builder: (context) => NewsScreen(
+                //                 mode: thread.mode,
+                //                 news: notifier,
+                //
+                //                 deleteNews: () {
+                //                   throw UnimplementedError();
+                //                 },
+                //               ),
+                //             ),
+                //           );
+                //         }
+                //       case .discussion:
+                //         {
+                //           throw UnimplementedError();
+                //         }
+                //     }
+                //   },
+                //   debugLabel: 'Retrieve news and discussion data from cache.',
+                // );
               },
             );
           },

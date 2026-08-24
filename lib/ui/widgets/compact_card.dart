@@ -8,18 +8,23 @@ class CompactCard extends StatelessWidget {
   final Widget subtitle;
   final Widget? trailing;
 
+  final VoidCallback? onPressed;
+
   const CompactCard({
     super.key,
     required this.scheme,
     required this.title,
     required this.subtitle,
     this.trailing,
+    this.onPressed,
   });
 
   @override
   Widget build(BuildContext context) {
     return Pressable(
       borderRadius: .circular(16),
+
+      onPressed: onPressed,
 
       child: Ink(
         decoration: BoxDecoration(

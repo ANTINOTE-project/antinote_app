@@ -276,11 +276,13 @@ class _TimetableDisplayState extends State<TimetableDisplay>
 
                     if (widget.scrollable) {
                       partialChild = SingleChildScrollView(
-                        padding: .only(
-                          bottom: MediaQuery.paddingOf(context).bottom + 20,
-                          right: 12,
-                        ),
-
+                        padding: widget.transparent
+                            ? null
+                            : .only(
+                                bottom:
+                                    MediaQuery.paddingOf(context).bottom + 20,
+                                right: 12,
+                              ),
                         child: child,
                       );
                     } else {

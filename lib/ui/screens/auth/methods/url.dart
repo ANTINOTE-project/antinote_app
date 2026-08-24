@@ -48,7 +48,7 @@ class _UrlMethodScreenState extends State<UrlMethodScreen> {
       lastApplicableParameters = Completer();
     });
 
-    _debounce = Timer(const Duration(seconds: 1), () async {
+    _debounce = Timer(const Duration(seconds: 3), () async {
       instanceUrl = Uri.tryParse(_controller.text.trim());
 
       if (instanceUrl == null) {
@@ -59,6 +59,10 @@ class _UrlMethodScreenState extends State<UrlMethodScreen> {
         final workspacesSession = await RemoteSession.init(
           instanceUrl!,
           workspace: Workspace.common,
+          parameters: {
+            ...RemoteSession.baseParameters,
+            ...RemoteSession.delegationBypassParameters,
+          },
         );
 
         await workspacesSession.access(const InstanceParametersAccessor());
@@ -69,6 +73,10 @@ class _UrlMethodScreenState extends State<UrlMethodScreen> {
             final session = await RemoteSession.init(
               instanceUrl!,
               workspace: workspace,
+              parameters: {
+                ...RemoteSession.baseParameters,
+                ...RemoteSession.delegationBypassParameters,
+              },
             );
 
             await session.access(const InstanceParametersAccessor());
@@ -76,8 +84,6 @@ class _UrlMethodScreenState extends State<UrlMethodScreen> {
 
             lastApplicableParameters?.complete(session.instance);
             break;
-
-            // catch
           } catch (e, st) {
             if (kDebugMode) {
               libLog.severe(

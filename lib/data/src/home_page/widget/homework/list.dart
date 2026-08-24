@@ -167,9 +167,7 @@ final class const HomeworkListWidget()
     >
     state,
     Map<Date, List<Homework>> value,
-  ) {
-    return SliverToBoxAdapter(child: Text(value.length.toString()));
-  }
+  ) => HomeworkWidgetSliver(state: state, value: value);
 
   @override
   FutureOr<Map<Date, List<Homework>>?> computeValue(

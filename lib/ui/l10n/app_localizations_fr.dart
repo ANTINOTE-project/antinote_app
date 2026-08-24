@@ -646,4 +646,8 @@ class AppLocalizationsFr extends AppLocalizations {
 
     return '$dateString';
   }
+
+  @override
+  String get communicationUnavailable =>
+      'La page de communication sera disponible dans une prochaine mise à jour';
 }

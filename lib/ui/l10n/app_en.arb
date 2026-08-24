@@ -28,7 +28,7 @@
   "home": "Home",
   "timetable": "Timetable",
   "grades": "Grades",
-  "homeworks": "Homeworks",
+  "homeworks": "Homework",
   "communication": "Inbox",
 
   "disableAutoLogin": "Disable auto-login",
@@ -194,5 +194,7 @@
   "loginQrCodeFromGallery": "Pick from gallery",
   "loginDemo": "Demo account",
   "loginDemoSubtitle": "Login to a test account to explore the app and its features",
-  "homeHiName": "Hi {name}!"
+  "homeHiName": "Hi {name}!",
+
+  "communicationUnavailable": "The communication page will be available in an upcoming update, stay tuned!"
 }

@@ -324,5 +324,7 @@
         "format": "MMMMd"
       }
     }
-  }
+  },
+
+  "communicationUnavailable": "La page de communication sera disponible dans une prochaine mise à jour"
 }
