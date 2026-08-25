@@ -196,5 +196,9 @@
   "loginDemoSubtitle": "Login to a test account to explore the app and its features",
   "homeHiName": "Hi {name}!",
 
-  "communicationUnavailable": "The communication page will be available in an upcoming update, stay tuned!"
+  "communicationUnavailable": "The communication page will be available in an upcoming update, stay tuned!",
+
+  "shortDate": "{date}",
+  "shortWeekday": "{date}",
+  "monthDay": "{date}"
 }
