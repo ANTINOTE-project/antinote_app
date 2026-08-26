@@ -35,7 +35,8 @@
   "enableAutoLogin": "Activer la connexion automatique",
   "disableSecureStore": "Désactiver le chiffrage",
   "enableSecureStore": "Activer le chiffrage",
-  "choseAnAccount": "Choisir un compte",
+  "chooseAnAccount": "Choisir un compte",
+  "chooseAnAccountSubtitle": "Choisir quel compte consulter, changer différentes propriétés des comptes, ajouter des comptes",
   "addAnAccount": "Ajouter un compte",
   "deleteAccount": "Supprimer",
   "accounts": "Comptes",
@@ -142,7 +143,7 @@
   "gradeExemption": "Disp",
   "gradeNotGraded": "Non noté",
   "gradeInapt": "Inapte",
-  "gradeFelicitations": "Félicitations",
+  "gradeCongratulations": "Félicitations",
   "gradesReport": "Bulletin",
   "classGradesReport": "Bulletin de classe",
   "reportUnpublished": "Bulletin non publié",
@@ -231,6 +232,7 @@
   "noHomeworkForWeek": "Pas de travaux à faire pour cette semaine !",
 
   "appSettings": "Paramètres de l'application",
+  "goToAppSettings": "Naviguer vers les paramètres de l'application",
   "deviceTheme": "Utiliser le thème de l'appareil",
   "deviceThemeDescription": "Le thème utilisé dans l'application changera selon le fond d'écran.",
   "displayProfilePicture": "Afficher la photo de profile",
@@ -326,5 +328,9 @@
     }
   },
 
-  "communicationUnavailable": "La page de communication sera disponible dans une prochaine mise à jour"
+  "communicationUnavailable": "La page de communication sera disponible dans une prochaine mise à jour",
+  "application": "Application",
+  "about": "À propos",
+  "appName": "ANTINOTE",
+  "appLegalese": "L'application ANTINOTE est libre et gratuite, disponible sous la license MIT. Nous rendons disponibles de nouvelles fonctionnalité grâce à une connection à votre compte PRONOTE. Nous ne sommes en aucun cas lié à Index-Education et nous ne proposons aucune garantie d'aucune sorte quant à l'utilisation du logiciel. Fait avec ❤ par l'équipe ANTINOTE"
 }

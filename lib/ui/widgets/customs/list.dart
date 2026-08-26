@@ -268,7 +268,7 @@ class ItemWidget extends StatelessWidget {
                         color: context.c.onSurface,
                       ),
 
-                      overflow: .ellipsis,
+                      overflow: titleMaxLines == null ? null : .ellipsis,
                       maxLines: titleMaxLines,
 
                       child: title!,
@@ -283,7 +283,7 @@ class ItemWidget extends StatelessWidget {
                         color: context.c.outline,
                       ),
 
-                      overflow: .ellipsis,
+                      overflow: subtitleMaxLines == null ? null : .ellipsis,
                       maxLines: subtitleMaxLines,
 
                       child: subtitle!,

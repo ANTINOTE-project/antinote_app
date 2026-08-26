@@ -272,11 +272,17 @@ abstract class AppLocalizations {
   /// **'Activer le chiffrage'**
   String get enableSecureStore;
 
-  /// No description provided for @choseAnAccount.
+  /// No description provided for @chooseAnAccount.
   ///
   /// In fr, this message translates to:
   /// **'Choisir un compte'**
-  String get choseAnAccount;
+  String get chooseAnAccount;
+
+  /// No description provided for @chooseAnAccountSubtitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Choisir quel compte consulter, changer différentes propriétés des comptes, ajouter des comptes'**
+  String get chooseAnAccountSubtitle;
 
   /// No description provided for @addAnAccount.
   ///
@@ -594,11 +600,11 @@ abstract class AppLocalizations {
   /// **'Inapte'**
   String get gradeInapt;
 
-  /// No description provided for @gradeFelicitations.
+  /// No description provided for @gradeCongratulations.
   ///
   /// In fr, this message translates to:
   /// **'Félicitations'**
-  String get gradeFelicitations;
+  String get gradeCongratulations;
 
   /// No description provided for @gradesReport.
   ///
@@ -918,6 +924,12 @@ abstract class AppLocalizations {
   /// **'Paramètres de l\'application'**
   String get appSettings;
 
+  /// No description provided for @goToAppSettings.
+  ///
+  /// In fr, this message translates to:
+  /// **'Naviguer vers les paramètres de l\'application'**
+  String get goToAppSettings;
+
   /// No description provided for @deviceTheme.
   ///
   /// In fr, this message translates to:
@@ -1133,6 +1145,30 @@ abstract class AppLocalizations {
   /// In fr, this message translates to:
   /// **'La page de communication sera disponible dans une prochaine mise à jour'**
   String get communicationUnavailable;
+
+  /// No description provided for @application.
+  ///
+  /// In fr, this message translates to:
+  /// **'Application'**
+  String get application;
+
+  /// No description provided for @about.
+  ///
+  /// In fr, this message translates to:
+  /// **'À propos'**
+  String get about;
+
+  /// No description provided for @appName.
+  ///
+  /// In fr, this message translates to:
+  /// **'ANTINOTE'**
+  String get appName;
+
+  /// No description provided for @appLegalese.
+  ///
+  /// In fr, this message translates to:
+  /// **'L\'application ANTINOTE est libre et gratuite, disponible sous la license MIT. Nous rendons disponibles de nouvelles fonctionnalité grâce à une connection à votre compte PRONOTE. Nous ne sommes en aucun cas lié à Index-Education et nous ne proposons aucune garantie d\'aucune sorte quant à l\'utilisation du logiciel. Fait avec ❤ par l\'équipe ANTINOTE'**
+  String get appLegalese;
 }
 
 class _AppLocalizationsDelegate

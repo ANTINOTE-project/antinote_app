@@ -5,8 +5,8 @@ import 'package:antinote_app/ui/widgets/customs/attachment.dart';
 import 'package:antinote_app/ui/widgets/customs/icon.dart';
 import 'package:antinote_app/ui/widgets/customs/list.dart';
 import 'package:antinote_app/ui/widgets/remote_html.dart';
-import 'package:material_ui/material_ui.dart';
 import 'package:hugeicons_pro/hugeicons.dart';
+import 'package:material_ui/material_ui.dart';
 
 class HomeworkDetailScreen extends StatefulWidget {
   final void Function(bool value) onHomeworkChange;
@@ -223,7 +223,6 @@ class _HomeworkDetailScreenState extends State<HomeworkDetailScreen> {
 
                       title: Text(
                         renderLabel,
-                        maxLines: 999,
                         style: TextStyle(color: scheme.onSurface, fontSize: 15),
                       ),
                     ),
@@ -275,7 +274,7 @@ class _HomeworkDetailScreenState extends State<HomeworkDetailScreen> {
 
                         child: VerticalDivider(
                           color: scheme.outline,
-                          radius: .circular(999),
+                          radius: .circular(90),
                           thickness: 2,
                           width: 5,
                         ),

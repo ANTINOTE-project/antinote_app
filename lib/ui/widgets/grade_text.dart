@@ -42,7 +42,7 @@ class GradeText extends StatelessWidget {
       .inapt => context.l10n.gradeInapt,
       .notHanded => context.l10n.gradeNotHanded,
       .absentZero => context.l10n.gradeAbsentZero,
-      .felicitations => context.l10n.gradeFelicitations,
+      .congratulations => context.l10n.gradeCongratulations,
       _ => selfValue,
     };
 

@@ -7,8 +7,8 @@ import 'package:antinote_app/ui/utils/utils.dart';
 import 'package:antinote_app/ui/widgets/customs/app_bar.dart';
 import 'package:antinote_app/ui/widgets/customs/button.dart';
 import 'package:antinote_app/ui/widgets/customs/list.dart';
-import 'package:material_ui/material_ui.dart';
 import 'package:hugeicons_pro/hugeicons.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:skeletonizer/skeletonizer.dart';
 
 class AccountsListScreen extends StatefulWidget {
@@ -100,7 +100,7 @@ class _AccountsListScreenState extends State<AccountsListScreen>
   ) {
     return Scaffold(
       appBar: AppBarWidget(
-        title: Text(context.l10n.choseAnAccount),
+        title: Text(context.l10n.chooseAnAccount),
         backButton: false,
       ),
 

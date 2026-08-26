@@ -31,6 +31,8 @@ dependencies:
   webview_flutter: ^4.13.1
   mobile_scanner: ^7.2.0
   flutter_widget_from_html_core: ^0.17.2
+  material_ui: any
+  package_info_plus: ^10.2.1
 
   # Backend
   html: ^0.15.6
@@ -44,7 +46,6 @@ dependencies:
   # Disabled because it doesn't play nicely with R8
   #  cryptography_flutter_plus: ^3.0.2 # So that cryptography_plus in antinote is faster.
 
-  material_ui: any
 
 dependency_overrides:
   dynamic_color:
@@ -63,6 +64,9 @@ dev_dependencies:
 flutter:
   uses-material-design: true
   generate: true
+
+  assets:
+    - "assets/icon.png"
 
   fonts:
     - family: SNPro

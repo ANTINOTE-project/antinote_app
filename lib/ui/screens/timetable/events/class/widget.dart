@@ -3,8 +3,8 @@ import 'package:antinote_app/ui/screens/timetable/events/class/modal.dart';
 import 'package:antinote_app/ui/utils/utils.dart';
 import 'package:antinote_app/ui/widgets/overflow_row.dart';
 import 'package:antinote_app/ui/widgets/pressable.dart';
-import 'package:material_ui/material_ui.dart';
 import 'package:hugeicons_pro/hugeicons.dart';
+import 'package:material_ui/material_ui.dart';
 
 import '../block.dart';
 
@@ -187,7 +187,7 @@ class _ContentOverflowRow extends StatelessWidget {
       badgeStyle: TextStyle(color: color, fontWeight: .w800, fontSize: 12),
       badgeDecoration: BoxDecoration(
         color: color.withAlpha(32),
-        borderRadius: .circular(999),
+        borderRadius: .circular(90),
       ),
       children: [
         for (int i = 0; i < contents.length; i++)
@@ -212,7 +212,7 @@ class _Divider extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      decoration: BoxDecoration(borderRadius: .circular(999), color: color),
+      decoration: BoxDecoration(borderRadius: .circular(90), color: color),
       margin: const .symmetric(vertical: 4),
 
       height: 18,

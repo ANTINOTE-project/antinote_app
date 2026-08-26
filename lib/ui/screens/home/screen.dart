@@ -54,6 +54,7 @@ class _HomeScreenState extends State<HomeScreen>
         actions: [
           IconButton(
             icon: const Icon(HugeIconsSolid.settings02),
+            tooltip: '${context.l10n.goToAppSettings}…',
             onPressed: () async {
               await Navigator.push(
                 context,

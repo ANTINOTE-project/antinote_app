@@ -375,6 +375,9 @@ class _TimetableDisplayState extends State<TimetableDisplay>
       final curSlot = _scheduleDisplayData.starts[i];
       final curEndSlot = _scheduleDisplayData.endings[i];
 
+      final nexSlot = _scheduleDisplayData.starts.elementAtOrNull(i + 1);
+      final prevEndSlot = _scheduleDisplayData.endings.elementAtOrNull(i - 1);
+
       if (lastAppliedSlot != null && lastAppliedSlot + 1 != i) {
         final from = _scheduleDisplayData.starts[lastAppliedSlot + 1];
         final to = _scheduleDisplayData.endings[i - 1];
@@ -384,7 +387,6 @@ class _TimetableDisplayState extends State<TimetableDisplay>
             to.timing.minute -
             from.timing.minute;
 
-        libLog.info('${from.timing} -> ${to.timing} : $value');
         displays.add(Expanded(flex: value, child: const SizedBox.shrink()));
       }
 
@@ -412,20 +414,30 @@ class _TimetableDisplayState extends State<TimetableDisplay>
           curEndSlot.timing.minute -
           curSlot.timing.minute;
 
+      final showStart =
+          curSlot.active ||
+          (prevEndSlot != null &&
+              prevEndSlot.timing == curSlot.timing &&
+              prevEndSlot.active);
+
+      final showEnd =
+          curEndSlot.active &&
+          !(nexSlot != null && nexSlot.timing == curEndSlot.timing);
+
       displays.add(
         Expanded(
           flex: value,
           child: Container(
             decoration: BoxDecoration(
               border: Border(
-                top: curSlot.active ? borderSide : .none,
-                bottom: curEndSlot.active ? borderSide : .none,
+                top: showStart ? borderSide : .none,
+                bottom: showEnd ? borderSide : .none,
               ),
             ),
             padding: const .symmetric(horizontal: 5),
             child: Column(
               children: [
-                if (curSlot.active)
+                if (showStart)
                   FittedBox(
                     fit: .scaleDown,
                     alignment: .topCenter,
@@ -443,7 +455,7 @@ class _TimetableDisplayState extends State<TimetableDisplay>
 
                 const Spacer(),
 
-                if (curEndSlot.active)
+                if (showEnd)
                   FittedBox(
                     fit: .scaleDown,
                     alignment: .bottomCenter,

@@ -58,13 +58,13 @@ class HomeWidget extends StatelessWidget {
                 ),
 
                 Pressable(
-                  borderRadius: .circular(999),
+                  borderRadius: .circular(90),
                   onPressed: onShowMorePressed,
 
                   child: Ink(
                     decoration: BoxDecoration(
                       color: context.c.surfaceContainerLow,
-                      borderRadius: .circular(999),
+                      borderRadius: .circular(90),
                     ),
 
                     padding: const .symmetric(horizontal: 12, vertical: 8),

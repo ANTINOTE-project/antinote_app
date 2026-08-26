@@ -97,7 +97,11 @@ class AppLocalizationsEn extends AppLocalizations {
   String get enableSecureStore => 'Enable secure store';
 
   @override
-  String get choseAnAccount => 'Pick account';
+  String get chooseAnAccount => 'Pick account';
+
+  @override
+  String get chooseAnAccountSubtitle =>
+      'Pick which account to use, change properties about accounts, add accounts';
 
   @override
   String get addAnAccount => 'Add account';
@@ -312,7 +316,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get gradeInapt => 'Inapt';
 
   @override
-  String get gradeFelicitations => 'Congratulations';
+  String get gradeCongratulations => 'Congratulations';
 
   @override
   String get gradesReport => 'Report';
@@ -511,6 +515,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get appSettings => 'App settings';
 
   @override
+  String get goToAppSettings => 'Go to app settings';
+
+  @override
   String get deviceTheme => 'Use the device theme';
 
   @override
@@ -650,4 +657,17 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get communicationUnavailable =>
       'The communication page will be available in an upcoming update, stay tuned!';
+
+  @override
+  String get application => 'Application';
+
+  @override
+  String get about => 'About';
+
+  @override
+  String get appName => 'ANTINOTE';
+
+  @override
+  String get appLegalese =>
+      'The ANTINOTE app is free and open-source, available under the MIT license. We offer new functionnality using a connection to your PRONOTE account. We are not affiliated with Index-Education, and we do not offer guaranties in any way, shape, of form regarding the use of this software. Made with ❤ by the ANTINOTE team';
 }

@@ -130,3 +130,5 @@ android/app/local.properties
 
 # Translations
 missing-translations.txt
+
+pubspec_overrides.yaml

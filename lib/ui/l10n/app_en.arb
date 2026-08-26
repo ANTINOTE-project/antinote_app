@@ -33,7 +33,8 @@
 
   "disableAutoLogin": "Disable auto-login",
   "enableAutoLogin": "Enable auto-login",
-  "choseAnAccount": "Pick account",
+  "chooseAnAccount": "Pick account",
+  "chooseAnAccountSubtitle": "Pick which account to use, change properties about accounts, add accounts",
   "addAnAccount": "Add account",
   "deleteAccount": "Delete account",
   "accounts": "Accounts",
@@ -87,7 +88,7 @@
   "gradeExemption": "Exmpt",
   "gradeNotGraded": "Not graded",
   "gradeInapt": "Inapt",
-  "gradeFelicitations": "Congratulations",
+  "gradeCongratulations": "Congratulations",
   "gradesReport": "Report",
   "classGradesReport": "Class report",
   "reportUnpublished": "Report not yet published",
@@ -149,6 +150,7 @@
   "noHomeworkForWeek": "No homework for this week!",
 
   "appSettings": "App settings",
+  "goToAppSettings": "Go to app settings",
   "deviceTheme": "Use the device theme",
   "deviceThemeDescription": "The theme will change according to your wallpaper",
   "displayProfilePicture": "Show the profile picture",
@@ -200,5 +202,10 @@
 
   "shortDate": "{date}",
   "shortWeekday": "{date}",
-  "monthDay": "{date}"
+  "monthDay": "{date}",
+
+  "application": "Application",
+  "about": "About",
+  "appName": "ANTINOTE",
+  "appLegalese": "The ANTINOTE app is free and open-source, available under the MIT license. We offer new functionnality using a connection to your PRONOTE account. We are not affiliated with Index-Education, and we do not offer guaranties in any way, shape, of form regarding the use of this software. Made with ❤ by the ANTINOTE team"
 }

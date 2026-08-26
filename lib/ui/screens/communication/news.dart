@@ -196,12 +196,8 @@ class _Question extends StatelessWidget {
           title: RemoteHtml(
             rawHtml: question.htmlText,
             style: TextStyle(color: context.c.onSurface, fontWeight: .normal),
-
-            // style: TextStyle(color: context.c.onSurface, fontWeight: .bold),
-            // removeStyleAndFontSize: true,
-
-            // maxLines: 999,
           ),
+          titleMaxLines: null,
         ),
 
         ListWidget(
@@ -326,11 +322,7 @@ class _ChoiceAnswer extends StatelessWidget {
                   )
                 : borderRadius,
 
-            title: Text(
-              choice.label,
-              maxLines: 999,
-              style: const TextStyle(fontSize: 15),
-            ),
+            title: Text(choice.label, style: const TextStyle(fontSize: 15)),
 
             leading: SizedBox(
               width: 24,
