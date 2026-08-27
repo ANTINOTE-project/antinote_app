@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:antinote_api/antinote_api.dart';
 import 'package:antinote_app/data/src/settings/category.dart';
@@ -19,8 +20,10 @@ class NetworkingSettings extends SettingsCategory {
   SessionOptions get sessionOptions {
     if (has('session_options')) {
       return SessionOptions.fromBuffer(
-        base64Decode(get<String>('session_options')!),
-      )..freeze();
+          base64Decode(get<String>('session_options')!),
+        )
+        ..locale = Platform.localeName
+        ..freeze();
     }
 
     return SessionOptions.getDefault();

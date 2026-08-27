@@ -248,29 +248,29 @@ abstract class AppLocalizations {
   /// **'Réception'**
   String get communication;
 
-  /// No description provided for @disableAutoLogin.
+  /// No description provided for @autoLogin.
   ///
   /// In fr, this message translates to:
-  /// **'Désactiver la connexion automatique'**
-  String get disableAutoLogin;
+  /// **'Connexion automatique'**
+  String get autoLogin;
 
-  /// No description provided for @enableAutoLogin.
+  /// No description provided for @autoLoginSubtitle.
   ///
   /// In fr, this message translates to:
-  /// **'Activer la connexion automatique'**
-  String get enableAutoLogin;
+  /// **'Sélectionne ce compte dès l\'ouverture de l\'application'**
+  String get autoLoginSubtitle;
 
-  /// No description provided for @disableSecureStore.
+  /// No description provided for @secureStore.
   ///
   /// In fr, this message translates to:
-  /// **'Désactiver le chiffrage'**
-  String get disableSecureStore;
+  /// **'Chiffrage du compte'**
+  String get secureStore;
 
-  /// No description provided for @enableSecureStore.
+  /// No description provided for @secureStoreSubtitle.
   ///
   /// In fr, this message translates to:
-  /// **'Activer le chiffrage'**
-  String get enableSecureStore;
+  /// **'Demande votre biométrie pour se connecter au compte'**
+  String get secureStoreSubtitle;
 
   /// No description provided for @chooseAnAccount.
   ///

@@ -157,85 +157,164 @@ class _AccountsListScreenState extends State<AccountsListScreen>
                         builder: (context) {
                           return SafeArea(
                             child: Padding(
-                              padding: MediaQuery.viewInsetsOf(context),
+                              padding: const .symmetric(horizontal: 12),
+                              child: Column(
+                                spacing: 12,
+                                mainAxisSize: .min,
+                                mainAxisAlignment: .spaceBetween,
+                                children: [
+                                  ListWidget.list(
+                                    items: [
+                                      .new(
+                                        title: Text(context.l10n.autoLogin),
+                                        subtitle: Text(
+                                          context.l10n.autoLoginSubtitle,
+                                        ),
+                                        trailing: Switch(
+                                          value: _defaultUid == account.uid,
+                                          onChanged: (value) async {
+                                            await context.ar.storage.setDefault(
+                                              value ? account.uid : null,
+                                            );
+                                            await reload();
+                                            if (context.mounted) {
+                                              Navigator.pop(context);
+                                            }
+                                          },
+                                        ),
+                                      ),
+                                      .new(
+                                        title: Text(context.l10n.secureStore),
+                                        subtitle: Text(
+                                          context.l10n.secureStoreSubtitle,
+                                        ),
+                                        trailing: Switch(
+                                          value: account.storeSecurely,
+                                          onChanged: (value) async {
+                                            if (value ==
+                                                account.storeSecurely) {
+                                              return;
+                                            }
 
-                              child: Container(
-                                padding: const EdgeInsets.symmetric(
-                                  horizontal: 16,
-                                  vertical: 14,
-                                ),
+                                            await context.ar.storage
+                                                .updateAccount(
+                                                  account.rebuild((acc) {
+                                                    acc.storeSecurely = value;
+                                                  }),
+                                                  account.uid,
+                                                );
+                                            await reload();
+                                            if (context.mounted) {
+                                              Navigator.pop(context);
+                                            }
+                                          },
+                                        ),
+                                      ),
+                                    ],
+                                    isColumn: true,
+                                    isSliver: false,
+                                  ),
 
-                                child: Column(
-                                  mainAxisSize: .min,
-                                  spacing: 4,
-
-                                  children: [
-                                    ButtonWidget(
-                                      onPressed: () async {
-                                        await context.ar.storage.setDefault(
-                                          _defaultUid == account.uid
-                                              ? null
-                                              : account.uid,
-                                        );
-                                        await reload();
-
-                                        if (context.mounted) {
-                                          Navigator.pop(context);
-                                        }
-                                      },
-
-                                      label: _defaultUid == account.uid
-                                          ? context.l10n.disableAutoLogin
-                                          : context.l10n.enableAutoLogin,
-                                      icon: _defaultUid == account.uid
-                                          ? HugeIconsSolid.starOff
-                                          : HugeIconsSolid.star,
-                                    ),
-
-                                    ButtonWidget(
-                                      onPressed: () async {
-                                        await context.ar.storage.updateAccount(
-                                          account.rebuild((acc) {
-                                            acc.storeSecurely =
-                                                !acc.storeSecurely;
-                                          }),
-                                          account.uid,
-                                        );
-                                        await reload();
-
-                                        if (context.mounted) {
-                                          Navigator.pop(context);
-                                        }
-                                      },
-
-                                      icon: HugeIconsSolid.biometricAccess,
-                                      label: account.storeSecurely
-                                          ? context.l10n.disableSecureStore
-                                          : context.l10n.enableSecureStore,
-                                      variant: .secondary,
-                                    ),
-
-                                    ButtonWidget(
-                                      onPressed: () async {
-                                        await context.ar.storage.deleteAccount(
-                                          account.uid,
-                                        );
-                                        await reload();
-
-                                        if (context.mounted) {
-                                          Navigator.pop(context);
-                                        }
-                                      },
-
-                                      variant: .dangerous,
-                                      icon: HugeIconsSolid.delete02,
-                                      label: context.l10n.deleteAccount,
-                                    ),
-                                  ],
-                                ),
+                                  ButtonWidget(
+                                    onPressed: () async {
+                                      await context.ar.storage.deleteAccount(
+                                        account.uid,
+                                      );
+                                      await reload();
+                                      if (context.mounted) {
+                                        Navigator.pop(context);
+                                      }
+                                    },
+                                    variant: .dangerous,
+                                    icon: HugeIconsSolid.delete02,
+                                    label: context.l10n.deleteAccount,
+                                  ),
+                                ],
                               ),
                             ),
                           );
+
+                          // return SafeArea(
+                          //   child: Padding(
+                          //     padding: MediaQuery.viewInsetsOf(context),
+                          //
+                          //     child: Container(
+                          //       padding: const EdgeInsets.symmetric(
+                          //         horizontal: 16,
+                          //         vertical: 14,
+                          //       ),
+                          //
+                          //       child: Column(
+                          //         mainAxisSize: .min,
+                          //         spacing: 4,
+                          //
+                          //         children: [
+                          //           ButtonWidget(
+                          //             onPressed: () async {
+                          //               await context.ar.storage.setDefault(
+                          //                 _defaultUid == account.uid
+                          //                     ? null
+                          //                     : account.uid,
+                          //               );
+                          //               await reload();
+                          //
+                          //               if (context.mounted) {
+                          //                 Navigator.pop(context);
+                          //               }
+                          //             },
+                          //
+                          //             label: _defaultUid == account.uid
+                          //                 ? context.l10n.disableAutoLogin
+                          //                 : context.l10n.enableAutoLogin,
+                          //             icon: _defaultUid == account.uid
+                          //                 ? HugeIconsSolid.starOff
+                          //                 : HugeIconsSolid.star,
+                          //           ),
+                          //
+                          //           ButtonWidget(
+                          //             onPressed: () async {
+                          //               await context.ar.storage.updateAccount(
+                          //                 account.rebuild((acc) {
+                          //                   acc.storeSecurely =
+                          //                       !acc.storeSecurely;
+                          //                 }),
+                          //                 account.uid,
+                          //               );
+                          //               await reload();
+                          //
+                          //               if (context.mounted) {
+                          //                 Navigator.pop(context);
+                          //               }
+                          //             },
+                          //
+                          //             icon: HugeIconsSolid.biometricAccess,
+                          //             label: account.storeSecurely
+                          //                 ? context.l10n.disableSecureStore
+                          //                 : context.l10n.enableSecureStore,
+                          //             variant: .secondary,
+                          //           ),
+                          //
+                          //           ButtonWidget(
+                          //             onPressed: () async {
+                          //               await context.ar.storage.deleteAccount(
+                          //                 account.uid,
+                          //               );
+                          //               await reload();
+                          //
+                          //               if (context.mounted) {
+                          //                 Navigator.pop(context);
+                          //               }
+                          //             },
+                          //
+                          //             variant: .dangerous,
+                          //             icon: HugeIconsSolid.delete02,
+                          //             label: context.l10n.deleteAccount,
+                          //           ),
+                          //         ],
+                          //       ),
+                          //     ),
+                          //   ),
+                          // );
                         },
                       );
                     },

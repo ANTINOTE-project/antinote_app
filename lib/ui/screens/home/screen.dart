@@ -34,6 +34,7 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen>
     with PageMixin<HomeScreen>, TabMixin<HomeScreen> {
   late HomePageManager homePageManager;
+  late String username;
 
   @override
   Widget buildLoaded(
@@ -46,7 +47,7 @@ class _HomeScreenState extends State<HomeScreen>
     return Scaffold(
       appBar: AppBar(
         title: Text(
-          context.l10n.homeHiName('example'),
+          context.l10n.homeHiName(username),
           style: const TextStyle(fontWeight: .bold),
         ),
 
@@ -110,6 +111,8 @@ class _HomeScreenState extends State<HomeScreen>
   Future<void> load(RemoteSession session) async {
     homePageManager = HomePageManager();
     await homePageManager.initialize(context, session);
+
+    username = session.user.name;
 
     libLog.info(
       'Loaded home page with ${homePageManager.loadedWidgets.length} widget(s)',

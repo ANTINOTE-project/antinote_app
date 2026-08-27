@@ -5,8 +5,10 @@ import 'package:antinote_app/data/src/accounts/storage/widget.dart';
 import 'package:antinote_app/data/src/settings/registry.dart';
 import 'package:antinote_app/ui/app.dart';
 import 'package:antinote_app/ui/screens/shell/shell.dart';
-import 'package:material_ui/material_ui.dart';
+import 'package:flutter/foundation.dart';
+import 'package:flutter/services.dart';
 import 'package:logging/logging.dart';
+import 'package:material_ui/material_ui.dart';
 
 Future<void> mainEntrypoint() async {
   hierarchicalLoggingEnabled = true;
@@ -22,6 +24,12 @@ Future<void> mainEntrypoint() async {
   });
 
   WidgetsFlutterBinding.ensureInitialized();
+
+  LicenseRegistry.addLicense(() async* {
+    yield LicenseEntryWithLineBreaks([
+      'SN Pro',
+    ], await rootBundle.loadString('assets/fonts/OFL.txt', cache: false));
+  });
 
   final registry = SettingsRegistry();
   await registry.initialize();

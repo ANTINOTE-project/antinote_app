@@ -12,7 +12,7 @@ fonctionnalités poussées :
 
 - [x] Comptes chiffrés et sécurisés par biométrie
 - [x] Mise à jour des données en arrière-plan*
-- [x] Calendrier dans l'application du téléphone*
+- [x] Calendrier dans l'application du téléphone (disponibles dans les paramètres du téléphone)*
 - [ ] Notifications* (Coming Soon™)
 - [ ] Widgets* (Coming *less* Soon™)
 

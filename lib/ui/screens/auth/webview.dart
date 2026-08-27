@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:antinote_api/antinote_api.dart';
 import 'package:antinote_app/ui/utils/utils.dart';
 import 'package:antinote_app/ui/widgets/customs/app_bar.dart';
@@ -62,6 +64,7 @@ class _WebviewLoginScreenState extends State<WebviewLoginScreen> {
                   url!,
                   widget.parameters.casToken,
                   widget.workspace,
+                  Platform.localeName,
                 );
 
                 if (mounted) {

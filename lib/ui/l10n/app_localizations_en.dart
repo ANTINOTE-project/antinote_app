@@ -85,16 +85,18 @@ class AppLocalizationsEn extends AppLocalizations {
   String get communication => 'Inbox';
 
   @override
-  String get disableAutoLogin => 'Disable auto-login';
+  String get autoLogin => 'Connexion automatique';
 
   @override
-  String get enableAutoLogin => 'Enable auto-login';
+  String get autoLoginSubtitle =>
+      'Sélectionne ce compte dès l\'ouverture de l\'application';
 
   @override
-  String get disableSecureStore => 'Disable secure store';
+  String get secureStore => 'Chiffrage du compte';
 
   @override
-  String get enableSecureStore => 'Enable secure store';
+  String get secureStoreSubtitle =>
+      'Demande votre biométrie pour se connecter au compte';
 
   @override
   String get chooseAnAccount => 'Pick account';

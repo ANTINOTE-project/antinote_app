@@ -372,6 +372,8 @@ final class SessionWrapper({required final String accountUid}) {
             );
           }
 
+          session.stack.locale = Platform.localeName;
+
           final result = await callback(session);
 
           if (_state != null) {

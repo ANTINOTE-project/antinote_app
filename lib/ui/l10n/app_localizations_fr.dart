@@ -85,16 +85,18 @@ class AppLocalizationsFr extends AppLocalizations {
   String get communication => 'Réception';
 
   @override
-  String get disableAutoLogin => 'Désactiver la connexion automatique';
+  String get autoLogin => 'Connexion automatique';
 
   @override
-  String get enableAutoLogin => 'Activer la connexion automatique';
+  String get autoLoginSubtitle =>
+      'Sélectionne ce compte dès l\'ouverture de l\'application';
 
   @override
-  String get disableSecureStore => 'Désactiver le chiffrage';
+  String get secureStore => 'Chiffrage du compte';
 
   @override
-  String get enableSecureStore => 'Activer le chiffrage';
+  String get secureStoreSubtitle =>
+      'Demande votre biométrie pour se connecter au compte';
 
   @override
   String get chooseAnAccount => 'Choisir un compte';

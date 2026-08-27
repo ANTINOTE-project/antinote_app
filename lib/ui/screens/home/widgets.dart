@@ -187,7 +187,7 @@ class GradesWidget extends StatelessWidget {
     exams.sort((a, b) => b.date.compareTo(a.date));
 
     return HomeWidget(
-      icon: Icon(HugeIconsSolid.graduationScroll),
+      icon: const Icon(HugeIconsSolid.graduationScroll),
       label: Text(
         exams.length > 5
             ? '${context.l10n.grades} (+${exams.length - 5})'

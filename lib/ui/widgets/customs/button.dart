@@ -1,5 +1,6 @@
 import 'package:antinote_app/ui/utils/utils.dart';
 import 'package:antinote_app/ui/widgets/pressable.dart';
+import 'package:dynamic_color/dynamic_color.dart';
 import 'package:material_ui/material_ui.dart';
 
 enum ButtonVariant { primary, secondary, tertiary, dangerous }
@@ -45,12 +46,9 @@ class ButtonWidget extends StatelessWidget {
   Color _getBorderColor(BuildContext context) {
     if (notEnabled) return context.c.outlineVariant;
 
-    return switch (variant) {
-      .dangerous => context.c.onError,
-      .secondary => context.c.onSecondary,
-      .tertiary => context.c.onTertiary,
-      .primary => context.c.onPrimary,
-    };
+    return context.c.outline
+        .harmonizeWith(_getButtonColor(context))
+        .withAlpha(64);
   }
 
   Color _getTextColor(BuildContext context) {
@@ -69,7 +67,7 @@ class ButtonWidget extends StatelessWidget {
     return Pressable(
       onPressed: _onPressed,
 
-      borderRadius: .circular(8),
+      borderRadius: .circular(90),
       hasFeedback: enabled,
 
       child: Ink(
@@ -81,7 +79,7 @@ class ButtonWidget extends StatelessWidget {
         decoration: BoxDecoration(
           border: .all(color: _getBorderColor(context)),
           color: _getButtonColor(context),
-          borderRadius: .circular(8),
+          borderRadius: .circular(90),
         ),
 
         child: Center(

@@ -376,7 +376,9 @@ class _TimetableDisplayState extends State<TimetableDisplay>
       final curEndSlot = _scheduleDisplayData.endings[i];
 
       final nexSlot = _scheduleDisplayData.starts.elementAtOrNull(i + 1);
-      final prevEndSlot = _scheduleDisplayData.endings.elementAtOrNull(i - 1);
+      final prevEndSlot = i == 0
+          ? null
+          : _scheduleDisplayData.endings.elementAtOrNull(i - 1);
 
       if (lastAppliedSlot != null && lastAppliedSlot + 1 != i) {
         final from = _scheduleDisplayData.starts[lastAppliedSlot + 1];
@@ -416,13 +418,16 @@ class _TimetableDisplayState extends State<TimetableDisplay>
 
       final showStart =
           curSlot.active ||
+          i == relevantFirst ||
           (prevEndSlot != null &&
               prevEndSlot.timing == curSlot.timing &&
               prevEndSlot.active);
 
       final showEnd =
-          curEndSlot.active &&
-          !(nexSlot != null && nexSlot.timing == curEndSlot.timing);
+          (curEndSlot.active || i == relevantLast) &&
+          !(nexSlot != null &&
+              nexSlot.timing == curEndSlot.timing &&
+              i != relevantLast);
 
       displays.add(
         Expanded(

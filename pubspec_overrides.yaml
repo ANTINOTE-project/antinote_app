@@ -1,0 +1,8 @@
+dependency_overrides:
+  dynamic_color:
+    git:
+      url: "https://github.com/helomri/flutter-packages.git"
+      path: "packages/dynamic_color"
+      ref: feat/new-apis
+  antinote_api:
+    path: ../antinote

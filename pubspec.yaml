@@ -1,7 +1,7 @@
 name: antinote_app
 description: "La solution !"
 publish_to: "none"
-version: 0.1.0+000100
+version: 0.1.1+000101
 repository: https://github.com/ANTINOTE-project/antinote_app
 
 environment:
@@ -67,6 +67,7 @@ flutter:
 
   assets:
     - "assets/icon.png"
+    - "assets/fonts/OFL.txt"
 
   fonts:
     - family: SNPro
