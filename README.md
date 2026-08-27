@@ -6,6 +6,10 @@
 Votre emploi du temps, vos notes, vos devoirs et vos messages à portée de main, c'est
 possible avec ANTINOTE !
 
+<a href="https://play.google.com/store/apps/details?id=fr.antinote.antinote_app"><img src="assets/ic_get_on_playstore.png" height="64" /></a>
+
+---
+
 Nous connectons vos comptes PRONOTE à votre téléphone d'une façon jamais vue auparavant, grâce à
 notre intégration profonde au système d'exploitation, nous sommes capables de vous proposer des
 fonctionnalités poussées :
@@ -26,6 +30,8 @@ Nous supportons également les fonctionnalités principales de PRONOTE dans l'ap
 - [x] Travail à Faire
 - [x] Discussions
 - [x] Informations et Sondages (problèmes de stabilité liés à la version 2026...)
+
+---
 
 Nous proposons donc des dispositifs de sécurité qui ne sont pas supportés par l'application mobile
 PRONOTE tout en proposant à l'utilisateur des fonctionnalités supplémentaires pour réduire sa
