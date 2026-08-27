@@ -31,8 +31,8 @@
   "homeworks": "Homework",
   "communication": "Inbox",
 
-  "disableAutoLogin": "Disable auto-login",
-  "enableAutoLogin": "Enable auto-login",
+  "autoLogin": "Auto-login",
+  "autoLoginSubtitle": "Marks this account to open upon the start of the app",
   "chooseAnAccount": "Pick account",
   "chooseAnAccountSubtitle": "Pick which account to use, change properties about accounts, add accounts",
   "addAnAccount": "Add account",
@@ -190,8 +190,8 @@
 
   "boardOpinion": "Board opinion",
 
-  "disableSecureStore": "Disable secure store",
-  "enableSecureStore": "Enable secure store",
+  "secureStore": "Secure store",
+  "secureStoreSubtitle": "Asks for biometrics each time a new connection to this account is made",
 
   "loginQrCodeFromGallery": "Pick from gallery",
   "loginDemo": "Demo account",
