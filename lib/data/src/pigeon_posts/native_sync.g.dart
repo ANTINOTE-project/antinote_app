@@ -9,6 +9,32 @@ import 'dart:typed_data' show Float64List, Int32List, Int64List;
 import 'package:flutter/services.dart';
 import 'package:meta/meta.dart' show immutable, protected, visibleForTesting;
 
+Object? _extractReplyValueOrThrow(
+    List<Object?>? replyList,
+    String channelName, {
+    required bool isNullValid,
+}) {
+  if (replyList == null) {
+    throw PlatformException(
+      code: 'channel-error',
+      message: 'Unable to establish connection on channel: "$channelName".',
+    );
+  } else if (replyList.length > 1) {
+    throw PlatformException(
+      code: replyList[0]! as String,
+      message: replyList[1] as String?,
+      details: replyList[2],
+    );
+  } else if (!isNullValid && (replyList.isNotEmpty && replyList[0] == null)) {
+    throw PlatformException(
+      code: 'null-error',
+      message: 'Host platform returned null value for non-null return value.',
+    );
+  }
+  return replyList.firstOrNull;
+}
+
+
 List<Object?> wrapResponse({Object? result, PlatformException? error, bool empty = false}) {
   if (empty) {
     return <Object?>[];
@@ -88,6 +114,11 @@ enum SyncResultType {
   retry,
   /// When the credentials are invalid or the feature is unavailable.
   failure,
+}
+
+enum SyncMessageType {
+  missingCalendarPermission,
+  missingNotificationPermission,
 }
 
 class SyncRequest {
@@ -200,11 +231,14 @@ class _PigeonCodec extends StandardMessageCodec {
     }    else if (value is SyncResultType) {
       buffer.putUint8(129);
       writeValue(buffer, value.index);
-    }    else if (value is SyncRequest) {
+    }    else if (value is SyncMessageType) {
       buffer.putUint8(130);
+      writeValue(buffer, value.index);
+    }    else if (value is SyncRequest) {
+      buffer.putUint8(131);
       writeValue(buffer, value.encode());
     }    else if (value is SyncResponse) {
-      buffer.putUint8(131);
+      buffer.putUint8(132);
       writeValue(buffer, value.encode());
     } else {
       super.writeValue(buffer, value);
@@ -218,8 +252,11 @@ class _PigeonCodec extends StandardMessageCodec {
         final value = readValue(buffer) as int?;
         return value == null ? null : SyncResultType.values[value];
       case 130:
-        return SyncRequest.decode(readValue(buffer)!);
+        final value = readValue(buffer) as int?;
+        return value == null ? null : SyncMessageType.values[value];
       case 131:
+        return SyncRequest.decode(readValue(buffer)!);
+      case 132:
         return SyncResponse.decode(readValue(buffer)!);
       default:
         return super.readValueOfType(type, buffer);
@@ -255,5 +292,39 @@ abstract class SyncManager {
         });
       }
     }
+  }
+}
+
+class NativeSyncManager {
+  /// Constructor for [NativeSyncManager]. The [binaryMessenger] named argument is
+  /// available for dependency injection. If it is left null, the default
+  /// BinaryMessenger will be used which routes to the host platform.
+  NativeSyncManager({BinaryMessenger? binaryMessenger, String messageChannelSuffix = ''})
+      : pigeonVar_binaryMessenger = binaryMessenger,
+        pigeonVar_messageChannelSuffix = messageChannelSuffix.isNotEmpty ? '.$messageChannelSuffix' : '';
+  final BinaryMessenger? pigeonVar_binaryMessenger;
+
+  static const MessageCodec<Object?> pigeonChannelCodec = _PigeonCodec();
+
+  final String pigeonVar_messageChannelSuffix;
+
+  /// We use this as we can't easily know the locale in a non-Flutter
+  /// environment.
+  Future<void> displayMessage(SyncMessageType messageType) async {
+    final pigeonVar_channelName = 'dev.flutter.pigeon.antinote_app.NativeSyncManager.displayMessage$pigeonVar_messageChannelSuffix';
+    final pigeonVar_channel = BasicMessageChannel<Object?>(
+      pigeonVar_channelName,
+      pigeonChannelCodec,
+      binaryMessenger: pigeonVar_binaryMessenger,
+    );
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[messageType]);
+    final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
+
+    _extractReplyValueOrThrow(
+        pigeonVar_replyList,
+        pigeonVar_channelName,
+        isNullValid: true,
+    )
+    ;
   }
 }

@@ -417,7 +417,7 @@ class AppLocalizationsFr extends AppLocalizations {
   String get raMessage => 'J\'ai pris connaissance de cette information';
 
   @override
-  String get couldNotLoad => 'L\'instance m\'a pas pu être chargée...';
+  String get couldNotLoad => 'L\'instance m\'a pas pu être chargée…';
 
   @override
   String get instanceName => 'Nom d\'instance';
@@ -673,4 +673,7 @@ class AppLocalizationsFr extends AppLocalizations {
   @override
   String get appLegalese =>
       'L\'application ANTINOTE est libre et gratuite, disponible sous la license MIT. Nous rendons disponibles de nouvelles fonctionnalité grâce à une connection à votre compte PRONOTE. Nous ne sommes en aucun cas lié à Index-Education et nous ne proposons aucune garantie d\'aucune sorte quant à l\'utilisation du logiciel. Fait avec ❤ par l\'équipe ANTINOTE';
+
+  @override
+  String get openAccountSettings => 'Ouvrir les paramètres de compte…';
 }

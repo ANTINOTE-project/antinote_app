@@ -672,4 +672,7 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get appLegalese =>
       'The ANTINOTE app is free and open-source, available under the MIT license. We offer new functionnality using a connection to your PRONOTE account. We are not affiliated with Index-Education, and we do not offer guaranties in any way, shape, of form regarding the use of this software. Made with ❤ by the ANTINOTE team';
+
+  @override
+  String get openAccountSettings => 'Open account settings…';
 }

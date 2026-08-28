@@ -8,9 +8,9 @@ import 'package:antinote_app/ui/widgets/customs/list.dart';
 import 'package:antinote_app/ui/widgets/grade_text.dart';
 import 'package:antinote_app/ui/widgets/pressable.dart';
 import 'package:collection/collection.dart';
-import 'package:material_ui/material_ui.dart';
 import 'package:hugeicons_pro/hugeicons.dart';
 import 'package:intl/intl.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:skeletonizer/skeletonizer.dart';
 
 part 'modal.dart';
@@ -75,7 +75,7 @@ Future<void> showExamDetails(BuildContext context, Exam exam) async {
     if (exam.minGrade != null)
       (
         label: context.l10n.worstGrade,
-      icon: HugeIconsStroke.crying,
+        icon: HugeIconsStroke.crying,
         grade: exam.minGrade,
         theoreticalMaxGrade: exam.theoreticalMaxGrade,
         defaultMaxGrade: exam.defaultMaxGrade,

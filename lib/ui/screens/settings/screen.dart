@@ -1,5 +1,5 @@
 import 'package:antinote_app/ui/l10n/app_localizations.dart';
-import 'package:antinote_app/ui/screens/auth/lists/accounts_list.dart';
+import 'package:antinote_app/ui/screens/auth/lists/accounts.dart';
 import 'package:antinote_app/ui/screens/settings/networking.dart';
 import 'package:antinote_app/ui/screens/settings/theme.dart';
 import 'package:antinote_app/ui/utils/utils.dart';

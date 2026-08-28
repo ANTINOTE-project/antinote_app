@@ -5,9 +5,9 @@ import 'package:antinote_app/data/src/accounts/storage/base.dart';
 import 'package:antinote_app/data/src/accounts/storage/widget.dart';
 import 'package:antinote_app/data/src/settings/registry.dart';
 import 'package:antinote_app/ui/app.dart';
-import 'package:antinote_app/ui/screens/auth/lists/methods_list.dart';
-import 'package:material_ui/material_ui.dart';
+import 'package:antinote_app/ui/screens/auth/lists/methods.dart';
 import 'package:logging/logging.dart';
+import 'package:material_ui/material_ui.dart';
 
 Future<void> loginEntrypoint() async {
   hierarchicalLoggingEnabled = true;

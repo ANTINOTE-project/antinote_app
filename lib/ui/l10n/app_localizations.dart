@@ -789,7 +789,7 @@ abstract class AppLocalizations {
   /// No description provided for @couldNotLoad.
   ///
   /// In fr, this message translates to:
-  /// **'L\'instance m\'a pas pu être chargée...'**
+  /// **'L\'instance m\'a pas pu être chargée…'**
   String get couldNotLoad;
 
   /// No description provided for @instanceName.
@@ -1169,6 +1169,12 @@ abstract class AppLocalizations {
   /// In fr, this message translates to:
   /// **'L\'application ANTINOTE est libre et gratuite, disponible sous la license MIT. Nous rendons disponibles de nouvelles fonctionnalité grâce à une connection à votre compte PRONOTE. Nous ne sommes en aucun cas lié à Index-Education et nous ne proposons aucune garantie d\'aucune sorte quant à l\'utilisation du logiciel. Fait avec ❤ par l\'équipe ANTINOTE'**
   String get appLegalese;
+
+  /// No description provided for @openAccountSettings.
+  ///
+  /// In fr, this message translates to:
+  /// **'Ouvrir les paramètres de compte…'**
+  String get openAccountSettings;
 }
 
 class _AppLocalizationsDelegate

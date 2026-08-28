@@ -25,6 +25,11 @@ enum SyncResultType {
   failure,
 }
 
+enum SyncMessageType {
+  missingCalendarPermission,
+  missingNotificationPermission,
+}
+
 final class SyncRequest {
   /// The account protobuf (without credentials) to perform the task.
   final Uint8List account;
@@ -47,4 +52,11 @@ final class SyncResponse {
 abstract class SyncManager {
   @async
   SyncResponse syncAccount(SyncRequest request);
+}
+
+@HostApi()
+abstract class NativeSyncManager {
+  /// We use this as we can't easily know the locale in a non-Flutter
+  /// environment.
+  void displayMessage(SyncMessageType messageType);
 }

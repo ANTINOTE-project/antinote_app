@@ -2,6 +2,7 @@ package fr.antinote.antinote_app.sync
 
 import android.content.Context
 import android.util.Log
+import android.widget.Toast
 import androidx.core.app.NotificationChannelCompat
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
@@ -18,7 +19,9 @@ import fr.antinote.antinote_app.protos.SyncTaskType
 import fr.antinote.antinote_app.session.SessionManager
 import fr.antinote.studies_management.antinote_app.pigeon_posts.NativeCalendarManager
 import fr.antinote.studies_management.antinote_app.pigeon_posts.NativeSessionManager
+import fr.antinote.studies_management.antinote_app.pigeon_posts.NativeSyncManager
 import fr.antinote.studies_management.antinote_app.pigeon_posts.SyncManager
+import fr.antinote.studies_management.antinote_app.pigeon_posts.SyncMessageType
 import fr.antinote.studies_management.antinote_app.pigeon_posts.SyncRequest
 import fr.antinote.studies_management.antinote_app.pigeon_posts.SyncResultType
 import io.flutter.FlutterInjector
@@ -37,7 +40,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withTimeout
 import kotlin.time.Duration.Companion.minutes
 
-class SyncWorker(appContext: Context, workerParams: WorkerParameters) :
+class SyncWorker(val appContext: Context, workerParams: WorkerParameters) :
     CoroutineWorker(appContext, workerParams) {
     companion object {
         const val TAG = "SyncWorker"
@@ -55,6 +58,18 @@ class SyncWorker(appContext: Context, workerParams: WorkerParameters) :
         var sessionManager: SessionManager? = null
     )
 
+
+    inner class SyncManager : NativeSyncManager {
+        override fun displayMessage(messageType: SyncMessageType) {
+            Toast.makeText(
+                appContext, when (messageType) {
+                    SyncMessageType.MISSING_CALENDAR_PERMISSION -> R.string.calendar_permission_message
+                    SyncMessageType.MISSING_NOTIFICATION_PERMISSION -> R.string.notification_permission_message
+                }, Toast.LENGTH_SHORT
+            ).show()
+        }
+    }
+
     private val mainScope = CoroutineScope(Dispatchers.Main + SupervisorJob())
 
     override suspend fun doWork(): Result {
@@ -71,13 +86,19 @@ class SyncWorker(appContext: Context, workerParams: WorkerParameters) :
         for (account in app.accountStore.data.first().accountsList) {
             Log.i(TAG, "Checking whether we should sync ${account.uid}...")
 
-            if(account.storeSecurely) continue
-            if(!shouldDoSync(account) && uids == null) {
-                Log.i(TAG, "We skip sync for account ${account.uid} because it doesn't have any task to run.")
+            if (account.storeSecurely) continue
+            if (!shouldDoSync(account) && uids == null) {
+                Log.i(
+                    TAG,
+                    "We skip sync for account ${account.uid} because it doesn't have any task to run."
+                )
                 continue
             }
             if (uids != null && !uids.contains(account.uid)) {
-                Log.i(TAG, "We skip sync for account ${account.uid} for now to focus on provided accounts.")
+                Log.i(
+                    TAG,
+                    "We skip sync for account ${account.uid} for now to focus on provided accounts."
+                )
                 continue
             }
 
@@ -100,8 +121,7 @@ class SyncWorker(appContext: Context, workerParams: WorkerParameters) :
             flutterLoader.ensureInitializationComplete(applicationContext, null)
 
             val entrypoint = DartExecutor.DartEntrypoint(
-                flutterLoader.findAppBundlePath(),
-                "syncMain"
+                flutterLoader.findAppBundlePath(), "syncMain"
             )
 
             val options = FlutterEngineGroup.Options(applicationContext).run {
@@ -119,37 +139,42 @@ class SyncWorker(appContext: Context, workerParams: WorkerParameters) :
             val loginManager = LoginManager(applicationContext, null)
 
             NativeCalendarManager.setUp(
-                data.engine!!.dartExecutor.binaryMessenger,
-                CalendarManager(applicationContext)
+                data.engine!!.dartExecutor.binaryMessenger, CalendarManager(applicationContext)
             )
             NativeLoginManager.setUp(
-                data.engine!!.dartExecutor.binaryMessenger,
-                loginManager
+                data.engine!!.dartExecutor.binaryMessenger, loginManager
             )
             NativeSessionManager.setUp(
-                data.engine!!.dartExecutor.binaryMessenger,
-                data.sessionManager
+                data.engine!!.dartExecutor.binaryMessenger, data.sessionManager
+            )
+            NativeSyncManager.setUp(
+                data.engine!!.dartExecutor.binaryMessenger, SyncManager()
             )
 
-            var curResponseLevel: SyncResultType = SyncResultType.SUCCESS
+            var curResponseLevel: SyncResultType? = null
 
             val accounts = loginManager.scanAndGetAccounts(uidFilter = validUids)
-            for(account in accounts) {
+            for (account in accounts) {
                 val res = syncManager.syncAccount(
                     SyncRequest(
                         account = account.toByteArray(),
-                        forcedScope = forcedTasks?.map { it.number.toLong() }
-                    )
+                        forcedScope = forcedTasks?.map { it.number.toLong() })
                 )
 
-                if(res.result == SyncResultType.RETRY) {
-                    curResponseLevel = res.result
-                } else if(res.result == SyncResultType.FAILURE && curResponseLevel == SyncResultType.SUCCESS) {
-                    curResponseLevel = res.result
+                // Success if all requests success, failure if all requests fail, else retry.
+                curResponseLevel = if (
+                    (res.result == SyncResultType.RETRY
+                    || curResponseLevel == SyncResultType.RETRY
+                    || res.result != curResponseLevel)
+                    && curResponseLevel != null
+                ) {
+                    SyncResultType.RETRY
+                } else {
+                    res.result
                 }
             }
 
-            data.workResult = when (curResponseLevel) {
+            data.workResult = when (curResponseLevel ?: SyncResultType.SUCCESS) {
                 SyncResultType.SUCCESS -> Result.success()
                 SyncResultType.RETRY -> Result.retry()
                 SyncResultType.FAILURE -> Result.failure()
@@ -182,21 +207,18 @@ class SyncWorker(appContext: Context, workerParams: WorkerParameters) :
     override suspend fun getForegroundInfo(): ForegroundInfo {
         NotificationManagerCompat.from(applicationContext).createNotificationChannel(
             NotificationChannelCompat.Builder(
-                SYNC_NOTIFICATION_CHANNEL_ID,
-                NotificationManagerCompat.IMPORTANCE_MIN
+                SYNC_NOTIFICATION_CHANNEL_ID, NotificationManagerCompat.IMPORTANCE_MIN
             ).build()
         )
 
         return ForegroundInfo(
-            0,
-            NotificationCompat.Builder(applicationContext, SYNC_NOTIFICATION_CHANNEL_ID).run {
+            0, NotificationCompat.Builder(applicationContext, SYNC_NOTIFICATION_CHANNEL_ID).run {
                 setContentTitle(applicationContext.getString(R.string.syncing))
                 setSmallIcon(R.drawable.rounded_sync_arrow_down_24)
 
                 // TODO: Make sync have a progress indicator using the SyncManager.
 
                 build()
-            }
-        )
+            })
     }
 }

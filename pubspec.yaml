@@ -28,8 +28,8 @@ dependencies:
 
   # Frontend - useful
   url_launcher: ^6.3.2
-  webview_flutter: ^4.13.1
-  mobile_scanner: ^7.2.0
+  webview_flutter: ^4.14.1
+  mobile_scanner: ^7.4.0
   flutter_widget_from_html_core: ^0.17.2
   material_ui: any
   package_info_plus: ^10.2.1
@@ -43,6 +43,7 @@ dependencies:
   http: ^1.6.0
   collection: ^1.19.1
   image_picker: ^1.2.3
+  permission_handler: ^12.0.3
   # Disabled because it doesn't play nicely with R8
   #  cryptography_flutter_plus: ^3.0.2 # So that cryptography_plus in antinote is faster.
 

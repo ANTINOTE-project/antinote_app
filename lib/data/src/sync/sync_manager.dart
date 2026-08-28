@@ -14,6 +14,7 @@ import 'package:antinote_app/data/src/sync/polling_manager.dart';
 import 'package:flutter/foundation.dart';
 import 'package:logging/logging.dart';
 import 'package:material_ui/material_ui.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:protobuf/well_known_types/google/protobuf/any.pb.dart';
 import 'package:protobuf/well_known_types/google/protobuf/timestamp.pb.dart';
 
@@ -34,6 +35,8 @@ Future<void> syncEntrypoint() async {
 }
 
 final class SyncRequestManager extends SyncManager {
+  static final nativeSync = NativeSyncManager();
+
   late final AccountRegistry registry;
   late final SyncPollingManager pollingManager;
 
@@ -178,6 +181,19 @@ final class SyncRequestManager extends SyncManager {
   static final NativeCalendarManager _calendarManager = NativeCalendarManager();
 
   Future<SyncResponse> syncCalendar(SessionWrapper wrapper) async {
+    final calendarStatus = await Permission.calendarFullAccess.status;
+
+    if (!calendarStatus.isGranted) {
+      final newStatus = calendarStatus.isPermanentlyDenied
+          ? calendarStatus
+          : await Permission.calendarFullAccess.request();
+
+      if (!newStatus.isGranted) {
+        await nativeSync.displayMessage(.missingCalendarPermission);
+        return SyncResponse(result: .failure);
+      }
+    }
+
     final (timetables, user, instanceDomain, address) = await wrapper.runTask(
       callback: (session) async {
         final timetables = <UserResource, List<RecurringClass<Class>>>{};

@@ -23,6 +23,26 @@ private object NativeSyncPigeonUtils {
 
   fun createConnectionError(channelName: String): SyncManagerError {
     return SyncManagerError("channel-error",  "Unable to establish connection on channel: '$channelName'.", "")  }
+
+  fun wrapResult(result: Any?): List<Any?> {
+    return listOf(result)
+  }
+
+  fun wrapError(exception: Throwable): List<Any?> {
+    return if (exception is SyncManagerError) {
+      listOf(
+        exception.code,
+        exception.message,
+        exception.details
+      )
+    } else {
+      listOf(
+        exception.javaClass.simpleName,
+        exception.toString(),
+        "Cause: " + exception.cause + ", Stacktrace: " + Log.getStackTraceString(exception)
+      )
+    }
+  }
   fun doubleEquals(a: Double, b: Double): Boolean {
     // Normalize -0.0 to 0.0 and handle NaN equality.
     return (if (a == 0.0) 0.0 else a) == (if (b == 0.0) 0.0 else b) || (a.isNaN() && b.isNaN())
@@ -196,6 +216,17 @@ enum class SyncResultType(val raw: Int) {
   }
 }
 
+enum class SyncMessageType(val raw: Int) {
+  MISSING_CALENDAR_PERMISSION(0),
+  MISSING_NOTIFICATION_PERMISSION(1);
+
+  companion object {
+    fun ofRaw(raw: Int): SyncMessageType? {
+      return values().firstOrNull { it.raw == raw }
+    }
+  }
+}
+
 /** Generated class from Pigeon that represents data sent in messages. */
 data class SyncRequest (
   /** The account protobuf (without credentials) to perform the task. */
@@ -288,11 +319,16 @@ private open class NativeSyncPigeonCodec : StandardMessageCodec() {
         }
       }
       130.toByte() -> {
+        return (readValue(buffer) as Long?)?.let {
+          SyncMessageType.ofRaw(it.toInt())
+        }
+      }
+      131.toByte() -> {
         return (readValue(buffer) as? List<Any?>)?.let {
           SyncRequest.fromList(it)
         }
       }
-      131.toByte() -> {
+      132.toByte() -> {
         return (readValue(buffer) as? List<Any?>)?.let {
           SyncResponse.fromList(it)
         }
@@ -306,12 +342,16 @@ private open class NativeSyncPigeonCodec : StandardMessageCodec() {
         stream.write(129)
         writeValue(stream, value.raw.toLong())
       }
-      is SyncRequest -> {
+      is SyncMessageType -> {
         stream.write(130)
+        writeValue(stream, value.raw.toLong())
+      }
+      is SyncRequest -> {
+        stream.write(131)
         writeValue(stream, value.toList())
       }
       is SyncResponse -> {
-        stream.write(131)
+        stream.write(132)
         writeValue(stream, value.toList())
       }
       else -> super.writeValue(stream, value)
@@ -346,6 +386,44 @@ class SyncManager(private val binaryMessenger: BinaryMessenger, private val mess
         } else {
           continuation.resumeWithException(NativeSyncPigeonUtils.createConnectionError(channelName))
         } 
+      }
+    }
+  }
+}
+/** Generated interface from Pigeon that represents a handler of messages from Flutter. */
+interface NativeSyncManager {
+  /**
+   * We use this as we can't easily know the locale in a non-Flutter
+   * environment.
+   */
+  fun displayMessage(messageType: SyncMessageType)
+
+  companion object {
+    /** The codec used by NativeSyncManager. */
+    val codec: MessageCodec<Any?> by lazy {
+      NativeSyncPigeonCodec()
+    }
+    /** Sets up an instance of `NativeSyncManager` to handle messages through the `binaryMessenger`. */
+    @JvmOverloads
+    fun setUp(binaryMessenger: BinaryMessenger, api: NativeSyncManager?, messageChannelSuffix: String = "") {
+      val separatedMessageChannelSuffix = if (messageChannelSuffix.isNotEmpty()) ".$messageChannelSuffix" else ""
+      run {
+        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.antinote_app.NativeSyncManager.displayMessage$separatedMessageChannelSuffix", codec)
+        if (api != null) {
+          channel.setMessageHandler { message, reply ->
+            val args = message as List<Any?>
+            val messageTypeArg = args[0] as SyncMessageType
+            val wrapped: List<Any?> = try {
+              api.displayMessage(messageTypeArg)
+              listOf(null)
+            } catch (exception: Throwable) {
+              NativeSyncPigeonUtils.wrapError(exception)
+            }
+            reply.reply(wrapped)
+          }
+        } else {
+          channel.setMessageHandler(null)
+        }
       }
     }
   }

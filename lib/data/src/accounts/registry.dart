@@ -4,7 +4,7 @@ import 'dart:io';
 import 'package:antinote_api/antinote_api.dart';
 import 'package:antinote_app/data/src/accounts/storage/base.dart';
 import 'package:antinote_app/data/src/pigeon_posts/native_session.g.dart';
-import 'package:antinote_app/ui/screens/auth/lists/accounts_list.dart';
+import 'package:antinote_app/ui/screens/auth/lists/accounts.dart';
 import 'package:material_ui/material_ui.dart';
 
 import '../session/wrapper.dart';

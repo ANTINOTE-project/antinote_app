@@ -1,7 +1,7 @@
 import 'dart:async';
 
 import 'package:antinote_api/antinote_api.dart';
-import 'package:antinote_app/ui/screens/auth/lists/workspaces_list.dart';
+import 'package:antinote_app/ui/screens/auth/lists/workspaces.dart';
 import 'package:antinote_app/ui/utils/utils.dart';
 import 'package:antinote_app/ui/widgets/customs/app_bar.dart';
 import 'package:antinote_app/ui/widgets/customs/button.dart';

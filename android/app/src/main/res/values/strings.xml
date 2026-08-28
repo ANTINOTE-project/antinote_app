@@ -7,4 +7,6 @@
     <string name="biometric_prompt_description">Get access to your protected account credentials by confirming your identity</string>
     <string name="biometric_prompt_cancel">Cancel</string>
     <string name="syncing">Syncing…</string>
+    <string name="calendar_permission_message">Calendar permission is required to perform sync operation</string>
+    <string name="notification_permission_message">Notification permission is required to send updates in background</string>
 </resources>

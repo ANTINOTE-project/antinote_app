@@ -178,7 +178,7 @@
   "anonymousPoll": "sondage anonyme",
   "raMessage": "J'ai pris connaissance de cette information",
 
-  "couldNotLoad": "L'instance m'a pas pu être chargée...",
+  "couldNotLoad": "L'instance m'a pas pu être chargée…",
   "instanceName": "Nom d'instance",
   "instanceNameValue": "{mainName} ({loginName} quand déconnecté)",
   "remoteVersion": "Version de l'instance",
@@ -332,5 +332,7 @@
   "application": "Application",
   "about": "À propos",
   "appName": "ANTINOTE",
-  "appLegalese": "L'application ANTINOTE est libre et gratuite, disponible sous la license MIT. Nous rendons disponibles de nouvelles fonctionnalité grâce à une connection à votre compte PRONOTE. Nous ne sommes en aucun cas lié à Index-Education et nous ne proposons aucune garantie d'aucune sorte quant à l'utilisation du logiciel. Fait avec ❤ par l'équipe ANTINOTE"
+  "appLegalese": "L'application ANTINOTE est libre et gratuite, disponible sous la license MIT. Nous rendons disponibles de nouvelles fonctionnalité grâce à une connection à votre compte PRONOTE. Nous ne sommes en aucun cas lié à Index-Education et nous ne proposons aucune garantie d'aucune sorte quant à l'utilisation du logiciel. Fait avec ❤ par l'équipe ANTINOTE",
+
+  "openAccountSettings": "Ouvrir les paramètres de compte…"
 }
