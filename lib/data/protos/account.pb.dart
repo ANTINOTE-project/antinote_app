@@ -23,6 +23,138 @@ export 'package:protobuf/protobuf.dart' show GeneratedMessageGenericExtensions;
 
 export 'account.pbenum.dart';
 
+class SyncTaskData_Notification_Entry extends $pb.GeneratedMessage {
+  factory SyncTaskData_Notification_Entry({
+    SyncTaskData_Notification_EntryType? type,
+    $core.String? visualId,
+  }) {
+    final result = create();
+    if (type != null) result.type = type;
+    if (visualId != null) result.visualId = visualId;
+    return result;
+  }
+
+  SyncTaskData_Notification_Entry._();
+
+  factory SyncTaskData_Notification_Entry.fromBuffer($core.List<$core.int> data,
+          [$pb.ExtensionRegistry registry = $pb.ExtensionRegistry.EMPTY]) =>
+      create()..mergeFromBuffer(data, registry);
+  factory SyncTaskData_Notification_Entry.fromJson($core.String json,
+          [$pb.ExtensionRegistry registry = $pb.ExtensionRegistry.EMPTY]) =>
+      create()..mergeFromJson(json, registry);
+
+  static final $pb.BuilderInfo _i = $pb.BuilderInfo(
+      _omitMessageNames ? '' : 'SyncTaskData.Notification.Entry',
+      package: const $pb.PackageName(_omitMessageNames ? '' : 'antinote_app'),
+      createEmptyInstance: create)
+    ..aE<SyncTaskData_Notification_EntryType>(1, _omitFieldNames ? '' : 'type',
+        enumValues: SyncTaskData_Notification_EntryType.values)
+    ..aOS(2, _omitFieldNames ? '' : 'visualId')
+    ..hasRequiredFields = false;
+
+  @$core.Deprecated('See https://github.com/google/protobuf.dart/issues/998.')
+  SyncTaskData_Notification_Entry clone() => deepCopy();
+  @$core.Deprecated('See https://github.com/google/protobuf.dart/issues/998.')
+  SyncTaskData_Notification_Entry copyWith(
+          void Function(SyncTaskData_Notification_Entry) updates) =>
+      super.copyWith(
+              (message) => updates(message as SyncTaskData_Notification_Entry))
+          as SyncTaskData_Notification_Entry;
+
+  @$core.override
+  $pb.BuilderInfo get info_ => _i;
+
+  @$core.pragma('dart2js:noInline')
+  static SyncTaskData_Notification_Entry create() =>
+      SyncTaskData_Notification_Entry._();
+  @$core.override
+  SyncTaskData_Notification_Entry createEmptyInstance() => create();
+  @$core.pragma('dart2js:noInline')
+  static SyncTaskData_Notification_Entry getDefault() => _defaultInstance ??=
+      $pb.GeneratedMessage.$_defaultFor<SyncTaskData_Notification_Entry>(
+          create);
+  static SyncTaskData_Notification_Entry? _defaultInstance;
+
+  @$pb.TagNumber(1)
+  SyncTaskData_Notification_EntryType get type => $_getN(0);
+  @$pb.TagNumber(1)
+  set type(SyncTaskData_Notification_EntryType value) => $_setField(1, value);
+  @$pb.TagNumber(1)
+  $core.bool hasType() => $_has(0);
+  @$pb.TagNumber(1)
+  void clearType() => $_clearField(1);
+
+  @$pb.TagNumber(2)
+  $core.String get visualId => $_getSZ(1);
+  @$pb.TagNumber(2)
+  set visualId($core.String value) => $_setString(1, value);
+  @$pb.TagNumber(2)
+  $core.bool hasVisualId() => $_has(1);
+  @$pb.TagNumber(2)
+  void clearVisualId() => $_clearField(2);
+}
+
+class SyncTaskData_Notification extends $pb.GeneratedMessage {
+  factory SyncTaskData_Notification({
+    $core.Iterable<SyncTaskData_Notification_Entry>? entries,
+    $core.Iterable<SyncTaskData_Notification_EntryType>? enabledTypes,
+  }) {
+    final result = create();
+    if (entries != null) result.entries.addAll(entries);
+    if (enabledTypes != null) result.enabledTypes.addAll(enabledTypes);
+    return result;
+  }
+
+  SyncTaskData_Notification._();
+
+  factory SyncTaskData_Notification.fromBuffer($core.List<$core.int> data,
+          [$pb.ExtensionRegistry registry = $pb.ExtensionRegistry.EMPTY]) =>
+      create()..mergeFromBuffer(data, registry);
+  factory SyncTaskData_Notification.fromJson($core.String json,
+          [$pb.ExtensionRegistry registry = $pb.ExtensionRegistry.EMPTY]) =>
+      create()..mergeFromJson(json, registry);
+
+  static final $pb.BuilderInfo _i = $pb.BuilderInfo(
+      _omitMessageNames ? '' : 'SyncTaskData.Notification',
+      package: const $pb.PackageName(_omitMessageNames ? '' : 'antinote_app'),
+      createEmptyInstance: create)
+    ..pPM<SyncTaskData_Notification_Entry>(1, _omitFieldNames ? '' : 'entries',
+        subBuilder: SyncTaskData_Notification_Entry.create)
+    ..pc<SyncTaskData_Notification_EntryType>(
+        2, _omitFieldNames ? '' : 'enabledTypes', $pb.PbFieldType.KE,
+        valueOf: SyncTaskData_Notification_EntryType.valueOf,
+        enumValues: SyncTaskData_Notification_EntryType.values,
+        defaultEnumValue: SyncTaskData_Notification_EntryType.INFORMATION)
+    ..hasRequiredFields = false;
+
+  @$core.Deprecated('See https://github.com/google/protobuf.dart/issues/998.')
+  SyncTaskData_Notification clone() => deepCopy();
+  @$core.Deprecated('See https://github.com/google/protobuf.dart/issues/998.')
+  SyncTaskData_Notification copyWith(
+          void Function(SyncTaskData_Notification) updates) =>
+      super.copyWith((message) => updates(message as SyncTaskData_Notification))
+          as SyncTaskData_Notification;
+
+  @$core.override
+  $pb.BuilderInfo get info_ => _i;
+
+  @$core.pragma('dart2js:noInline')
+  static SyncTaskData_Notification create() => SyncTaskData_Notification._();
+  @$core.override
+  SyncTaskData_Notification createEmptyInstance() => create();
+  @$core.pragma('dart2js:noInline')
+  static SyncTaskData_Notification getDefault() => _defaultInstance ??=
+      $pb.GeneratedMessage.$_defaultFor<SyncTaskData_Notification>(create);
+  static SyncTaskData_Notification? _defaultInstance;
+
+  @$pb.TagNumber(1)
+  $pb.PbList<SyncTaskData_Notification_Entry> get entries => $_getList(0);
+
+  @$pb.TagNumber(2)
+  $pb.PbList<SyncTaskData_Notification_EntryType> get enabledTypes =>
+      $_getList(1);
+}
+
 class SyncTaskData extends $pb.GeneratedMessage {
   factory SyncTaskData({
     SyncTaskType? type,

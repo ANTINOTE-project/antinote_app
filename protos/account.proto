@@ -26,6 +26,25 @@ message SyncTaskData {
 
   // This is used to store additional that is specific to the task type.
   optional google.protobuf.Any specialized_data = 4;
+
+  message Notification {
+    enum EntryType {
+      INFORMATION = 0;
+      DISCUSSION = 1;
+      HOMEWORK = 2;
+      GRADE = 3;
+      MENU = 4;
+    }
+
+    message Entry {
+        EntryType type = 1;
+        string visual_id = 2;
+        string resource_visual_id = 3;
+    }
+
+    repeated Entry entries = 1;
+    repeated EntryType enabled_types = 2;
+  }
 }
 
 message EncryptedCredentials {

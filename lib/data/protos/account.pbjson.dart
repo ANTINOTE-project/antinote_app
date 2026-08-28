@@ -60,8 +60,62 @@ const SyncTaskData$json = {
       '17': true
     },
   ],
+  '3': [SyncTaskData_Notification$json],
   '8': [
     {'1': '_specialized_data'},
+  ],
+};
+
+@$core.Deprecated('Use syncTaskDataDescriptor instead')
+const SyncTaskData_Notification$json = {
+  '1': 'Notification',
+  '2': [
+    {
+      '1': 'entries',
+      '3': 1,
+      '4': 3,
+      '5': 11,
+      '6': '.antinote_app.SyncTaskData.Notification.Entry',
+      '10': 'entries'
+    },
+    {
+      '1': 'enabled_types',
+      '3': 2,
+      '4': 3,
+      '5': 14,
+      '6': '.antinote_app.SyncTaskData.Notification.EntryType',
+      '10': 'enabledTypes'
+    },
+  ],
+  '3': [SyncTaskData_Notification_Entry$json],
+  '4': [SyncTaskData_Notification_EntryType$json],
+};
+
+@$core.Deprecated('Use syncTaskDataDescriptor instead')
+const SyncTaskData_Notification_Entry$json = {
+  '1': 'Entry',
+  '2': [
+    {
+      '1': 'type',
+      '3': 1,
+      '4': 1,
+      '5': 14,
+      '6': '.antinote_app.SyncTaskData.Notification.EntryType',
+      '10': 'type'
+    },
+    {'1': 'visual_id', '3': 2, '4': 1, '5': 9, '10': 'visualId'},
+  ],
+};
+
+@$core.Deprecated('Use syncTaskDataDescriptor instead')
+const SyncTaskData_Notification_EntryType$json = {
+  '1': 'EntryType',
+  '2': [
+    {'1': 'INFORMATION', '2': 0},
+    {'1': 'DISCUSSION', '2': 1},
+    {'1': 'HOMEWORK', '2': 2},
+    {'1': 'GRADE', '2': 3},
+    {'1': 'MENU', '2': 4},
   ],
 };
 
@@ -70,8 +124,14 @@ final $typed_data.Uint8List syncTaskDataDescriptor = $convert.base64Decode(
     'CgxTeW5jVGFza0RhdGESLgoEdHlwZRgBIAEoDjIaLmFudGlub3RlX2FwcC5TeW5jVGFza1R5cG'
     'VSBHR5cGUSOwoLbGFzdF9zeW5jZWQYAiABKAsyGi5nb29nbGUucHJvdG9idWYuVGltZXN0YW1w'
     'UgpsYXN0U3luY2VkEhgKB2VuYWJsZWQYAyABKAhSB2VuYWJsZWQSRAoQc3BlY2lhbGl6ZWRfZG'
-    'F0YRgEIAEoCzIULmdvb2dsZS5wcm90b2J1Zi5BbnlIAFIPc3BlY2lhbGl6ZWREYXRhiAEBQhMK'
-    'EV9zcGVjaWFsaXplZF9kYXRh');
+    'F0YRgEIAEoCzIULmdvb2dsZS5wcm90b2J1Zi5BbnlIAFIPc3BlY2lhbGl6ZWREYXRhiAEBGu0C'
+    'CgxOb3RpZmljYXRpb24SRwoHZW50cmllcxgBIAMoCzItLmFudGlub3RlX2FwcC5TeW5jVGFza0'
+    'RhdGEuTm90aWZpY2F0aW9uLkVudHJ5UgdlbnRyaWVzElYKDWVuYWJsZWRfdHlwZXMYAiADKA4y'
+    'MS5hbnRpbm90ZV9hcHAuU3luY1Rhc2tEYXRhLk5vdGlmaWNhdGlvbi5FbnRyeVR5cGVSDGVuYW'
+    'JsZWRUeXBlcxprCgVFbnRyeRJFCgR0eXBlGAEgASgOMjEuYW50aW5vdGVfYXBwLlN5bmNUYXNr'
+    'RGF0YS5Ob3RpZmljYXRpb24uRW50cnlUeXBlUgR0eXBlEhsKCXZpc3VhbF9pZBgCIAEoCVIIdm'
+    'lzdWFsSWQiTwoJRW50cnlUeXBlEg8KC0lORk9STUFUSU9OEAASDgoKRElTQ1VTU0lPThABEgwK'
+    'CEhPTUVXT1JLEAISCQoFR1JBREUQAxIICgRNRU5VEARCEwoRX3NwZWNpYWxpemVkX2RhdGE=');
 
 @$core.Deprecated('Use encryptedCredentialsDescriptor instead')
 const EncryptedCredentials$json = {

@@ -15,8 +15,12 @@ import 'package:flutter/foundation.dart';
 import 'package:logging/logging.dart';
 import 'package:material_ui/material_ui.dart';
 import 'package:permission_handler/permission_handler.dart';
+import 'package:protobuf/protobuf.dart';
 import 'package:protobuf/well_known_types/google/protobuf/any.pb.dart';
 import 'package:protobuf/well_known_types/google/protobuf/timestamp.pb.dart';
+
+part 'tasks/calendar.dart';
+part 'tasks/notifications.dart';
 
 Future<void> syncEntrypoint() async {
   hierarchicalLoggingEnabled = true;
@@ -32,6 +36,27 @@ Future<void> syncEntrypoint() async {
   });
 
   await SyncRequestManager().initialize();
+}
+
+final NativeCalendarManager _calendarManager = NativeCalendarManager();
+
+Future<SyncResponse?> checkPermission(
+  Future<PermissionStatus> Function() getStatus,
+  Future<PermissionStatus> Function() request,
+  SyncMessageType missingMessage,
+) async {
+  final status = await getStatus();
+
+  if (!status.isGranted) {
+    final newStatus = status.isPermanentlyDenied ? status : await request();
+
+    if (!newStatus.isGranted) {
+      await SyncRequestManager.nativeSync.displayMessage(missingMessage);
+      return SyncResponse(result: .failure);
+    }
+  }
+
+  return null;
 }
 
 final class SyncRequestManager extends SyncManager {
@@ -133,30 +158,40 @@ final class SyncRequestManager extends SyncManager {
     final wrapper = registry.specificSession(account.uid)!;
 
     try {
-      for (final MapEntry(key: task, value: (index, data))
-          in associatedEntries.entries) {
-        try {
-          final res = await runTask(wrapper, task, data.specializedData);
+      final taskResults = await Future.wait(
+        associatedEntries.entries.map((entry) async {
+          final MapEntry(key: task, value: (index, data)) = entry;
 
-          if (res.result != .success) {
-            return res;
+          try {
+            return await runTask(wrapper, task, data.specializedData);
+          } on IOException {
+            return SyncResponse(result: .retry);
+          } on SessionException {
+            return SyncResponse(result: .failure);
+          } finally {
+            final newData = data.rebuild(
+              (oldData) => oldData.lastSynced = Timestamp.fromDateTime(
+                DateTime.timestamp(),
+              ),
+            );
+            if (index != -1) {
+              account = account.rebuild(
+                (acc) => acc..syncData[index] = newData,
+              );
+            } else {
+              account = account.rebuild((acc) => acc..syncData.add(newData));
+            }
           }
-        } on IOException {
-          return SyncResponse(result: .retry);
-        } on SessionException {
-          return SyncResponse(result: .failure);
-        } finally {
-          final newData = data.rebuild(
-            (oldData) => oldData.lastSynced = Timestamp.fromDateTime(
-              DateTime.timestamp(),
-            ),
-          );
-          if (index != -1) {
-            account = account.rebuild((acc) => acc..syncData[index] = newData);
-          } else {
-            account = account.rebuild((acc) => acc..syncData.add(newData));
-          }
-        }
+        }),
+      );
+
+      // I am making up those rules, this probably isn't right.
+      if (taskResults.any((element) => element.result == .retry)) {
+        return SyncResponse(result: .retry);
+      }
+
+      if (taskResults.every((element) => element.result == .failure)) {
+        return SyncResponse(result: .failure);
       }
 
       return SyncResponse(result: .success);
@@ -166,144 +201,24 @@ final class SyncRequestManager extends SyncManager {
     }
   }
 
+  T _tryUnpack<T extends GeneratedMessage>(Any data, T defaultInstance) =>
+      data.canUnpackInto(defaultInstance)
+      ? data.unpackInto(defaultInstance)
+      : defaultInstance;
+
   Future<SyncResponse> runTask(
     SessionWrapper wrapper,
     SyncTaskType type,
     Any data,
   ) {
     return switch (type) {
-      .CALENDAR => syncCalendar(wrapper),
-      .NOTIFICATIONS => syncNotifications(wrapper),
+      .CALENDAR => _syncCalendar(registry, wrapper),
+      .NOTIFICATIONS => _syncNotifications(
+        registry,
+        wrapper,
+        _tryUnpack(data, SyncTaskData_Notification.getDefault()),
+      ),
       _ => throw UnimplementedError('Unknown sync task: $type'),
     };
-  }
-
-  static final NativeCalendarManager _calendarManager = NativeCalendarManager();
-
-  Future<SyncResponse> syncCalendar(SessionWrapper wrapper) async {
-    final calendarStatus = await Permission.calendarFullAccess.status;
-
-    if (!calendarStatus.isGranted) {
-      final newStatus = calendarStatus.isPermanentlyDenied
-          ? calendarStatus
-          : await Permission.calendarFullAccess.request();
-
-      if (!newStatus.isGranted) {
-        await nativeSync.displayMessage(.missingCalendarPermission);
-        return SyncResponse(result: .failure);
-      }
-    }
-
-    final (timetables, user, instanceDomain, address) = await wrapper.runTask(
-      callback: (session) async {
-        final timetables = <UserResource, List<RecurringClass<Class>>>{};
-        for (final resource in session.user.resources) {
-          final recurringTimetable = (await session.access(
-            TimetableAccessor.forYear(
-              resource: session.userResource,
-              session: session,
-            ),
-          )).asRecurringTimetable(session);
-          if (recurringTimetable.recurringClasses == null) continue;
-          timetables[resource] = recurringTimetable.recurringClasses!;
-        }
-
-        return (
-          timetables,
-          session.user,
-          session.stack.baseUrl.authority,
-          session.instance.establishmentName,
-        );
-      },
-      storage: registry.storage,
-      options: registry.settings.sessionOptions,
-      debugLabel: 'Run sync calendar task',
-      retry: true,
-    );
-
-    final existingCalendars = await _calendarManager.listCalendars(
-      wrapper.accountUid,
-    );
-    for (final MapEntry(key: resource, value: timetable)
-        in timetables.entries) {
-      final resourceVisualId = resource.visualId;
-      var calendar = existingCalendars
-          .cast<ExistingCalendarEntry?>()
-          .firstWhere(
-            (element) => element!.resourceVisualId == resourceVisualId,
-            orElse: () => null,
-          );
-      if (calendar == null) {
-        final colorId = Random().nextInt(Colors.accents.length);
-        calendar = await _calendarManager.insertNewCalendar(
-          NewCalendarEntry(
-            displayName:
-                'Cours${user.name == resource.name ? '' : ' (${resource.name})'}',
-            accountUid: wrapper.accountUid,
-            resourceVisualId: resourceVisualId,
-            color: Colors.accents[colorId].toARGB32(),
-          ),
-        );
-      }
-      final localEntriesMap = <String, List<ExistingCalendarEventEntry>>{};
-      final rawCalendarEntries = await _calendarManager.listExisting(
-        wrapper.accountUid,
-        calendar.id,
-      );
-      for (final entry in rawCalendarEntries) {
-        final groupId = entry.originalVisualId ?? entry.visualId;
-        localEntriesMap.putIfAbsent(groupId, () => []).add(entry);
-      }
-      final toDelete = <ExistingCalendarEventEntry>[];
-      final toInsert = <NewRecurringCalendarEventEntry>[];
-      final timetableEntries = timetable.mapL(
-        (e) => e.toNewRecurringCalendarEventEntry(
-          wrapper.accountUid,
-          calendar!.id,
-          instanceDomain,
-          address,
-        ),
-        true,
-      );
-      for (final remoteEntry in timetableEntries) {
-        final baseId = remoteEntry.visualId;
-        final localGroup = localEntriesMap.remove(baseId);
-        if (localGroup == null) {
-          toInsert.add(remoteEntry);
-          continue;
-        }
-        final remoteIds = {
-          remoteEntry.visualId,
-          ...remoteEntry.exceptions.map((e) => e.visualId),
-        };
-        final localIds = localGroup.map((e) => e.visualId).toSet();
-        if (!setEquals(remoteIds, localIds)) {
-          toDelete.addAll(localGroup);
-          toInsert.add(remoteEntry);
-        }
-      }
-      for (final leftoverLocalGroup in localEntriesMap.values) {
-        toDelete.addAll(leftoverLocalGroup);
-      }
-      try {
-        if (toDelete.isNotEmpty) {
-          await _calendarManager.deleteExisting(toDelete);
-        }
-        if (toInsert.isNotEmpty) {
-          await _calendarManager.insertNew(toInsert);
-        }
-      } catch (e, st) {
-        libLog.severe('Failed to update calendar', e, st);
-
-        rethrow;
-      }
-    }
-
-    return SyncResponse(result: .success);
-  }
-
-  Future<SyncResponse> syncNotifications(SessionWrapper wrapper) async {
-    // TODO
-    return SyncResponse(result: .success);
   }
 }

@@ -38,5 +38,37 @@ class SyncTaskType extends $pb.ProtobufEnum {
   const SyncTaskType._(super.value, super.name);
 }
 
+class SyncTaskData_Notification_EntryType extends $pb.ProtobufEnum {
+  static const SyncTaskData_Notification_EntryType INFORMATION =
+      SyncTaskData_Notification_EntryType._(
+          0, _omitEnumNames ? '' : 'INFORMATION');
+  static const SyncTaskData_Notification_EntryType DISCUSSION =
+      SyncTaskData_Notification_EntryType._(
+          1, _omitEnumNames ? '' : 'DISCUSSION');
+  static const SyncTaskData_Notification_EntryType HOMEWORK =
+      SyncTaskData_Notification_EntryType._(
+          2, _omitEnumNames ? '' : 'HOMEWORK');
+  static const SyncTaskData_Notification_EntryType GRADE =
+      SyncTaskData_Notification_EntryType._(3, _omitEnumNames ? '' : 'GRADE');
+  static const SyncTaskData_Notification_EntryType MENU =
+      SyncTaskData_Notification_EntryType._(4, _omitEnumNames ? '' : 'MENU');
+
+  static const $core.List<SyncTaskData_Notification_EntryType> values =
+      <SyncTaskData_Notification_EntryType>[
+    INFORMATION,
+    DISCUSSION,
+    HOMEWORK,
+    GRADE,
+    MENU,
+  ];
+
+  static final $core.List<SyncTaskData_Notification_EntryType?> _byValue =
+      $pb.ProtobufEnum.$_initByValueList(values, 4);
+  static SyncTaskData_Notification_EntryType? valueOf($core.int value) =>
+      value < 0 || value >= _byValue.length ? null : _byValue[value];
+
+  const SyncTaskData_Notification_EntryType._(super.value, super.name);
+}
+
 const $core.bool _omitEnumNames =
     $core.bool.fromEnvironment('protobuf.omit_enum_names');

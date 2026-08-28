@@ -9,6 +9,7 @@ import androidx.core.app.NotificationManagerCompat
 import androidx.work.CoroutineWorker
 import androidx.work.ForegroundInfo
 import androidx.work.WorkerParameters
+import com.baseflow.permissionhandler.PermissionHandlerPlugin
 import fr.antinote.antinote_app.App
 import fr.antinote.antinote_app.R
 import fr.antinote.antinote_app.auth.LoginManager
@@ -131,6 +132,7 @@ class SyncWorker(val appContext: Context, workerParams: WorkerParameters) :
 
             data.engine = app.engineGroup.createAndRunEngine(options)
             data.engine!!.plugins.add(SharedPreferencesPlugin())
+            data.engine!!.plugins.add(PermissionHandlerPlugin())
 
             data.sessionManager =
                 SessionManager(applicationContext, data.engine!!.dartExecutor.binaryMessenger)
