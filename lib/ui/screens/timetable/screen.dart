@@ -144,6 +144,7 @@ class _TimetableDisplayState extends State<TimetableDisplay>
           context: context,
           callback: (session) async =>
               await widget.updateBlocks(session, days, dayList, forceReload),
+          retry: true,
           debugLabel: 'Fetch classes for ${days.toString()}',
         );
       }

@@ -189,8 +189,6 @@ class _AccountsListScreenState extends State<AccountsListScreen>
   Widget build(BuildContext context) {
     return PopScope(
       canPop: context.ar.accountPicked,
-      onPopInvokedWithResult: (didPop, result) =>
-          libLog.info('Salut $didPop ${context.ar.curAccountUid}'),
       child: super.build(context),
     );
   }

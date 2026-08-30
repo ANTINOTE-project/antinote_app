@@ -749,5 +749,5 @@ class AppLocalizationsFr extends AppLocalizations {
   String get syncFailed => 'Synchronisation échouée…';
 
   @override
-  String get markedThreadRead => 'Le fil marqué comme lu';
+  String get markedThreadRead => 'Le fil a été marqué comme lu';
 }

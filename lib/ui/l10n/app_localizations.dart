@@ -1299,7 +1299,7 @@ abstract class AppLocalizations {
   /// No description provided for @markedThreadRead.
   ///
   /// In fr, this message translates to:
-  /// **'Le fil marqué comme lu'**
+  /// **'Le fil a été marqué comme lu'**
   String get markedThreadRead;
 }
 
