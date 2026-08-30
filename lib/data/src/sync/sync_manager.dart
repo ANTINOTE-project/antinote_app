@@ -11,9 +11,14 @@ import 'package:antinote_app/data/src/pigeon_posts/native_sync.g.dart';
 import 'package:antinote_app/data/src/session/wrapper.dart';
 import 'package:antinote_app/data/src/settings/networking.dart';
 import 'package:antinote_app/data/src/sync/polling_manager.dart';
+import 'package:antinote_app/ui/l10n/app_localizations.dart';
+import 'package:antinote_app/ui/utils/src/date.dart';
 import 'package:flutter/foundation.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:intl/date_symbol_data_local.dart';
+import 'package:intl/intl.dart';
 import 'package:logging/logging.dart';
-import 'package:material_ui/material_ui.dart';
+import 'package:material_ui/material_ui.dart' hide Element;
 import 'package:permission_handler/permission_handler.dart';
 import 'package:protobuf/protobuf.dart';
 import 'package:protobuf/well_known_types/google/protobuf/any.pb.dart';
@@ -21,6 +26,8 @@ import 'package:protobuf/well_known_types/google/protobuf/timestamp.pb.dart';
 
 part 'tasks/calendar.dart';
 part 'tasks/notifications.dart';
+
+final logger = Logger('SyncManager');
 
 Future<void> syncEntrypoint() async {
   hierarchicalLoggingEnabled = true;
@@ -34,11 +41,23 @@ Future<void> syncEntrypoint() async {
       );
     }
   });
+  logger.level = .ALL;
+  logger.onRecord.listen((event) {
+    debugPrint('SYNC: [${event.level.name}] ${event.message}');
+    if (event.error != null) {
+      debugPrintStack(
+        stackTrace: event.stackTrace,
+        label: event.error.toString(),
+      );
+    }
+  });
 
   await SyncRequestManager().initialize();
 }
 
 final NativeCalendarManager _calendarManager = NativeCalendarManager();
+final FlutterLocalNotificationsPlugin _notificationPlugin =
+    FlutterLocalNotificationsPlugin();
 
 Future<SyncResponse?> checkPermission(
   Future<PermissionStatus> Function() getStatus,
@@ -58,6 +77,11 @@ Future<SyncResponse?> checkPermission(
 
   return null;
 }
+
+final class const TaskReturnData({
+  required final SyncResponse response,
+  final Any? newData,
+});
 
 final class SyncRequestManager extends SyncManager {
   static final nativeSync = NativeSyncManager();
@@ -79,7 +103,7 @@ final class SyncRequestManager extends SyncManager {
 
       return result;
     } catch (e, st) {
-      libLog.severe('Failed to initialize sync manager', e, st);
+      logger.severe('Failed to initialize sync manager', e, st);
       _initializer?.complete(false);
 
       return false;
@@ -91,13 +115,13 @@ final class SyncRequestManager extends SyncManager {
 
     var settings = NetworkingSettings();
     if (!(await settings.initialize())) {
-      libLog.warning('Failed to initialize settings, recreating.');
+      logger.warning('Failed to initialize settings, recreating.');
       await settings.clear();
 
       settings = NetworkingSettings();
       final result = await settings.initialize();
       if (!result) {
-        libLog.severe(
+        logger.severe(
           'Failed to initialize settings a second time. Aborting...',
         );
         return false;
@@ -143,62 +167,72 @@ final class SyncRequestManager extends SyncManager {
 
     final associatedEntries = {
       for (final task in tasks)
-        task: account.syncData.indexed.firstWhere(
-          (element) => element.$2.type == task,
-          orElse: () =>
-              (-1, SyncTaskData(type: task, enabled: false)..freeze()),
+        task: account.syncData.firstWhere(
+          (element) => element.type == task,
+          orElse: () => SyncTaskData(type: task, enabled: false)..freeze(),
         ),
     };
 
     if (tasks.isEmpty) return .new(result: .failure);
 
-    final result = await registry.pickAccount(account.uid);
+    final result = await registry.loadAccount(account.uid, pick: false);
     if (!result) return .new(result: .failure);
 
     final wrapper = registry.specificSession(account.uid)!;
 
-    try {
-      final taskResults = await Future.wait(
-        associatedEntries.entries.map((entry) async {
-          final MapEntry(key: task, value: (index, data)) = entry;
+    final taskResults = await Future.wait(
+      associatedEntries.entries.map((entry) async {
+        final MapEntry(key: task, value: data) = entry;
 
-          try {
-            return await runTask(wrapper, task, data.specializedData);
-          } on IOException {
-            return SyncResponse(result: .retry);
-          } on SessionException {
-            return SyncResponse(result: .failure);
-          } finally {
-            final newData = data.rebuild(
-              (oldData) => oldData.lastSynced = Timestamp.fromDateTime(
-                DateTime.timestamp(),
-              ),
-            );
-            if (index != -1) {
-              account = account.rebuild(
-                (acc) => acc..syncData[index] = newData,
-              );
-            } else {
-              account = account.rebuild((acc) => acc..syncData.add(newData));
-            }
+        var tempData = data.deepCopy();
+
+        try {
+          final taskResult = await runTask(
+            wrapper,
+            task,
+            tempData.specializedData,
+          );
+
+          if (taskResult.newData != null) {
+            tempData.specializedData = taskResult.newData!;
           }
-        }),
-      );
 
-      // I am making up those rules, this probably isn't right.
-      if (taskResults.any((element) => element.result == .retry)) {
-        return SyncResponse(result: .retry);
-      }
+          return taskResult.response;
+        } on IOException {
+          return SyncResponse(result: .retry);
+        } on SessionException {
+          return SyncResponse(result: .failure);
+        } finally {
+          tempData.lastSynced = Timestamp.fromDateTime(DateTime.timestamp());
 
-      if (taskResults.every((element) => element.result == .failure)) {
-        return SyncResponse(result: .failure);
-      }
+          account = (await registry.storage.getAccount(account.uid)) ?? account;
 
-      return SyncResponse(result: .success);
-    } finally {
-      // TODO: Refetch the account here as maybe data is outdated.
-      await registry.storage.updateAccount(account, account.uid);
+          account = account.rebuild((acc) {
+            switch (task) {
+              case SyncTaskType.CALENDAR:
+                acc.calendarData = tempData;
+                break;
+              case SyncTaskType.NOTIFICATIONS:
+                acc.notificationData = tempData;
+                break;
+            }
+          });
+
+          await registry.storage.updateAccount(account, account.uid);
+        }
+      }),
+    );
+
+    // I am making up those rules, this probably isn't right.
+    if (taskResults.any((element) => element.result == .retry)) {
+      return SyncResponse(result: .retry);
     }
+
+    if (taskResults.every((element) => element.result == .failure)) {
+      return SyncResponse(result: .failure);
+    }
+
+    return SyncResponse(result: .success);
   }
 
   T _tryUnpack<T extends GeneratedMessage>(Any data, T defaultInstance) =>
@@ -206,7 +240,7 @@ final class SyncRequestManager extends SyncManager {
       ? data.unpackInto(defaultInstance)
       : defaultInstance;
 
-  Future<SyncResponse> runTask(
+  Future<TaskReturnData> runTask(
     SessionWrapper wrapper,
     SyncTaskType type,
     Any data,
@@ -216,7 +250,7 @@ final class SyncRequestManager extends SyncManager {
       .NOTIFICATIONS => _syncNotifications(
         registry,
         wrapper,
-        _tryUnpack(data, SyncTaskData_Notification.getDefault()),
+        _tryUnpack(data, SyncTaskData_Notification.create()),
       ),
       _ => throw UnimplementedError('Unknown sync task: $type'),
     };

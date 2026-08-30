@@ -1175,6 +1175,132 @@ abstract class AppLocalizations {
   /// In fr, this message translates to:
   /// **'Ouvrir les paramètres de compte…'**
   String get openAccountSettings;
+
+  /// No description provided for @homeworksNotificationDescription.
+  ///
+  /// In fr, this message translates to:
+  /// **'Notification quand un nouveau devoir est publié'**
+  String get homeworksNotificationDescription;
+
+  /// No description provided for @newHomework.
+  ///
+  /// In fr, this message translates to:
+  /// **'{subject} → {date}'**
+  String newHomework(String subject, DateTime date);
+
+  /// No description provided for @accountSyncSettings.
+  ///
+  /// In fr, this message translates to:
+  /// **'Synchronisation en arrière-plan'**
+  String get accountSyncSettings;
+
+  /// No description provided for @accountNotFound.
+  ///
+  /// In fr, this message translates to:
+  /// **'Compte non trouvé…'**
+  String get accountNotFound;
+
+  /// No description provided for @calendarSync.
+  ///
+  /// In fr, this message translates to:
+  /// **'Calendrier'**
+  String get calendarSync;
+
+  /// No description provided for @calendarSyncSubtitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Synchronise votre emploi du temps avec le calendrier de votre téléphone et le met à jour en arrière-plan'**
+  String get calendarSyncSubtitle;
+
+  /// No description provided for @newsSync.
+  ///
+  /// In fr, this message translates to:
+  /// **'Annonces'**
+  String get newsSync;
+
+  /// No description provided for @newsSyncSubtitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Quand vous recevez une information ou un sondage'**
+  String get newsSyncSubtitle;
+
+  /// No description provided for @discussionSync.
+  ///
+  /// In fr, this message translates to:
+  /// **'Messages'**
+  String get discussionSync;
+
+  /// No description provided for @discussionSyncSubtitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Dès la réception d\'un message de discussion'**
+  String get discussionSyncSubtitle;
+
+  /// No description provided for @homeworkSync.
+  ///
+  /// In fr, this message translates to:
+  /// **'Travaux à faire'**
+  String get homeworkSync;
+
+  /// No description provided for @homeworkSyncSubtitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'À la publication de nouveaux travaux à faire'**
+  String get homeworkSyncSubtitle;
+
+  /// No description provided for @gradeSync.
+  ///
+  /// In fr, this message translates to:
+  /// **'Notes'**
+  String get gradeSync;
+
+  /// No description provided for @gradeSyncSubtitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Quand une nouvelle note est publiée'**
+  String get gradeSyncSubtitle;
+
+  /// No description provided for @menuSync.
+  ///
+  /// In fr, this message translates to:
+  /// **'Menus'**
+  String get menuSync;
+
+  /// No description provided for @menuSyncSubtitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Envoyée au temps du midi pour vous informer du menu du jour'**
+  String get menuSyncSubtitle;
+
+  /// No description provided for @syncAll.
+  ///
+  /// In fr, this message translates to:
+  /// **'Synchroniser tous'**
+  String get syncAll;
+
+  /// No description provided for @syncing.
+  ///
+  /// In fr, this message translates to:
+  /// **'Synchronisation…'**
+  String get syncing;
+
+  /// No description provided for @syncSuccessful.
+  ///
+  /// In fr, this message translates to:
+  /// **'Synchronisation réussie !'**
+  String get syncSuccessful;
+
+  /// No description provided for @syncFailed.
+  ///
+  /// In fr, this message translates to:
+  /// **'Synchronisation échouée…'**
+  String get syncFailed;
+
+  /// No description provided for @markedThreadRead.
+  ///
+  /// In fr, this message translates to:
+  /// **'Le fil marqué comme lu'**
+  String get markedThreadRead;
 }
 
 class _AppLocalizationsDelegate

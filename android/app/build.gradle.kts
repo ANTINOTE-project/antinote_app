@@ -21,6 +21,8 @@ dependencies {
     implementation("com.google.protobuf:protobuf-kotlin-lite:4.36.0")
     implementation("androidx.work:work-runtime-ktx:2.11.2")
     implementation("androidx.appcompat:appcompat:1.8.0")
+
+    coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:2.1.5")
 }
 
 protobuf {
@@ -42,12 +44,15 @@ protobuf {
 }
 
 
+@Suppress("DEPRECATION")
 android {
     namespace = "fr.antinote.antinote_app"
     compileSdk = flutter.compileSdkVersion
     ndkVersion = flutter.ndkVersion
 
     compileOptions {
+        isCoreLibraryDesugaringEnabled = true
+
         sourceCompatibility = JavaVersion.VERSION_17
         targetCompatibility = JavaVersion.VERSION_17
     }
@@ -92,7 +97,7 @@ android {
             dimension = "default"
             applicationIdSuffix = ".dev"
             versionNameSuffix = "-dev"
-            resValue("string", "app_name", "ANTINOTE Dev")
+            resValue("string", "app_name", "ANTINOTE DEV")
             resValue("string", "account_type", "fr.antinote.antinote_app.dev.account")
         }
 

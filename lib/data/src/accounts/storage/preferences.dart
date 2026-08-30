@@ -59,6 +59,10 @@ class PreferencesAccountStorage implements AccountStorage {
   }
 
   @override
+  Future<AntinoteAccount?> getAccount(String uid) =>
+      borrowAccountWithCredentials(uid);
+
+  @override
   Future<AntinoteAccount?> getDefaultAccount() async {
     final defaultAccountUid = (await registry).defaultAccountId;
 
@@ -125,4 +129,10 @@ class PreferencesAccountStorage implements AccountStorage {
 
     await writeRegistry();
   }
+
+  @override
+  Future<bool> manuallySync(String uid) => Future.value(false);
+
+  @override
+  Future<void> cancelManualSync(String uid) => Future.value();
 }

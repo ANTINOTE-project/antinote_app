@@ -18,6 +18,14 @@ import androidx.biometric.BiometricManager
 import androidx.biometric.BiometricPrompt
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.FragmentActivity
+import androidx.lifecycle.asFlow
+import androidx.work.ExistingWorkPolicy
+import androidx.work.OneTimeWorkRequestBuilder
+import androidx.work.Operation
+import androidx.work.OutOfQuotaPolicy
+import androidx.work.WorkInfo
+import androidx.work.WorkManager
+import androidx.work.workDataOf
 import com.google.protobuf.Any
 import com.google.protobuf.ByteString
 import com.google.protobuf.kotlin.toByteString
@@ -27,7 +35,10 @@ import fr.antinote.antinote_app.pigeon_posts.NativeLoginManager
 import fr.antinote.antinote_app.protos.AntinoteAccount
 import fr.antinote.antinote_app.protos.EncryptedCredentials
 import fr.antinote.antinote_app.protos.copy
+import fr.antinote.antinote_app.sync.SyncWorker
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.dropWhile
+import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.suspendCancellableCoroutine
 import kotlinx.coroutines.withContext
@@ -49,6 +60,8 @@ class LoginManager(val context: Context, val activity: FragmentActivity?) : Nati
             "${KeyProperties.KEY_ALGORITHM_AES}/${KeyProperties.BLOCK_MODE_GCM}/${KeyProperties.ENCRYPTION_PADDING_NONE}"
 
         private const val TYPE_PREFIX = "type.antinote.fr"
+
+        private const val FORCE_SYNC_WORK_ID = "manual-"
 
         fun accountKeyAlias(uid: String): String = "TOKEN / $uid"
 
@@ -438,8 +451,12 @@ class LoginManager(val context: Context, val activity: FragmentActivity?) : Nati
                             setTypeUrl("${TYPE_PREFIX}/${newCredentials.javaClass.name}")
                             build()
                         }
+                    } else if(!hasTokenCredentials()) {
+                        tokenCredentials = oldAccount.tokenCredentials
                     }
                 }
+
+                assert(accounts[accIndex].hasTokenCredentials())
             }
         }
 
@@ -494,6 +511,11 @@ class LoginManager(val context: Context, val activity: FragmentActivity?) : Nati
         }
 
         if (!account.storeSecurely) {
+            if(!account.hasTokenCredentials()) {
+                Log.e(TAG, "Non-secure account does not have credentials")
+                return null
+            }
+
             return account.toByteArray()
         }
 
@@ -514,6 +536,11 @@ class LoginManager(val context: Context, val activity: FragmentActivity?) : Nati
         return account.copy {
             tokenCredentials = decrypted
         }.toByteArray()
+    }
+
+    override suspend fun getAccount(uid: String): ByteArray? {
+        val account = scanAndGetAccounts(listOf(uid)).singleOrNull()
+        return account?.toByteArray()
     }
 
     override suspend fun getDefaultAccount(): ByteArray? {
@@ -546,5 +573,37 @@ class LoginManager(val context: Context, val activity: FragmentActivity?) : Nati
                 }
             }
         }
+    }
+
+    override suspend fun manuallySyncAccount(uid: String): Boolean {
+        scanAndGetAccounts(listOf(uid)).singleOrNull() ?: return false
+
+        val workRequest = OneTimeWorkRequestBuilder<SyncWorker>().apply {
+            setExpedited(OutOfQuotaPolicy.RUN_AS_NON_EXPEDITED_WORK_REQUEST)
+            setInputData(
+                workDataOf(
+                    SyncWorker.KEY_UIDS to arrayOf(uid)
+                )
+            )
+        }.build()
+
+        val workManager = WorkManager.getInstance(context)
+
+        workManager.enqueueUniqueWork(
+            FORCE_SYNC_WORK_ID + uid,
+            ExistingWorkPolicy.KEEP,
+            workRequest
+        )
+
+        val workInfo = workManager.getWorkInfoByIdFlow(workRequest.id)
+            .filterNotNull()
+            .first { it.state.isFinished }
+
+        return workInfo.state == WorkInfo.State.SUCCEEDED
+    }
+
+    override suspend fun cancelManualSync(uid: String) {
+        val workManager = WorkManager.getInstance(context)
+        workManager.cancelUniqueWork(FORCE_SYNC_WORK_ID + uid)
     }
 }

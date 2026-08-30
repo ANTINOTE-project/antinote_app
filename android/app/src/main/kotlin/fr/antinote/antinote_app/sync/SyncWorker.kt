@@ -10,12 +10,14 @@ import androidx.work.CoroutineWorker
 import androidx.work.ForegroundInfo
 import androidx.work.WorkerParameters
 import com.baseflow.permissionhandler.PermissionHandlerPlugin
+import com.dexterous.flutterlocalnotifications.FlutterLocalNotificationsPlugin
 import fr.antinote.antinote_app.App
 import fr.antinote.antinote_app.R
 import fr.antinote.antinote_app.auth.LoginManager
 import fr.antinote.antinote_app.calendar.CalendarManager
 import fr.antinote.antinote_app.pigeon_posts.NativeLoginManager
 import fr.antinote.antinote_app.protos.AntinoteAccount
+import fr.antinote.antinote_app.protos.SyncTaskData
 import fr.antinote.antinote_app.protos.SyncTaskType
 import fr.antinote.antinote_app.session.SessionManager
 import fr.antinote.studies_management.antinote_app.pigeon_posts.NativeCalendarManager
@@ -41,12 +43,17 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withTimeout
 import kotlin.time.Duration.Companion.minutes
 
+
+private val AntinoteAccount.syncDataList: List<SyncTaskData>
+    get() = listOf(calendarData, notificationData)
+
 class SyncWorker(val appContext: Context, workerParams: WorkerParameters) :
     CoroutineWorker(appContext, workerParams) {
     companion object {
         const val TAG = "SyncWorker"
         const val KEY_UIDS = "account_uids"
         const val KEY_FORCED_TASKS = "forced"
+        const val KEY_CAN_RETRY = "can_retry"
         const val SYNC_NOTIFICATION_CHANNEL_ID = "sync_channel"
 
         fun shouldDoSync(account: AntinoteAccount): Boolean =
@@ -83,6 +90,8 @@ class SyncWorker(val appContext: Context, workerParams: WorkerParameters) :
 
         val forcedTasks =
             inputData.getIntArray(KEY_FORCED_TASKS)?.map { SyncTaskType.forNumber(it) }
+
+        val canRetry = inputData.getBoolean(KEY_CAN_RETRY, false)
 
         for (account in app.accountStore.data.first().accountsList) {
             Log.i(TAG, "Checking whether we should sync ${account.uid}...")
@@ -133,6 +142,7 @@ class SyncWorker(val appContext: Context, workerParams: WorkerParameters) :
             data.engine = app.engineGroup.createAndRunEngine(options)
             data.engine!!.plugins.add(SharedPreferencesPlugin())
             data.engine!!.plugins.add(PermissionHandlerPlugin())
+            data.engine!!.plugins.add(FlutterLocalNotificationsPlugin())
 
             data.sessionManager =
                 SessionManager(applicationContext, data.engine!!.dartExecutor.binaryMessenger)
@@ -166,8 +176,8 @@ class SyncWorker(val appContext: Context, workerParams: WorkerParameters) :
                 // Success if all requests success, failure if all requests fail, else retry.
                 curResponseLevel = if (
                     (res.result == SyncResultType.RETRY
-                    || curResponseLevel == SyncResultType.RETRY
-                    || res.result != curResponseLevel)
+                            || curResponseLevel == SyncResultType.RETRY
+                            || res.result != curResponseLevel)
                     && curResponseLevel != null
                 ) {
                     SyncResultType.RETRY
@@ -178,7 +188,7 @@ class SyncWorker(val appContext: Context, workerParams: WorkerParameters) :
 
             data.workResult = when (curResponseLevel ?: SyncResultType.SUCCESS) {
                 SyncResultType.SUCCESS -> Result.success()
-                SyncResultType.RETRY -> Result.retry()
+                SyncResultType.RETRY -> if (canRetry) Result.retry() else Result.failure()
                 SyncResultType.FAILURE -> Result.failure()
             }
             syncLock.complete(Unit)
@@ -195,7 +205,7 @@ class SyncWorker(val appContext: Context, workerParams: WorkerParameters) :
             result = data.workResult ?: Result.failure()
         } catch (_: TimeoutCancellationException) {
             Log.e(TAG, "Timeout while trying to update accounts.")
-            result = Result.retry()
+            result = if (canRetry) Result.retry() else Result.failure()
         } finally {
             mainScope.launch {
                 data.sessionManager?.doUnbindService()

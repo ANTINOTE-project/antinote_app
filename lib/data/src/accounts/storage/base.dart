@@ -1,6 +1,6 @@
+import 'package:antinote_app/data/protos/account.pb.dart';
 import 'package:antinote_app/data/src/accounts/storage/native.dart';
 import 'package:antinote_app/data/src/accounts/storage/preferences.dart';
-import 'package:antinote_app/data/protos/account.pb.dart';
 import 'package:material_ui/material_ui.dart';
 
 abstract class AccountStorage {
@@ -24,8 +24,10 @@ abstract class AccountStorage {
 
   /// This makes implementation mark an account as "borrowed": nobody else can
   /// access the credentials until new ones are set.
-  /// TODO: Implement it like that.
+  // TODO: Implement it like that.
   Future<AntinoteAccount?> borrowAccountWithCredentials(String uid);
+
+  Future<AntinoteAccount?> getAccount(String uid);
 
   Future<AntinoteAccount?> getDefaultAccount();
 
@@ -38,4 +40,7 @@ abstract class AccountStorage {
   Future<void> deleteAccount(String uid);
 
   Future<void> deleteAllAccounts();
+
+  Future<bool> manuallySync(String uid);
+  Future<void> cancelManualSync(String uid);
 }

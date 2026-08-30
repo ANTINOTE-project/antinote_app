@@ -6,6 +6,9 @@ typedef _NotificationTypeFetchResult<T extends VisualIdMixin> =
 typedef _NotificationFetchResult =
     Map<SyncTaskData_Notification_EntryType, _NotificationTypeFetchResult>;
 
+typedef _NotificationExistingEntryData =
+    Map<SyncTaskData_Notification_EntryType, Map<List<int>, List<List<int>>>>;
+
 extension EntryTypeAvailability on SyncTaskData_Notification_EntryType {
   bool available(RemoteSession session) {
     return switch (this) {
@@ -20,7 +23,7 @@ extension EntryTypeAvailability on SyncTaskData_Notification_EntryType {
   }
 }
 
-Future<SyncResponse> _syncNotifications(
+Future<TaskReturnData> _syncNotifications(
   AccountRegistry registry,
   SessionWrapper wrapper,
   SyncTaskData_Notification rawData,
@@ -32,9 +35,12 @@ Future<SyncResponse> _syncNotifications(
     Permission.notification.request,
     .missingCalendarPermission,
   );
-  if (errorResp != null) return errorResp;
+  if (errorResp != null) return .new(response: errorResp);
 
-  final _NotificationFetchResult entries = await wrapper.runTask(
+  final (
+    _NotificationFetchResult entries,
+    List<UserResource> resources,
+  ) = await wrapper.runTask(
     callback: (session) async {
       _NotificationFetchResult result = {};
 
@@ -87,14 +93,40 @@ Future<SyncResponse> _syncNotifications(
           case SyncTaskData_Notification_EntryType.HOMEWORK:
             for (int i = 0; i < session.user.resources.length; i++) {
               session.currentUserResourceId = i;
+              final startDay = (session.instance.demoDateTime ?? DateTime.now())
+                  .toDay(true);
+              final endDay = startDay.add(const .new(days: 14)).toDay();
+              final range = DateRange(start: startDay, end: endDay);
+              final baseWeekNumber = session.instance.getWeekNumberForDate(
+                startDay,
+              );
+              final endWeekNumber = session.instance.getWeekNumberForDate(
+                endDay,
+              );
+
               final page = await session.access(
-                NotebookPageAccessor.upcoming(
+                NotebookPageAccessor(
                   section: .homework,
-                  date: DateTime.now().toDay(true),
+                  weeks: {
+                    for (int i = baseWeekNumber; i <= endWeekNumber; i++)
+                      max(
+                        min(
+                          i,
+                          session.instance.getWeekNumberForDate(
+                            session.instance.lastDate,
+                          ),
+                        ),
+                        session.instance.firstWeekNumber,
+                      ),
+                  },
                 ),
               );
 
-              entryResult[session.userResource]!.addAll(page.entries);
+              entryResult[session.userResource]!.addAll(
+                (page.homeworkSet?.homeworks ?? []).where(
+                  (element) => range.contains(element.deadlineDate),
+                ),
+              );
             }
             break;
           case SyncTaskData_Notification_EntryType.INFORMATION:
@@ -120,9 +152,11 @@ Future<SyncResponse> _syncNotifications(
             }
             break;
         }
+
+        result[entryType] = entryResult;
       }
 
-      return result;
+      return (result, session.user.resources);
     },
     storage: registry.storage,
     options: registry.settings.sessionOptions,
@@ -130,9 +164,135 @@ Future<SyncResponse> _syncNotifications(
     retry: true,
   );
 
-  // TODO: Compare entries to previous version to determine which notifications
-  // TODO: to send. Add a flag so that less data is loaded when on measured
-  // TODO: network. Save the data to the account once finished.
+  final cachedResources = {
+    for (final resource in resources) resource.visualIdBytes: resource,
+  };
 
-  return SyncResponse(result: .success);
+  final _NotificationExistingEntryData existingEntries = {};
+  for (final existingEntry in data.entries) {
+    if (!existingEntries.containsKey(existingEntry.type)) {
+      existingEntries[existingEntry.type] = {};
+    }
+
+    final resource = cachedResources[existingEntry.resourceVisualId];
+    if (resource == null) continue;
+
+    if (!existingEntries[existingEntry.type]!.containsKey(
+      existingEntry.resourceVisualId,
+    )) {
+      existingEntries[existingEntry.type]![existingEntry.resourceVisualId] = [];
+    }
+
+    existingEntries[existingEntry.type]![existingEntry.resourceVisualId]!.add(
+      existingEntry.visualId,
+    );
+  }
+
+  for (final MapEntry(key: entryType, value: values) in entries.entries) {
+    final existingValues = existingEntries[entryType];
+
+    for (final MapEntry(key: resource, value: curEntries) in values.entries) {
+      final resourceVisualId = resource.visualIdBytes;
+
+      final alreadyFetched =
+          existingValues != null &&
+          existingValues.containsKey(resourceVisualId);
+      if (!alreadyFetched) {
+        logger.info(
+          'Values were never fetched for resource ${resourceVisualId.toHex()}/$entryType',
+        );
+      }
+      final existingIds = existingValues?[resourceVisualId] ?? <String>[];
+
+      // We do not save actual data about the old entries, so we can't have a
+      // useful list of deleted entries for now...
+      final rawNewEntries = curEntries.where(
+        (element) => !existingIds.contains(element.visualId),
+      );
+
+      for (final newEntry in rawNewEntries) {
+        data.entries.add(
+          .new(
+            type: entryType,
+            resourceVisualId: resourceVisualId,
+            visualId: newEntry.visualIdBytes,
+          ),
+        );
+      }
+
+      // We skip to not blast the user with notifications for things they
+      // probably already saw.
+      if (!alreadyFetched) continue;
+
+      switch (entryType) {
+        case .DISCUSSION:
+          // TODO: Handle this case.
+          break;
+        case .GRADE:
+          // TODO: Handle this case.
+          break;
+        case .HOMEWORK:
+          final newEntries = rawNewEntries.cast<Homework>().toList(
+            growable: false,
+          );
+
+          logger.info('Posting ${newEntries.length} for homeworks');
+
+          await _notifyHomeworks(newEntries);
+
+          break;
+        case .INFORMATION:
+          // TODO: Handle this case.
+          break;
+        case .MENU:
+          // TODO: Handle this case.
+          break;
+      }
+    }
+  }
+
+  return .new(
+    response: .new(result: .success),
+    newData: Any.pack(data, typeUrlPrefix: typePrefix),
+  );
+}
+
+Future<void> _notifyHomeworks(List<Homework> homeworks) async {
+  final [localeCode, countryCode] = Intl.canonicalizedLocale(
+    Platform.localeName,
+  ).split('_');
+  final l10n = lookupAppLocalizations(Locale(localeCode, countryCode));
+  await initializeDateFormatting(l10n.localeName);
+
+  for (final homework in homeworks) {
+    if (homework.isDone) continue;
+
+    final id = homework.visualId;
+
+    final homeworksChannel = AndroidNotificationDetails(
+      'fr.antinote.app.homeworks',
+      l10n.homeworks,
+      subText: homework.publicName,
+      channelDescription: l10n.homeworksNotificationDescription,
+      tag: id,
+      icon: 'rounded_task_24',
+      color: Color(homework.backgroundColor),
+      onlyAlertOnce: true,
+      colorized: true,
+      channelAction: .update,
+      category: .reminder,
+
+      when: kDebugMode ? null : homework.givenDate.millisecondsSinceEpoch,
+      styleInformation: const DefaultStyleInformation(true, false),
+    );
+    final notificationDetails = NotificationDetails(android: homeworksChannel);
+
+    await _notificationPlugin.show(
+      id: 0,
+      title: l10n.newHomework(homework.subject.name!, homework.deadlineDate),
+      body: homework.description,
+      notificationDetails: notificationDetails,
+      payload: id,
+    );
+  }
 }

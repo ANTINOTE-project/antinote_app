@@ -2,6 +2,8 @@ import 'package:intl/intl.dart';
 
 export 'package:material_ui/material_ui.dart' show DateTimeRange;
 
+const typePrefix = 'type.antinote.fr';
+
 /// Credit: https://stackoverflow.com/a/68847631 (by Raul Mabe)
 extension IterableExt<T> on Iterable<T> {
   Iterable<T> superJoin(T separator) {

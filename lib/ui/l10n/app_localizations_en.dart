@@ -675,4 +675,78 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get openAccountSettings => 'Open account settings…';
+
+  @override
+  String get homeworksNotificationDescription =>
+      'Notification quand un nouveau devoir est publié';
+
+  @override
+  String newHomework(String subject, DateTime date) {
+    final intl.DateFormat dateDateFormat = intl.DateFormat.MMMd(localeName);
+    final String dateString = dateDateFormat.format(date);
+
+    return '$subject → $dateString';
+  }
+
+  @override
+  String get accountSyncSettings => 'Synchronisation en arrière-plan';
+
+  @override
+  String get accountNotFound => 'Compte non trouvé…';
+
+  @override
+  String get calendarSync => 'Calendrier';
+
+  @override
+  String get calendarSyncSubtitle =>
+      'Synchronise votre emploi du temps avec le calendrier de votre téléphone et le met à jour en arrière-plan';
+
+  @override
+  String get newsSync => 'Annonces';
+
+  @override
+  String get newsSyncSubtitle =>
+      'Quand vous recevez une information ou un sondage';
+
+  @override
+  String get discussionSync => 'Messages';
+
+  @override
+  String get discussionSyncSubtitle =>
+      'Dès la réception d\'un message de discussion';
+
+  @override
+  String get homeworkSync => 'Travaux à faire';
+
+  @override
+  String get homeworkSyncSubtitle =>
+      'À la publication de nouveaux travaux à faire';
+
+  @override
+  String get gradeSync => 'Notes';
+
+  @override
+  String get gradeSyncSubtitle => 'Quand une nouvelle note est publiée';
+
+  @override
+  String get menuSync => 'Menus';
+
+  @override
+  String get menuSyncSubtitle =>
+      'Envoyée au temps du midi pour vous informer du menu du jour';
+
+  @override
+  String get syncAll => 'Synchroniser tous';
+
+  @override
+  String get syncing => 'Synchronisation…';
+
+  @override
+  String get syncSuccessful => 'Synchronisation réussie !';
+
+  @override
+  String get syncFailed => 'Synchronisation échouée…';
+
+  @override
+  String get markedThreadRead => 'Le fil marqué comme lu';
 }

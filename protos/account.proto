@@ -38,8 +38,8 @@ message SyncTaskData {
 
     message Entry {
         EntryType type = 1;
-        string visual_id = 2;
-        string resource_visual_id = 3;
+        bytes visual_id = 2;
+        bytes resource_visual_id = 3;
     }
 
     repeated Entry entries = 1;
@@ -83,7 +83,11 @@ message AntinoteAccount {
   // Whether to store the account in the Keystore of the platform.
   bool store_securely = 9;
 
-  repeated SyncTaskData sync_data = 10;
+  // The old list of sync data, we know fill each field individually
+  reserved 10;
+
+  SyncTaskData calendar_data = 11;
+  SyncTaskData notification_data = 12;
 }
 
 message SerializedAccountRegistry {

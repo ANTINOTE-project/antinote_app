@@ -59,8 +59,9 @@ class ListWidget<T> extends StatelessWidget {
     );
   }
 
-  static const radius = Radius.circular(12);
+  static const radius = Radius.circular(16);
   static const defaultRadius = Radius.circular(4);
+  static const gap = 2.0;
 
   BorderRadius _getBorderRadius(int index, int length) {
     final isFirst = index == 0 && !gotBefore;
@@ -97,7 +98,7 @@ class ListWidget<T> extends StatelessWidget {
           children: [
             for (int i = 0; i < items.length; i++)
               Padding(
-                padding: const .symmetric(vertical: 2),
+                padding: i == 0 ? .zero : const .only(top: gap),
                 child: itemBuilder(
                   context,
                   items[i],
@@ -127,7 +128,7 @@ class ListWidget<T> extends StatelessWidget {
             final borderRadius = _getBorderRadius(index, items.length);
 
             return Padding(
-              padding: const EdgeInsets.symmetric(vertical: 2),
+              padding: index == 0 ? .zero : const .only(top: gap),
               child: itemBuilder(context, item, borderRadius),
             );
           },
@@ -148,7 +149,7 @@ class ListWidget<T> extends StatelessWidget {
           final borderRadius = _getBorderRadius(index, items.length);
 
           return Padding(
-            padding: const EdgeInsets.symmetric(vertical: 2),
+            padding: index == 0 ? .zero : const .only(top: gap),
             child: itemBuilder(context, item, borderRadius),
           );
         },
@@ -244,7 +245,7 @@ class ItemWidget extends StatelessWidget {
           borderRadius: borderRadius,
         ),
 
-        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
 
         child: Row(
           spacing: 12,
@@ -254,18 +255,13 @@ class ItemWidget extends StatelessWidget {
 
             Expanded(
               child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                spacing: 2,
-
+                crossAxisAlignment: .start,
                 children: [
                   if (title != null)
                     DefaultTextStyle.merge(
-                      style: TextStyle(
-                        fontSize: 16,
-                        fontWeight: .w800,
-                        fontFamily: 'SNPro',
-
+                      style: TextTheme.of(context).bodyLarge?.copyWith(
                         color: context.c.onSurface,
+                        fontWeight: .w800, // TODO: Edit bodyLarge directly with the custom font weights
                       ),
 
                       overflow: titleMaxLines == null ? null : .ellipsis,
@@ -277,10 +273,8 @@ class ItemWidget extends StatelessWidget {
                   if (subtitle != null)
                     DefaultTextStyle.merge(
                       style: TextTheme.of(context).bodyMedium?.copyWith(
-                        fontWeight: .bold,
-                        fontFamily: 'SNPro',
-
-                        color: context.c.outline,
+                        fontWeight: .w500,
+                        color: context.c.onSurfaceVariant,
                       ),
 
                       overflow: subtitleMaxLines == null ? null : .ellipsis,

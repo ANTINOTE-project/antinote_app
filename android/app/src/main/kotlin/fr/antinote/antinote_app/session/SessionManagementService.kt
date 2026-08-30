@@ -187,7 +187,8 @@ class SessionManagementService : Service() {
         val clientTaskId: Long,
         val scheduler: Messenger,
         val channels: List<String>,
-        val accountId: String
+        val accountId: String,
+        val existingVersion: Long,
     )
 
     internal data class AccountSessionManager(
@@ -284,6 +285,7 @@ class SessionManagementService : Service() {
         scheduler: Messenger,
         clientTaskId: Long,
         ownerClientId: Long,
+        sessionVersion: Long,
 
         debugLabel: String?,
     ): Long? {
@@ -296,7 +298,8 @@ class SessionManagementService : Service() {
             clientTaskId = clientTaskId,
             scheduler = scheduler,
             channels = channels,
-            accountId = accountId
+            accountId = accountId,
+            existingVersion = sessionVersion,
         )
 
         // We can directly run the task without waiting.
@@ -352,14 +355,14 @@ class SessionManagementService : Service() {
         val task = manager.lockOwners.remove(taskId)
         if (task == null) {
             Log.w(TAG, "FinishTask: Task ID $taskId does not own any locks.")
-            return Pair(manager.latestVersion, null)
+            return manager.latestVersion to null
         }
 
         manager.busyChannels.removeAll(task.channels.toSet())
 
         val newTasks = processTaskQueue(manager)
 
-        return Pair(manager.latestVersion, newTasks)
+        return manager.latestVersion to newTasks
     }
 
     private suspend fun cleanupDeadClient(deadClientId: Long) {
@@ -464,7 +467,7 @@ class SessionManagementService : Service() {
                 return
             }
 
-            val manager = svc.accountSessionManagers[accountId]!!
+            val manager = svc.createOrGetManager(accountId, false)
 
             if (lastSessionVersion < manager.latestVersion) {
                 val app = svc.applicationContext as App
@@ -576,6 +579,7 @@ class SessionManagementService : Service() {
                         val clientTaskId = msg.data.getLong("client_task_id", -1L)
                         val ownerClientId = msg.data.getLong("client_id", -1L)
 
+                        val sessionVersion = msg.data.getLong("last_session_version", -1L)
                         val debugLabel = msg.data.getString("debug_label")
 
                         if (accountId == null || channels == null || clientTaskId == -1L || ownerClientId == -1L) {
@@ -597,7 +601,9 @@ class SessionManagementService : Service() {
                             scheduler = msg.replyTo,
                             clientTaskId = clientTaskId,
                             ownerClientId = ownerClientId,
-                            debugLabel = debugLabel
+                            sessionVersion = sessionVersion,
+
+                            debugLabel = debugLabel,
                         )
 
                         if (resultTaskId != null && resultTaskId != -1L) {
@@ -605,7 +611,7 @@ class SessionManagementService : Service() {
                                 msg.replyTo,
                                 clientTaskId,
                                 resultTaskId,
-                                msg.data.getLong("last_session_version", -1L),
+                                sessionVersion,
                                 accountId
                             )
                         }
@@ -641,7 +647,7 @@ class SessionManagementService : Service() {
                                 target = newTask.scheduler,
                                 clientTaskId = newTask.clientTaskId, // Use clientTaskId, not id (which is internal)
                                 taskId = newTask.id,
-                                lastSessionVersion = result.first,
+                                lastSessionVersion = newTask.existingVersion,
                                 accountId = newTask.accountId
                             )
                         }

@@ -5,6 +5,10 @@ generate-code:
 build-release-apk:
 	env ORG_GRADLE_PROJECT_dev.steenbakker.mobile_scanner.useUnbundled=false flutter build apk --flavor=prodindependent --split-per-abi --obfuscate --split-debug-info=./debug-info --dart-define=protobuf.omit_enum_names=true
 
+build-test-release-apk:
+	env ORG_GRADLE_PROJECT_dev.steenbakker.mobile_scanner.useUnbundled=false flutter build apk --flavor=devindependent --split-per-abi --obfuscate --split-debug-info=./debug-info --dart-define=protobuf.omit_enum_names=true
+
+
 build-playstore-release-apk:
 	env ORG_GRADLE_PROJECT_dev.steenbakker.mobile_scanner.useUnbundled=true flutter build apk --flavor=prodplaystore --split-per-abi --obfuscate --split-debug-info=./debug-info --dart-define=protobuf.omit_enum_names=true
 

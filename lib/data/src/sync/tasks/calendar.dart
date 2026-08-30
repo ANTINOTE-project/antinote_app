@@ -1,6 +1,6 @@
 part of '../sync_manager.dart';
 
-Future<SyncResponse> _syncCalendar(
+Future<TaskReturnData> _syncCalendar(
   AccountRegistry registry,
   SessionWrapper wrapper,
 ) async {
@@ -9,7 +9,7 @@ Future<SyncResponse> _syncCalendar(
     Permission.calendarFullAccess.request,
     .missingCalendarPermission,
   );
-  if (errorResp != null) return errorResp;
+  if (errorResp != null) return .new(response: errorResp);
 
   final (timetables, user, instanceDomain, address) = await wrapper.runTask(
     callback: (session) async {
@@ -107,11 +107,11 @@ Future<SyncResponse> _syncCalendar(
         await _calendarManager.insertNew(toInsert);
       }
     } catch (e, st) {
-      libLog.severe('Failed to update calendar', e, st);
+      logger.severe('Failed to update calendar', e, st);
 
       rethrow;
     }
   }
 
-  return SyncResponse(result: .success);
+  return .new(response: .new(result: .success));
 }

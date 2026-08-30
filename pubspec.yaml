@@ -44,6 +44,7 @@ dependencies:
   collection: ^1.19.1
   image_picker: ^1.2.3
   permission_handler: ^12.0.3
+  flutter_local_notifications: ^22.3.0
   # Disabled because it doesn't play nicely with R8
   #  cryptography_flutter_plus: ^3.0.2 # So that cryptography_plus in antinote is faster.
 

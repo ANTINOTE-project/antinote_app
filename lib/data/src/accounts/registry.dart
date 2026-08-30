@@ -52,7 +52,7 @@ final class AccountRegistry({
 
       final defaultAccount = await _storage.getDefaultAccount();
       if (defaultAccount != null && !defaultAccount.invalid) {
-        await pickAccount(defaultAccount.uid);
+        await loadAccount(defaultAccount.uid);
         return;
       }
 
@@ -77,8 +77,10 @@ final class AccountRegistry({
     }
   }
 
-  Future<bool> pickAccount(String accountUid) async {
-    _curAccount = accountUid;
+  Future<bool> loadAccount(String accountUid, {bool pick = true}) async {
+    if (pick) {
+      _curAccount = accountUid;
+    }
     final wrapper = curSession ?? SessionWrapper(accountUid: accountUid);
     _sessions[accountUid] = wrapper;
 
@@ -124,11 +126,7 @@ final class AccountRegistry({
 
       _sessions[entry.account.uid] = entry.wrapper;
 
-      if (shouldPickAccount) {
-        return await pickAccount(entry.account.uid);
-      }
-
-      return true;
+      return await loadAccount(entry.account.uid, pick: shouldPickAccount);
     } catch (e, st) {
       libLog.severe('Failed to register account to storage/manager', e, st);
 
@@ -143,8 +141,13 @@ final class AccountRegistry({
     required String? debugLabel,
     bool retry = false,
     bool registerHook = false,
+    String? forceAccountId,
   }) async {
-    await ensureAccountPicked(context: context);
+    if (forceAccountId == null) {
+      await ensureAccountPicked(context: context);
+    } else {
+      await loadAccount(forceAccountId, pick: false);
+    }
 
     return runRawTask(
       callback: callback,
@@ -163,8 +166,9 @@ final class AccountRegistry({
     required String? debugLabel,
     bool retry = false,
     bool registerHook = false,
+    String? forceAccountId,
   }) async {
-    return curSession!.runTask(
+    return specificSession(forceAccountId ?? _curAccount!)!.runTask(
       callback: callback,
       channels: channels,
       debugLabel: debugLabel,

@@ -1,12 +1,14 @@
 import 'package:antinote_app/ui/l10n/app_localizations.dart';
 import 'package:antinote_app/ui/screens/auth/lists/accounts.dart';
 import 'package:antinote_app/ui/screens/settings/networking.dart';
+import 'package:antinote_app/ui/screens/settings/sync_screen.dart';
 import 'package:antinote_app/ui/screens/settings/theme.dart';
 import 'package:antinote_app/ui/utils/utils.dart';
 import 'package:antinote_app/ui/widgets/bottom_padding.dart';
 import 'package:antinote_app/ui/widgets/customs/app_bar.dart';
 import 'package:antinote_app/ui/widgets/customs/list.dart';
 import 'package:antinote_app/ui/widgets/text_icon.dart';
+import 'package:flutter/foundation.dart';
 import 'package:hugeicons_pro/hugeicons.dart';
 import 'package:material_ui/material_ui.dart';
 import 'package:package_info_plus/package_info_plus.dart';
@@ -84,6 +86,30 @@ class SettingsScreen extends StatelessWidget {
                     ),
                   ),
                 ),
+                if (kDebugMode)
+                  .new(
+                    title: Text(context.l10n.accountSyncSettings),
+                    trailing: Icon(
+                      HugeIconsSolid.arrowRight01,
+                      color: context.c.outline,
+                    ),
+                    onPressed: () async {
+                      if (context.ar.curAccountUid == null) {
+                        await context.ar.ensureAccountPicked(context: context);
+                      }
+
+                      if (!context.mounted) return;
+
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => SettingsSyncScreen(
+                            accountUid: context.ar.curAccountUid!,
+                          ),
+                        ),
+                      );
+                    },
+                  ),
               ],
             ),
 

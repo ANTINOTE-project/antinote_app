@@ -27,96 +27,157 @@ class _CommunicationScreenState extends State<CommunicationScreen>
     bool partial,
   ) {
     return buildRefreshIndicator(
-      child: Padding(
-        padding: const .symmetric(horizontal: 12, vertical: 4),
+      child: CustomScrollView(
+        slivers: [
+          SliverSafeArea(
+            sliver: SliverPadding(
+              padding: const .symmetric(horizontal: 12, vertical: 4),
 
-        child: ListWidget(
-          items: threads,
-          isSliver: false,
+              sliver: ListWidget(
+                items: threads,
 
-          itemBuilder: (context, thread, borderRadius) {
-            return ItemWidget(
-              borderRadius: borderRadius,
+                itemBuilder: (context, thread, borderRadius) {
+                  return ItemWidget(
+                    borderRadius: borderRadius,
 
-              title: Text(thread.title),
-              subtitle: Text(thread.authorName),
+                    title: Text(thread.title),
+                    subtitle: Text(thread.authorName),
 
-              leading: Badge(
-                isLabelVisible: !thread.read,
-                smallSize: 7,
+                    leading: Badge(
+                      isLabelVisible: !thread.read,
+                      smallSize: 7,
 
-                child: Icon(switch (thread.commType) {
-                  .discussion => HugeIconsSolid.conversation,
-                  .news => HugeIconsSolid.news01,
-                  .poll => HugeIconsSolid.pieChart,
-                }, size: 24),
+                      child: Icon(switch (thread.commType) {
+                        .discussion => HugeIconsSolid.conversation,
+                        .news => HugeIconsSolid.news01,
+                        .poll => HugeIconsSolid.pieChart,
+                      }, size: 24),
+                    ),
+
+                    trailing: Text(
+                      context.l10n.monthDay(thread.publishDate),
+
+                      style: TextStyle(
+                        fontWeight: .w800,
+                        color: context.c.outline,
+                        fontSize: 13,
+                      ),
+                    ),
+
+                    onLongPress: () async {
+                      await context.ar.runTask(
+                        context: context,
+                        channels: const {},
+                        callback: (session) async {
+                          switch (thread.commType) {
+                            case .poll:
+                            case .news:
+                              {
+                                if (!context.mounted ||
+                                    thread is! InformationThreadPreview) {
+                                  return;
+                                }
+
+                                final cachedValue = session
+                                    .getCachedValue<News?>(
+                                      .NEWS,
+                                      thread.visualId,
+                                    );
+
+                                if (cachedValue == null) return;
+
+                                await session.access(
+                                  ChangeNewsStateAccessor(
+                                    updatesToPerform: {
+                                      cachedValue: const .new(
+                                        read: true,
+                                        onlyMarkedRead: true,
+                                        deleted: null,
+                                        answersToChange: {},
+                                      ),
+                                    },
+                                  ),
+                                );
+                              }
+                            case .discussion:
+                              {
+                                throw UnimplementedError();
+                              }
+                          }
+                        },
+                        debugLabel:
+                            'Retrieve news and discussion data from cache.',
+                      );
+
+                      if (!context.mounted) return;
+
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          behavior: .floating,
+                          content: Text(context.l10n.markedThreadRead),
+                        ),
+                      );
+
+                      await reload();
+                    },
+                    onPressed: () async {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          behavior: .floating,
+                          content: Text(context.l10n.communicationUnavailable),
+                        ),
+                      );
+
+                      // await context.ar.runTask(
+                      //   context: context,
+                      //   channels: const {},
+                      //   callback: (session) {
+                      //     switch (thread.commType) {
+                      //       case .poll:
+                      //       case .news:
+                      //         {
+                      //           if (!context.mounted ||
+                      //               thread is! InformationThreadPreview) {
+                      //             return;
+                      //           }
+                      //
+                      //           final notifier = ValueNotifier(
+                      //             session.getCachedValue<News>(
+                      //               .NEWS,
+                      //               thread.visualId,
+                      //             ),
+                      //           );
+                      //
+                      //           Navigator.push(
+                      //             context,
+                      //
+                      //             MaterialPageRoute(
+                      //               builder: (context) => NewsScreen(
+                      //                 mode: thread.mode,
+                      //                 news: notifier,
+                      //
+                      //                 deleteNews: () {
+                      //                   throw UnimplementedError();
+                      //                 },
+                      //               ),
+                      //             ),
+                      //           );
+                      //         }
+                      //       case .discussion:
+                      //         {
+                      //           throw UnimplementedError();
+                      //         }
+                      //     }
+                      //   },
+                      //   debugLabel: 'Retrieve news and discussion data from cache.',
+                      // );
+                    },
+                  );
+                },
               ),
-
-              trailing: Text(
-                context.l10n.monthDay(thread.publishDate),
-
-                style: TextStyle(
-                  fontWeight: .w800,
-                  color: context.c.outline,
-                  fontSize: 13,
-                ),
-              ),
-
-              onPressed: () async {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(
-                    behavior: .floating,
-                    content: Text(context.l10n.communicationUnavailable),
-                  ),
-                );
-
-                // await context.ar.runTask(
-                //   context: context,
-                //   channels: const {},
-                //   callback: (session) {
-                //     switch (thread.commType) {
-                //       case .poll:
-                //       case .news:
-                //         {
-                //           if (!context.mounted ||
-                //               thread is! InformationThreadPreview) {
-                //             return;
-                //           }
-                //
-                //           final notifier = ValueNotifier(
-                //             session.getCachedValue<News>(
-                //               .NEWS,
-                //               thread.visualId,
-                //             ),
-                //           );
-                //
-                //           Navigator.push(
-                //             context,
-                //
-                //             MaterialPageRoute(
-                //               builder: (context) => NewsScreen(
-                //                 mode: thread.mode,
-                //                 news: notifier,
-                //
-                //                 deleteNews: () {
-                //                   throw UnimplementedError();
-                //                 },
-                //               ),
-                //             ),
-                //           );
-                //         }
-                //       case .discussion:
-                //         {
-                //           throw UnimplementedError();
-                //         }
-                //     }
-                //   },
-                //   debugLabel: 'Retrieve news and discussion data from cache.',
-                // );
-              },
-            );
-          },
-        ),
+            ),
+          ),
+        ],
       ),
     );
   }

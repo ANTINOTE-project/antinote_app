@@ -67,8 +67,6 @@ class _AppState extends State<App> {
               }
 
               return MaterialApp(
-                debugShowCheckedModeBanner: false,
-
                 builder: (context, child) {
                   return MaterialUiCompatibilityBridge(child: child!);
                 },

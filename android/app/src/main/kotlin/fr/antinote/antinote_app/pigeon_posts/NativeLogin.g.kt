@@ -67,12 +67,15 @@ private open class NativeLoginPigeonCodec : StandardMessageCodec() {
 interface NativeLoginManager {
   suspend fun listAccounts(): List<ByteArray>
   suspend fun getAccountWithCredentials(uid: String): ByteArray?
+  suspend fun getAccount(uid: String): ByteArray?
   suspend fun getDefaultAccount(): ByteArray?
   suspend fun setDefaultAccount(uid: String?)
   suspend fun addAccount(rawAccount: ByteArray): Boolean
   suspend fun deleteAccount(uid: String)
   suspend fun deleteAllAccounts()
   suspend fun updateAccount(newRawAccount: ByteArray, uid: String): Boolean
+  suspend fun manuallySyncAccount(uid: String): Boolean
+  suspend fun cancelManualSync(uid: String)
 
   companion object {
     /** The codec used by NativeLoginManager. */
@@ -109,6 +112,25 @@ interface NativeLoginManager {
             CoroutineScope(Dispatchers.Main).launch {
               val wrapped: List<Any?> = try {
                 listOf(api.getAccountWithCredentials(uidArg))
+              } catch (exception: Throwable) {
+                NativeLoginPigeonUtils.wrapError(exception)
+              }
+              reply.reply(wrapped)
+            }
+          }
+        } else {
+          channel.setMessageHandler(null)
+        }
+      }
+      run {
+        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.antinote_app.NativeLoginManager.getAccount$separatedMessageChannelSuffix", codec)
+        if (api != null) {
+          channel.setMessageHandler { message, reply ->
+            val args = message as List<Any?>
+            val uidArg = args[0] as String
+            CoroutineScope(Dispatchers.Main).launch {
+              val wrapped: List<Any?> = try {
+                listOf(api.getAccount(uidArg))
               } catch (exception: Throwable) {
                 NativeLoginPigeonUtils.wrapError(exception)
               }
@@ -223,6 +245,45 @@ interface NativeLoginManager {
             CoroutineScope(Dispatchers.Main).launch {
               val wrapped: List<Any?> = try {
                 listOf(api.updateAccount(newRawAccountArg, uidArg))
+              } catch (exception: Throwable) {
+                NativeLoginPigeonUtils.wrapError(exception)
+              }
+              reply.reply(wrapped)
+            }
+          }
+        } else {
+          channel.setMessageHandler(null)
+        }
+      }
+      run {
+        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.antinote_app.NativeLoginManager.manuallySyncAccount$separatedMessageChannelSuffix", codec)
+        if (api != null) {
+          channel.setMessageHandler { message, reply ->
+            val args = message as List<Any?>
+            val uidArg = args[0] as String
+            CoroutineScope(Dispatchers.Main).launch {
+              val wrapped: List<Any?> = try {
+                listOf(api.manuallySyncAccount(uidArg))
+              } catch (exception: Throwable) {
+                NativeLoginPigeonUtils.wrapError(exception)
+              }
+              reply.reply(wrapped)
+            }
+          }
+        } else {
+          channel.setMessageHandler(null)
+        }
+      }
+      run {
+        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.antinote_app.NativeLoginManager.cancelManualSync$separatedMessageChannelSuffix", codec)
+        if (api != null) {
+          channel.setMessageHandler { message, reply ->
+            val args = message as List<Any?>
+            val uidArg = args[0] as String
+            CoroutineScope(Dispatchers.Main).launch {
+              val wrapped: List<Any?> = try {
+                api.cancelManualSync(uidArg)
+                listOf(null)
               } catch (exception: Throwable) {
                 NativeLoginPigeonUtils.wrapError(exception)
               }

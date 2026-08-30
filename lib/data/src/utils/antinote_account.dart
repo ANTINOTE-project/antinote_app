@@ -1,5 +1,6 @@
 import 'package:antinote_api/antinote_api.dart';
 import 'package:antinote_app/data/protos/account.pb.dart';
+import 'package:antinote_app/data/src/utils/various.dart';
 import 'package:protobuf/well_known_types/google/protobuf/any.pb.dart';
 import 'package:uuid/v4.dart';
 
@@ -29,13 +30,11 @@ extension LoadCredentials on AntinoteAccount {
         };
 }
 
-const _prefix = 'type.antinote.fr';
-
 extension SetCredentials on AntinoteAccount {
   AntinoteAccount setCredentials(Credentials credentials) => rebuild(
     (acc) => acc.tokenCredentials = Any.pack(
       (credentials as SerializableObject).serialize(),
-      typeUrlPrefix: _prefix,
+      typeUrlPrefix: typePrefix,
     ),
   );
 }
@@ -56,7 +55,7 @@ extension CredentialsAsAntinoteAccount on Credentials {
           establishmentName: session.anyInstance.establishmentName.trim(),
           baseUrl: baseUrl.toString(),
           workspaceName: workspace.label,
-          tokenCredentials: Any.pack(serialize(), typeUrlPrefix: _prefix),
+          tokenCredentials: Any.pack(serialize(), typeUrlPrefix: typePrefix),
         ),
       PasswordCredentials(
         username: final username,
@@ -71,9 +70,13 @@ extension CredentialsAsAntinoteAccount on Credentials {
           establishmentName: session.anyInstance.establishmentName.trim(),
           baseUrl: baseUrl.toString(),
           workspaceName: workspace.label,
-          tokenCredentials: Any.pack(serialize(), typeUrlPrefix: _prefix),
+          tokenCredentials: Any.pack(serialize(), typeUrlPrefix: typePrefix),
         ),
       _ => throw UnimplementedError('Unknown credentials type: $runtimeType'),
     }..freeze();
   }
+}
+
+extension AllSyncData on AntinoteAccount {
+  List<SyncTaskData> get syncData => [calendarData, notificationData];
 }

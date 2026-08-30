@@ -23,6 +23,9 @@ abstract class NativeLoginManager {
   Uint8List? getAccountWithCredentials(String uid);
 
   @async
+  Uint8List? getAccount(String uid);
+
+  @async
   Uint8List? getDefaultAccount();
 
   @async
@@ -39,4 +42,10 @@ abstract class NativeLoginManager {
 
   @async
   bool updateAccount(Uint8List newRawAccount, String uid);
+
+  @async
+  bool manuallySyncAccount(String uid);
+
+  @async
+  void cancelManualSync(String uid);
 }

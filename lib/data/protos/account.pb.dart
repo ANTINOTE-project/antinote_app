@@ -26,11 +26,13 @@ export 'account.pbenum.dart';
 class SyncTaskData_Notification_Entry extends $pb.GeneratedMessage {
   factory SyncTaskData_Notification_Entry({
     SyncTaskData_Notification_EntryType? type,
-    $core.String? visualId,
+    $core.List<$core.int>? visualId,
+    $core.List<$core.int>? resourceVisualId,
   }) {
     final result = create();
     if (type != null) result.type = type;
     if (visualId != null) result.visualId = visualId;
+    if (resourceVisualId != null) result.resourceVisualId = resourceVisualId;
     return result;
   }
 
@@ -49,7 +51,10 @@ class SyncTaskData_Notification_Entry extends $pb.GeneratedMessage {
       createEmptyInstance: create)
     ..aE<SyncTaskData_Notification_EntryType>(1, _omitFieldNames ? '' : 'type',
         enumValues: SyncTaskData_Notification_EntryType.values)
-    ..aOS(2, _omitFieldNames ? '' : 'visualId')
+    ..a<$core.List<$core.int>>(
+        2, _omitFieldNames ? '' : 'visualId', $pb.PbFieldType.OY)
+    ..a<$core.List<$core.int>>(
+        3, _omitFieldNames ? '' : 'resourceVisualId', $pb.PbFieldType.OY)
     ..hasRequiredFields = false;
 
   @$core.Deprecated('See https://github.com/google/protobuf.dart/issues/998.')
@@ -85,13 +90,22 @@ class SyncTaskData_Notification_Entry extends $pb.GeneratedMessage {
   void clearType() => $_clearField(1);
 
   @$pb.TagNumber(2)
-  $core.String get visualId => $_getSZ(1);
+  $core.List<$core.int> get visualId => $_getN(1);
   @$pb.TagNumber(2)
-  set visualId($core.String value) => $_setString(1, value);
+  set visualId($core.List<$core.int> value) => $_setBytes(1, value);
   @$pb.TagNumber(2)
   $core.bool hasVisualId() => $_has(1);
   @$pb.TagNumber(2)
   void clearVisualId() => $_clearField(2);
+
+  @$pb.TagNumber(3)
+  $core.List<$core.int> get resourceVisualId => $_getN(2);
+  @$pb.TagNumber(3)
+  set resourceVisualId($core.List<$core.int> value) => $_setBytes(2, value);
+  @$pb.TagNumber(3)
+  $core.bool hasResourceVisualId() => $_has(2);
+  @$pb.TagNumber(3)
+  void clearResourceVisualId() => $_clearField(3);
 }
 
 class SyncTaskData_Notification extends $pb.GeneratedMessage {
@@ -366,7 +380,8 @@ class AntinoteAccount extends $pb.GeneratedMessage {
     $1.Any? tokenCredentials,
     $core.bool? invalid,
     $core.bool? storeSecurely,
-    $core.Iterable<SyncTaskData>? syncData,
+    SyncTaskData? calendarData,
+    SyncTaskData? notificationData,
   }) {
     final result = create();
     if (uid != null) result.uid = uid;
@@ -378,7 +393,8 @@ class AntinoteAccount extends $pb.GeneratedMessage {
     if (tokenCredentials != null) result.tokenCredentials = tokenCredentials;
     if (invalid != null) result.invalid = invalid;
     if (storeSecurely != null) result.storeSecurely = storeSecurely;
-    if (syncData != null) result.syncData.addAll(syncData);
+    if (calendarData != null) result.calendarData = calendarData;
+    if (notificationData != null) result.notificationData = notificationData;
     return result;
   }
 
@@ -405,7 +421,9 @@ class AntinoteAccount extends $pb.GeneratedMessage {
         subBuilder: $1.Any.create)
     ..aOB(8, _omitFieldNames ? '' : 'invalid')
     ..aOB(9, _omitFieldNames ? '' : 'storeSecurely')
-    ..pPM<SyncTaskData>(10, _omitFieldNames ? '' : 'syncData',
+    ..aOM<SyncTaskData>(11, _omitFieldNames ? '' : 'calendarData',
+        subBuilder: SyncTaskData.create)
+    ..aOM<SyncTaskData>(12, _omitFieldNames ? '' : 'notificationData',
         subBuilder: SyncTaskData.create)
     ..hasRequiredFields = false;
 
@@ -523,8 +541,27 @@ class AntinoteAccount extends $pb.GeneratedMessage {
   @$pb.TagNumber(9)
   void clearStoreSecurely() => $_clearField(9);
 
-  @$pb.TagNumber(10)
-  $pb.PbList<SyncTaskData> get syncData => $_getList(9);
+  @$pb.TagNumber(11)
+  SyncTaskData get calendarData => $_getN(9);
+  @$pb.TagNumber(11)
+  set calendarData(SyncTaskData value) => $_setField(11, value);
+  @$pb.TagNumber(11)
+  $core.bool hasCalendarData() => $_has(9);
+  @$pb.TagNumber(11)
+  void clearCalendarData() => $_clearField(11);
+  @$pb.TagNumber(11)
+  SyncTaskData ensureCalendarData() => $_ensure(9);
+
+  @$pb.TagNumber(12)
+  SyncTaskData get notificationData => $_getN(10);
+  @$pb.TagNumber(12)
+  set notificationData(SyncTaskData value) => $_setField(12, value);
+  @$pb.TagNumber(12)
+  $core.bool hasNotificationData() => $_has(10);
+  @$pb.TagNumber(12)
+  void clearNotificationData() => $_clearField(12);
+  @$pb.TagNumber(12)
+  SyncTaskData ensureNotificationData() => $_ensure(10);
 }
 
 class SerializedAccountRegistry extends $pb.GeneratedMessage {

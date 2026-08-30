@@ -26,6 +26,13 @@ class NativeAccountStorage implements AccountStorage {
   }
 
   @override
+  Future<AntinoteAccount?> getAccount(String uid) async {
+    final res = await _receiver.getAccount(uid);
+    if (res == null) return null;
+    return AntinoteAccount.fromBuffer(res)..freeze();
+  }
+
+  @override
   Future<AntinoteAccount?> getDefaultAccount() async {
     final res = await _receiver.getDefaultAccount();
     if (res == null) return null;
@@ -48,4 +55,9 @@ class NativeAccountStorage implements AccountStorage {
   @override
   Future<void> updateAccount(AntinoteAccount newAccount, String uid) =>
       _receiver.updateAccount(newAccount.writeToBuffer(), uid);
+
+  @override
+  Future<bool> manuallySync(String uid) => _receiver.manuallySyncAccount(uid);
+  @override
+  Future<void> cancelManualSync(String uid) => _receiver.cancelManualSync(uid);
 }

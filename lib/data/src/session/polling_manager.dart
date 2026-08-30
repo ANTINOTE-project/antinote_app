@@ -36,7 +36,7 @@ class SessionPollingManager extends PollingManager {
     Future.microtask(() async {
       var wrapper = registry.specificSession(accountUid);
       if (wrapper == null) {
-        final result = await registry.pickAccount(accountUid);
+        final result = await registry.loadAccount(accountUid, pick: false);
 
         if (!result) {
           await _sessionManager.updatePollingState(accountUid, .dead, null);

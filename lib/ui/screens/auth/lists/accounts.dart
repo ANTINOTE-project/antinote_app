@@ -2,11 +2,13 @@ import 'package:antinote_api/antinote_api.dart';
 import 'package:antinote_app/data/protos/account.pb.dart';
 import 'package:antinote_app/data/src/session/wrapper.dart';
 import 'package:antinote_app/ui/screens/auth/lists/methods.dart';
+import 'package:antinote_app/ui/screens/settings/sync_screen.dart';
 import 'package:antinote_app/ui/screens/shell/tab.dart';
 import 'package:antinote_app/ui/utils/utils.dart';
 import 'package:antinote_app/ui/widgets/customs/app_bar.dart';
 import 'package:antinote_app/ui/widgets/customs/button.dart';
 import 'package:antinote_app/ui/widgets/customs/list.dart';
+import 'package:flutter/foundation.dart';
 import 'package:hugeicons_pro/hugeicons.dart';
 import 'package:material_ui/material_ui.dart';
 import 'package:skeletonizer/skeletonizer.dart';
@@ -65,7 +67,7 @@ class _AccountsListScreenState extends State<AccountsListScreen>
       _loggingUid = account.uid;
     });
 
-    final result = await ar.pickAccount(account.uid);
+    final result = await ar.loadAccount(account.uid);
 
     if (!result && context.mounted) {
       libLog.warning('Failed to pick account...');
@@ -140,6 +142,24 @@ class _AccountsListScreenState extends State<AccountsListScreen>
                         },
                       ),
                     ),
+
+                    if (kDebugMode)
+                      .new(
+                        title: Text(context.l10n.accountSyncSettings),
+                        trailing: const Icon(HugeIconsSolid.arrowRight01),
+                        onPressed: account.storeSecurely
+                            ? null
+                            : () async {
+                                await Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => SettingsSyncScreen(
+                                      accountUid: account.uid,
+                                    ),
+                                  ),
+                                );
+                              },
+                      ),
                   ],
                   isColumn: true,
                   isSliver: false,

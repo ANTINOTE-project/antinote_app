@@ -334,5 +334,47 @@
   "appName": "ANTINOTE",
   "appLegalese": "L'application ANTINOTE est libre et gratuite, disponible sous la license MIT. Nous rendons disponibles de nouvelles fonctionnalité grâce à une connection à votre compte PRONOTE. Nous ne sommes en aucun cas lié à Index-Education et nous ne proposons aucune garantie d'aucune sorte quant à l'utilisation du logiciel. Fait avec ❤ par l'équipe ANTINOTE",
 
-  "openAccountSettings": "Ouvrir les paramètres de compte…"
+  "openAccountSettings": "Ouvrir les paramètres de compte…",
+
+  "homeworksNotificationDescription": "Notification quand un nouveau devoir est publié",
+  "newHomework": "{subject} → {date}",
+  "@newHomework": {
+    "placeholders": {
+      "subject": {
+        "type": "String"
+      },
+      "date": {
+        "type": "DateTime",
+        "format": "MMMd"
+      }
+    }
+  },
+
+  "accountSyncSettings": "Synchronisation en arrière-plan",
+  "accountNotFound": "Compte non trouvé…",
+
+  "calendarSync": "Calendrier",
+  "calendarSyncSubtitle": "Synchronise votre emploi du temps avec le calendrier de votre téléphone et le met à jour en arrière-plan",
+
+  "newsSync": "Annonces",
+  "newsSyncSubtitle": "Quand vous recevez une information ou un sondage",
+
+  "discussionSync": "Messages",
+  "discussionSyncSubtitle": "Dès la réception d'un message de discussion",
+
+  "homeworkSync": "Travaux à faire",
+  "homeworkSyncSubtitle": "À la publication de nouveaux travaux à faire",
+
+  "gradeSync": "Notes",
+  "gradeSyncSubtitle": "Quand une nouvelle note est publiée",
+
+  "menuSync": "Menus",
+  "menuSyncSubtitle": "Envoyée au temps du midi pour vous informer du menu du jour",
+
+  "syncAll": "Synchroniser tous",
+  "syncing": "Synchronisation…",
+  "syncSuccessful": "Synchronisation réussie !",
+  "syncFailed": "Synchronisation échouée…",
+
+  "markedThreadRead": "Le fil marqué comme lu"
 }
