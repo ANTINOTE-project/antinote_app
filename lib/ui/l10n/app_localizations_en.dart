@@ -678,7 +678,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get homeworksNotificationDescription =>
-      'Notification quand un nouveau devoir est publié';
+      'Notification when a new homework is published';
 
   @override
   String newHomework(String subject, DateTime date) {
@@ -689,64 +689,62 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
-  String get accountSyncSettings => 'Synchronisation en arrière-plan';
+  String get accountSyncSettings => 'Background sync';
 
   @override
-  String get accountNotFound => 'Compte non trouvé…';
+  String get accountNotFound => 'Account not found…';
 
   @override
-  String get calendarSync => 'Calendrier';
+  String get calendarSync => 'Calendar';
 
   @override
   String get calendarSyncSubtitle =>
-      'Synchronise votre emploi du temps avec le calendrier de votre téléphone et le met à jour en arrière-plan';
+      'Syncs your timetable with your phone\'s calendar and updates it in the backgorund';
 
   @override
-  String get newsSync => 'Annonces';
+  String get newsSync => 'News';
 
   @override
   String get newsSyncSubtitle =>
-      'Quand vous recevez une information ou un sondage';
+      'Upon the reception of a new discussion message';
 
   @override
-  String get discussionSync => 'Messages';
+  String get discussionSync => 'Direct Messages';
 
   @override
-  String get discussionSyncSubtitle =>
-      'Dès la réception d\'un message de discussion';
+  String get discussionSyncSubtitle => 'When a DM is received';
 
   @override
-  String get homeworkSync => 'Travaux à faire';
+  String get homeworkSync => 'Homeworks';
 
   @override
-  String get homeworkSyncSubtitle =>
-      'À la publication de nouveaux travaux à faire';
+  String get homeworkSyncSubtitle => 'When new homework is published';
 
   @override
-  String get gradeSync => 'Notes';
+  String get gradeSync => 'Grades';
 
   @override
-  String get gradeSyncSubtitle => 'Quand une nouvelle note est publiée';
+  String get gradeSyncSubtitle => 'When a new grade is published';
 
   @override
   String get menuSync => 'Menus';
 
   @override
   String get menuSyncSubtitle =>
-      'Envoyée au temps du midi pour vous informer du menu du jour';
+      'Sent before lunch to tell you what the menu is';
 
   @override
-  String get syncAll => 'Synchroniser tous';
+  String get syncAll => 'Sync all';
 
   @override
-  String get syncing => 'Synchronisation…';
+  String get syncing => 'Syncing…';
 
   @override
-  String get syncSuccessful => 'Synchronisation réussie !';
+  String get syncSuccessful => 'Sync successful!';
 
   @override
-  String get syncFailed => 'Synchronisation échouée…';
+  String get syncFailed => 'Sync failed…';
 
   @override
-  String get markedThreadRead => 'Le fil a été marqué comme lu';
+  String get markedThreadRead => 'The thread was marked as read';
 }

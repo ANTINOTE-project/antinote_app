@@ -209,5 +209,36 @@
   "appName": "ANTINOTE",
   "appLegalese": "The ANTINOTE app is free and open-source, available under the MIT license. We offer new functionnality using a connection to your PRONOTE account. We are not affiliated with Index-Education, and we do not offer guaranties in any way, shape, of form regarding the use of this software. Made with ❤ by the ANTINOTE team",
 
-  "openAccountSettings": "Open account settings…"
+  "openAccountSettings": "Open account settings…",
+
+  "homeworksNotificationDescription": "Notification when a new homework is published",
+  "newHomework": "{subject} → {date}",
+
+  "accountSyncSettings": "Background sync",
+  "accountNotFound": "Account not found…",
+
+  "calendarSync": "Calendar",
+  "calendarSyncSubtitle": "Syncs your timetable with your phone's calendar and updates it in the backgorund",
+
+  "newsSync": "News",
+  "newsSyncSubtitle": "Upon the reception of a new discussion message",
+
+  "discussionSync": "Direct Messages",
+  "discussionSyncSubtitle": "When a DM is received",
+
+  "homeworkSync": "Homeworks",
+  "homeworkSyncSubtitle": "When new homework is published",
+
+  "gradeSync": "Grades",
+  "gradeSyncSubtitle": "When a new grade is published",
+
+  "menuSync": "Menus",
+  "menuSyncSubtitle": "Sent before lunch to tell you what the menu is",
+
+  "syncAll": "Sync all",
+  "syncing": "Syncing…",
+  "syncSuccessful": "Sync successful!",
+  "syncFailed": "Sync failed…",
+
+  "markedThreadRead": "The thread was marked as read"
 }
