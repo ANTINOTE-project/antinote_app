@@ -10,7 +10,7 @@ class SliverTextIcon extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return SliverPadding(
-      padding: const .only(left: 6, top: 16, bottom: 4),
+      padding: const .only(left: 6, top: 16, bottom: 6),
       sliver: SliverToBoxAdapter(
         child: Row(
           spacing: 8,

@@ -1,21 +1,22 @@
 import 'package:antinote_app/ui/utils/utils.dart';
-import 'package:material_ui/material_ui.dart';
 import 'package:hugeicons_pro/hugeicons.dart';
+import 'package:material_ui/material_ui.dart';
 
 class AppBarWidget extends StatelessWidget implements PreferredSizeWidget {
-  final AlignmentGeometry titleAlign;
   final Widget? title;
+  final TextAlign? titleAlign;
+
   final bool backButton;
-  final List<Widget> actions;
   final Widget? leading;
+  final Widget? trailing;
 
   const AppBarWidget({
     super.key,
     this.title,
-    this.titleAlign = .center,
+    this.titleAlign,
     this.backButton = true,
-    this.actions = const [],
     this.leading,
+    this.trailing,
   });
 
   @override
@@ -39,41 +40,28 @@ class AppBarWidget extends StatelessWidget implements PreferredSizeWidget {
       bottom: false,
 
       child: Container(
-        padding: const .symmetric(horizontal: 8),
+        padding: const .symmetric(horizontal: 12),
         height: preferredSize.height,
 
-        child: Stack(
-          alignment: .center,
+        child: Row(
+          spacing: 12,
 
           children: [
-            Container(
-              alignment: titleAlign,
-              padding: const EdgeInsets.symmetric(horizontal: 48),
+            ?leadingWidget,
+
+            Expanded(
               child: title != null
                   ? DefaultTextStyle(
                       overflow: .ellipsis,
-                      textAlign: .center,
-                      style: context.tt.titleLarge!.copyWith(
-                        fontWeight: .bold,
-                        fontFamily: 'SNPro',
-                      ),
+                      textAlign: titleAlign,
+                      maxLines: 1,
+                      style: context.tt.titleLarge!.copyWith(fontWeight: .bold),
                       child: title!,
                     )
                   : const SizedBox.shrink(),
             ),
 
-            Row(
-              mainAxisAlignment: .spaceBetween,
-
-              children: [
-                leadingWidget ?? const SizedBox.shrink(),
-
-                Padding(
-                  padding: const EdgeInsets.only(right: 6),
-                  child: Row(mainAxisSize: .min, children: actions),
-                ),
-              ],
-            ),
+            ?trailing,
           ],
         ),
       ),

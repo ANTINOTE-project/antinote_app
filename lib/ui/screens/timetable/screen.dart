@@ -4,6 +4,7 @@ import 'package:antinote_api/antinote_api.dart';
 import 'package:antinote_app/ui/screens/shell/tab.dart';
 import 'package:antinote_app/ui/screens/timetable/events/block.dart';
 import 'package:antinote_app/ui/utils/utils.dart';
+import 'package:antinote_app/ui/widgets/customs/app_bar.dart';
 import 'package:antinote_app/ui/widgets/customs/loading.dart';
 import 'package:collection/collection.dart';
 import 'package:hugeicons_pro/hugeicons.dart';
@@ -311,12 +312,8 @@ class _TimetableDisplayState extends State<TimetableDisplay>
     );
   }
 
-  AppBar _buildAppBar(DateRange dayGroup, BuildContext context) {
-    return AppBar(
-      backgroundColor: widget.transparent ? Colors.transparent : null,
-      surfaceTintColor: widget.transparent ? Colors.transparent : null,
-
-      centerTitle: !widget.normalPicker,
+  PreferredSizeWidget _buildAppBar(DateRange dayGroup, BuildContext context) {
+    return AppBarWidget(
       title: TextButton.icon(
         label: Text(
           dayGroup.pprint(context),

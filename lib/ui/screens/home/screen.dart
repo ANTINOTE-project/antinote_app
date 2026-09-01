@@ -3,6 +3,7 @@ import 'package:antinote_app/data/src/home_page/manager.dart';
 import 'package:antinote_app/ui/screens/settings/screen.dart';
 import 'package:antinote_app/ui/screens/shell/tab.dart';
 import 'package:antinote_app/ui/utils/utils.dart';
+import 'package:antinote_app/ui/widgets/customs/app_bar.dart';
 import 'package:hugeicons_pro/hugeicons.dart';
 import 'package:material_ui/material_ui.dart';
 
@@ -45,29 +46,24 @@ class _HomeScreenState extends State<HomeScreen>
     assert(!partial, 'This loaded page does not support partial loading yet.');
 
     return Scaffold(
-      appBar: AppBar(
-        title: Text(
-          context.l10n.homeHiName(username),
-          style: const TextStyle(fontWeight: .bold),
-        ),
+      appBar: AppBarWidget(
+        title: Text(context.l10n.homeHiName(username)),
+        titleAlign: .start,
 
-        actionsPadding: const .only(right: 8),
-        actions: [
-          IconButton(
-            icon: const Icon(HugeIconsSolid.settings02),
-            tooltip: '${context.l10n.goToAppSettings}…',
-            onPressed: () async {
-              await Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) {
-                    return const SettingsScreen();
-                  },
-                ),
-              );
-            },
-          ),
-        ],
+        trailing: IconButton(
+          icon: const Icon(HugeIconsSolid.settings02),
+          tooltip: context.l10n.goToAppSettings,
+          onPressed: () async {
+            await Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) {
+                  return const SettingsScreen();
+                },
+              ),
+            );
+          },
+        ),
       ),
 
       body: buildRefreshIndicator(

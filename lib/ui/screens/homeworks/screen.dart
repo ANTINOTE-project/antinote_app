@@ -6,12 +6,13 @@ import 'package:antinote_app/ui/screens/homeworks/detail.dart';
 import 'package:antinote_app/ui/screens/shell/tab.dart';
 import 'package:antinote_app/ui/utils/utils.dart';
 import 'package:antinote_app/ui/widgets/bottom_padding.dart';
+import 'package:antinote_app/ui/widgets/customs/app_bar.dart';
 import 'package:antinote_app/ui/widgets/customs/loading.dart';
 import 'package:antinote_app/ui/widgets/pressable.dart';
 import 'package:antinote_app/ui/widgets/remote_html.dart';
 import 'package:collection/collection.dart';
-import 'package:material_ui/material_ui.dart';
 import 'package:hugeicons_pro/hugeicons.dart';
+import 'package:material_ui/material_ui.dart';
 
 typedef Homeworks = Map<DateTime, ValueNotifier<List<Homework>?>>;
 
@@ -162,7 +163,10 @@ class _HomeworksScreenState extends State<HomeworksScreen>
               slivers: [
                 SliverPadding(
                   padding: const .symmetric(horizontal: 4),
+
                   sliver: SliverList.builder(
+                    itemCount: displayableDays.length,
+
                     itemBuilder: (context, index) {
                       final day = displayableDays[index];
                       final value = _homeworks[day]!.value;
@@ -179,16 +183,16 @@ class _HomeworksScreenState extends State<HomeworksScreen>
                         },
                       );
                     },
-                    itemCount: displayableDays.length,
                   ),
                 ),
+
                 const BottomPadding(padding: 20),
               ],
             );
           }
 
           return Scaffold(
-            appBar: AppBar(
+            appBar: AppBarWidget(
               title: _WeekPicker(
                 firstWeekNumber: _data.firstWeekNumber,
                 weekCount: _weeks.length,
@@ -351,7 +355,7 @@ class _HomeworkListState extends State<_HomeworkList> {
           padding: const .fromLTRB(8, 0, 8, 16),
 
           child: Column(
-            spacing: 8,
+            spacing: 6,
 
             children: [
               for (final homework in widget.homeworks)

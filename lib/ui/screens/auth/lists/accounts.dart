@@ -203,6 +203,7 @@ class _AccountsListScreenState extends State<AccountsListScreen>
     return Scaffold(
       appBar: AppBarWidget(
         title: Text(context.l10n.chooseAnAccount),
+        titleAlign: .center,
         backButton: false,
       ),
 
