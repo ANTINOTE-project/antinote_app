@@ -6,6 +6,7 @@ import 'package:antinote_app/ui/screens/auth/methods/url.dart';
 import 'package:antinote_app/ui/utils/utils.dart';
 import 'package:antinote_app/ui/widgets/customs/app_bar.dart';
 import 'package:antinote_app/ui/widgets/customs/list.dart';
+import 'package:antinote_app/ui/widgets/text_icon.dart';
 import 'package:hugeicons_pro/hugeicons.dart';
 import 'package:material_ui/material_ui.dart';
 import 'package:skeletonizer/skeletonizer.dart';
@@ -76,34 +77,6 @@ class MethodsListScreen extends StatelessWidget with WidgetsBindingObserver {
           );
         },
       ),
-      (
-        icon: HugeIconsSolid.testTube02,
-
-        title: context.l10n.loginDemo,
-        subtitle: context.l10n.loginDemoSubtitle,
-
-        onPressed: () async {
-          final credentials = PasswordCredentials(
-            username: 'demonstration',
-            password: 'pronotevs',
-
-            workspace: .studentMobile,
-
-            deviceUuid: Credentials.generateDeviceUuid(),
-            baseUrl: Uri.parse('https://demo.index-education.net/pronote'),
-            cookies: [],
-          );
-
-          final result = await credentials.login(
-            options: context.s.networking.sessionOptions,
-          );
-
-          if (!context.mounted) return;
-
-          final entry = SessionWrapper.register(result, credentials);
-          Navigator.pop(context, entry);
-        },
-      ),
     ];
   }
 
@@ -114,45 +87,86 @@ class MethodsListScreen extends StatelessWidget with WidgetsBindingObserver {
     return Scaffold(
       appBar: AppBarWidget(title: Text(context.l10n.addAnAccount)),
 
-      body: Padding(
-        padding: const EdgeInsets.all(12),
+      body: CustomScrollView(
+        slivers: [
+          SliverPadding(
+            padding: const .symmetric(horizontal: 12),
 
-        child: ListWidget(
-          isSliver: false,
-          items: options,
+            sliver: SliverMainAxisGroup(
+              slivers: [
+                ListWidget(
+                  shrinkWrap: true,
+                  items: options,
 
-          itemBuilder: (context, item, borderRadius) {
-            return TileWidget(
-              borderRadius: borderRadius,
-              onPressed: item.onPressed,
+                  itemBuilder: (context, item, borderRadius) {
+                    return TileWidget(
+                      borderRadius: borderRadius,
+                      onPressed: item.onPressed,
 
-              leading: Icon(item.icon),
+                      leading: Icon(item.icon),
+                      title: Text(item.title, maxLines: 3),
+                      subtitle: Text(item.subtitle, maxLines: 3),
 
-              title: Text(
-                item.title,
-
-                maxLines: 3,
-
-                style: const TextStyle(fontSize: 18),
-              ),
-
-              subtitle: Text(
-                item.subtitle,
-
-                maxLines: 3,
-
-                style: const TextStyle(fontSize: 13),
-              ),
-
-              trailing: Skeleton.ignore(
-                child: Icon(
-                  HugeIconsSolid.arrowRight01,
-                  color: context.c.outline,
+                      trailing: Skeleton.ignore(
+                        child: Icon(
+                          HugeIconsSolid.arrowRight01,
+                          color: context.c.outline,
+                        ),
+                      ),
+                    );
+                  },
                 ),
-              ),
-            );
-          },
-        ),
+
+                SliverTextIcon(label: context.l10n.loginDemoText),
+
+                SliverToBoxAdapter(
+                  child: TileWidget(
+                    borderRadius: const .all(ListWidget.radius),
+                    onPressed: () async {
+                      final credentials = PasswordCredentials(
+                        username: 'demonstration',
+                        password: 'pronotevs',
+
+                        workspace: .studentMobile,
+
+                        deviceUuid: Credentials.generateDeviceUuid(),
+                        baseUrl: Uri.parse(
+                          'https://demo.index-education.net/pronote',
+                        ),
+                        cookies: [],
+                      );
+
+                      final result = await credentials.login(
+                        options: context.s.networking.sessionOptions,
+                      );
+
+                      if (!context.mounted) return;
+
+                      final entry = SessionWrapper.register(
+                        result,
+                        credentials,
+                      );
+                      Navigator.pop(context, entry);
+                    },
+
+                    leading: const Icon(HugeIconsSolid.testTube02),
+
+                    title: Text(context.l10n.loginDemo, maxLines: 3),
+
+                    subtitle: Text(context.l10n.loginDemoSubtitle, maxLines: 3),
+
+                    trailing: Skeleton.ignore(
+                      child: Icon(
+                        HugeIconsSolid.arrowRight01,
+                        color: context.c.outline,
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
       ),
     );
   }

@@ -95,7 +95,7 @@ class _AccountsListScreenState extends State<AccountsListScreen>
       builder: (context) {
         return SafeArea(
           child: Padding(
-            padding: const .symmetric(horizontal: 12),
+            padding: const .only(left: 12, right: 12, bottom: 16),
             child: Column(
               spacing: 12,
               mainAxisSize: .min,
@@ -235,7 +235,7 @@ class _AccountsListScreenState extends State<AccountsListScreen>
 
       body: buildRefreshIndicator(
         child: Padding(
-          padding: const EdgeInsets.only(left: 12, right: 12, bottom: 70),
+          padding: const .only(left: 12, right: 12, bottom: 70),
 
           child: CustomScrollView(
             slivers: [
@@ -246,6 +246,7 @@ class _AccountsListScreenState extends State<AccountsListScreen>
                     onPressed: () => _onAccountPressed(account),
                     borderRadius: borderRadius,
 
+                    // leading: account.is,
                     trailing: Skeleton.ignore(
                       child: IconButton(
                         onPressed: () async {
@@ -301,15 +302,17 @@ class _AccountsListScreenState extends State<AccountsListScreen>
                       crossAxisAlignment: .start,
 
                       children: [
-                        Text(
-                          account.establishmentName,
-                          style: const TextStyle(fontSize: 14),
-                        ),
+                        if (account.establishmentName.trim().isNotEmpty)
+                          Text(
+                            account.establishmentName,
+                            style: const TextStyle(fontSize: 14),
+                          ),
 
-                        Text(
-                          account.workspaceName,
-                          style: const TextStyle(fontSize: 14),
-                        ),
+                        if (account.workspaceName.trim().isNotEmpty)
+                          Text(
+                            account.workspaceName,
+                            style: const TextStyle(fontSize: 14),
+                          ),
                       ],
                     ),
                   );

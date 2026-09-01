@@ -31,6 +31,7 @@
   "homeworks": "Devoirs",
   "communication": "Réception",
 
+  "loginDemoText": "Démo",
   "autoLogin": "Connexion automatique",
   "autoLoginSubtitle": "Sélectionne ce compte dès l'ouverture de l'application",
   "secureStore": "Chiffrage du compte",
@@ -334,7 +335,7 @@
   "appName": "ANTINOTE",
   "appLegalese": "L'application ANTINOTE est libre et gratuite, disponible sous la license MIT. Nous rendons disponibles de nouvelles fonctionnalité grâce à une connection à votre compte PRONOTE. Nous ne sommes en aucun cas lié à Index-Education et nous ne proposons aucune garantie d'aucune sorte quant à l'utilisation du logiciel. Fait avec ❤ par l'équipe ANTINOTE",
 
-  "openAccountSettings": "Ouvrir les paramètres de compte…",
+  "openAccountSettings": "Ouvrir les paramètres du compte",
 
   "homeworksNotificationDescription": "Notification quand un nouveau devoir est publié",
   "newHomework": "{subject} → {date}",

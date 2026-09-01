@@ -85,6 +85,9 @@ class AppLocalizationsFr extends AppLocalizations {
   String get communication => 'Réception';
 
   @override
+  String get loginDemoText => 'Démo';
+
+  @override
   String get autoLogin => 'Connexion automatique';
 
   @override
@@ -674,7 +677,7 @@ class AppLocalizationsFr extends AppLocalizations {
       'L\'application ANTINOTE est libre et gratuite, disponible sous la license MIT. Nous rendons disponibles de nouvelles fonctionnalité grâce à une connection à votre compte PRONOTE. Nous ne sommes en aucun cas lié à Index-Education et nous ne proposons aucune garantie d\'aucune sorte quant à l\'utilisation du logiciel. Fait avec ❤ par l\'équipe ANTINOTE';
 
   @override
-  String get openAccountSettings => 'Ouvrir les paramètres de compte…';
+  String get openAccountSettings => 'Ouvrir les paramètres du compte';
 
   @override
   String get homeworksNotificationDescription =>

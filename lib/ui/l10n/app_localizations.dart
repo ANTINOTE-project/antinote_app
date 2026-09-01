@@ -248,6 +248,12 @@ abstract class AppLocalizations {
   /// **'Réception'**
   String get communication;
 
+  /// No description provided for @loginDemoText.
+  ///
+  /// In fr, this message translates to:
+  /// **'Démo'**
+  String get loginDemoText;
+
   /// No description provided for @autoLogin.
   ///
   /// In fr, this message translates to:
@@ -1173,7 +1179,7 @@ abstract class AppLocalizations {
   /// No description provided for @openAccountSettings.
   ///
   /// In fr, this message translates to:
-  /// **'Ouvrir les paramètres de compte…'**
+  /// **'Ouvrir les paramètres du compte'**
   String get openAccountSettings;
 
   /// No description provided for @homeworksNotificationDescription.
