@@ -525,7 +525,7 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get deviceThemeDescription =>
-      'Le thème utilisé dans l\'application changera selon le fond d\'écran.';
+      'Le thème utilisé dans l\'application changera selon ton fond d\'écran';
 
   @override
   String get displayProfilePicture => 'Afficher la photo de profile';
@@ -541,7 +541,7 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get sendNavigationRequestsSubtitle =>
-      'Quand cette option est désactivée, des gains en latence et en données transférées peuvent être observés. Cependant, cela fait diverger le fonctionnement de l\'application de celle de PRONOTE.';
+      'Quand cette option est désactivée, des gains en latence et en données transférées peuvent être observés. Cependant, cela fait diverger le fonctionnement de l\'application de celle de PRONOTE';
 
   @override
   String get noMenuForToday => 'Pas de menu pour aujourd\'hui !';

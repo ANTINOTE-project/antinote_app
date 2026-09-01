@@ -2,7 +2,6 @@ import 'package:antinote_app/ui/screens/settings/screen.dart';
 import 'package:antinote_app/ui/utils/utils.dart';
 import 'package:antinote_app/ui/widgets/customs/list.dart';
 import 'package:antinote_app/ui/widgets/pressable.dart';
-import 'package:hugeicons_pro/hugeicons.dart';
 import 'package:material_ui/material_ui.dart';
 
 class AppearancePicker extends StatefulWidget {
@@ -13,125 +12,92 @@ class AppearancePicker extends StatefulWidget {
 }
 
 class _AppearancePickerState extends State<AppearancePicker> {
-  late Color _activeColor;
-
-  @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-    _activeColor = context.s.theme.seedColor;
-  }
-
   @override
   Widget build(BuildContext context) {
-    final areColorsEnabled = !context.s.theme.isDynamic;
+    final isDynamic = context.s.theme.isDynamic;
+    final currentColorScheme = context.c;
 
     return ListWidget.list(
       items: [
         TileWidgetData(
-          title: GridView.builder(
-            physics: const NeverScrollableScrollPhysics(),
-            shrinkWrap: true,
+          padding: .zero,
 
-            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-              crossAxisCount: 3,
-            ),
+          title: SizedBox(
+            height: 110,
 
-            itemCount: AppColor.values.length,
-            padding: const .all(8),
+            child: ListView.builder(
+              physics: const BouncingScrollPhysics(
+                parent: AlwaysScrollableScrollPhysics(),
+              ),
 
-            itemBuilder: (context, index) {
-              final appColor = AppColor.values[index];
-              final label = appColor.label(context.l10n);
-              final color = appColor.color;
-              final isSelected = color == _activeColor;
+              padding: const .symmetric(horizontal: 12, vertical: 14),
 
-              return Column(
-                mainAxisAlignment: .center,
-                spacing: 4,
+              itemCount: AppColor.values.length,
+              scrollDirection: .horizontal,
+              shrinkWrap: true,
 
-                children: [
-                  Pressable(
-                    hasVisuals: false,
+              itemBuilder: (context, index) {
+                final appColor = AppColor.values[index];
 
-                    onPressed: areColorsEnabled
-                        ? () async {
-                            setState(() {
-                              _activeColor = color;
-                            });
+                final label = appColor.label(context.l10n);
+                final color = appColor.color;
 
-                            await context.s.theme.setSeedColor(color);
-                          }
-                        : null,
+                final isSelected = color == context.s.theme.seedColor;
 
-                    child: AnimatedSwitcher(
-                      duration: const Duration(milliseconds: 500),
+                return Padding(
+                  padding: const .only(right: 20),
 
-                      switchInCurve: Curves.elasticOut,
-                      switchOutCurve: Curves.easeInBack,
+                  child: Column(
+                    mainAxisAlignment: .center,
+                    spacing: 4,
 
-                      layoutBuilder: (currentChild, previousChildren) {
-                        return Stack(
-                          alignment: Alignment.center,
-                          children: [...previousChildren, ?currentChild],
-                        );
-                      },
+                    children: [
+                      Pressable(
+                        borderRadius: .circular(90),
 
-                      transitionBuilder: (child, animation) {
-                        return FadeTransition(opacity: animation, child: child);
-                      },
+                        onPressed: isDynamic
+                            ? null
+                            : () async {
+                                await context.s.theme.setSeedColor(color);
+                                if (mounted) setState(() {});
+                              },
 
-                      child: Container(
-                        key: ValueKey(isSelected),
+                        child: Ink(
+                          height: 48,
+                          width: 48,
 
-                        height: 64,
-                        width: 64,
-
-                        decoration: BoxDecoration(
-                          borderRadius: .circular(14),
-                          color: areColorsEnabled
-                              ? color
-                              : color.withAlpha(128),
-                        ),
-
-                        foregroundDecoration: BoxDecoration(
-                          borderRadius: .circular(14),
-
-                          border: Border.all(
-                            color: isSelected
-                                ? context.c.onPrimary
-                                : context.c.outline,
-                            width: isSelected ? 3 : 1,
-                            strokeAlign: 1,
+                          decoration: BoxDecoration(
+                            borderRadius: .circular(90),
+                            color: isDynamic ? color.withAlpha(128) : color,
+                            border: isSelected
+                                ? .all(
+                                    color: currentColorScheme.primary,
+                                    width: 2,
+                                  )
+                                : null,
                           ),
                         ),
-
-                        child: isSelected
-                            ? Icon(
-                                HugeIconsSolid.tick03,
-                                size: 24,
-                                color: context.c.onPrimary,
-                              )
-                            : null,
                       ),
-                    ),
-                  ),
 
-                  Text(
-                    label,
-                    overflow: .ellipsis,
-                    style: TextStyle(
-                      fontWeight: .w800,
-                      fontSize: 15,
-                      color: areColorsEnabled
-                          ? null
-                          : context.c.onSurface.withAlpha(128),
-                    ),
+                      Text(
+                        label,
+                        overflow: .ellipsis,
+                        style: TextStyle(
+                          fontWeight: .w600,
+                          fontSize: 15,
+                          color: isDynamic
+                              ? currentColorScheme.onSurface.withAlpha(128)
+                              : null,
+                        ),
+                      ),
+                    ],
                   ),
-                ],
-              );
-            },
+                );
+              },
+            ),
           ),
         ),
+
         TileWidgetData(
           title: Text(context.l10n.deviceTheme),
           subtitle: Text(context.l10n.deviceThemeDescription, maxLines: 3),
@@ -146,127 +112,7 @@ class _AppearancePickerState extends State<AppearancePicker> {
             },
           ),
         ),
-        TileWidgetData(
-          title: Text(context.l10n.displayProfilePicture),
-          trailing: Switch(
-            value: context.s.theme.showProfilePicture,
-            onChanged: (value) async {
-              await context.s.theme.setShowProfilePicture(value);
-
-              if (context.mounted) {
-                setState(() {});
-              }
-            },
-          ),
-        ),
       ],
-    );
-  }
-}
-
-class PreviewColor extends StatelessWidget {
-  const PreviewColor({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return SliverToBoxAdapter(
-      child: Container(
-        padding: const .all(16),
-        width: double.infinity,
-
-        decoration: BoxDecoration(
-          border: .all(color: context.c.outlineVariant),
-          color: context.c.surfaceContainer,
-          borderRadius: .circular(20),
-        ),
-
-        child: Wrap(
-          crossAxisAlignment: .center,
-          alignment: .center,
-
-          runSpacing: 12,
-          spacing: 12,
-
-          children: [
-            Container(
-              padding: const .symmetric(horizontal: 16, vertical: 8),
-
-              decoration: BoxDecoration(
-                color: context.c.primary,
-                borderRadius: .circular(12),
-              ),
-
-              child: Text(
-                context.l10n.themePrimary,
-                style: TextStyle(color: context.c.onPrimary, fontWeight: .bold),
-              ),
-            ),
-
-            Container(
-              padding: const .symmetric(horizontal: 16, vertical: 8),
-
-              decoration: BoxDecoration(
-                color: context.c.secondary,
-                borderRadius: .circular(12),
-              ),
-
-              child: Text(
-                context.l10n.themeSecondary,
-                style: TextStyle(
-                  color: context.c.onSecondary,
-                  fontWeight: .bold,
-                ),
-              ),
-            ),
-
-            Container(
-              padding: const .symmetric(horizontal: 16, vertical: 8),
-
-              decoration: BoxDecoration(
-                color: context.c.tertiary,
-                borderRadius: .circular(12),
-              ),
-
-              child: Text(
-                context.l10n.themeTertiary,
-                style: TextStyle(
-                  color: context.c.onTertiary,
-                  fontWeight: .bold,
-                ),
-              ),
-            ),
-
-            Container(
-              padding: const .symmetric(horizontal: 16, vertical: 8),
-
-              decoration: BoxDecoration(
-                color: context.c.surfaceContainerHigh,
-                borderRadius: .circular(12),
-                border: .all(color: context.c.outlineVariant),
-              ),
-
-              child: Text(
-                context.l10n.themeSurface,
-                style: TextStyle(color: context.c.onSurface, fontWeight: .bold),
-              ),
-            ),
-
-            Container(
-              padding: const .symmetric(horizontal: 16, vertical: 8),
-
-              decoration: BoxDecoration(
-                color: context.c.error,
-                borderRadius: .circular(12),
-              ),
-
-              child: Text(
-                context.l10n.themeError,
-                style: TextStyle(color: context.c.onError, fontWeight: .bold),
-              ),
-            ),
-          ],
-        ),
-      ),
     );
   }
 }

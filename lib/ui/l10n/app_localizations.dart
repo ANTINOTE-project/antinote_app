@@ -939,7 +939,7 @@ abstract class AppLocalizations {
   /// No description provided for @deviceThemeDescription.
   ///
   /// In fr, this message translates to:
-  /// **'Le thème utilisé dans l\'application changera selon le fond d\'écran.'**
+  /// **'Le thème utilisé dans l\'application changera selon ton fond d\'écran'**
   String get deviceThemeDescription;
 
   /// No description provided for @displayProfilePicture.
@@ -969,7 +969,7 @@ abstract class AppLocalizations {
   /// No description provided for @sendNavigationRequestsSubtitle.
   ///
   /// In fr, this message translates to:
-  /// **'Quand cette option est désactivée, des gains en latence et en données transférées peuvent être observés. Cependant, cela fait diverger le fonctionnement de l\'application de celle de PRONOTE.'**
+  /// **'Quand cette option est désactivée, des gains en latence et en données transférées peuvent être observés. Cependant, cela fait diverger le fonctionnement de l\'application de celle de PRONOTE'**
   String get sendNavigationRequestsSubtitle;
 
   /// No description provided for @noMenuForToday.

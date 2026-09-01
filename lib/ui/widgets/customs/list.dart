@@ -170,6 +170,7 @@ class TileWidgetData {
   final VoidCallback? onLongPressed;
 
   final Color? backgroundColor;
+  final EdgeInsets? padding;
 
   const TileWidgetData({
     this.title,
@@ -179,6 +180,7 @@ class TileWidgetData {
     this.onPressed,
     this.onLongPressed,
     this.backgroundColor,
+    this.padding,
   });
 }
 
@@ -195,6 +197,8 @@ class TileWidget extends StatelessWidget {
   final VoidCallback? onLongPress;
 
   final BorderRadius borderRadius;
+  final EdgeInsets? padding;
+
   final Color? backgroundColor;
 
   const TileWidget({
@@ -212,6 +216,8 @@ class TileWidget extends StatelessWidget {
     this.onLongPress,
 
     this.backgroundColor,
+    this.padding,
+
     required this.borderRadius,
   });
 
@@ -227,6 +233,7 @@ class TileWidget extends StatelessWidget {
       onPressed: data.onPressed,
       onLongPress: data.onLongPressed,
       backgroundColor: data.backgroundColor,
+      padding: data.padding,
       borderRadius: borderRadius,
     );
   }
@@ -245,7 +252,7 @@ class TileWidget extends StatelessWidget {
           borderRadius: borderRadius,
         ),
 
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+        padding: padding ?? const .symmetric(horizontal: 16, vertical: 10),
 
         child: Row(
           spacing: 12,
@@ -259,7 +266,7 @@ class TileWidget extends StatelessWidget {
                 children: [
                   if (title != null)
                     DefaultTextStyle.merge(
-                      style: TextTheme.of(context).bodyLarge?.copyWith(
+                      style: context.tt.bodyLarge?.copyWith(
                         color: context.c.onSurface,
                         fontWeight: .w800, // TODO: Edit bodyLarge directly with the custom font weights
                       ),

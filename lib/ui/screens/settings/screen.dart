@@ -54,7 +54,6 @@ class SettingsScreen extends StatelessWidget {
 
             const AppearancePicker(),
             const SliverPadding(padding: .only(top: 12)),
-            const PreviewColor(),
 
             SliverTextIcon(
               icon: HugeIconsSolid.securedNetwork,
