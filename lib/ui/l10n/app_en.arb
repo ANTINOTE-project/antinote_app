@@ -157,7 +157,7 @@
   "network": "Network",
   "reconnectAccount": "Reconnect the account",
   "sendNavigationRequests": "Send navigation requests",
-  "sendNavigationRequestsSubtitle": "When unselected, speed gains may be observed. Although, the app will visibly be behave differently from the official application",
+  "sendNavigationRequestsSubtitle": "When disabled, speed gains may be observed (this differs from the official app's behavior)",
 
   "noMenuForToday": "No menu for today!",
   "menu": "Menu",
@@ -215,6 +215,7 @@
   "newHomework": "{subject} → {date}",
 
   "accountSyncSettings": "Background sync",
+  "accountSyncSettingsSubtitle": "Choose what you want to sync in the background",
   "accountNotFound": "Account not found…",
 
   "calendarSync": "Calendar",

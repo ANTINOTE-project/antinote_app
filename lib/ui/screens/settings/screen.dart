@@ -44,7 +44,7 @@ class SettingsScreen extends StatelessWidget {
 
         child: CustomScrollView(
           slivers: [
-            AppearancePicker(),
+            Appearance(),
             Networking(),
             Account(),
             Application(),

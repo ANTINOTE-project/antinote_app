@@ -540,7 +540,7 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get sendNavigationRequestsSubtitle =>
-      'Quand cette option est désactivée, des gains en latence et en données transférées peuvent être observés. Cependant, cela fait diverger le fonctionnement de l\'application de celle de PRONOTE';
+      'Quand désactivée, des gains de vitesse peuvent être observés (diverge du fonctionnement de l\'application officielle)';
 
   @override
   String get noMenuForToday => 'Pas de menu pour aujourd\'hui !';
@@ -690,6 +690,10 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get accountSyncSettings => 'Synchronisation en arrière-plan';
+
+  @override
+  String get accountSyncSettingsSubtitle =>
+      'Choisis ce que tu veux synchroniser en arrière-plan';
 
   @override
   String get accountNotFound => 'Compte non trouvé…';

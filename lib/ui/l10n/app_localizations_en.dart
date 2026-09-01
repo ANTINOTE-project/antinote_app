@@ -539,7 +539,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get sendNavigationRequestsSubtitle =>
-      'When unselected, speed gains may be observed. Although, the app will visibly be behave differently from the official application';
+      'When disabled, speed gains may be observed (this differs from the official app\'s behavior)';
 
   @override
   String get noMenuForToday => 'No menu for today!';
@@ -689,6 +689,10 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get accountSyncSettings => 'Background sync';
+
+  @override
+  String get accountSyncSettingsSubtitle =>
+      'Choose what you want to sync in the background';
 
   @override
   String get accountNotFound => 'Account not found…';

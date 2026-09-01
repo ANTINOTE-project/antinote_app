@@ -6,14 +6,14 @@ import 'package:antinote_app/ui/widgets/text_icon.dart';
 import 'package:hugeicons_pro/hugeicons.dart';
 import 'package:material_ui/material_ui.dart';
 
-class AppearancePicker extends StatefulWidget {
-  const AppearancePicker({super.key});
+class Appearance extends StatefulWidget {
+  const Appearance({super.key});
 
   @override
-  State<AppearancePicker> createState() => _AppearancePickerState();
+  State<Appearance> createState() => _AppearanceState();
 }
 
-class _AppearancePickerState extends State<AppearancePicker> {
+class _AppearanceState extends State<Appearance> {
   @override
   Widget build(BuildContext context) {
     final isDynamic = context.s.theme.isDynamic;
@@ -39,7 +39,7 @@ class _AppearancePickerState extends State<AppearancePicker> {
                     parent: AlwaysScrollableScrollPhysics(),
                   ),
 
-                  padding: const .symmetric(horizontal: 12, vertical: 14),
+                  padding: const .symmetric(horizontal: 20, vertical: 14),
 
                   itemCount: AppColor.values.length,
                   scrollDirection: .horizontal,
@@ -54,7 +54,9 @@ class _AppearancePickerState extends State<AppearancePicker> {
                     final isSelected = color == context.s.theme.seedColor;
 
                     return Padding(
-                      padding: const .only(right: 20),
+                      padding: .only(
+                        right: index == AppColor.values.length - 1 ? 0 : 20,
+                      ),
 
                       child: Column(
                         mainAxisAlignment: .center,

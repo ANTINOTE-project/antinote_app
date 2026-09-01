@@ -239,7 +239,7 @@
   "network": "Réseau",
   "reconnectAccount": "Reconnecter le compte",
   "sendNavigationRequests": "Envoyer les requêtes de navigation",
-  "sendNavigationRequestsSubtitle": "Quand cette option est désactivée, des gains en latence et en données transférées peuvent être observés. Cependant, cela fait diverger le fonctionnement de l'application de celle de PRONOTE",
+  "sendNavigationRequestsSubtitle": "Quand désactivée, des gains de vitesse peuvent être observés (diverge du fonctionnement de l'application officielle)",
 
   "noMenuForToday": "Pas de menu pour aujourd'hui !",
   "menu": "Menu",
@@ -351,6 +351,7 @@
   },
 
   "accountSyncSettings": "Synchronisation en arrière-plan",
+  "accountSyncSettingsSubtitle": "Choisis ce que tu veux synchroniser en arrière-plan",
   "accountNotFound": "Compte non trouvé…",
 
   "calendarSync": "Calendrier",

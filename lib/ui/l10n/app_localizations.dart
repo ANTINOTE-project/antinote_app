@@ -969,7 +969,7 @@ abstract class AppLocalizations {
   /// No description provided for @sendNavigationRequestsSubtitle.
   ///
   /// In fr, this message translates to:
-  /// **'Quand cette option est désactivée, des gains en latence et en données transférées peuvent être observés. Cependant, cela fait diverger le fonctionnement de l\'application de celle de PRONOTE'**
+  /// **'Quand désactivée, des gains de vitesse peuvent être observés (diverge du fonctionnement de l\'application officielle)'**
   String get sendNavigationRequestsSubtitle;
 
   /// No description provided for @noMenuForToday.
@@ -1193,6 +1193,12 @@ abstract class AppLocalizations {
   /// In fr, this message translates to:
   /// **'Synchronisation en arrière-plan'**
   String get accountSyncSettings;
+
+  /// No description provided for @accountSyncSettingsSubtitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Choisis ce que tu veux synchroniser en arrière-plan'**
+  String get accountSyncSettingsSubtitle;
 
   /// No description provided for @accountNotFound.
   ///
