@@ -70,6 +70,7 @@ class _AppState extends State<App> {
                 builder: (context, child) {
                   return MaterialUiCompatibilityBridge(child: child!);
                 },
+                debugShowCheckedModeBanner: false,
                 home: widget.home,
                 title: 'ANTINOTE',
 

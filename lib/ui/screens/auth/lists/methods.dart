@@ -6,8 +6,8 @@ import 'package:antinote_app/ui/screens/auth/methods/url.dart';
 import 'package:antinote_app/ui/utils/utils.dart';
 import 'package:antinote_app/ui/widgets/customs/app_bar.dart';
 import 'package:antinote_app/ui/widgets/customs/list.dart';
-import 'package:material_ui/material_ui.dart';
 import 'package:hugeicons_pro/hugeicons.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:skeletonizer/skeletonizer.dart';
 
 typedef Method = ({
@@ -46,7 +46,7 @@ class MethodsListScreen extends StatelessWidget with WidgetsBindingObserver {
         subtitle: context.l10n.loginQrCodeSubtitle,
 
         onPressed: () async {
-          await Navigator.push(
+          final result = await Navigator.push(
             context,
             MaterialPageRoute(
               builder: (context) {
@@ -54,6 +54,9 @@ class MethodsListScreen extends StatelessWidget with WidgetsBindingObserver {
               },
             ),
           );
+          if (result != null && context.mounted) {
+            Navigator.pop(context, result);
+          }
         },
       ),
       (
@@ -84,11 +87,7 @@ class MethodsListScreen extends StatelessWidget with WidgetsBindingObserver {
             username: 'demonstration',
             password: 'pronotevs',
 
-            workspace: const Workspace(
-              type: WorkspaceType.mobileEleve,
-              label: '',
-              pathSegment: 'mobile.eleve.html',
-            ),
+            workspace: .studentMobile,
 
             deviceUuid: Credentials.generateDeviceUuid(),
             baseUrl: Uri.parse('https://demo.index-education.net/pronote'),

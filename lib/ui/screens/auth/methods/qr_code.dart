@@ -1,14 +1,15 @@
 import 'dart:async';
 
 import 'package:antinote_api/antinote_api.dart';
+import 'package:antinote_app/data/src/session/wrapper.dart';
 import 'package:antinote_app/ui/utils/utils.dart';
 import 'package:antinote_app/ui/widgets/customs/app_bar.dart';
 import 'package:antinote_app/ui/widgets/customs/button.dart';
 import 'package:antinote_app/ui/widgets/customs/field.dart';
 import 'package:antinote_app/ui/widgets/customs/loading.dart';
-import 'package:material_ui/material_ui.dart';
 import 'package:hugeicons_pro/hugeicons.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:mobile_scanner/mobile_scanner.dart';
 
 class QRCodeMethodScreen extends StatefulWidget {
@@ -28,7 +29,7 @@ class _QRCodeMethodScreenState extends State<QRCodeMethodScreen> {
     super.dispose();
   }
 
-  Future<Future<LoginResult>?> _askForPin(String qrCodeContent) async {
+  Future<RegisterableAccount?> _askForPin(String qrCodeContent) async {
     final pinCode = await showDialog<String?>(
       context: context,
       builder: (context) => _PinCodeDialog(qrCodeContent: qrCodeContent),
@@ -36,7 +37,9 @@ class _QRCodeMethodScreenState extends State<QRCodeMethodScreen> {
 
     if (pinCode == null) return null;
 
-    return QrCodeCredentials.loginFromQrCode(qrCodeContent, pinCode);
+    return SessionWrapper.register(
+      await QrCodeCredentials.loginFromQrCode(qrCodeContent, pinCode),
+    );
   }
 
   Future<void> _scanFromGallery() async {

@@ -79,15 +79,18 @@ final class SessionWrapper({required final String accountUid}) {
 
   RemoteSession? get unsafeSession => _state?.session;
 
-  static RegisterableAccount register(
-    LoginResult result,
-    Credentials baseCredentials,
-  ) {
+  static RegisterableAccount? register(
+    LoginResult result, [
+    Credentials? baseCredentials,
+  ]) {
     final account =
         (result.session.stack.demo
                 ? baseCredentials
                 : result.credentials ?? baseCredentials)
-            .asAntinoteAccount(result.session);
+            ?.asAntinoteAccount(result.session);
+
+    if (account == null) return null;
+
     final wrapper = SessionWrapper(accountUid: account.uid);
     wrapper._state = .new(
       session: result.session,
