@@ -281,7 +281,7 @@ abstract class AppLocalizations {
   /// No description provided for @chooseAnAccountSubtitle.
   ///
   /// In fr, this message translates to:
-  /// **'Choisir quel compte consulter, changer différentes propriétés des comptes, ajouter des comptes'**
+  /// **'Changer de compter ou en ajouter un'**
   String get chooseAnAccountSubtitle;
 
   /// No description provided for @addAnAccount.

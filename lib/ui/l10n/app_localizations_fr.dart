@@ -102,8 +102,7 @@ class AppLocalizationsFr extends AppLocalizations {
   String get chooseAnAccount => 'Choisir un compte';
 
   @override
-  String get chooseAnAccountSubtitle =>
-      'Choisir quel compte consulter, changer différentes propriétés des comptes, ajouter des comptes';
+  String get chooseAnAccountSubtitle => 'Changer de compter ou en ajouter un';
 
   @override
   String get addAnAccount => 'Ajouter un compte';

@@ -36,7 +36,7 @@
   "secureStore": "Chiffrage du compte",
   "secureStoreSubtitle": "Demande votre biométrie pour se connecter au compte",
   "chooseAnAccount": "Choisir un compte",
-  "chooseAnAccountSubtitle": "Choisir quel compte consulter, changer différentes propriétés des comptes, ajouter des comptes",
+  "chooseAnAccountSubtitle": "Changer de compter ou en ajouter un",
   "addAnAccount": "Ajouter un compte",
   "deleteAccount": "Supprimer",
   "accounts": "Comptes",
