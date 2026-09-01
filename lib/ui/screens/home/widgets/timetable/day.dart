@@ -19,11 +19,14 @@ class const TimetableDayWidgetSliver({
       child: HomeWidget(
         icon: const Icon(HugeIconsSolid.calendar01),
         label: Text(context.l10n.timetable),
+
         onShowMorePressed: () {
           context.sc.goToTab(.timetable);
         },
+
         content: ConstrainedBox(
           constraints: .new(maxHeight: MediaQuery.heightOf(context) * .6),
+
           child: TimetableDisplay(
             baseDate: state.reloadArguments.get(TimetableDayArgument.day),
             normalPicker: false,

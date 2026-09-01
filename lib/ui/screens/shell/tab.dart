@@ -6,8 +6,8 @@ import 'package:antinote_app/ui/utils/utils.dart';
 import 'package:antinote_app/ui/widgets/customs/button.dart';
 import 'package:antinote_app/ui/widgets/customs/loading.dart';
 import 'package:flutter/foundation.dart';
-import 'package:material_ui/material_ui.dart';
 import 'package:hugeicons_pro/hugeicons.dart';
+import 'package:material_ui/material_ui.dart';
 
 typedef RefreshIndicatorBuilder = Widget Function({
   required Widget child,
@@ -122,7 +122,7 @@ mixin PageMixin<T extends StatefulWidget> on State<T> {
     Widget buildRefreshIndicator({
       required Widget child,
       bool pullable = true,
-    }) => RefreshIndicator(
+    }) => (pullable ? RefreshIndicator.new : RefreshIndicator.noSpinner)(
       key: loaded ? loadedRefreshIndicator : unloadedRefreshIndicator,
       onRefresh: refreshFunction,
 
