@@ -5,9 +5,9 @@ import 'package:antinote_app/ui/widgets/customs/app_bar.dart';
 import 'package:material_ui/material_ui.dart';
 
 import 'account.dart';
+import 'appearance.dart';
 import 'application.dart';
 import 'networking.dart';
-import 'theme.dart';
 
 enum AppColor {
   coral(Color(0xff904a40)),
