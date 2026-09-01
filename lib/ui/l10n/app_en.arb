@@ -157,7 +157,7 @@
   "network": "Network",
   "reconnectAccount": "Reconnect the account",
   "sendNavigationRequests": "Send navigation requests",
-  "sendNavigationRequestsSubtitle": "When unselected, latency gains may be observed. Although, the app will visibly be behave differently from the official application",
+  "sendNavigationRequestsSubtitle": "When unselected, speed gains may be observed. Although, the app will visibly be behave differently from the official application",
 
   "noMenuForToday": "No menu for today!",
   "menu": "Menu",
