@@ -77,56 +77,62 @@ class _HomeworkCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final scheme = Utils.buildColorScheme(context, homework.backgroundColor);
 
-    return CompactCard(
-      scheme: scheme,
+    return Padding(
+      padding: const .symmetric(vertical: 1),
 
-      onPressed: () async {
-        await Navigator.push(
-          context,
+      child: CompactCard(
+        scheme: scheme,
 
-          MaterialPageRoute(
-            builder: (context) {
-              return HomeworkDetailScreen(
-                homework: homework,
-                onHomeworkChange: (_) async {
-                  await update();
-                },
-              );
-            },
+        onPressed: () async {
+          await Navigator.push(
+            context,
+
+            MaterialPageRoute(
+              builder: (context) {
+                return HomeworkDetailScreen(
+                  homework: homework,
+                  onHomeworkChange: (_) async {
+                    await update();
+                  },
+                );
+              },
+            ),
+          );
+        },
+
+        title: homework.subject.name ?? context.l10n.noSubject,
+
+        subtitle: RemoteHtml(
+          rawHtml: homework.description,
+          compact: true,
+          maxLines: 1,
+
+          style: TextStyle(
+            color: scheme.onSurface,
+            fontWeight: .w600,
+            fontSize: 15,
           ),
-        );
-      },
-
-      title: homework.subject.name ?? context.l10n.noSubject,
-
-      subtitle: RemoteHtml(
-        rawHtml: homework.description,
-        compact: true,
-        maxLines: 1,
-
-        style: TextStyle(
-          color: scheme.onSurface,
-          fontWeight: .w600,
-          fontSize: 15,
         ),
-      ),
 
-      trailing: Column(
-        crossAxisAlignment: .end,
-        spacing: 4,
+        trailing: Column(
+          crossAxisAlignment: .end,
+          spacing: 4,
 
-        children: [
-          Text(
-            homework.deadlineDate.asRelativeWeekday(context),
-            style: TextStyle(fontWeight: .bold, color: scheme.outline),
-          ),
+          children: [
+            Text(
+              homework.deadlineDate.asRelativeWeekday(context),
+              style: TextStyle(fontWeight: .bold, color: scheme.outline),
+            ),
 
-          Icon(
-            homework.isDone ? HugeIconsSolid.tick03 : HugeIconsStroke.tick03,
-            color: homework.isDone ? scheme.onPrimaryContainer : scheme.outline,
-            size: 18,
-          ),
-        ],
+            Icon(
+              homework.isDone ? HugeIconsSolid.tick03 : HugeIconsStroke.tick03,
+              color: homework.isDone
+                  ? scheme.onPrimaryContainer
+                  : scheme.outline,
+              size: 18,
+            ),
+          ],
+        ),
       ),
     );
   }
