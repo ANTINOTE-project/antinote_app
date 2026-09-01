@@ -34,7 +34,7 @@
   "autoLogin": "Auto-login",
   "autoLoginSubtitle": "Marks this account to open upon the start of the app",
   "chooseAnAccount": "Pick account",
-  "chooseAnAccountSubtitle": "Pick which account to use, change properties about accounts, add accounts",
+  "chooseAnAccountSubtitle": "Change account or add one",
   "addAnAccount": "Add account",
   "deleteAccount": "Delete account",
   "accounts": "Accounts",
@@ -235,7 +235,7 @@
   "menuSync": "Menus",
   "menuSyncSubtitle": "Sent before lunch to tell you what the menu is",
 
-  "syncAll": "Sync all",
+  "sync": "Sync",
   "syncing": "Syncing…",
   "syncSuccessful": "Sync successful!",
   "syncFailed": "Sync failed…",

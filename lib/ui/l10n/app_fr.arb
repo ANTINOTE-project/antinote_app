@@ -371,7 +371,7 @@
   "menuSync": "Menus",
   "menuSyncSubtitle": "Envoyée au temps du midi pour vous informer du menu du jour",
 
-  "syncAll": "Synchroniser tous",
+  "sync": "Synchroniser",
   "syncing": "Synchronisation…",
   "syncSuccessful": "Synchronisation réussie !",
   "syncFailed": "Synchronisation échouée…",

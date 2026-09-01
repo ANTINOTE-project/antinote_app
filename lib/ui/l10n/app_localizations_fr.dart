@@ -736,7 +736,7 @@ class AppLocalizationsFr extends AppLocalizations {
       'Envoyée au temps du midi pour vous informer du menu du jour';
 
   @override
-  String get syncAll => 'Synchroniser tous';
+  String get sync => 'Synchroniser';
 
   @override
   String get syncing => 'Synchronisation…';

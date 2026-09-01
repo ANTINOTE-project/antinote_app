@@ -262,13 +262,17 @@ class TileWidget extends StatelessWidget {
 
             Expanded(
               child: Column(
+                spacing: title != null && subtitle != null ? 3 : 0,
                 crossAxisAlignment: .start,
+
                 children: [
                   if (title != null)
                     DefaultTextStyle.merge(
                       style: context.tt.bodyLarge?.copyWith(
                         color: context.c.onSurface,
-                        fontWeight: .w800, // TODO: Edit bodyLarge directly with the custom font weights
+                        // TODO: Edit bodyLarge directly with the custom font weights
+                        fontWeight: .w800,
+                        height: 1.25,
                       ),
 
                       overflow: titleMaxLines == null ? null : .ellipsis,
@@ -280,8 +284,9 @@ class TileWidget extends StatelessWidget {
                   if (subtitle != null)
                     DefaultTextStyle.merge(
                       style: TextTheme.of(context).bodyMedium?.copyWith(
+                        color: context.c.outline,
                         fontWeight: .w500,
-                        color: context.c.onSurfaceVariant,
+                        height: 1.25,
                       ),
 
                       overflow: subtitleMaxLines == null ? null : .ellipsis,

@@ -1272,11 +1272,11 @@ abstract class AppLocalizations {
   /// **'Envoyée au temps du midi pour vous informer du menu du jour'**
   String get menuSyncSubtitle;
 
-  /// No description provided for @syncAll.
+  /// No description provided for @sync.
   ///
   /// In fr, this message translates to:
-  /// **'Synchroniser tous'**
-  String get syncAll;
+  /// **'Synchroniser'**
+  String get sync;
 
   /// No description provided for @syncing.
   ///

@@ -102,8 +102,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get chooseAnAccount => 'Pick account';
 
   @override
-  String get chooseAnAccountSubtitle =>
-      'Pick which account to use, change properties about accounts, add accounts';
+  String get chooseAnAccountSubtitle => 'Change account or add one';
 
   @override
   String get addAnAccount => 'Add account';
@@ -734,7 +733,7 @@ class AppLocalizationsEn extends AppLocalizations {
       'Sent before lunch to tell you what the menu is';
 
   @override
-  String get syncAll => 'Sync all';
+  String get sync => 'Sync';
 
   @override
   String get syncing => 'Syncing…';

@@ -27,8 +27,9 @@ class _SettingsSyncScreenState extends State<SettingsSyncScreen>
 
   late Map<SyncTaskData_Notification_EntryType, bool> availableTypes;
 
-  bool accountValid(AntinoteAccount? account) =>
-      account != null && !account.storeSecurely;
+  bool accountValid(AntinoteAccount? account) {
+    return account != null && !account.storeSecurely;
+  }
 
   Future<void> saveCalendarData() async {
     final ar = context.ar;
@@ -66,6 +67,20 @@ class _SettingsSyncScreenState extends State<SettingsSyncScreen>
     notificationData = notificationData.deepCopy();
   }
 
+  Future<void> toggleCalendarSync(bool value) async {
+    if (!(await Permission.calendarFullAccess.isGranted)) {
+      await Permission.calendarFullAccess.request();
+    }
+
+    if (!(await Permission.calendarFullAccess.isGranted)) {
+      value = false;
+    }
+
+    calendarData.enabled = value;
+    await saveCalendarData();
+    if (mounted) setState(() {});
+  }
+
   Future<bool>? runningSync;
 
   @override
@@ -95,6 +110,7 @@ class _SettingsSyncScreenState extends State<SettingsSyncScreen>
 
         return Scaffold(
           appBar: appBar,
+
           floatingActionButtonLocation: .centerFloat,
           floatingActionButton: Padding(
             padding: const .symmetric(horizontal: 12),
@@ -121,7 +137,7 @@ class _SettingsSyncScreenState extends State<SettingsSyncScreen>
                         );
                       });
                     },
-                    label: context.l10n.syncAll,
+                    label: context.l10n.sync,
                     variant: .secondary,
                   );
                 } else if (snapshot.data == true) {
@@ -151,9 +167,11 @@ class _SettingsSyncScreenState extends State<SettingsSyncScreen>
               },
             ),
           ),
+
           body: buildRefreshIndicator(
             child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 12),
+              padding: const .symmetric(horizontal: 12),
+
               child: CustomScrollView(
                 slivers: [
                   ListWidget.list(
@@ -161,29 +179,12 @@ class _SettingsSyncScreenState extends State<SettingsSyncScreen>
                       .new(
                         title: Text(context.l10n.calendarSync),
                         subtitle: Text(context.l10n.calendarSyncSubtitle),
-
+                        onPressed: syncing
+                            ? null
+                            : () => toggleCalendarSync(!calendarData.enabled),
                         trailing: Switch(
                           value: calendarData.enabled,
-                          onChanged: syncing
-                              ? null
-                              : (value) async {
-                                  if (!(await Permission
-                                      .calendarFullAccess
-                                      .isGranted)) {
-                                    await Permission.calendarFullAccess
-                                        .request();
-                                  }
-
-                                  if (!(await Permission
-                                      .calendarFullAccess
-                                      .isGranted)) {
-                                    value = false;
-                                  }
-
-                                  calendarData.enabled = value;
-                                  await saveCalendarData();
-                                  if (mounted) setState(() {});
-                                },
+                          onChanged: syncing ? null : toggleCalendarSync,
                         ),
                       ),
                     ],
@@ -197,6 +198,37 @@ class _SettingsSyncScreenState extends State<SettingsSyncScreen>
                           .specializedData
                           .unpackInto(SyncTaskData_Notification.create());
 
+                      Future<void> toggle(
+                        SyncTaskData_Notification_EntryType type,
+                        bool value,
+                      ) async {
+                        if (!(await Permission.notification.isGranted)) {
+                          await Permission.notification.request();
+                        }
+
+                        if (!(await Permission.notification.isGranted)) {
+                          value = false;
+                        }
+
+                        if (value) {
+                          notificationData.enabled = true;
+                          notificationSettings.enabledTypes.add(type);
+                        } else {
+                          notificationSettings.enabledTypes.remove(type);
+
+                          if (notificationSettings.enabledTypes.isEmpty) {
+                            notificationData.enabled = false;
+                          }
+                        }
+
+                        notificationData.specializedData = Any.pack(
+                          notificationSettings,
+                          typeUrlPrefix: typePrefix,
+                        );
+                        await saveNotificationData();
+                        if (mounted) setState(() {});
+                      }
+
                       Widget createSwitch(
                         SyncTaskData_Notification_EntryType type,
                       ) {
@@ -205,42 +237,19 @@ class _SettingsSyncScreenState extends State<SettingsSyncScreen>
                             type,
                           ),
                           onChanged: availableTypes[type]! && !syncing
-                              ? (value) async {
-                                  if (!(await Permission
-                                      .notification
-                                      .isGranted)) {
-                                    await Permission.notification.request();
-                                  }
-
-                                  if (!(await Permission
-                                      .notification
-                                      .isGranted)) {
-                                    value = false;
-                                  }
-
-                                  if (value) {
-                                    notificationData.enabled = true;
-                                    notificationSettings.enabledTypes.add(type);
-                                  } else {
-                                    notificationSettings.enabledTypes.remove(
-                                      type,
-                                    );
-
-                                    if (notificationSettings
-                                        .enabledTypes
-                                        .isEmpty) {
-                                      notificationData.enabled = false;
-                                    }
-                                  }
-
-                                  notificationData.specializedData = Any.pack(
-                                    notificationSettings,
-                                    typeUrlPrefix: typePrefix,
-                                  );
-                                  await saveNotificationData();
-                                  if (mounted) setState(() {});
-                                }
+                              ? (value) => toggle(type, value)
                               : null,
+                        );
+                      }
+
+                      VoidCallback? createOnPressed(
+                        SyncTaskData_Notification_EntryType type,
+                      ) {
+                        if (!availableTypes[type]! || syncing) return null;
+
+                        return () => toggle(
+                          type,
+                          !notificationSettings.enabledTypes.contains(type),
                         );
                       }
 
@@ -249,32 +258,32 @@ class _SettingsSyncScreenState extends State<SettingsSyncScreen>
                           .new(
                             title: Text(context.l10n.newsSync),
                             subtitle: Text(context.l10n.newsSyncSubtitle),
-
                             trailing: createSwitch(.INFORMATION),
+                            onPressed: createOnPressed(.INFORMATION),
                           ),
                           .new(
                             title: Text(context.l10n.discussionSync),
                             subtitle: Text(context.l10n.discussionSyncSubtitle),
-
                             trailing: createSwitch(.DISCUSSION),
+                            onPressed: createOnPressed(.DISCUSSION),
                           ),
                           .new(
                             title: Text(context.l10n.homeworkSync),
                             subtitle: Text(context.l10n.homeworkSyncSubtitle),
-
                             trailing: createSwitch(.HOMEWORK),
+                            onPressed: createOnPressed(.HOMEWORK),
                           ),
                           .new(
                             title: Text(context.l10n.gradeSync),
                             subtitle: Text(context.l10n.gradeSyncSubtitle),
-
                             trailing: createSwitch(.GRADE),
+                            onPressed: createOnPressed(.GRADE),
                           ),
                           .new(
                             title: Text(context.l10n.menuSync),
                             subtitle: Text(context.l10n.menuSyncSubtitle),
-
                             trailing: createSwitch(.MENU),
+                            onPressed: createOnPressed(.MENU),
                           ),
                         ],
                       );
