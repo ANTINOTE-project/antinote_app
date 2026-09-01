@@ -30,13 +30,16 @@ Future<void> showClassModal(BuildContext context, Class defaultClass) async {
   await showModalBottomSheet(
     context: context,
     showDragHandle: true,
+
     builder: (context) {
       return FutureBuilder(
         future: clazzCallback,
+
         builder: (context, snapshot) {
           return AnimatedSwitcher(
             duration: const Duration(milliseconds: 300),
             switchInCurve: Curves.fastOutSlowIn,
+
             child: SingleChildScrollView(
               key: ValueKey(snapshot.connectionState == .done),
               child: ClassModalContents(clazz: snapshot.data ?? defaultClass),
@@ -77,45 +80,61 @@ class ClassModalContents extends StatelessWidget {
 
     return Container(
       padding: const .all(12),
+
       child: Column(
         children: [
-          Text(
-            clazz.classTitle(context),
-            textAlign: .center,
-            maxLines: 2,
-            overflow: .ellipsis,
-            style: TextTheme.of(context).headlineSmall
-                ?.copyWith(fontWeight: .w800),
+          Padding(
+            padding: const .symmetric(horizontal: 12),
+
+            child: Text(
+              clazz.classTitle(context),
+              textAlign: .center,
+              maxLines: 2,
+              overflow: .ellipsis,
+              style: context.tt.headlineSmall?.copyWith(fontWeight: .w800),
+            ),
           ),
-          if (clazz.studentCountString != null)
+
+          if (clazz.studentCountString != null) ...[
             Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 25),
+              padding: const .symmetric(horizontal: 25),
 
               child: Text(
                 clazz.studentCountString!,
 
-                textAlign: TextAlign.center,
-                style: const TextStyle(
-                  fontWeight: FontWeight.w700,
+                textAlign: .center,
+                style: TextStyle(
+                  fontWeight: .w700,
                   fontSize: 17,
+                  color: context.c.outline,
                 ),
               ),
             ),
+          ] else ...[
+            const SizedBox(height: 24),
+          ],
+
           Padding(
             padding: const .only(top: 16),
+
             child: ListWidget(
               shrinkWrap: true,
               isSliver: false,
+
               physics: const NeverScrollableScrollPhysics(),
               items: sortedContentCategories,
+
               itemBuilder: (context, item, borderRadius) {
                 return TileWidget(
                   borderRadius: borderRadius,
                   backgroundColor: scheme.primaryContainer,
+
                   leading: Icon(item.value.first.icon),
                   title: Text(item.value.first.label(context)!),
+
                   subtitle: Wrap(
                     spacing: 6,
+
                     children: [
                       for (final child in item.value)
                         Text(
@@ -123,7 +142,7 @@ class ClassModalContents extends StatelessWidget {
                           style: TextStyle(
                             color: scheme.primary,
                             fontSize: 20,
-                            fontWeight: FontWeight.w800,
+                            fontWeight: .w800,
                           ),
                         ),
                     ],
@@ -134,7 +153,7 @@ class ClassModalContents extends StatelessWidget {
           ),
 
           Padding(
-            padding: const EdgeInsets.only(top: 12),
+            padding: const .symmetric(vertical: 12),
             child: Text(
               '${clazz.startDate.asLongNumericDate()} ${clazz.startDate.asNumericTime()} - ${clazz.endDate.asNumericTime()} (${Formatters.formatDuration(clazz.endDate.difference(clazz.startDate))})',
               style: TextStyle(color: context.c.onSurface, fontWeight: .bold),
