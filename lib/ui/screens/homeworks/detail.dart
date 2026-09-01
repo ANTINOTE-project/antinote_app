@@ -112,7 +112,7 @@ class _HomeworkDetailScreenState extends State<HomeworkDetailScreen> {
 
               itemBuilder: (context, _, borderRadius) => Column(
                 children: [
-                  ItemWidget(
+                  TileWidget(
                     backgroundColor: scheme.primaryContainer,
 
                     borderRadius:
@@ -209,7 +209,7 @@ class _HomeworkDetailScreenState extends State<HomeworkDetailScreen> {
                   ),
 
                   if (widget.homework.assignmentToRenderType != .noRender)
-                    ItemWidget(
+                    TileWidget(
                       backgroundColor: scheme.surfaceContainer,
 
                       borderRadius: borderRadius.copyWith(
@@ -233,7 +233,7 @@ class _HomeworkDetailScreenState extends State<HomeworkDetailScreen> {
             if (widget.homework.description.trim().isNotEmpty) ...[
               _Text(label: context.l10n.homeworkDescription, scheme: scheme),
 
-              ItemWidget(
+              TileWidget(
                 backgroundColor: scheme.surfaceContainer,
                 borderRadius: const .all(ListWidget.radius),
 
@@ -252,7 +252,7 @@ class _HomeworkDetailScreenState extends State<HomeworkDetailScreen> {
                 widget.homework.difficultyLevel > 0) ...[
               _Text(label: context.l10n.homeworkDifficulty, scheme: scheme),
 
-              ItemWidget(
+              TileWidget(
                 backgroundColor: scheme.surfaceContainer,
                 borderRadius: const .all(ListWidget.radius),
 

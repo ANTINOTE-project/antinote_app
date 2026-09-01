@@ -33,8 +33,8 @@ class ListWidget<T> extends StatelessWidget {
     this.gotAfter = false,
   });
 
-  static ListWidget<ItemWidgetData> list({
-    required List<ItemWidgetData> items,
+  static ListWidget<TileWidgetData> list({
+    required List<TileWidgetData> items,
     bool isLoading = false,
     bool isSliver = true,
     bool isColumn = false,
@@ -44,10 +44,10 @@ class ListWidget<T> extends StatelessWidget {
     bool gotBefore = false,
     bool gotAfter = false,
   }) {
-    return ListWidget<ItemWidgetData>(
+    return ListWidget<TileWidgetData>(
       items: items,
       itemBuilder: (context, item, borderRadius) {
-        return ItemWidget.fromData(data: item, borderRadius: borderRadius);
+        return TileWidget.fromData(data: item, borderRadius: borderRadius);
       },
       shrinkWrap: shrinkWrap,
       physics: physics,
@@ -159,7 +159,7 @@ class ListWidget<T> extends StatelessWidget {
 }
 
 @immutable
-class ItemWidgetData {
+class TileWidgetData {
   final Widget? title;
   final Widget? subtitle;
 
@@ -171,7 +171,7 @@ class ItemWidgetData {
 
   final Color? backgroundColor;
 
-  const ItemWidgetData({
+  const TileWidgetData({
     this.title,
     this.subtitle,
     this.leading,
@@ -182,7 +182,7 @@ class ItemWidgetData {
   });
 }
 
-class ItemWidget extends StatelessWidget {
+class TileWidget extends StatelessWidget {
   final Widget? title;
   final int? titleMaxLines;
   final Widget? subtitle;
@@ -197,7 +197,7 @@ class ItemWidget extends StatelessWidget {
   final BorderRadius borderRadius;
   final Color? backgroundColor;
 
-  const ItemWidget({
+  const TileWidget({
     super.key,
 
     this.title,
@@ -215,11 +215,11 @@ class ItemWidget extends StatelessWidget {
     required this.borderRadius,
   });
 
-  factory ItemWidget.fromData({
-    required ItemWidgetData data,
+  factory TileWidget.fromData({
+    required TileWidgetData data,
     required BorderRadius borderRadius,
   }) {
-    return ItemWidget(
+    return TileWidget(
       title: data.title,
       subtitle: data.subtitle,
       leading: data.leading,

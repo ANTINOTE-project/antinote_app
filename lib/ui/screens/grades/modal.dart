@@ -59,7 +59,7 @@ Future<void> _showDetails({
                   isSliver: false,
                   items: items,
                   itemBuilder: (context, item, borderRadius) {
-                    return ItemWidget(
+                    return TileWidget(
                       borderRadius: borderRadius,
                       backgroundColor: scheme.primaryContainer,
                       leading: Icon(

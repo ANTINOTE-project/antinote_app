@@ -134,7 +134,7 @@ class AttendanceWidget extends StatelessWidget {
               ? absence.reasons.map((e) => e.name).join(', ')
               : context.l10n.absenceNotJustified;
 
-          return ItemWidget(
+          return TileWidget(
             backgroundColor: context.c.surfaceContainerHigh,
             borderRadius: borderRadius,
 

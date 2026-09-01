@@ -108,7 +108,7 @@ class _SearchSchoolsMethodScreenState extends State<SearchSchoolsMethodScreen> {
                     isLoading: _filteredInstances == null,
 
                     itemBuilder: (context, instance, borderRadius) {
-                      return ItemWidget(
+                      return TileWidget(
                         borderRadius: borderRadius,
 
                         onPressed: () async {

@@ -105,7 +105,7 @@ class _NewsScreenState extends State<NewsScreen>
                     ),
                   ),
 
-                  ItemWidget(
+                  TileWidget(
                     borderRadius: const .all(ListWidget.radius),
 
                     title: Text(
@@ -186,7 +186,7 @@ class _Question extends StatelessWidget {
       spacing: 3,
 
       children: [
-        ItemWidget(
+        TileWidget(
           borderRadius: hasResponse || question.attachments.isNotEmpty
               ? borderRadius.copyWith(
                   bottomLeft: ListWidget.defaultRadius,
@@ -250,7 +250,7 @@ class _Answer extends StatelessWidget {
     final answer = question.answer;
 
     return switch (answer) {
-      RANewsQuestionAnswer(withAnswer: final answered) => ItemWidget(
+      RANewsQuestionAnswer(withAnswer: final answered) => TileWidget(
         backgroundColor: context.c.surfaceContainerHigh,
         borderRadius: borderRadius,
 
@@ -310,7 +310,7 @@ class _ChoiceAnswer extends StatelessWidget {
         itemBuilder: (context, choice, borderRadius) {
           final selected = _answer.answers.contains(choice.rank);
 
-          return ItemWidget(
+          return TileWidget(
             backgroundColor: selected
                 ? context.c.primaryContainer
                 : context.c.surfaceContainerHigh,

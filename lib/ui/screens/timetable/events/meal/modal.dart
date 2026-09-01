@@ -74,7 +74,7 @@ class SliverMealContents extends StatelessWidget {
                 ListWidget(
                   items: meal.dishes,
                   itemBuilder: (context, item, borderRadius) {
-                    return ItemWidget(
+                    return TileWidget(
                       borderRadius: borderRadius,
                       titleMaxLines: null,
                       title: Text.rich(

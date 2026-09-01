@@ -20,7 +20,7 @@ class _NetworkingState extends State<Networking> {
       listenable: context.s.networking,
       builder: (context, child) => ListWidget.list(
         items: [
-          ItemWidgetData(
+          TileWidgetData(
             title: Text(context.l10n.sendNavigationRequests, maxLines: 3),
             subtitle: Text(
               context.l10n.sendNavigationRequestsSubtitle,
@@ -38,7 +38,7 @@ class _NetworkingState extends State<Networking> {
               },
             ),
           ),
-          ItemWidgetData(
+          TileWidgetData(
             title: Text(context.l10n.reconnectAccount),
             onPressed: () {
               if (reconnectFuture != null) return;

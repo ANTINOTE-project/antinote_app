@@ -186,7 +186,7 @@ class _UrlMethodScreenState extends State<UrlMethodScreen> {
                         ],
 
                         itemBuilder: (context, item, borderRadius) {
-                          return ItemWidget(
+                          return TileWidget(
                             borderRadius: borderRadius,
 
                             titleMaxLines: null,

@@ -122,7 +122,7 @@ class MethodsListScreen extends StatelessWidget with WidgetsBindingObserver {
           items: options,
 
           itemBuilder: (context, item, borderRadius) {
-            return ItemWidget(
+            return TileWidget(
               borderRadius: borderRadius,
               onPressed: item.onPressed,
 

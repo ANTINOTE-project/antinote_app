@@ -739,7 +739,7 @@ class _ExamWidget extends StatelessWidget {
     final title = Utils.getExamComment(context, exam);
     final subtitle = exam.date.asRelativeDate(context);
 
-    return ItemWidget(
+    return TileWidget(
       backgroundColor: scheme.secondaryContainer,
       borderRadius: borderRadius,
 

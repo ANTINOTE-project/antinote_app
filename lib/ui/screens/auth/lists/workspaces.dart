@@ -4,8 +4,8 @@ import 'package:antinote_app/ui/screens/auth/webview.dart';
 import 'package:antinote_app/ui/utils/utils.dart';
 import 'package:antinote_app/ui/widgets/customs/app_bar.dart';
 import 'package:antinote_app/ui/widgets/customs/list.dart';
-import 'package:material_ui/material_ui.dart';
 import 'package:hugeicons_pro/hugeicons.dart';
+import 'package:material_ui/material_ui.dart';
 
 class WorkspacesListScreen extends StatefulWidget {
   final MobileInstanceParameters parameters;
@@ -83,7 +83,7 @@ class _WorkspacesListScreenState extends State<WorkspacesListScreen> {
           slivers: [
             if (_isCasActive) ...[
               SliverToBoxAdapter(
-                child: ItemWidget(
+                child: TileWidget(
                   borderRadius: const .all(ListWidget.radius),
 
                   title: Text(context.l10n.activateCas),
@@ -107,7 +107,7 @@ class _WorkspacesListScreenState extends State<WorkspacesListScreen> {
               itemBuilder: (context, workspace, borderRadius) {
                 final isNotStudent = workspace.type != .mobileEleve;
 
-                return ItemWidget(
+                return TileWidget(
                   borderRadius: borderRadius,
 
                   onPressed: isNotStudent

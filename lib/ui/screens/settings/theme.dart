@@ -2,8 +2,8 @@ import 'package:antinote_app/ui/screens/settings/screen.dart';
 import 'package:antinote_app/ui/utils/utils.dart';
 import 'package:antinote_app/ui/widgets/customs/list.dart';
 import 'package:antinote_app/ui/widgets/pressable.dart';
-import 'package:material_ui/material_ui.dart';
 import 'package:hugeicons_pro/hugeicons.dart';
+import 'package:material_ui/material_ui.dart';
 
 class AppearancePicker extends StatefulWidget {
   const AppearancePicker({super.key});
@@ -27,7 +27,7 @@ class _AppearancePickerState extends State<AppearancePicker> {
 
     return ListWidget.list(
       items: [
-        ItemWidgetData(
+        TileWidgetData(
           title: GridView.builder(
             physics: const NeverScrollableScrollPhysics(),
             shrinkWrap: true,
@@ -132,7 +132,7 @@ class _AppearancePickerState extends State<AppearancePicker> {
             },
           ),
         ),
-        ItemWidgetData(
+        TileWidgetData(
           title: Text(context.l10n.deviceTheme),
           subtitle: Text(context.l10n.deviceThemeDescription, maxLines: 3),
           trailing: Switch(
@@ -146,7 +146,7 @@ class _AppearancePickerState extends State<AppearancePicker> {
             },
           ),
         ),
-        ItemWidgetData(
+        TileWidgetData(
           title: Text(context.l10n.displayProfilePicture),
           trailing: Switch(
             value: context.s.theme.showProfilePicture,

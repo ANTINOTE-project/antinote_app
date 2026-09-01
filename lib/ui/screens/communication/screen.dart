@@ -37,7 +37,7 @@ class _CommunicationScreenState extends State<CommunicationScreen>
                 items: threads,
 
                 itemBuilder: (context, thread, borderRadius) {
-                  return ItemWidget(
+                  return TileWidget(
                     borderRadius: borderRadius,
 
                     title: Text(thread.title),

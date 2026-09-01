@@ -540,7 +540,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get sendNavigationRequestsSubtitle =>
-      'When unselected, latency gains may be observed. Although, the app will visibly be behave differently from the official application';
+      'When unselected, speed gains may be observed. Although, the app will visibly be behave differently from the official application';
 
   @override
   String get noMenuForToday => 'No menu for today!';

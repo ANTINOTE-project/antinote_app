@@ -100,6 +100,7 @@ class _AccountsListScreenState extends State<AccountsListScreen>
               spacing: 12,
               mainAxisSize: .min,
               mainAxisAlignment: .spaceBetween,
+
               children: [
                 ListWidget.list(
                   items: [
@@ -240,7 +241,7 @@ class _AccountsListScreenState extends State<AccountsListScreen>
               ListWidget(
                 items: _accounts,
                 itemBuilder: (context, account, borderRadius) {
-                  return ItemWidget(
+                  return TileWidget(
                     onPressed: () => _onAccountPressed(account),
                     borderRadius: borderRadius,
 

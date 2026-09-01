@@ -109,7 +109,7 @@ class ClassModalContents extends StatelessWidget {
               physics: const NeverScrollableScrollPhysics(),
               items: sortedContentCategories,
               itemBuilder: (context, item, borderRadius) {
-                return ItemWidget(
+                return TileWidget(
                   borderRadius: borderRadius,
                   backgroundColor: scheme.primaryContainer,
                   leading: Icon(item.value.first.icon),

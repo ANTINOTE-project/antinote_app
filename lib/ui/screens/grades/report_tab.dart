@@ -507,7 +507,7 @@ class _ServiceWidget extends StatelessWidget {
                       report.displayInformation.appreciationLabels[index];
                   final trimmed = appreciation.name?.trim() ?? '';
 
-                  return ItemWidget(
+                  return TileWidget(
                     backgroundColor: scheme.surfaceContainer,
                     borderRadius: borderRadius,
 
@@ -589,7 +589,7 @@ class _ServiceWidget extends StatelessWidget {
                                         ?.trim() ??
                                     '';
 
-                                return ItemWidget(
+                                return TileWidget(
                                   backgroundColor: scheme.surfaceContainer,
                                   borderRadius: borderRadius,
 
@@ -663,7 +663,7 @@ class _Attendance extends StatelessWidget {
               items: items,
 
               itemBuilder: (context, item, borderRadius) {
-                return ItemWidget(
+                return TileWidget(
                   borderRadius: borderRadius,
                   title: Text(item),
                   titleMaxLines: null,
@@ -706,7 +706,7 @@ class _Orientation extends StatelessWidget {
               for (final wish in section.wishes!)
                 ListWidget.list(
                   items: [
-                    ItemWidgetData(
+                    TileWidgetData(
                       title: Text('${wish.rank}) ${wish.stat.label}'),
                       subtitle: Text.rich(
                         TextSpan(
@@ -725,7 +725,7 @@ class _Orientation extends StatelessWidget {
                         ),
                       ),
                     ),
-                    ItemWidgetData(
+                    TileWidgetData(
                       title: Text(context.l10n.boardOpinion),
                       subtitle: Text(switch (wish.boardResponse) {
                         .none => context.l10n.none,
@@ -899,7 +899,7 @@ class _GeneralAppreciations extends StatelessWidget {
                 final hasName = name != null && name.isNotEmpty;
                 final hasTitle = title != null && title.isNotEmpty;
 
-                return ItemWidget(
+                return TileWidget(
                   borderRadius: borderRadius,
 
                   onPressed: hasName
