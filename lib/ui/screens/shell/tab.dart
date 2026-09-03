@@ -62,7 +62,7 @@ mixin PageMixin<T extends StatefulWidget> on State<T> {
           padding: const .symmetric(vertical: 4),
           child: Text(
             context.l10n.anErrorOccurred,
-            style: TextTheme.of(context).titleMedium,
+            style: context.tt.titleMedium,
           ),
         ),
         if (kDebugMode)

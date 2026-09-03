@@ -283,7 +283,7 @@ class TileWidget extends StatelessWidget {
 
                   if (subtitle != null)
                     DefaultTextStyle.merge(
-                      style: TextTheme.of(context).bodyMedium?.copyWith(
+                      style: context.tt.bodyMedium?.copyWith(
                         color: context.c.outline,
                         fontWeight: .w500,
                         height: 1.25,
