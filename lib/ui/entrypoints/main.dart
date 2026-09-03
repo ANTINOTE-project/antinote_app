@@ -25,6 +25,13 @@ Future<void> mainEntrypoint() async {
 
   WidgetsFlutterBinding.ensureInitialized();
 
+  SystemChrome.setSystemUIOverlayStyle(
+    const SystemUiOverlayStyle(
+      systemNavigationBarColor: Colors.transparent,
+      systemNavigationBarContrastEnforced: false,
+    ),
+  );
+
   LicenseRegistry.addLicense(() async* {
     yield LicenseEntryWithLineBreaks([
       'SN Pro',
@@ -33,6 +40,7 @@ Future<void> mainEntrypoint() async {
 
   final registry = SettingsRegistry();
   await registry.initialize();
+
   runApp(MainApp(settingsRegistry: registry));
 }
 

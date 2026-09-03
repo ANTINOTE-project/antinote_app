@@ -6,6 +6,7 @@ import 'package:antinote_app/data/src/accounts/storage/widget.dart';
 import 'package:antinote_app/data/src/settings/registry.dart';
 import 'package:antinote_app/ui/app.dart';
 import 'package:antinote_app/ui/screens/auth/lists/methods.dart';
+import 'package:flutter/services.dart';
 import 'package:logging/logging.dart';
 import 'package:material_ui/material_ui.dart';
 
@@ -24,8 +25,16 @@ Future<void> loginEntrypoint() async {
 
   WidgetsFlutterBinding.ensureInitialized();
 
+  SystemChrome.setSystemUIOverlayStyle(
+    const SystemUiOverlayStyle(
+      systemNavigationBarColor: Colors.transparent,
+      systemNavigationBarContrastEnforced: false,
+    ),
+  );
+
   final registry = SettingsRegistry();
   await registry.initialize();
+
   runApp(LoginApp(settingsRegistry: registry));
 }
 
