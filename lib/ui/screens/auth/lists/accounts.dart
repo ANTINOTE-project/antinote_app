@@ -31,8 +31,10 @@ class _AccountsListScreenState extends State<AccountsListScreen>
   Future<void> loadPage() async {
     final ar = context.ar;
 
-    _accounts = await ar.storage.listAccounts();
     _defaultUid = (await ar.storage.getDefaultAccount())?.uid;
+
+    _accounts = await ar.storage.listAccounts();
+    _accounts.sort((a, b) => a.uid == _defaultUid ? -1 : 1);
   }
 
   @override
@@ -246,6 +248,7 @@ class _AccountsListScreenState extends State<AccountsListScreen>
                     onPressed: () => _onAccountPressed(account),
                     borderRadius: borderRadius,
 
+                    // TODO check if account is demo
                     // leading: account.is,
                     trailing: Skeleton.ignore(
                       child: IconButton(
@@ -303,16 +306,10 @@ class _AccountsListScreenState extends State<AccountsListScreen>
 
                       children: [
                         if (account.establishmentName.trim().isNotEmpty)
-                          Text(
-                            account.establishmentName,
-                            style: const TextStyle(fontSize: 14),
-                          ),
+                          Text(account.establishmentName),
 
                         if (account.workspaceName.trim().isNotEmpty)
-                          Text(
-                            account.workspaceName,
-                            style: const TextStyle(fontSize: 14),
-                          ),
+                          Text(account.workspaceName),
                       ],
                     ),
                   );
