@@ -46,7 +46,9 @@ mixin PageMixin<T extends StatefulWidget> on State<T> {
     BuildContext context,
     RefreshIndicatorBuilder buildRefreshIndicator,
     double? progress,
-  ) => LoadingWidget(progress: progress);
+  ) {
+    return Scaffold(body: LoadingWidget(progress: progress));
+  }
 
   Widget buildErrored(
     BuildContext context,
