@@ -45,11 +45,15 @@ class _HomeworksScreenState extends State<HomeworksScreen>
     }
   }
 
-  Future<void> _updateHomeworks(int week, {RemoteSession? session}) async {
+  Future<void> _updateHomeworks(int weekIndex, {RemoteSession? session}) async {
     Future<void> update(RemoteSession session) async {
-      final weekStart = session.instance.getDateForWeekNumber(week);
+      final weekStart = session.instance.firstMonday
+          .add(Duration(days: 7 * weekIndex))
+          .toDay();
       final weekEnd = weekStart.add(const Duration(days: 6)).toDay();
       final days = DateRange(start: weekStart, end: weekEnd).listDays();
+
+      final week = session.instance.getWeekNumberForDate(weekStart);
 
       for (final day in days) {
         _homeworks.putIfAbsent(day, () => ValueNotifier([]));
@@ -71,24 +75,22 @@ class _HomeworksScreenState extends State<HomeworksScreen>
         _homeworks[day]!.value = newHomeworks;
 
         if (newHomeworks.isEmpty && (oldHomeworks?.isNotEmpty ?? true)) {
-          _weeks[week - _data.firstWeekNumber]?.currentState?.removeItem(
-            days.indexOf(day),
-            (context, animation) {
-              return AnimatedScale(
-                alignment: .topCenter,
-                scale: animation.value,
-
-                duration: const Duration(seconds: 4),
-                curve: Curves.fastOutSlowIn,
-
-                child: _HomeworkList(
-                  day: day,
-                  homeworks: const [],
-                  onReturn: () {},
-                ),
-              );
-            },
-          );
+          _weeks[weekIndex]?.currentState?.removeItem(days.indexOf(day), (
+            context,
+            animation,
+          ) {
+            return AnimatedScale(
+              alignment: .topCenter,
+              scale: animation.value,
+              duration: const Duration(seconds: 4),
+              curve: Curves.fastOutSlowIn,
+              child: _HomeworkList(
+                day: day,
+                homeworks: const [],
+                onReturn: () {},
+              ),
+            );
+          });
         }
       }
     }
@@ -123,21 +125,21 @@ class _HomeworksScreenState extends State<HomeworksScreen>
         controller: _pageController,
 
         itemBuilder: (context, index) {
-          final weekNumber = index + _data.firstWeekNumber;
+          final weekStart = _data.firstMonday
+              .add(Duration(days: 7 * index))
+              .toDay();
+          final weekNumber = _data.getWeekNumberForDate(weekStart);
 
-          final weekStart = _data.getDateForWeekNumber(weekNumber);
-          final weekEnd = weekStart.add(const Duration(days: 6));
+          final rawWeekEnd = weekStart.add(const Duration(days: 6));
+          final weekEnd = DateTime.fromMillisecondsSinceEpoch(
+            min(
+              _data.lastDate.millisecondsSinceEpoch,
+              rawWeekEnd.millisecondsSinceEpoch,
+            ),
+            isUtc: true,
+          ).toDay();
 
-          final days = DateRange(
-            start: weekStart,
-            end: DateTime.fromMillisecondsSinceEpoch(
-              min(
-                _data.lastDate.millisecondsSinceEpoch,
-                weekEnd.millisecondsSinceEpoch,
-              ),
-              isUtc: true,
-            ).toDay(),
-          ).listDays();
+          final days = DateRange(start: weekStart, end: weekEnd).listDays();
 
           final bool loaded = days.every(
             (element) => _homeworks[element]!.value != null,
@@ -194,7 +196,7 @@ class _HomeworksScreenState extends State<HomeworksScreen>
           return Scaffold(
             appBar: AppBarWidget(
               title: _WeekPicker(
-                firstWeekNumber: _data.firstWeekNumber,
+                weekNumber: weekNumber,
                 weekCount: _weeks.length,
                 curWeekIndex: index,
               ),
@@ -219,18 +221,19 @@ class _HomeworksScreenState extends State<HomeworksScreen>
   Future<void> load(RemoteSession session) async {
     _data = session.instance;
 
-    final firstWeekNumber = session.instance.firstWeekNumber;
-    final lastWeekNumber = session.instance.getWeekNumberForDate(
-      session.instance.lastDate,
-    );
+    final weekCount =
+        ((session.instance.lastDate.toUtc().millisecondsSinceEpoch -
+                session.instance.firstMonday.toUtc().millisecondsSinceEpoch) ~/
+            (Duration.millisecondsPerSecond *
+                Duration.secondsPerMinute *
+                Duration.minutesPerHour *
+                Duration.hoursPerDay *
+                7)) +
+        1;
 
     if (!loaded) {
       _weeks = {
-        for (
-          int weekIndex = 0;
-          weekIndex <= lastWeekNumber - firstWeekNumber;
-          weekIndex++
-        )
+        for (int weekIndex = 0; weekIndex < weekCount; weekIndex++)
           weekIndex: GlobalKey(),
       };
     }
@@ -240,9 +243,18 @@ class _HomeworksScreenState extends State<HomeworksScreen>
     if (_pageController == null ||
         !_pageController!.hasClients ||
         _pageController?.page == null) {
-      final curWeekNumber = session.instance.getWeekNumberForDate(.now());
-
-      currentWeekIndex = min(curWeekNumber, lastWeekNumber) - firstWeekNumber;
+      final now = DateTime.now();
+      final diffWeeks =
+          ((now.toUtc().millisecondsSinceEpoch -
+                  session.instance.firstMonday
+                      .toUtc()
+                      .millisecondsSinceEpoch) ~/
+              (Duration.millisecondsPerSecond *
+                  Duration.secondsPerMinute *
+                  Duration.minutesPerHour *
+                  Duration.hoursPerDay)) ~/
+          7;
+      currentWeekIndex = diffWeeks.clamp(0, weekCount - 1);
     } else {
       currentWeekIndex = _pageController!.page!.round();
     }
@@ -259,10 +271,7 @@ class _HomeworksScreenState extends State<HomeworksScreen>
       _pageController?.addListener(_onPageDrag);
     }
 
-    await _updateHomeworks(
-      currentWeekIndex + firstWeekNumber,
-      session: session,
-    );
+    await _updateHomeworks(currentWeekIndex, session: session);
   }
 }
 
@@ -491,12 +500,12 @@ class _HomeworkCard extends StatelessWidget {
 class _WeekPicker extends StatefulWidget {
   final int weekCount;
   final int curWeekIndex;
-  final int firstWeekNumber;
+  final int weekNumber;
 
   const _WeekPicker({
     required this.weekCount,
     required this.curWeekIndex,
-    required this.firstWeekNumber,
+    required this.weekNumber,
   });
 
   @override
@@ -518,7 +527,7 @@ class _WeekPickerState extends State<_WeekPicker>
         _DotIndicator(active: canGoBack),
 
         Text(
-          context.l10n.weekNumber(widget.curWeekIndex + widget.firstWeekNumber),
+          context.l10n.weekNumber(widget.weekNumber),
           style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
         ),
 
