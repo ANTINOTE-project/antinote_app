@@ -80,7 +80,7 @@ abstract class SettingsCategory extends ChangeNotifier {
 
     initializationState = Completer();
 
-    libLog.info('Registering $name...');
+    logger.info('Registering $name...');
 
     try {
       _mode = .registering;

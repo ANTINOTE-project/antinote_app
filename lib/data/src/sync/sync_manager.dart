@@ -31,8 +31,8 @@ final logger = Logger('SyncManager');
 
 Future<void> syncEntrypoint() async {
   hierarchicalLoggingEnabled = true;
-  libLog.level = .ALL;
-  libLog.onRecord.listen((event) {
+  logger.level = .ALL;
+  logger.onRecord.listen((event) {
     debugPrint('[${event.level.name}] ${event.message}');
     if (event.error != null) {
       debugPrintStack(

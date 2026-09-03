@@ -68,7 +68,7 @@ mixin PageMixin<T extends StatefulWidget> on State<T> {
         if (kDebugMode)
           ButtonWidget(
             onPressed: () {
-              libLog.fine('${error.runtimeType}', error, stackTrace);
+              logger.fine('${error.runtimeType}', error, stackTrace);
             },
             label: 'Show error in console',
           ),
@@ -77,7 +77,7 @@ mixin PageMixin<T extends StatefulWidget> on State<T> {
   );
 
   void _updateCallback() {
-    libLog.info('Loading page $runtimeType...');
+    logger.info('Loading page $runtimeType...');
 
     _loader = loadPage();
     _loader!.whenComplete(() {

@@ -20,7 +20,7 @@ class SessionPollingManager extends PollingManager {
   @override
   Future<bool> askToTakePolling(String accountUid) async {
     final answer = registry.curAccountUid == accountUid;
-    libLog.info('Got asked whether to take polling job... Answered $answer');
+    logger.info('Got asked whether to take polling job... Answered $answer');
     return answer;
   }
 
@@ -31,7 +31,7 @@ class SessionPollingManager extends PollingManager {
 
   @override
   Future<void> startPolling(String accountUid) async {
-    libLog.info('Starting polling...');
+    logger.info('Starting polling...');
 
     Future.microtask(() async {
       var wrapper = registry.specificSession(accountUid);
@@ -91,7 +91,7 @@ class SessionPollingManager extends PollingManager {
               break;
             } on IOException {
               restartCount += 1;
-              libLog.info('Polling just failed for the ${restartCount}th time');
+              logger.info('Polling just failed for the ${restartCount}th time');
 
               if (restartCount >= _maxRetries) {
                 await _sessionManager.updatePollingState(

@@ -181,14 +181,14 @@ final class SessionWrapper({required final String accountUid}) {
           await storage.updateAccount(account, accountUid);
         }
       } catch (e, st) {
-        libLog.severe(
+        logger.severe(
           'Couldn\'t login into account ${account?.uid}. Marking the account as invalid',
           e,
           st,
         );
 
         if (e is IOException) {
-          libLog.warning(
+          logger.warning(
             'The failure seems to be related to IO, is the network available?',
           );
         }
@@ -267,7 +267,7 @@ final class SessionWrapper({required final String accountUid}) {
               lastRanSessionVersion: _state!.session.stack.sessionId,
             );
           } catch (e, st) {
-            libLog.severe(
+            logger.severe(
               'Failed to run hook "${hook.debugLabel}" upon session change, '
               'deleting the hook...',
               e,
@@ -397,7 +397,7 @@ final class SessionWrapper({required final String accountUid}) {
           if (channels.isNotEmpty &&
               _nativeSessionManagerSupported &&
               sendSession) {
-            libLog.info(
+            logger.info(
               'Marking $accountUid polling as ALIVE because task '
               'using network succeeded ($debugLabel).',
             );
@@ -414,7 +414,7 @@ final class SessionWrapper({required final String accountUid}) {
             // wasn't its fault.
             tryCount++;
 
-            libLog.info(
+            logger.info(
               'Giving the task one more chance to perform since the '
               'session was probably already dead when the task started.',
             );
@@ -428,10 +428,10 @@ final class SessionWrapper({required final String accountUid}) {
             await _sessionManager.updatePollingState(accountUid, .dead, null);
           }
 
-          libLog.info('Session exception... ($curTry/$tryCount)');
+          logger.info('Session exception... ($curTry/$tryCount)');
           if (curTry == tryCount) rethrow;
         } catch (e, st) {
-          libLog.info('Failed to run callback... ($curTry/$tryCount)', e, st);
+          logger.info('Failed to run callback... ($curTry/$tryCount)', e, st);
           if (curTry == tryCount) rethrow;
         }
       }

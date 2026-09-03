@@ -11,8 +11,8 @@ import 'package:material_ui/material_ui.dart';
 
 Future<void> loginEntrypoint() async {
   hierarchicalLoggingEnabled = true;
-  libLog.level = .ALL;
-  libLog.onRecord.listen((event) {
+  logger.level = .ALL;
+  logger.onRecord.listen((event) {
     debugPrint('[${event.level.name}] ${event.message}');
     if (event.error != null) {
       debugPrintStack(

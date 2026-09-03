@@ -1,5 +1,5 @@
 import 'package:antinote_api/antinote_api.dart';
-import 'package:antinote_app/data/data.dart';
+import 'package:antinote_app/data/data.dart' hide logger;
 import 'package:antinote_app/data/src/accounts/registry.dart';
 import 'package:antinote_app/data/src/accounts/storage/widget.dart';
 import 'package:antinote_app/data/src/settings/registry.dart';
@@ -12,8 +12,8 @@ import 'package:material_ui/material_ui.dart';
 
 Future<void> mainEntrypoint() async {
   hierarchicalLoggingEnabled = true;
-  libLog.level = .ALL;
-  libLog.onRecord.listen((event) {
+  logger.level = .ALL;
+  logger.onRecord.listen((event) {
     debugPrint('[${event.level.name}] ${event.message}');
     if (event.error != null) {
       debugPrintStack(

@@ -56,7 +56,7 @@ final class AccountRegistry({
         return;
       }
 
-      libLog.info('Sent user to account pick screen');
+      logger.info('Sent user to account pick screen');
 
       // This never returns until [accountPicked] is true.
       if (context.mounted) {
@@ -87,7 +87,7 @@ final class AccountRegistry({
     try {
       await wrapper.runTask(
         callback: (session) {
-          libLog.info(
+          logger.info(
             'Logged in to account $accountUid with session ID ${session.stack.sessionId}!',
           );
         },
@@ -106,7 +106,7 @@ final class AccountRegistry({
 
       return true;
     } catch (e, st) {
-      libLog.severe('Failed to log in to newly picked account', e, st);
+      logger.severe('Failed to log in to newly picked account', e, st);
       _curAccount = null;
 
       return false;
@@ -128,7 +128,7 @@ final class AccountRegistry({
 
       return await loadAccount(entry.account.uid, pick: shouldPickAccount);
     } catch (e, st) {
-      libLog.severe('Failed to register account to storage/manager', e, st);
+      logger.severe('Failed to register account to storage/manager', e, st);
 
       return false;
     }

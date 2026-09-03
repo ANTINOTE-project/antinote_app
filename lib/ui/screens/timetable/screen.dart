@@ -562,7 +562,7 @@ class _TimetableDisplayState extends State<TimetableDisplay>
           _scheduleDisplayData.demoDateTime?.toDay() ??
           _scheduleDisplayData.nextBusinessDay;
 
-      libLog.info('Initializing timetable with base date $selectedBaseDate');
+      logger.info('Initializing timetable with base date $selectedBaseDate');
 
       currentGroupIndex = _currentGroups.indexWhere((element) {
         return element.contains(selectedBaseDate);

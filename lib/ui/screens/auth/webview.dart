@@ -78,7 +78,7 @@ class _WebviewLoginScreenState extends State<WebviewLoginScreen> {
                 }
               } catch (e, st) {
                 _loginHandled = false;
-                libLog.severe(
+                logger.severe(
                   'Failed to login although matched criterion',
                   e,
                   st,

@@ -70,7 +70,7 @@ class _AccountsListScreenState extends State<AccountsListScreen>
     final result = await ar.loadAccount(account.uid);
 
     if (!result && context.mounted) {
-      libLog.warning('Failed to pick account...');
+      logger.warning('Failed to pick account...');
 
       setState(() {
         _loggingUid = null;

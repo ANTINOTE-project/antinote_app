@@ -59,7 +59,7 @@ final class const City({
           .cast<Map<String, dynamic>>()
           .mapL((e) => .decode(e));
     } catch (e, st) {
-      libLog.severe('Failed to decode request', e, st);
+      logger.severe('Failed to decode request', e, st);
       return [];
     }
   }

@@ -86,7 +86,7 @@ class _UrlMethodScreenState extends State<UrlMethodScreen> {
             break;
           } catch (e, st) {
             if (kDebugMode) {
-              libLog.severe(
+              logger.severe(
                 'Could not start ${workspace.label} session at $instanceUrl',
                 e,
                 st,
@@ -219,7 +219,7 @@ class _UrlMethodScreenState extends State<UrlMethodScreen> {
 
                             // catch
                           } catch (e, st) {
-                            libLog.severe(
+                            logger.severe(
                               'Error during fetch of parameters',
                               e,
                               st,

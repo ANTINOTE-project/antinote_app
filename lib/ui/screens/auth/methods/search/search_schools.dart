@@ -133,7 +133,7 @@ class _SearchSchoolsMethodScreenState extends State<SearchSchoolsMethodScreen> {
 
                             // catch
                           } catch (e, st) {
-                            libLog.severe(
+                            logger.severe(
                               'Error during fetch of parameters',
                               e,
                               st,

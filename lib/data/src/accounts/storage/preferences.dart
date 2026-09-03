@@ -28,7 +28,7 @@ class PreferencesAccountStorage implements AccountStorage {
     try {
       return SerializedAccountRegistry.fromBuffer(base64Decode(registry));
     } catch (e, st) {
-      libLog.severe(
+      logger.severe(
         'Failed to load account registry, creating a new one...',
         e,
         st,

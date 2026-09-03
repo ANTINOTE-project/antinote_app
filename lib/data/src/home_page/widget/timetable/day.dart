@@ -4,11 +4,11 @@ enum TimetableDayParameter<T>(@override final String code)
     implements WidgetParameter<T> {
   decayAfterClass<bool>('decay_after_class'),
   onlyOnBusinessDays<bool>('only_business_days'),
-  defaultDelta<Duration>('default_delta');
+  defaultDelta<Duration>('default_delta'),
 }
 
 enum TimetableDayArgument<T>() implements WidgetArgument<T> {
-  day<Date>()
+  day<Date>(),
 }
 
 final class const TimetableDayWidget()
@@ -95,7 +95,7 @@ final class const TimetableDayWidget()
                   .toDay()
             : anchorDate;
 
-        libLog.info('Selected dates are $anchorDate -> $selectedDate');
+        logger.info('Selected dates are $anchorDate -> $selectedDate');
 
         if (params.get(TimetableDayParameter.decayAfterClass) &&
             selectedDate.isAtSameMomentAs(cache.anchorDate) &&
