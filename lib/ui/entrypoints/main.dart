@@ -1,5 +1,5 @@
 import 'package:antinote_api/antinote_api.dart';
-import 'package:antinote_app/data/data.dart' hide logger;
+import 'package:antinote_app/data/data.dart';
 import 'package:antinote_app/data/src/accounts/registry.dart';
 import 'package:antinote_app/data/src/accounts/storage/widget.dart';
 import 'package:antinote_app/data/src/settings/registry.dart';

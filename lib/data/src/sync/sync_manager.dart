@@ -27,12 +27,12 @@ import 'package:protobuf/well_known_types/google/protobuf/timestamp.pb.dart';
 part 'tasks/calendar.dart';
 part 'tasks/notifications.dart';
 
-final logger = Logger('SyncManager');
+final _logger = Logger('SyncManager');
 
 Future<void> syncEntrypoint() async {
   hierarchicalLoggingEnabled = true;
-  logger.level = .ALL;
-  logger.onRecord.listen((event) {
+  _logger.level = .ALL;
+  _logger.onRecord.listen((event) {
     debugPrint('[${event.level.name}] ${event.message}');
     if (event.error != null) {
       debugPrintStack(
@@ -41,8 +41,8 @@ Future<void> syncEntrypoint() async {
       );
     }
   });
-  logger.level = .ALL;
-  logger.onRecord.listen((event) {
+  _logger.level = .ALL;
+  _logger.onRecord.listen((event) {
     debugPrint('SYNC: [${event.level.name}] ${event.message}');
     if (event.error != null) {
       debugPrintStack(
@@ -103,7 +103,7 @@ final class SyncRequestManager extends SyncManager {
 
       return result;
     } catch (e, st) {
-      logger.severe('Failed to initialize sync manager', e, st);
+      _logger.severe('Failed to initialize sync manager', e, st);
       _initializer?.complete(false);
 
       return false;
@@ -115,13 +115,13 @@ final class SyncRequestManager extends SyncManager {
 
     var settings = NetworkingSettings();
     if (!(await settings.initialize())) {
-      logger.warning('Failed to initialize settings, recreating.');
+      _logger.warning('Failed to initialize settings, recreating.');
       await settings.clear();
 
       settings = NetworkingSettings();
       final result = await settings.initialize();
       if (!result) {
-        logger.severe(
+        _logger.severe(
           'Failed to initialize settings a second time. Aborting...',
         );
         return false;
