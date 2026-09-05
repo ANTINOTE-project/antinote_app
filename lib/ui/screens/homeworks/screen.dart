@@ -302,6 +302,10 @@ class _DayState extends State<_Day> {
       !DateTime.now().copyWith(isUtc: true).toDay().isAfter(widget.day) ||
       (widget.homeworks.any((element) => !element.isDone));
 
+  double get progress =>
+      widget.homeworks.where((element) => element.isDone).length /
+      widget.homeworks.length;
+
   void _displayIfNeeded() {
     if (needToDisplay) {
       controller.expand();
@@ -330,7 +334,7 @@ class _DayState extends State<_Day> {
 
       headerBuilder: (context, animation) {
         return Padding(
-          padding: const .symmetric(horizontal: 8, vertical: 6),
+          padding: const .only(left: 12, right: 8, top: 6, bottom: 8),
 
           child: Pressable(
             onPressed: controller.toggle,
@@ -338,27 +342,27 @@ class _DayState extends State<_Day> {
 
             child: Row(
               children: [
-                Icon(
-                  !needToDisplay
-                      ? HugeIconsSolid.tick03
-                      : HugeIconsStroke.tick03,
-                  color: context.c.outline,
-                  size: 19,
+                SizedBox(
+                  height: 18,
+                  width: 18,
+
+                  child: CircularProgressIndicator(
+                    backgroundColor: context.c.outlineVariant,
+                    color: context.c.outline,
+                    value: progress,
+                    strokeWidth: 4,
+                  ),
                 ),
 
-                const SizedBox(width: 8),
+                const SizedBox(width: 12),
 
                 Expanded(
-                  child: Padding(
-                    padding: const .only(left: 2, bottom: 2),
-
-                    child: Text(
-                      widget.day.asRelativeDate(context),
-                      style: TextStyle(
-                        color: context.c.outline,
-                        fontWeight: .bold,
-                        fontSize: 16,
-                      ),
+                  child: Text(
+                    widget.day.asRelativeDate(context),
+                    style: TextStyle(
+                      color: context.c.outline,
+                      fontWeight: .bold,
+                      fontSize: 16,
                     ),
                   ),
                 ),
