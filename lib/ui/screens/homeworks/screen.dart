@@ -422,79 +422,123 @@ class _HomeworkCard extends StatelessWidget {
           color: scheme.primaryContainer,
         ),
 
-        padding: const .symmetric(horizontal: 12, vertical: 8),
-
         child: Column(
           crossAxisAlignment: .start,
           spacing: 6,
 
           children: [
-            Row(
-              mainAxisAlignment: .spaceBetween,
-              spacing: 10,
+            Padding(
+              padding: const .symmetric(horizontal: 12, vertical: 8),
 
-              children: [
-                Expanded(
-                  child: Text(
-                    homework.subject.name ?? context.l10n.noSubject,
+              child: Column(
+                children: [
+                  Row(
+                    mainAxisAlignment: .spaceBetween,
+                    spacing: 10,
 
-                    overflow: .ellipsis,
-                    maxLines: 1,
+                    children: [
+                      Expanded(
+                        child: Text(
+                          homework.subject.name ?? context.l10n.noSubject,
+
+                          overflow: .ellipsis,
+                          maxLines: 1,
+
+                          style: TextStyle(
+                            color: scheme.primary,
+                            fontWeight: .w800,
+                            fontSize: 21,
+                          ),
+                        ),
+                      ),
+
+                      Text(
+                        date,
+                        style: TextStyle(
+                          fontWeight: .bold,
+                          color: scheme.outline,
+                        ),
+                      ),
+                    ],
+                  ),
+
+                  RemoteHtml(
+                    rawHtml: homework.description,
+                    compact: true,
+                    maxLines: 3,
 
                     style: TextStyle(
-                      color: scheme.primary,
-                      fontWeight: .w800,
-                      fontSize: 21,
+                      color: scheme.onSurface,
+                      fontWeight: .w600,
+                      fontSize: 15,
                     ),
                   ),
-                ),
-
-                Text(
-                  date,
-                  style: TextStyle(fontWeight: .bold, color: scheme.outline),
-                ),
-              ],
-            ),
-
-            RemoteHtml(
-              rawHtml: homework.description,
-              compact: true,
-              maxLines: 3,
-
-              style: TextStyle(
-                color: scheme.onSurface,
-                fontWeight: .w600,
-                fontSize: 15,
+                ],
               ),
             ),
 
-            const SizedBox(height: 6),
-
-            Row(
-              spacing: 6,
-
+            Column(
               children: [
-                Icon(
-                  homework.isDone
-                      ? HugeIconsSolid.tick03
-                      : HugeIconsStroke.tick03,
-                  color: homework.isDone
-                      ? scheme.onPrimaryContainer
-                      : scheme.outline,
-                  size: 21,
-                ),
+                Divider(height: 0, thickness: 1, color: scheme.inversePrimary),
 
-                Text(
-                  homework.isDone
-                      ? context.l10n.homeworkSetDone
-                      : context.l10n.homeworkSetNotDone,
+                Pressable(
+                  borderRadius: const .vertical(bottom: .circular(11)),
+                  onPressed: () async {
+                    await context.ar.runTask(
+                      context: context,
 
-                  style: TextStyle(
-                    color: homework.isDone
-                        ? scheme.onPrimaryContainer
-                        : scheme.outline,
-                    fontWeight: .w800,
-                    fontSize: 15.5,
+                      callback: (session) async {
+                        final cachedHomework = session.getCachedValue<Homework>(
+                          .HOMEWORK,
+                          homework.visualId,
+                        );
+
+                        await session.access(
+                          ChangeHomeworkStateAccessor(
+                            homeworksToUpdate: {
+                              cachedHomework: !homework.isDone,
+                            },
+                          ),
+                        );
+                      },
+                      debugLabel: 'Update state for homework',
+                    );
+
+                    onReturn();
+                  },
+
+                  child: Padding(
+                    padding: const .symmetric(horizontal: 12, vertical: 8),
+
+                    child: Row(
+                      spacing: 6,
+
+                      children: [
+                        Icon(
+                          homework.isDone
+                              ? HugeIconsSolid.tick03
+                              : HugeIconsStroke.tick03,
+                          color: homework.isDone
+                              ? scheme.onPrimaryContainer
+                              : scheme.outline,
+                          size: 21,
+                        ),
+
+                        Text(
+                          homework.isDone
+                              ? context.l10n.homeworkSetDone
+                              : context.l10n.homeworkSetNotDone,
+
+                          style: TextStyle(
+                            color: homework.isDone
+                                ? scheme.onPrimaryContainer
+                                : scheme.outline,
+                            fontWeight: .w800,
+                            fontSize: 15.5,
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
                 ),
               ],
