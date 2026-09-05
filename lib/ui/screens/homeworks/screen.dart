@@ -87,11 +87,7 @@ class _HomeworksScreenState extends State<HomeworksScreen>
               scale: animation.value,
               duration: const Duration(seconds: 4),
               curve: Curves.fastOutSlowIn,
-              child: _HomeworkList(
-                day: day,
-                homeworks: const [],
-                onReturn: () {},
-              ),
+              child: _Day(day: day, homeworks: const [], onReturn: () {}),
             );
           });
         }
@@ -183,7 +179,7 @@ class _HomeworksScreenState extends State<HomeworksScreen>
                         return const SizedBox.shrink();
                       }
 
-                      return _HomeworkList(
+                      return _Day(
                         day: day,
                         homeworks: value,
                         onReturn: () {
@@ -284,27 +280,30 @@ class _HomeworksScreenState extends State<HomeworksScreen>
   }
 }
 
-class _HomeworkList extends StatefulWidget {
+class _Day extends StatefulWidget {
   final DateTime day;
   final List<Homework> homeworks;
   final VoidCallback onReturn;
 
-  const _HomeworkList({
+  const _Day({
     required this.day,
     required this.homeworks,
     required this.onReturn,
   });
 
   @override
-  State<_HomeworkList> createState() => _HomeworkListState();
+  State<_Day> createState() => _DayState();
 }
 
-class _HomeworkListState extends State<_HomeworkList> {
+class _DayState extends State<_Day> {
   final ExpansibleController controller = ExpansibleController();
 
+  bool get needToDisplay =>
+      !DateTime.now().copyWith(isUtc: true).toDay().isAfter(widget.day) ||
+      (widget.homeworks.any((element) => !element.isDone));
+
   void _displayIfNeeded() {
-    if (!DateTime.now().copyWith(isUtc: true).toDay().isAfter(widget.day) ||
-        (widget.homeworks.any((element) => !element.isDone))) {
+    if (needToDisplay) {
       controller.expand();
     }
   }
@@ -316,7 +315,7 @@ class _HomeworkListState extends State<_HomeworkList> {
   }
 
   @override
-  void didUpdateWidget(covariant _HomeworkList oldWidget) {
+  void didUpdateWidget(covariant _Day oldWidget) {
     super.didUpdateWidget(oldWidget);
 
     if (oldWidget.homeworks != widget.homeworks) {
@@ -338,18 +337,28 @@ class _HomeworkListState extends State<_HomeworkList> {
             hasVisuals: false,
 
             child: Row(
-              mainAxisAlignment: .spaceBetween,
-
               children: [
-                Padding(
-                  padding: const .only(left: 2, bottom: 2),
+                Icon(
+                  !needToDisplay
+                      ? HugeIconsSolid.tick03
+                      : HugeIconsStroke.tick03,
+                  color: context.c.outline,
+                  size: 19,
+                ),
 
-                  child: Text(
-                    widget.day.asRelativeDate(context),
-                    style: TextStyle(
-                      color: context.c.outline,
-                      fontWeight: .bold,
-                      fontSize: 16,
+                const SizedBox(width: 8),
+
+                Expanded(
+                  child: Padding(
+                    padding: const .only(left: 2, bottom: 2),
+
+                    child: Text(
+                      widget.day.asRelativeDate(context),
+                      style: TextStyle(
+                        color: context.c.outline,
+                        fontWeight: .bold,
+                        fontSize: 16,
+                      ),
                     ),
                   ),
                 ),
