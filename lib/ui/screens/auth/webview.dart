@@ -1,8 +1,10 @@
 import 'dart:io';
 
 import 'package:antinote_api/antinote_api.dart';
+import 'package:antinote_app/data/src/session/wrapper.dart';
 import 'package:antinote_app/ui/utils/utils.dart';
 import 'package:antinote_app/ui/widgets/customs/app_bar.dart';
+import 'package:flutter/foundation.dart';
 import 'package:material_ui/material_ui.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 
@@ -43,9 +45,10 @@ class _WebviewLoginScreenState extends State<WebviewLoginScreen> {
     super.initState();
 
     final manager = WebViewCookieManager();
-    manager.clearCookies();
+    if (!kDebugMode) {
+      manager.clearCookies();
+    }
 
-    // TODO: Ajouter cookies dans credential car pas uuidAppliMobile == pronote pas content
     _controller = WebViewController()
       ..setJavaScriptMode(JavaScriptMode.unrestricted)
       ..setNavigationDelegate(
@@ -60,7 +63,7 @@ class _WebviewLoginScreenState extends State<WebviewLoginScreen> {
               _loginHandled = true;
 
               try {
-                final result = await CasCredentials.loginFromTicketOrId(
+                final result = await TicketCredentials.loginFromTicketOrId(
                   url!,
                   widget.parameters.casToken,
                   widget.workspace,
@@ -68,11 +71,7 @@ class _WebviewLoginScreenState extends State<WebviewLoginScreen> {
                 );
 
                 if (mounted) {
-                  Navigator.popUntilWithResult(
-                    context,
-                    (route) => route.popDisposition == .doNotPop,
-                    result,
-                  );
+                  Navigator.pop(context, SessionWrapper.register(result));
                 } else {
                   return NavigationDecision.navigate;
                 }

@@ -12,5 +12,4 @@
     <fields>;
 }
 
--dontwarn com.google.protobuf.**
 -keep class com.google.protobuf.** { *; }

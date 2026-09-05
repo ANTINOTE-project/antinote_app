@@ -222,8 +222,8 @@ class _HomeworksScreenState extends State<HomeworksScreen>
     _data = session.instance;
 
     final weekCount =
-        ((session.instance.lastDate.toUtc().millisecondsSinceEpoch -
-                session.instance.firstMonday.toUtc().millisecondsSinceEpoch) ~/
+        ((session.instance.lastDate.millisecondsSinceEpoch -
+                session.instance.firstMonday.millisecondsSinceEpoch) ~/
             (Duration.millisecondsPerSecond *
                 Duration.secondsPerMinute *
                 Duration.minutesPerHour *
@@ -243,12 +243,15 @@ class _HomeworksScreenState extends State<HomeworksScreen>
     if (_pageController == null ||
         !_pageController!.hasClients ||
         _pageController?.page == null) {
-      final now = DateTime.now();
+      final now =
+          session.instance.demoDateTime ??
+          session.instance.findBusinessDay(
+            DateTime.now().toDay(true),
+            const .new(days: 1),
+          );
       final diffWeeks =
-          ((now.toUtc().millisecondsSinceEpoch -
-                  session.instance.firstMonday
-                      .toUtc()
-                      .millisecondsSinceEpoch) ~/
+          ((now.millisecondsSinceEpoch -
+                  session.instance.firstMonday.millisecondsSinceEpoch) ~/
               (Duration.millisecondsPerSecond *
                   Duration.secondsPerMinute *
                   Duration.minutesPerHour *

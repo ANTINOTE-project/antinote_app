@@ -30,7 +30,7 @@ class MethodsListScreen extends StatelessWidget with WidgetsBindingObserver {
         subtitle: context.l10n.loginCitySubtitle,
 
         onPressed: () async {
-          await Navigator.push(
+          final result = await Navigator.push(
             context,
             MaterialPageRoute(
               builder: (context) {
@@ -38,6 +38,9 @@ class MethodsListScreen extends StatelessWidget with WidgetsBindingObserver {
               },
             ),
           );
+          if (result != null && context.mounted) {
+            Navigator.pop(context, result);
+          }
         },
       ),
       (
@@ -67,7 +70,7 @@ class MethodsListScreen extends StatelessWidget with WidgetsBindingObserver {
         subtitle: context.l10n.loginUrlSubtitle,
 
         onPressed: () async {
-          await Navigator.push(
+          final result = await Navigator.push(
             context,
             MaterialPageRoute(
               builder: (context) {
@@ -75,6 +78,9 @@ class MethodsListScreen extends StatelessWidget with WidgetsBindingObserver {
               },
             ),
           );
+          if (result != null && context.mounted) {
+            Navigator.pop(context, result);
+          }
         },
       ),
     ];

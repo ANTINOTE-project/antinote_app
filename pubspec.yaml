@@ -1,7 +1,7 @@
 name: antinote_app
 description: "La solution, tout simplement."
 publish_to: "none"
-version: 0.2.0+000200
+version: 0.2.1+000201
 repository: https://github.com/ANTINOTE-project/antinote_app
 
 environment:

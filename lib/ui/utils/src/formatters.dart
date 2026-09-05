@@ -29,8 +29,8 @@ extension AsRelativeDateString on DateTime {
   String asRelativeDate(BuildContext context, [bool dayOnly = true]) {
     var dayTitle = context.l10n.shortDate(this);
 
-    final today = DateTime.now().toUtc().toDay();
-    final thisDay = toUtc().toDay();
+    final today = DateTime.now().toDay(true);
+    final thisDay = toDay(true);
 
     if (today == thisDay) {
       dayTitle = context.l10n.today;
@@ -48,8 +48,8 @@ extension AsRelativeDateString on DateTime {
   }
 
   String asRelativeWeekday(BuildContext context) {
-    final today = DateTime.now().toUtc().toDay();
-    final thisDay = toUtc().toDay();
+    final today = DateTime.now().toDay(true);
+    final thisDay = toDay(true);
 
     if (today == thisDay) {
       return context.l10n.today;

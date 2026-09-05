@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:math';
 
 import 'package:antinote_app/data/src/accounts/place.dart';
+import 'package:antinote_app/data/src/session/wrapper.dart';
 import 'package:antinote_app/ui/screens/auth/methods/search/search_schools.dart';
 import 'package:antinote_app/ui/utils/utils.dart';
 import 'package:antinote_app/ui/widgets/bottom_padding.dart';
@@ -147,17 +148,22 @@ class _SearchCitiesMethodScreenState extends State<SearchCitiesMethodScreen> {
                             borderRadius: borderRadius,
 
                             onPressed: () async {
-                              await Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) {
-                                    return SearchSchoolsMethodScreen(
-                                      lat: city.latitude,
-                                      long: city.longitude,
-                                    );
-                                  },
-                                ),
-                              );
+                              final result =
+                                  await Navigator.push<RegisterableAccount>(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) {
+                                        return SearchSchoolsMethodScreen(
+                                          lat: city.latitude,
+                                          long: city.longitude,
+                                        );
+                                      },
+                                    ),
+                                  );
+
+                              if (result != null && context.mounted) {
+                                Navigator.pop(context, result);
+                              }
                             },
 
                             leading: Icon(switch (city.placeType) {

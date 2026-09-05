@@ -111,7 +111,7 @@ class _HomeScreenState extends State<HomeScreen>
     username = session.user.name;
 
     logger.info(
-      'Loaded home page with ${homePageManager.loadedWidgets.length} widget(s)',
+      'Loaded home page with ${homePageManager.loadedWidgets.length} widget(s) using ${homePageManager.initialized}',
     );
   }
 }

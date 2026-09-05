@@ -1,4 +1,5 @@
 import 'package:antinote_api/antinote_api.dart';
+import 'package:antinote_app/data/src/session/wrapper.dart';
 import 'package:antinote_app/ui/screens/auth/password.dart';
 import 'package:antinote_app/ui/screens/auth/webview.dart';
 import 'package:antinote_app/ui/utils/utils.dart';
@@ -44,31 +45,24 @@ class _WorkspacesListScreenState extends State<WorkspacesListScreen> {
   }
 
   Future<void> onSelected(BuildContext context, Workspace workspace) async {
-    if (_casLoginActive) {
-      await Navigator.push(
-        context,
-        MaterialPageRoute(
-          builder: (context) {
-            return WebviewLoginScreen(
-              parameters: widget.parameters,
-              workspace: workspace,
-            );
-          },
-        ),
-      );
-    } else {
-      await Navigator.push(
-        context,
-        MaterialPageRoute(
-          builder: (context) {
-            return PasswordLoginScreen(
-              workspace: workspace,
-              baseUrl: widget.parameters.baseUrl,
-            );
-          },
-        ),
-      );
-    }
+    final result = await Navigator.push<RegisterableAccount>(
+      context,
+      MaterialPageRoute(
+        builder: (context) {
+          return _casLoginActive
+              ? WebviewLoginScreen(
+                  parameters: widget.parameters,
+                  workspace: workspace,
+                )
+              : PasswordLoginScreen(
+                  workspace: workspace,
+                  baseUrl: widget.parameters.baseUrl,
+                );
+        },
+      ),
+    );
+
+    if (result != null && context.mounted) Navigator.pop(context, result);
   }
 
   @override

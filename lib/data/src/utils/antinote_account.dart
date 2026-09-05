@@ -56,6 +56,7 @@ extension CredentialsAsAntinoteAccount on Credentials {
           baseUrl: baseUrl.toString(),
           workspaceName: workspace.label,
           tokenCredentials: Any.pack(serialize(), typeUrlPrefix: typePrefix),
+          isDemo: session.stack.demo,
         ),
       PasswordCredentials(
         username: final username,
@@ -71,6 +72,7 @@ extension CredentialsAsAntinoteAccount on Credentials {
           baseUrl: baseUrl.toString(),
           workspaceName: workspace.label,
           tokenCredentials: Any.pack(serialize(), typeUrlPrefix: typePrefix),
+          isDemo: session.stack.demo,
         ),
       _ => throw UnimplementedError('Unknown credentials type: $runtimeType'),
     }..freeze();

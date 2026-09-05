@@ -1,11 +1,13 @@
 import 'package:antinote_api/antinote_api.dart';
+import 'package:antinote_app/data/src/session/wrapper.dart';
 import 'package:antinote_app/ui/utils/utils.dart';
 import 'package:antinote_app/ui/widgets/customs/app_bar.dart';
 import 'package:antinote_app/ui/widgets/customs/button.dart';
 import 'package:antinote_app/ui/widgets/customs/field.dart';
 import 'package:antinote_app/ui/widgets/customs/icon.dart';
-import 'package:material_ui/material_ui.dart';
+import 'package:flutter/services.dart';
 import 'package:hugeicons_pro/hugeicons.dart';
+import 'package:material_ui/material_ui.dart';
 
 class PasswordLoginScreen extends StatefulWidget {
   final Workspace workspace;
@@ -26,6 +28,7 @@ class _PasswordLoginScreenState extends State<PasswordLoginScreen> {
   final _passwordController = TextEditingController();
 
   bool _showPassword = false;
+  bool loginJustFailed = false;
 
   @override
   Widget build(BuildContext context) {
@@ -47,9 +50,10 @@ class _PasswordLoginScreenState extends State<PasswordLoginScreen> {
                   prefixIcon: const Icon(HugeIconsSolid.user),
                   hintText: context.l10n.loginUsername,
 
-                  keyboardType: TextInputType.name,
+                  keyboardType: .name,
                   autofillHints: const [AutofillHints.username],
-                  inputAction: TextInputAction.next,
+                  autoCorrect: false,
+                  inputAction: .next,
                 ),
 
                 FieldWidget(
@@ -73,9 +77,10 @@ class _PasswordLoginScreenState extends State<PasswordLoginScreen> {
 
                   hintText: context.l10n.loginPassword,
 
-                  keyboardType: TextInputType.visiblePassword,
+                  keyboardType: .visiblePassword,
                   autofillHints: const [AutofillHints.password],
-                  inputAction: TextInputAction.done,
+                  autoCorrect: false,
+                  inputAction: .done,
                   obscureText: !_showPassword,
                 ),
 
@@ -94,25 +99,23 @@ class _PasswordLoginScreenState extends State<PasswordLoginScreen> {
                       deviceUuid: Credentials.generateDeviceUuid(),
                     );
 
-                    final result = credentials.login(
-                      options: context.s.networking.sessionOptions,
-                    );
-                    Navigator.popUntilWithResult(
-                      context,
-                      (route) => route.popDisposition == .doNotPop,
-                      () async {
-                        final loginResult = await result;
+                    try {
+                      final result = await credentials.login(
+                        options: context.s.networking.sessionOptions,
+                      );
 
-                        if (loginResult.session.stack.demo) {
-                          return (
-                            session: loginResult.session,
-                            credentials: credentials,
-                          );
-                        }
+                      if (context.mounted) {
+                        TextInput.finishAutofillContext();
 
-                        return loginResult;
-                      }(),
-                    );
+                        Navigator.pop(
+                          context,
+                          SessionWrapper.register(result, credentials),
+                        );
+                      }
+                    } catch (e, st) {
+                      logger.severe('Could not login using password', e, st);
+                      loginJustFailed = true;
+                    }
                   },
 
                   label: context.l10n.loginButton,

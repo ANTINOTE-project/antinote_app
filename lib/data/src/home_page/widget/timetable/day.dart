@@ -56,11 +56,7 @@ final class const TimetableDayWidget()
         final selectedDate =
             params.get(TimetableDayParameter.onlyOnBusinessDays)
             ? session.instance
-                  .findBusinessDay(
-                    anchorDate,
-                    const .new(days: 1),
-                    canBeDifferent: true,
-                  )
+                  .findBusinessDay(anchorDate, const .new(days: 1))
                   .toDay()
             : anchorDate;
 
@@ -87,11 +83,7 @@ final class const TimetableDayWidget()
 
         var selectedDate = params.get(TimetableDayParameter.onlyOnBusinessDays)
             ? session.instance
-                  .findBusinessDay(
-                    anchorDate,
-                    const .new(days: 1),
-                    canBeDifferent: true,
-                  )
+                  .findBusinessDay(anchorDate, const .new(days: 1))
                   .toDay()
             : anchorDate;
 

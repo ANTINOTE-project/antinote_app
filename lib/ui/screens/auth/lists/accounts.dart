@@ -248,8 +248,6 @@ class _AccountsListScreenState extends State<AccountsListScreen>
                     onPressed: () => _onAccountPressed(account),
                     borderRadius: borderRadius,
 
-                    // TODO check if account is demo
-                    // leading: account.is,
                     trailing: Skeleton.ignore(
                       child: IconButton(
                         onPressed: () async {
@@ -295,8 +293,15 @@ class _AccountsListScreenState extends State<AccountsListScreen>
                         if (_defaultUid == account.uid)
                           Icon(
                             HugeIconsSolid.star,
-                            size: 18,
+                            size: 20,
                             color: context.c.secondary,
+                          ),
+
+                        if (account.isDemo)
+                          Icon(
+                            HugeIconsSolid.testTube02,
+                            size: 20,
+                            color: context.c.tertiary,
                           ),
                       ],
                     ),

@@ -7,12 +7,12 @@ enum HomeworkListParameter<T>(@override final String code)
   expandInitiallyShownHomeworkDescription<bool>(
     'expand_initially_shown_homework_description',
   ),
-  showAllHomeworks<bool>('show_all_homeworks')
+  showAllHomeworks<bool>('show_all_homeworks'),
 }
 
 enum HomeworkListArgument<T>() implements WidgetArgument<T> {
   homeworkCount<int>(),
-  expandHomeworks<bool>()
+  expandHomeworks<bool>(),
 }
 
 final class const HomeworkListWidget()
@@ -88,11 +88,7 @@ final class const HomeworkListWidget()
 
           final nextDayHomeworks = cache.dayHomeworks(
             session.instance
-                .findBusinessDay(
-                  cache.anchorDate,
-                  const Duration(days: 1),
-                  canBeDifferent: true,
-                )
+                .findBusinessDay(cache.anchorDate, const Duration(days: 1))
                 .toDay(),
           );
           if (nextDayHomeworks.isNotEmpty) {

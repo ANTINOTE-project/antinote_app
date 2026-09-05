@@ -53,6 +53,8 @@ unlinked_spec.ds
 **/android/**/gradle-wrapper.jar
 .gradle/
 **/android/captures/
+**/android/.kotlin/
+**/android/build/
 **/android/gradlew
 **/android/gradlew.bat
 **/android/local.properties
@@ -123,7 +125,6 @@ app.*.symbols
 
 # Widget Preview related
 .widget_preview/
-android/app/local.properties
 
 # Debug symbols
 **/debug-info

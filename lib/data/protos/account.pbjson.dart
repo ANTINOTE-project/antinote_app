@@ -184,6 +184,7 @@ const AntinoteAccount$json = {
     },
     {'1': 'invalid', '3': 8, '4': 1, '5': 8, '10': 'invalid'},
     {'1': 'store_securely', '3': 9, '4': 1, '5': 8, '10': 'storeSecurely'},
+    {'1': 'is_demo', '3': 13, '4': 1, '5': 8, '10': 'isDemo'},
     {
       '1': 'calendar_data',
       '3': 11,
@@ -213,10 +214,10 @@ final $typed_data.Uint8List antinoteAccountDescriptor = $convert.base64Decode(
     'UhFlc3RhYmxpc2htZW50TmFtZRIZCghiYXNlX3VybBgFIAEoCVIHYmFzZVVybBIlCg53b3Jrc3'
     'BhY2VfbmFtZRgGIAEoCVINd29ya3NwYWNlTmFtZRJBChF0b2tlbl9jcmVkZW50aWFscxgHIAEo'
     'CzIULmdvb2dsZS5wcm90b2J1Zi5BbnlSEHRva2VuQ3JlZGVudGlhbHMSGAoHaW52YWxpZBgIIA'
-    'EoCFIHaW52YWxpZBIlCg5zdG9yZV9zZWN1cmVseRgJIAEoCFINc3RvcmVTZWN1cmVseRI/Cg1j'
-    'YWxlbmRhcl9kYXRhGAsgASgLMhouYW50aW5vdGVfYXBwLlN5bmNUYXNrRGF0YVIMY2FsZW5kYX'
-    'JEYXRhEkcKEW5vdGlmaWNhdGlvbl9kYXRhGAwgASgLMhouYW50aW5vdGVfYXBwLlN5bmNUYXNr'
-    'RGF0YVIQbm90aWZpY2F0aW9uRGF0YUoECAoQCw==');
+    'EoCFIHaW52YWxpZBIlCg5zdG9yZV9zZWN1cmVseRgJIAEoCFINc3RvcmVTZWN1cmVseRIXCgdp'
+    'c19kZW1vGA0gASgIUgZpc0RlbW8SPwoNY2FsZW5kYXJfZGF0YRgLIAEoCzIaLmFudGlub3RlX2'
+    'FwcC5TeW5jVGFza0RhdGFSDGNhbGVuZGFyRGF0YRJHChFub3RpZmljYXRpb25fZGF0YRgMIAEo'
+    'CzIaLmFudGlub3RlX2FwcC5TeW5jVGFza0RhdGFSEG5vdGlmaWNhdGlvbkRhdGFKBAgKEAs=');
 
 @$core.Deprecated('Use serializedAccountRegistryDescriptor instead')
 const SerializedAccountRegistry$json = {

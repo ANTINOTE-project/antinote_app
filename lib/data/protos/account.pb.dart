@@ -382,6 +382,7 @@ class AntinoteAccount extends $pb.GeneratedMessage {
     $core.bool? storeSecurely,
     SyncTaskData? calendarData,
     SyncTaskData? notificationData,
+    $core.bool? isDemo,
   }) {
     final result = create();
     if (uid != null) result.uid = uid;
@@ -395,6 +396,7 @@ class AntinoteAccount extends $pb.GeneratedMessage {
     if (storeSecurely != null) result.storeSecurely = storeSecurely;
     if (calendarData != null) result.calendarData = calendarData;
     if (notificationData != null) result.notificationData = notificationData;
+    if (isDemo != null) result.isDemo = isDemo;
     return result;
   }
 
@@ -425,6 +427,7 @@ class AntinoteAccount extends $pb.GeneratedMessage {
         subBuilder: SyncTaskData.create)
     ..aOM<SyncTaskData>(12, _omitFieldNames ? '' : 'notificationData',
         subBuilder: SyncTaskData.create)
+    ..aOB(13, _omitFieldNames ? '' : 'isDemo')
     ..hasRequiredFields = false;
 
   @$core.Deprecated('See https://github.com/google/protobuf.dart/issues/998.')
@@ -562,6 +565,16 @@ class AntinoteAccount extends $pb.GeneratedMessage {
   void clearNotificationData() => $_clearField(12);
   @$pb.TagNumber(12)
   SyncTaskData ensureNotificationData() => $_ensure(10);
+
+  /// Whether the account is from a demo instance that does not store any data.
+  @$pb.TagNumber(13)
+  $core.bool get isDemo => $_getBF(11);
+  @$pb.TagNumber(13)
+  set isDemo($core.bool value) => $_setBool(11, value);
+  @$pb.TagNumber(13)
+  $core.bool hasIsDemo() => $_has(11);
+  @$pb.TagNumber(13)
+  void clearIsDemo() => $_clearField(13);
 }
 
 class SerializedAccountRegistry extends $pb.GeneratedMessage {

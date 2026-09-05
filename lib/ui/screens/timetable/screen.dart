@@ -137,21 +137,16 @@ class _TimetableDisplayState extends State<TimetableDisplay>
 
     late final Map<DateTime, DayBlocks> result;
 
-    try {
-      if (session != null) {
-        result = await widget.updateBlocks(session, days, dayList, forceReload);
-      } else {
-        result = await context.ar.runTask(
-          context: context,
-          callback: (session) async =>
-              await widget.updateBlocks(session, days, dayList, forceReload),
-          retry: true,
-          debugLabel: 'Fetch classes for ${days.toString()}',
-        );
-      }
-    } catch (e, st) {
-      result = {};
-      debugPrintStack(label: e.toString(), stackTrace: st);
+    if (session != null) {
+      result = await widget.updateBlocks(session, days, dayList, forceReload);
+    } else {
+      result = await context.ar.runTask(
+        context: context,
+        callback: (session) async =>
+            await widget.updateBlocks(session, days, dayList, forceReload),
+        retry: true,
+        debugLabel: 'Fetch classes for ${days.toString()}',
+      );
     }
 
     for (final entry in result.entries) {

@@ -184,26 +184,24 @@ class _QRCodeMethodScreenState extends State<QRCodeMethodScreen> {
                           return const LoadingWidget();
                         },
 
-                        onDetect: (result) async {
+                        onDetect: (read) async {
                           if (_isProcessing) return;
-                          _isProcessing = true;
 
-                          final readValue = result.barcodes.first.rawValue;
+                          try {
+                            _isProcessing = true;
 
-                          if (readValue == null) {
+                            final value = read.barcodes.first.rawValue;
+                            if (value == null) {
+                              return;
+                            }
+
+                            final result = await _askForPin(value);
+                            if (result != null && context.mounted) {
+                              Navigator.pop(context, result);
+                            }
+                          } finally {
                             _isProcessing = false;
-                            return;
                           }
-
-                          final createdCredentials = await _askForPin(
-                            readValue,
-                          );
-
-                          if (createdCredentials != null && context.mounted) {
-                            Navigator.pop(context, createdCredentials);
-                          }
-
-                          _isProcessing = false;
                         },
                       ),
                     );

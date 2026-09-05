@@ -1,6 +1,7 @@
 import 'dart:math';
 
 import 'package:antinote_api/antinote_api.dart';
+import 'package:antinote_app/data/src/session/wrapper.dart';
 import 'package:antinote_app/ui/screens/auth/lists/workspaces.dart';
 import 'package:antinote_app/ui/utils/utils.dart';
 import 'package:antinote_app/ui/widgets/bottom_padding.dart';
@@ -119,19 +120,22 @@ class _SearchSchoolsMethodScreenState extends State<SearchSchoolsMethodScreen> {
                                 );
 
                             if (context.mounted) {
-                              await Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) {
-                                    return WorkspacesListScreen(
-                                      parameters: parameters!,
-                                    );
-                                  },
-                                ),
-                              );
-                            }
+                              final result =
+                                  await Navigator.push<RegisterableAccount>(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) {
+                                        return WorkspacesListScreen(
+                                          parameters: parameters!,
+                                        );
+                                      },
+                                    ),
+                                  );
 
-                            // catch
+                              if (result != null && context.mounted) {
+                                Navigator.pop(context, result);
+                              }
+                            }
                           } catch (e, st) {
                             logger.severe(
                               'Error during fetch of parameters',

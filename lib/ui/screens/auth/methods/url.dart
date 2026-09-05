@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:antinote_api/antinote_api.dart';
+import 'package:antinote_app/data/src/session/wrapper.dart';
 import 'package:antinote_app/ui/screens/auth/lists/workspaces.dart';
 import 'package:antinote_app/ui/utils/utils.dart';
 import 'package:antinote_app/ui/widgets/customs/app_bar.dart';
@@ -94,8 +95,6 @@ class _UrlMethodScreenState extends State<UrlMethodScreen> {
             }
           }
         }
-
-        // catch
       } catch (e) {
         return lastApplicableParameters?.complete(null);
       }
@@ -113,7 +112,7 @@ class _UrlMethodScreenState extends State<UrlMethodScreen> {
             child: Padding(
               padding: const .symmetric(horizontal: 12, vertical: 8),
 
-              // TODO: Faire en sorte que ça n'overflow pas.
+              // TODO: Make it so it doesn't overflow
               child: FieldWidget(
                 controller: _controller,
                 hintText: context.l10n.loginCitySubtitle,
@@ -126,11 +125,11 @@ class _UrlMethodScreenState extends State<UrlMethodScreen> {
             future: lastApplicableParameters?.future,
 
             builder: (context, snapshot) {
-              if (snapshot.connectionState == ConnectionState.none) {
+              if (snapshot.connectionState == .none) {
                 return const SliverToBoxAdapter(child: SizedBox.shrink());
               }
 
-              if (snapshot.connectionState != ConnectionState.done) {
+              if (snapshot.connectionState != .done) {
                 return const SliverFillRemaining(child: LoadingWidget());
               }
 
@@ -150,50 +149,46 @@ class _UrlMethodScreenState extends State<UrlMethodScreen> {
                     spacing: 8,
 
                     children: [
-                      ListWidget(
+                      ListWidget.list(
                         physics: const NeverScrollableScrollPhysics(),
                         shrinkWrap: true,
                         isSliver: false,
 
                         items: [
-                          (
-                            title: context.l10n.instanceName,
-                            subtitle: context.l10n.instanceNameValue(
-                              instance.establishmentName,
-                              instance.loginEstablishmentName,
+                          .new(
+                            title: Text(context.l10n.instanceName),
+                            subtitle: Text(
+                              context.l10n.instanceNameValue(
+                                instance.establishmentName,
+                                instance.loginEstablishmentName,
+                              ),
                             ),
                           ),
-                          (
-                            title: context.l10n.remoteVersion,
-                            subtitle: instance.version.toString(),
+                          .new(
+                            title: Text(context.l10n.remoteVersion),
+                            subtitle: Text(instance.version.toString()),
                           ),
-                          (
-                            title: context.l10n.remoteYear,
-                            subtitle: context.l10n.remoteYearSubtitle(
-                              instance.firstDate,
-                              instance.lastDate,
+                          .new(
+                            title: Text(context.l10n.remoteYear),
+                            subtitle: Text(
+                              context.l10n.remoteYearSubtitle(
+                                instance.firstDate,
+                                instance.lastDate,
+                              ),
                             ),
                           ),
-                          (
-                            title: context.l10n.remotePeriods,
-                            subtitle: instance.periods
-                                .map(
-                                  (e) =>
-                                      '- ${e.name} (${e.startDate} → ${e.endDate})',
-                                )
-                                .join('\n'),
+                          .new(
+                            title: Text(context.l10n.remotePeriods),
+                            subtitle: Text(
+                              instance.periods
+                                  .map(
+                                    (e) =>
+                                        '- ${e.name} (${e.startDate} → ${e.endDate})',
+                                  )
+                                  .join('\n'),
+                            ),
                           ),
                         ],
-
-                        itemBuilder: (context, item, borderRadius) {
-                          return TileWidget(
-                            borderRadius: borderRadius,
-
-                            titleMaxLines: null,
-                            title: Text(item.title),
-                            subtitle: Text(item.subtitle),
-                          );
-                        },
                       ),
 
                       ButtonWidget(
@@ -206,18 +201,21 @@ class _UrlMethodScreenState extends State<UrlMethodScreen> {
 
                             if (!context.mounted) return;
 
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) {
-                                  return WorkspacesListScreen(
-                                    parameters: parameters!,
-                                  );
-                                },
-                              ),
-                            );
+                            final result =
+                                await Navigator.push<RegisterableAccount>(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) {
+                                      return WorkspacesListScreen(
+                                        parameters: parameters!,
+                                      );
+                                    },
+                                  ),
+                                );
 
-                            // catch
+                            if (result != null && context.mounted) {
+                              Navigator.pop(context, result);
+                            }
                           } catch (e, st) {
                             logger.severe(
                               'Error during fetch of parameters',
