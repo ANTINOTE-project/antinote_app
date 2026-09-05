@@ -53,7 +53,10 @@ class _HomeworksScreenState extends State<HomeworksScreen>
       final weekEnd = weekStart.add(const Duration(days: 6)).toDay();
       final days = DateRange(start: weekStart, end: weekEnd).listDays();
 
-      final week = session.instance.getWeekNumberForDate(weekStart);
+      final week = session.instance.getWeekNumberForDate(
+        weekStart,
+        forceRelativeToSchoolYear: true,
+      );
 
       for (final day in days) {
         _homeworks.putIfAbsent(day, () => ValueNotifier([]));
@@ -128,7 +131,10 @@ class _HomeworksScreenState extends State<HomeworksScreen>
           final weekStart = _data.firstMonday
               .add(Duration(days: 7 * index))
               .toDay();
-          final weekNumber = _data.getWeekNumberForDate(weekStart);
+          final weekNumber = _data.getWeekNumberForDate(
+            weekStart,
+            forceRelativeToSchoolYear: true,
+          );
 
           final rawWeekEnd = weekStart.add(const Duration(days: 6));
           final weekEnd = DateTime.fromMillisecondsSinceEpoch(
