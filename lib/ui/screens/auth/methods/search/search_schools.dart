@@ -96,6 +96,7 @@ class _SearchSchoolsMethodScreenState extends State<SearchSchoolsMethodScreen> {
                 controller: _controller,
                 hintText: context.l10n.loginCitySubtitle,
                 onChanged: _onSearch,
+                autofocus: true,
               ),
             ),
 

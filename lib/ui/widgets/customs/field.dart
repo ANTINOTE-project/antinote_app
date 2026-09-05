@@ -14,6 +14,7 @@ class FieldWidget extends StatelessWidget {
   final TextInputType? keyboardType;
   final TextInputAction? inputAction;
   final bool obscureText;
+  final bool autofocus;
 
   final Widget? prefixIcon;
   final Widget? suffixIcon;
@@ -31,6 +32,7 @@ class FieldWidget extends StatelessWidget {
     this.keyboardType,
     this.obscureText = false,
     this.inputAction,
+    this.autofocus = false,
 
     this.prefixIcon,
     this.suffixIcon,
@@ -55,6 +57,7 @@ class FieldWidget extends StatelessWidget {
         autofillHints: autofillHints,
         keyboardType: keyboardType,
         obscureText: obscureText,
+        autofocus: autofocus,
 
         textAlignVertical: TextAlignVertical.center,
         style: const TextStyle(fontWeight: FontWeight.w600),

@@ -99,6 +99,7 @@ class _SearchCitiesMethodScreenState extends State<SearchCitiesMethodScreen> {
                 controller: _controller,
                 hintText: context.l10n.loginCitySubtitle,
                 onChanged: (_) => _onQueryChanged(),
+                autofocus: true,
               ),
             ),
 
