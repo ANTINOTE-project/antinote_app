@@ -170,17 +170,25 @@ mixin TabMixin<T extends StatefulWidget> on PageMixin<T> {
 
   bool get registerHook => true;
 
+  Future<void> loadWithSession(RemoteSession session) {
+    if (!mounted) return Future.value();
+
+    return load(session);
+  }
+
   Future<void> load(RemoteSession session);
 
   AccountRegistry? _curRegistry;
 
   @override
   Future<void> loadPage() async {
+    if (!mounted) return;
+
     _curRegistry = context.ar;
     await _curRegistry!.runTask(
       context: context,
       channels: loadChannels,
-      callback: load,
+      callback: loadWithSession,
       debugLabel: 'Reload page $runtimeType',
       retry: true,
       registerHook: registerHook,
@@ -189,7 +197,7 @@ mixin TabMixin<T extends StatefulWidget> on PageMixin<T> {
 
   @override
   void dispose() {
-    _curRegistry?.unregisterHook(load);
+    _curRegistry?.unregisterHook(loadWithSession);
 
     super.dispose();
   }

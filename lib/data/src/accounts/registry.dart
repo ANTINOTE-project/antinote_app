@@ -22,15 +22,17 @@ final class AccountRegistry({
   final Map<String, SessionWrapper> _sessions = {};
 
   SessionWrapper? get curSession =>
-      _curAccount == null ? null : _sessions[_curAccount];
+      _curAccount.value == null ? null : _sessions[_curAccount.value];
 
   SessionWrapper? specificSession(String accountUid) => _sessions[accountUid];
 
-  String? _curAccount;
+  final ValueNotifier<String?> _curAccount = ValueNotifier(null);
 
-  String? get curAccountUid => _curAccount;
+  ValueNotifier<String?> get curAccountListenable => _curAccount;
 
-  bool get accountPicked => _curAccount != null;
+  String? get curAccountUid => _curAccount.value;
+
+  bool get accountPicked => _curAccount.value != null;
   Completer<void>? pickLock;
 
   bool managesAccount(String accountUid) => _sessions.containsKey(accountUid);
@@ -48,7 +50,7 @@ final class AccountRegistry({
     pickLock = Completer();
 
     try {
-      if (_curAccount != null) return;
+      if (_curAccount.value != null) return;
 
       final defaultAccount = await _storage.getDefaultAccount();
       if (defaultAccount != null && !defaultAccount.invalid) {
@@ -79,7 +81,7 @@ final class AccountRegistry({
 
   Future<bool> loadAccount(String accountUid, {bool pick = true}) async {
     if (pick) {
-      _curAccount = accountUid;
+      _curAccount.value = accountUid;
     }
     final wrapper = curSession ?? SessionWrapper(accountUid: accountUid);
     _sessions[accountUid] = wrapper;
@@ -107,13 +109,13 @@ final class AccountRegistry({
       return true;
     } catch (e, st) {
       logger.severe('Failed to log in to newly picked account', e, st);
-      _curAccount = null;
+      _curAccount.value = null;
 
       return false;
     }
   }
 
-  void unpickAccount() => _curAccount = null;
+  void unpickAccount() => _curAccount.value = null;
 
   Future<bool> registerAccount(
     RegisterableAccount entry, {
@@ -168,7 +170,7 @@ final class AccountRegistry({
     bool registerHook = false,
     String? forceAccountId,
   }) async {
-    return specificSession(forceAccountId ?? _curAccount!)!.runTask(
+    return specificSession(forceAccountId ?? _curAccount.value!)!.runTask(
       callback: callback,
       channels: channels,
       debugLabel: debugLabel,

@@ -76,6 +76,8 @@ class _AppShellState extends State<AppShell> {
     super.dispose();
   }
 
+  String? nullAlias;
+
   @override
   Widget build(BuildContext context) {
     final screenSize = MediaQuery.sizeOf(context);
@@ -145,13 +147,33 @@ class _AppShellState extends State<AppShell> {
                     ),
                   ),
 
-                Expanded(
-                  child: AnimatedSwitcher(
-                    duration: const Duration(milliseconds: 300),
-                    switchInCurve: Curves.fastOutSlowIn,
+                ValueListenableBuilder(
+                  valueListenable: context.ar.curAccountListenable,
+                  builder: (context, value, child) {
+                    final String? actualKey;
 
-                    child: _tabs[currentPage].screen,
-                  ),
+                    if (value != null) {
+                      if (nullAlias == null) {
+                        nullAlias = value;
+                        actualKey = null;
+                      } else if (nullAlias == value) {
+                        actualKey = null;
+                      } else {
+                        actualKey = value;
+                      }
+                    } else {
+                      actualKey = null;
+                    }
+
+                    return Expanded(
+                      child: AnimatedSwitcher(
+                        duration: const Duration(milliseconds: 300),
+                        switchInCurve: Curves.fastOutSlowIn,
+
+                        child: _tabs[currentPage].screen(ValueKey(actualKey)),
+                      ),
+                    );
+                  },
                 ),
               ],
             ),

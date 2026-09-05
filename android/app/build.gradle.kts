@@ -18,7 +18,7 @@ if (keystorePropertiesFile.exists()) {
 dependencies {
     implementation("androidx.datastore:datastore:1.2.1")
     implementation("androidx.biometric:biometric:1.1.0")
-    implementation("com.google.protobuf:protobuf-kotlin-lite:4.36.0")
+    implementation("com.google.protobuf:protobuf-kotlin-lite:4.36.1")
     implementation("androidx.work:work-runtime-ktx:2.11.2")
     implementation("androidx.appcompat:appcompat:1.8.0")
 
@@ -81,6 +81,12 @@ android {
     }
 
     buildTypes {
+        debug {
+            if (keystorePropertiesFile.exists()) {
+                signingConfig = signingConfigs.getByName("release")
+            }
+        }
+
         release {
             @Suppress("UnstableApiUsage")
             optimization {
