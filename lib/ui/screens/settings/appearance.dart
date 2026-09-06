@@ -28,86 +28,82 @@ class _AppearanceState extends State<Appearance> {
 
         ListWidget.list(
           items: [
-            TileWidgetData(
-              padding: .zero,
+            if (!isDynamic)
+              TileWidgetData(
+                padding: .zero,
 
-              title: SizedBox(
-                height: 110,
+                title: SizedBox(
+                  height: 110,
 
-                child: ListView.builder(
-                  physics: const BouncingScrollPhysics(
-                    parent: AlwaysScrollableScrollPhysics(),
-                  ),
+                  child: ListView.builder(
+                    physics: const BouncingScrollPhysics(
+                      parent: AlwaysScrollableScrollPhysics(),
+                    ),
 
-                  padding: const .symmetric(horizontal: 20, vertical: 14),
+                    padding: const .symmetric(horizontal: 20, vertical: 14),
 
-                  itemCount: AppColor.values.length,
-                  scrollDirection: .horizontal,
-                  shrinkWrap: true,
+                    itemCount: AppColor.values.length,
+                    scrollDirection: .horizontal,
+                    shrinkWrap: true,
 
-                  itemBuilder: (context, index) {
-                    final appColor = AppColor.values[index];
+                    itemBuilder: (context, index) {
+                      final appColor = AppColor.values[index];
 
-                    final label = appColor.label(context.l10n);
-                    final color = appColor.color;
+                      final label = appColor.label(context.l10n);
+                      final color = appColor.color;
 
-                    final isSelected = color == context.s.theme.seedColor;
+                      final isSelected = color == context.s.theme.seedColor;
 
-                    return Padding(
-                      padding: .only(
-                        right: index == AppColor.values.length - 1 ? 0 : 20,
-                      ),
+                      return Padding(
+                        padding: .only(
+                          right: index == AppColor.values.length - 1 ? 0 : 20,
+                        ),
 
-                      child: Column(
-                        mainAxisAlignment: .center,
-                        spacing: 4,
+                        child: Column(
+                          mainAxisAlignment: .center,
+                          spacing: 4,
 
-                        children: [
-                          Pressable(
-                            borderRadius: .circular(90),
+                          children: [
+                            Pressable(
+                              borderRadius: .circular(90),
 
-                            onPressed: isDynamic
-                                ? null
-                                : () async {
-                                    await context.s.theme.setSeedColor(color);
-                                    if (mounted) setState(() {});
-                                  },
+                              onPressed: () async {
+                                await context.s.theme.setSeedColor(color);
+                                if (mounted) setState(() {});
+                              },
 
-                            child: Ink(
-                              height: 48,
-                              width: 48,
+                              child: Ink(
+                                height: 48,
+                                width: 48,
 
-                              decoration: BoxDecoration(
-                                borderRadius: .circular(90),
-                                color: isDynamic ? color.withAlpha(128) : color,
-                                border: isSelected
-                                    ? .all(
-                                        color: currentColorScheme.primary,
-                                        width: 2,
-                                      )
-                                    : null,
+                                decoration: BoxDecoration(
+                                  borderRadius: .circular(90),
+                                  color: color,
+                                  border: isSelected
+                                      ? .all(
+                                          color: currentColorScheme.primary,
+                                          width: 2,
+                                        )
+                                      : null,
+                                ),
                               ),
                             ),
-                          ),
 
-                          Text(
-                            label,
-                            overflow: .ellipsis,
-                            style: TextStyle(
-                              fontWeight: .w600,
-                              fontSize: 15,
-                              color: isDynamic
-                                  ? currentColorScheme.onSurface.withAlpha(128)
-                                  : null,
+                            Text(
+                              label,
+                              overflow: .ellipsis,
+                              style: const TextStyle(
+                                fontWeight: .w600,
+                                fontSize: 15,
+                              ),
                             ),
-                          ),
-                        ],
-                      ),
-                    );
-                  },
+                          ],
+                        ),
+                      );
+                    },
+                  ),
                 ),
               ),
-            ),
 
             TileWidgetData(
               title: Text(context.l10n.deviceTheme),
