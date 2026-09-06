@@ -1337,6 +1337,12 @@ abstract class AppLocalizations {
   /// In fr, this message translates to:
   /// **'Le fil a été marqué comme lu'**
   String get markedThreadRead;
+
+  /// No description provided for @renameAccount.
+  ///
+  /// In fr, this message translates to:
+  /// **'Propose un autre nom pour ton compte'**
+  String get renameAccount;
 }
 
 class _AppLocalizationsDelegate

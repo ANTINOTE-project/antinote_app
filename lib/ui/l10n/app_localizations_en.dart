@@ -766,4 +766,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get markedThreadRead => 'The thread was marked as read';
+
+  @override
+  String get renameAccount => 'Give your account a new name';
 }

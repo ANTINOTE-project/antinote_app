@@ -247,5 +247,6 @@
   "loginStudentAccount": "I'm a student",
   "loginParentAccount": "I'm a parent",
   "loginParentMessage": "Sorry but ANTINOTE is not available for you.\n\nPromise it will be in future updates !",
-  "dialogClose": "Close"
+  "dialogClose": "Close",
+  "renameAccount": "Give your account a new name"
 }

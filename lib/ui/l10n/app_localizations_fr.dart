@@ -769,4 +769,7 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get markedThreadRead => 'Le fil a été marqué comme lu';
+
+  @override
+  String get renameAccount => 'Propose un autre nom pour ton compte';
 }

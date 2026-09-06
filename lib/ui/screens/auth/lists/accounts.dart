@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:antinote_api/antinote_api.dart';
 import 'package:antinote_app/data/protos/account.pb.dart';
 import 'package:antinote_app/data/src/session/wrapper.dart';
@@ -7,6 +9,7 @@ import 'package:antinote_app/ui/screens/shell/tab.dart';
 import 'package:antinote_app/ui/utils/utils.dart';
 import 'package:antinote_app/ui/widgets/customs/app_bar.dart';
 import 'package:antinote_app/ui/widgets/customs/button.dart';
+import 'package:antinote_app/ui/widgets/customs/field.dart';
 import 'package:antinote_app/ui/widgets/customs/list.dart';
 import 'package:flutter/foundation.dart';
 import 'package:hugeicons_pro/hugeicons.dart';
@@ -91,98 +94,15 @@ class _AccountsListScreenState extends State<AccountsListScreen>
     AntinoteAccount account,
   ) async {
     await showModalBottomSheet(
+      isScrollControlled: true,
       showDragHandle: true,
       context: context,
 
       builder: (context) {
-        return SafeArea(
-          child: Padding(
-            padding: const .only(left: 12, right: 12, bottom: 16),
-            child: Column(
-              spacing: 12,
-              mainAxisSize: .min,
-              mainAxisAlignment: .spaceBetween,
-
-              children: [
-                ListWidget.list(
-                  items: [
-                    .new(
-                      title: Text(context.l10n.autoLogin),
-                      subtitle: Text(context.l10n.autoLoginSubtitle),
-                      trailing: Switch(
-                        value: _defaultUid == account.uid,
-                        onChanged: (value) async {
-                          await context.ar.storage.setDefault(
-                            value ? account.uid : null,
-                          );
-                          await reload();
-                          if (context.mounted) {
-                            Navigator.pop(context);
-                          }
-                        },
-                      ),
-                    ),
-                    .new(
-                      title: Text(context.l10n.secureStore),
-                      subtitle: Text(context.l10n.secureStoreSubtitle),
-                      trailing: Switch(
-                        value: account.storeSecurely,
-                        onChanged: (value) async {
-                          if (value == account.storeSecurely) {
-                            return;
-                          }
-
-                          await context.ar.storage.updateAccount(
-                            account.rebuild((acc) {
-                              acc.storeSecurely = value;
-                            }),
-                            account.uid,
-                          );
-                          await reload();
-                          if (context.mounted) {
-                            Navigator.pop(context);
-                          }
-                        },
-                      ),
-                    ),
-
-                    if (kDebugMode)
-                      .new(
-                        title: Text(context.l10n.accountSyncSettings),
-                        trailing: const Icon(HugeIconsSolid.arrowRight01),
-                        onPressed: account.storeSecurely
-                            ? null
-                            : () async {
-                                await Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) => SettingsSyncScreen(
-                                      accountUid: account.uid,
-                                    ),
-                                  ),
-                                );
-                              },
-                      ),
-                  ],
-                  isColumn: true,
-                  isSliver: false,
-                ),
-
-                ButtonWidget(
-                  onPressed: () async {
-                    await context.ar.storage.deleteAccount(account.uid);
-                    await reload();
-                    if (context.mounted) {
-                      Navigator.pop(context);
-                    }
-                  },
-                  variant: .dangerous,
-                  icon: HugeIconsSolid.delete02,
-                  label: context.l10n.deleteAccount,
-                ),
-              ],
-            ),
-          ),
+        return _AccountModal(
+          account: account,
+          defaultUid: _defaultUid,
+          reload: reload,
         );
       },
     );
@@ -322,6 +242,189 @@ class _AccountsListScreenState extends State<AccountsListScreen>
               ),
             ],
           ),
+        ),
+      ),
+    );
+  }
+}
+
+class _AccountModal extends StatefulWidget {
+  final AntinoteAccount account;
+  final String? defaultUid;
+  final Future<void> Function() reload;
+
+  const _AccountModal({
+    required this.account,
+    required this.defaultUid,
+    required this.reload,
+  });
+
+  @override
+  State<_AccountModal> createState() => _AccountModalState();
+}
+
+class _AccountModalState extends State<_AccountModal> {
+  late TextEditingController _nameController;
+
+  @override
+  void initState() {
+    super.initState();
+    _nameController = TextEditingController(text: widget.account.name);
+  }
+
+  @override
+  void dispose() {
+    _nameController.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return SafeArea(
+      child: Padding(
+        padding: .only(
+          bottom: 16 + MediaQuery.of(context).viewInsets.bottom,
+          right: 12,
+          left: 12,
+        ),
+
+        child: Column(
+          mainAxisAlignment: .spaceBetween,
+          mainAxisSize: .min,
+          spacing: 12,
+
+          children: [
+            Row(
+              children: [
+                Expanded(
+                  child: FieldWidget(
+                    controller: _nameController,
+                    hintText: context.l10n.renameAccount,
+                  ),
+                ),
+
+                ValueListenableBuilder<TextEditingValue>(
+                  valueListenable: _nameController,
+                  builder: (context, value, child) {
+                    final show = value.text.trim() != widget.account.name;
+
+                    return AnimatedSwitcher(
+                      duration: const Duration(milliseconds: 250),
+                      switchInCurve: Curves.easeOutBack,
+                      switchOutCurve: Curves.easeIn,
+
+                      transitionBuilder: (child, animation) {
+                        return ScaleTransition(scale: animation, child: child);
+                      },
+
+                      child: show
+                          ? Padding(
+                              padding: const .only(left: 8),
+
+                              child: IconButton.filledTonal(
+                                key: const ValueKey('confirm'),
+
+                                icon: const Icon(HugeIconsSolid.tick03),
+                                iconSize: 20,
+
+                                onPressed: () async {
+                                  await context.ar.storage.updateAccount(
+                                    widget.account.rebuild((acc) {
+                                      acc.name = _nameController.text;
+                                    }),
+                                    widget.account.uid,
+                                  );
+
+                                  await widget.reload();
+
+                                  if (context.mounted) Navigator.pop(context);
+                                },
+                              ),
+                            )
+                          : const SizedBox.shrink(key: ValueKey('empty')),
+                    );
+                  },
+                ),
+              ],
+            ),
+
+            ListWidget.list(
+              items: [
+                .new(
+                  title: Text(context.l10n.autoLogin),
+                  subtitle: Text(context.l10n.autoLoginSubtitle),
+                  trailing: Switch(
+                    value: widget.defaultUid == widget.account.uid,
+                    onChanged: (value) async {
+                      await context.ar.storage.setDefault(
+                        value ? widget.account.uid : null,
+                      );
+                      await widget.reload();
+                      if (context.mounted) {
+                        Navigator.pop(context);
+                      }
+                    },
+                  ),
+                ),
+                .new(
+                  title: Text(context.l10n.secureStore),
+                  subtitle: Text(context.l10n.secureStoreSubtitle),
+                  trailing: Switch(
+                    value: widget.account.storeSecurely,
+                    onChanged: (value) async {
+                      if (value == widget.account.storeSecurely) {
+                        return;
+                      }
+
+                      await context.ar.storage.updateAccount(
+                        widget.account.rebuild((acc) {
+                          acc.storeSecurely = value;
+                        }),
+                        widget.account.uid,
+                      );
+                      await widget.reload();
+                      if (context.mounted) {
+                        Navigator.pop(context);
+                      }
+                    },
+                  ),
+                ),
+
+                if (kDebugMode)
+                  .new(
+                    title: Text(context.l10n.accountSyncSettings),
+                    trailing: const Icon(HugeIconsSolid.arrowRight01),
+                    onPressed: widget.account.storeSecurely
+                        ? null
+                        : () async {
+                            await Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => SettingsSyncScreen(
+                                  accountUid: widget.account.uid,
+                                ),
+                              ),
+                            );
+                          },
+                  ),
+              ],
+              isColumn: true,
+              isSliver: false,
+            ),
+
+            ButtonWidget(
+              onPressed: () async {
+                await context.ar.storage.deleteAccount(widget.account.uid);
+                await widget.reload();
+                if (context.mounted) {
+                  Navigator.pop(context);
+                }
+              },
+              variant: .dangerous,
+              icon: HugeIconsSolid.delete02,
+              label: context.l10n.deleteAccount,
+            ),
+          ],
         ),
       ),
     );
