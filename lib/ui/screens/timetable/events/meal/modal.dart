@@ -30,10 +30,16 @@ Future<void> showMealModal(BuildContext context, DateTime date) async {
               child = MealContents(menu: snapshot.requireData!);
             } else {
               // TODO: Create a normalized error display.
-              child = Center(child: Text(context.l10n.noMenuForToday));
+              child = Padding(
+                padding: const .only(bottom: 24),
+                child: Center(child: Text(context.l10n.noMenuForToday)),
+              );
             }
           } else {
-            child = const Center(child: LoadingWidget());
+            child = const Padding(
+              padding: .only(bottom: 24),
+              child: Center(child: LoadingWidget()),
+            );
           }
 
           return AnimatedSwitcher(
