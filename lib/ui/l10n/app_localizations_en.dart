@@ -70,6 +70,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get retry => 'Try again';
 
   @override
+  String get dialogClose => 'Close';
+
+  @override
   String get home => 'Home';
 
   @override
@@ -177,6 +180,16 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get loginDemoSubtitle =>
       'Login to a test account to explore the app and its features';
+
+  @override
+  String get loginStudentAccount => 'I\'m a student';
+
+  @override
+  String get loginParentAccount => 'I\'m a parent';
+
+  @override
+  String get loginParentMessage =>
+      'Sorry but ANTINOTE is not available for you.\n\nPromise it will be in future updates !';
 
   @override
   String get homeShowMore => 'Show more';

@@ -24,6 +24,7 @@
   "cancel": "Annuler",
   "validate": "Valider",
   "retry": "Réessayer",
+  "dialogClose": "Fermer",
 
   "home": "Accueil",
   "timetable": "Cours",
@@ -60,6 +61,9 @@
   "loginPinCodeSubtitle": "Veuillez rentrer votre code PIN vous connecter à votre compte PRONOTE",
   "loginDemo": "Compte de démonstration",
   "loginDemoSubtitle": "Connecte toi à un compte de test pour explorer l'application et ses fonctionnalités",
+  "loginStudentAccount": "Je suis un élève",
+  "loginParentAccount": "Je suis un parent",
+  "loginParentMessage": "Désolé mais ANTINOTE n'est pas encore disponible pour toi.\n\nPromis ça arrive dans une future mise à jour !",
 
   "homeShowMore": "Voir plus",
   "homeAttendance": "Vie Scolaire",

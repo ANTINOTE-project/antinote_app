@@ -218,6 +218,12 @@ abstract class AppLocalizations {
   /// **'Réessayer'**
   String get retry;
 
+  /// No description provided for @dialogClose.
+  ///
+  /// In fr, this message translates to:
+  /// **'Fermer'**
+  String get dialogClose;
+
   /// No description provided for @home.
   ///
   /// In fr, this message translates to:
@@ -421,6 +427,24 @@ abstract class AppLocalizations {
   /// In fr, this message translates to:
   /// **'Connecte toi à un compte de test pour explorer l\'application et ses fonctionnalités'**
   String get loginDemoSubtitle;
+
+  /// No description provided for @loginStudentAccount.
+  ///
+  /// In fr, this message translates to:
+  /// **'Je suis un élève'**
+  String get loginStudentAccount;
+
+  /// No description provided for @loginParentAccount.
+  ///
+  /// In fr, this message translates to:
+  /// **'Je suis un parent'**
+  String get loginParentAccount;
+
+  /// No description provided for @loginParentMessage.
+  ///
+  /// In fr, this message translates to:
+  /// **'Désolé mais ANTINOTE n\'est pas encore disponible pour toi.\n\nPromis ça arrive dans une future mise à jour !'**
+  String get loginParentMessage;
 
   /// No description provided for @homeShowMore.
   ///

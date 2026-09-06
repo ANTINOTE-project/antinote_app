@@ -18,18 +18,7 @@ class WorkspacesListScreen extends StatefulWidget {
 }
 
 class _WorkspacesListScreenState extends State<WorkspacesListScreen> {
-  static const _iconMap = <WorkspaceType, IconData>{
-    .mobileAdministrateur: HugeIconsSolid.manager,
-    .mobileProfesseur: HugeIconsSolid.teacher,
-    .mobileEtablissement: HugeIconsSolid.school,
-    .mobileParent: HugeIconsSolid.manWoman,
-    .mobileAccompagnant: HugeIconsSolid.userGroup,
-    .mobileEleve: HugeIconsSolid.student,
-    .mobileEntreprise: HugeIconsSolid.corporate,
-  };
-
-  late List<Workspace> _workspaces;
-
+  Workspace? _studentWorkspace;
   late bool _casLoginActive;
   late bool _isCasActive;
 
@@ -37,8 +26,10 @@ class _WorkspacesListScreenState extends State<WorkspacesListScreen> {
   void initState() {
     super.initState();
 
-    _workspaces = widget.parameters.workspaces;
-    _workspaces.sort((a, b) => a.type == .mobileEleve ? -1 : 1);
+    final workspaces = widget.parameters.workspaces;
+    _studentWorkspace = workspaces.firstWhere(
+      (element) => element.type == .mobileEleve,
+    );
 
     _casLoginActive = widget.parameters.casActive;
     _isCasActive = widget.parameters.casActive;
@@ -79,12 +70,14 @@ class _WorkspacesListScreenState extends State<WorkspacesListScreen> {
               SliverToBoxAdapter(
                 child: TileWidget(
                   borderRadius: const .all(ListWidget.radius),
-
                   title: Text(context.l10n.activateCas),
+
+                  onPressed: () => setState(() {
+                    _casLoginActive = !_casLoginActive;
+                  }),
 
                   trailing: Switch(
                     value: _casLoginActive,
-
                     onChanged: (value) => setState(() {
                       _casLoginActive = value;
                     }),
@@ -95,48 +88,62 @@ class _WorkspacesListScreenState extends State<WorkspacesListScreen> {
               const SliverPadding(padding: .only(bottom: 8)),
             ],
 
-            ListWidget(
-              items: _workspaces,
-
-              itemBuilder: (context, workspace, borderRadius) {
-                final isNotStudent = workspace.type != .mobileEleve;
-
-                return TileWidget(
-                  borderRadius: borderRadius,
-
-                  onPressed: isNotStudent
-                      ? null
-                      : () => onSelected(context, workspace),
-
+            ListWidget.list(
+              items: [
+                .new(
                   leading: Icon(
-                    _iconMap[workspace.type],
-                    color: isNotStudent ? context.c.outlineVariant : null,
+                    HugeIconsSolid.student,
+                    color: _studentWorkspace == null
+                        ? context.c.outlineVariant
+                        : null,
                   ),
 
                   title: Text(
-                    workspace.label,
-
+                    context.l10n.loginStudentAccount,
                     style: TextStyle(
-                      color: isNotStudent ? context.c.outlineVariant : null,
+                      color: _studentWorkspace == null
+                          ? context.c.outlineVariant
+                          : null,
                     ),
                   ),
 
-                  subtitle: Text(
-                    workspace.pathSegment,
+                  onPressed: _studentWorkspace != null
+                      ? () {
+                          onSelected(context, _studentWorkspace!);
+                        }
+                      : null,
+                ),
 
-                    style: TextStyle(
-                      color: isNotStudent ? context.c.outlineVariant : null,
-                    ),
-                  ),
+                .new(
+                  leading: const Icon(HugeIconsSolid.manWoman),
+                  title: Text(context.l10n.loginParentAccount),
 
-                  trailing: Icon(
-                    HugeIconsSolid.arrowRight01,
-                    color: isNotStudent
-                        ? context.c.outlineVariant
-                        : context.c.outline,
-                  ),
-                );
-              },
+                  onPressed: () {
+                    showDialog(
+                      context: context,
+
+                      builder: (context) {
+                        return AlertDialog(
+                          content: Text(
+                            context.l10n.loginParentMessage,
+                            style: context.tt.bodyLarge?.copyWith(
+                              fontWeight: .w600,
+                              height: 1.2,
+                            ),
+                          ),
+
+                          actions: [
+                            TextButton(
+                              onPressed: () => Navigator.pop(context),
+                              child: Text(context.l10n.dialogClose),
+                            ),
+                          ],
+                        );
+                      },
+                    );
+                  },
+                ),
+              ],
             ),
           ],
         ),

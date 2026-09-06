@@ -242,5 +242,10 @@
   "syncSuccessful": "Sync successful!",
   "syncFailed": "Sync failed…",
 
-  "markedThreadRead": "The thread was marked as read"
+  "markedThreadRead": "The thread was marked as read",
+
+  "loginStudentAccount": "I'm a student",
+  "loginParentAccount": "I'm a parent",
+  "loginParentMessage": "Sorry but ANTINOTE is not available for you.\n\nPromise it will be in future updates !",
+  "dialogClose": "Close"
 }
