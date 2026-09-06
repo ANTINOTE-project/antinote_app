@@ -802,6 +802,7 @@ final class HomePageManager() {
     }
 
     return loaded.entries
+        .where((widget) => widget.value.value != null)
         .sorted((a, b) => a.key.compareTo(b.key))
         .map((e) => e.value)
         .toList(growable: false);
