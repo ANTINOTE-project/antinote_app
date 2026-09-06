@@ -59,9 +59,9 @@ class _AppShellState extends State<AppShell> {
   void didChangeDependencies() {
     super.didChangeDependencies();
 
-    if (signatureStream == null) {
-      _tabs = buildTabs(context);
+    _tabs = buildTabs(context);
 
+    if (signatureStream == null) {
       // manager!.subscribeSession(callback: loadNotificationStream);
       loadNotificationStream();
     } else {
@@ -76,7 +76,7 @@ class _AppShellState extends State<AppShell> {
     super.dispose();
   }
 
-  String? nullAlias;
+  String? nullAccountAlias;
 
   @override
   Widget build(BuildContext context) {
@@ -153,10 +153,10 @@ class _AppShellState extends State<AppShell> {
                     final String? actualKey;
 
                     if (value != null) {
-                      if (nullAlias == null) {
-                        nullAlias = value;
+                      if (nullAccountAlias == null) {
+                        nullAccountAlias = value;
                         actualKey = null;
-                      } else if (nullAlias == value) {
+                      } else if (nullAccountAlias == value) {
                         actualKey = null;
                       } else {
                         actualKey = value;
