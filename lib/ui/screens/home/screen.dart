@@ -1,4 +1,5 @@
 import 'package:antinote_api/antinote_api.dart';
+import 'package:antinote_app/data/protos/account.pb.dart';
 import 'package:antinote_app/data/src/home_page/manager.dart';
 import 'package:antinote_app/ui/screens/settings/screen.dart';
 import 'package:antinote_app/ui/screens/shell/tab.dart';
@@ -35,7 +36,7 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen>
     with PageMixin<HomeScreen>, TabMixin<HomeScreen> {
   late HomePageManager homePageManager;
-  late String username;
+  AntinoteAccount? account;
 
   @override
   Widget buildLoaded(
@@ -47,7 +48,7 @@ class _HomeScreenState extends State<HomeScreen>
 
     return Scaffold(
       appBar: AppBarWidget(
-        title: Text(context.l10n.homeHiName(username)),
+        title: Text(context.l10n.homeHiName(account!.name)),
         titleAlign: .start,
 
         trailing: IconButton(
@@ -105,10 +106,13 @@ class _HomeScreenState extends State<HomeScreen>
 
   @override
   Future<void> load(RemoteSession session) async {
-    homePageManager = HomePageManager();
-    await homePageManager.initialize(context, session);
+    final ctx = context;
 
-    username = session.user.name;
+    homePageManager = HomePageManager();
+    await homePageManager.initialize(ctx, session);
+
+    if (!ctx.mounted) return;
+    account = await ctx.ar.storage.getAccount(ctx.ar.curAccountUid!);
 
     logger.info(
       'Loaded home page with ${homePageManager.loadedWidgets.length} widget(s) using ${homePageManager.initialized}',
