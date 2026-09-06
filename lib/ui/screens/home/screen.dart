@@ -106,13 +106,11 @@ class _HomeScreenState extends State<HomeScreen>
 
   @override
   Future<void> load(RemoteSession session) async {
-    final ctx = context;
-
     homePageManager = HomePageManager();
-    await homePageManager.initialize(ctx, session);
+    await homePageManager.initialize(context, session);
 
-    if (!ctx.mounted) return;
-    account = await ctx.ar.storage.getAccount(ctx.ar.curAccountUid!);
+    if (!mounted) return;
+    account = await context.ar.storage.getAccount(context.ar.curAccountUid!);
 
     logger.info(
       'Loaded home page with ${homePageManager.loadedWidgets.length} widget(s) using ${homePageManager.initialized}',

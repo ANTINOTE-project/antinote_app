@@ -84,7 +84,9 @@ class _CommunicationScreenState extends State<CommunicationScreen>
                                       thread.visualId,
                                     );
 
-                                if (cachedValue == null) return;
+                                if (cachedValue == null || cachedValue.read) {
+                                  return;
+                                }
 
                                 await session.access(
                                   ChangeNewsStateAccessor(
