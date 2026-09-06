@@ -19,6 +19,7 @@ Future<void> showMealModal(BuildContext context, DateTime date) async {
   await showModalBottomSheet(
     context: context,
     showDragHandle: true,
+
     builder: (context) {
       return FutureBuilder(
         future: mealCallback,
@@ -26,7 +27,7 @@ Future<void> showMealModal(BuildContext context, DateTime date) async {
           final Widget child;
           if (snapshot.connectionState == .done) {
             if (snapshot.hasData && snapshot.requireData!.meals.isNotEmpty) {
-              child = SliverMealContents(menu: snapshot.requireData!);
+              child = MealContents(menu: snapshot.requireData!);
             } else {
               // TODO: Create a normalized error display.
               child = Center(child: Text(context.l10n.noMenuForToday));
@@ -38,7 +39,7 @@ Future<void> showMealModal(BuildContext context, DateTime date) async {
           return AnimatedSwitcher(
             duration: const Duration(milliseconds: 300),
             switchInCurve: Curves.fastOutSlowIn,
-            child: child,
+            child: SingleChildScrollView(child: child),
           );
         },
       );
@@ -46,8 +47,8 @@ Future<void> showMealModal(BuildContext context, DateTime date) async {
   );
 }
 
-class SliverMealContents extends StatelessWidget {
-  const SliverMealContents({super.key, required this.menu});
+class MealContents extends StatelessWidget {
+  const MealContents({super.key, required this.menu});
 
   final Menu menu;
 
@@ -63,20 +64,30 @@ class SliverMealContents extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return CustomScrollView(
-      slivers: [
-        for (final meal in menu.meals)
-          SliverPadding(
-            padding: const .symmetric(horizontal: 12),
-            sliver: SliverMainAxisGroup(
-              slivers: [
-                SliverTextIcon(label: mealTitle(context, meal)),
+    return Container(
+      padding: const .symmetric(horizontal: 12),
+
+      child: Column(
+        spacing: 12,
+
+        children: [
+          for (final meal in menu.meals)
+            Column(
+              children: [
+                TextIcon(label: mealTitle(context, meal).trim()),
+
                 ListWidget(
+                  physics: const NeverScrollableScrollPhysics(),
+                  shrinkWrap: true,
+                  isSliver: false,
+                  isColumn: true,
                   items: meal.dishes,
+
                   itemBuilder: (context, item, borderRadius) {
                     return TileWidget(
                       borderRadius: borderRadius,
                       titleMaxLines: null,
+
                       title: Text.rich(
                         TextSpan(
                           children: [
@@ -97,11 +108,10 @@ class SliverMealContents extends StatelessWidget {
                 ),
               ],
             ),
-          ),
-        const SliverSafeArea(
-          sliver: SliverPadding(padding: .symmetric(vertical: 16)),
-        ),
-      ],
+
+          const SafeArea(child: Padding(padding: .symmetric(vertical: 16))),
+        ],
+      ),
     );
   }
 }

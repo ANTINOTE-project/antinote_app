@@ -29,8 +29,7 @@ List<MealEvent> mealEventsForDay(
 
   final day = classes.first.startDate.toDay();
 
-  if (!parameters.lunchActivation ||
-      !parameters.lunchDays.contains(day.weekday - 1)) {
+  if (!parameters.lunchDays.contains(day.weekday - 1)) {
     return [];
   }
 
