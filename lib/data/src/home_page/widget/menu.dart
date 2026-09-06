@@ -90,6 +90,8 @@ final class const MenuWidget()
     HomePageCache cache,
     WidgetArguments args,
   ) {
+    if (!cache.hasMenuForDay(args.get(MenuArgument.day))) return null;
+
     final menu = cache.dayMenu(args.get(MenuArgument.day));
 
     if (menu.meals.isEmpty) return null;
