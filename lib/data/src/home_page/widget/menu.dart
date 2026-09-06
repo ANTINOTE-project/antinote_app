@@ -2,11 +2,11 @@ part of 'widget.dart';
 
 enum MenuParameter<T>(@override final String code)
     implements WidgetParameter<T> {
-  decayAfterMeal<bool>('decay_after_meal');
+  decayAfterMeal<bool>('decay_after_meal'),
 }
 
 enum MenuArgument<T>() implements WidgetArgument<T> {
-  day<Date>();
+  day<Date>(),
 }
 
 final class const MenuWidget()
@@ -90,7 +90,11 @@ final class const MenuWidget()
     HomePageCache cache,
     WidgetArguments args,
   ) {
-    return cache.dayMenu(args.get(MenuArgument.day));
+    final menu = cache.dayMenu(args.get(MenuArgument.day));
+
+    if (menu.meals.isEmpty) return null;
+
+    return menu;
   }
 
   @override

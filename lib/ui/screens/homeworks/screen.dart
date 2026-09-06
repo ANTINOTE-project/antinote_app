@@ -143,8 +143,8 @@ class _HomeworksScreenState extends State<HomeworksScreen>
 
           final days = DateRange(start: weekStart, end: weekEnd).listDays();
 
-          final bool loaded = days.every(
-            (element) => _homeworks[element]!.value != null,
+          final loaded = days.every(
+            (element) => _homeworks[element]?.value != null,
           );
 
           final displayableDays = days
