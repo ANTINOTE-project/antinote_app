@@ -237,12 +237,15 @@ class _HomeworkDetailScreenState extends State<HomeworkDetailScreen> {
                 backgroundColor: scheme.surfaceContainer,
                 borderRadius: const .all(ListWidget.radius),
 
-                title: RemoteHtml(
-                  rawHtml: widget.homework.description,
-                  style: TextStyle(
-                    color: scheme.onSurface,
-                    fontWeight: .w600,
-                    fontSize: 15,
+                title: SelectableRegion(
+                  selectionControls: materialTextSelectionControls,
+                  child: RemoteHtml(
+                    rawHtml: widget.homework.description,
+                    style: TextStyle(
+                      color: scheme.onSurface,
+                      fontWeight: .w600,
+                      fontSize: 15,
+                    ),
                   ),
                 ),
               ),

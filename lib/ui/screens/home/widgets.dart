@@ -11,7 +11,7 @@ class HomeWidget extends StatelessWidget {
   final Widget icon;
   final Widget label;
   final Widget content;
-  final VoidCallback onShowMorePressed;
+  final VoidCallback? onShowMorePressed;
 
   const HomeWidget({
     super.key,
@@ -57,41 +57,42 @@ class HomeWidget extends StatelessWidget {
                   ),
                 ),
 
-                Pressable(
-                  borderRadius: .circular(90),
-                  onPressed: onShowMorePressed,
+                if (onShowMorePressed != null)
+                  Pressable(
+                    borderRadius: .circular(90),
+                    onPressed: onShowMorePressed,
 
-                  child: Ink(
-                    decoration: BoxDecoration(
-                      color: context.c.surfaceContainerLow,
-                      borderRadius: .circular(90),
-                    ),
+                    child: Ink(
+                      decoration: BoxDecoration(
+                        color: context.c.surfaceContainerLow,
+                        borderRadius: .circular(90),
+                      ),
 
-                    padding: const .symmetric(horizontal: 12, vertical: 8),
+                      padding: const .symmetric(horizontal: 12, vertical: 8),
 
-                    child: Row(
-                      spacing: 6,
+                      child: Row(
+                        spacing: 6,
 
-                      children: [
-                        Text(
-                          context.l10n.homeShowMore,
+                        children: [
+                          Text(
+                            context.l10n.homeShowMore,
 
-                          style: TextStyle(
-                            color: context.c.outline,
-                            fontWeight: .bold,
-                            fontSize: 14,
+                            style: TextStyle(
+                              color: context.c.outline,
+                              fontWeight: .bold,
+                              fontSize: 14,
+                            ),
                           ),
-                        ),
 
-                        Icon(
-                          HugeIconsSolid.arrowUpRight02,
-                          color: context.c.outline,
-                          size: 21,
-                        ),
-                      ],
+                          Icon(
+                            HugeIconsSolid.arrowUpRight02,
+                            color: context.c.outline,
+                            size: 21,
+                          ),
+                        ],
+                      ),
                     ),
                   ),
-                ),
               ],
             ),
           ),

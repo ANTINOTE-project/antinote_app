@@ -54,9 +54,19 @@ Future<void> showMealModal(BuildContext context, DateTime date) async {
 }
 
 class MealContents extends StatelessWidget {
-  const MealContents({super.key, required this.menu});
+  const MealContents({
+    super.key,
+    required this.menu,
+    this.addPadding = true,
+    this.invertColor = false,
+    this.padding = const .symmetric(horizontal: 12),
+  });
 
   final Menu menu;
+  final bool addPadding;
+  final bool invertColor;
+
+  final EdgeInsetsGeometry? padding;
 
   String mealTitle(BuildContext context, Meal meal) {
     if (meal.title != null) return meal.title!;
@@ -71,7 +81,7 @@ class MealContents extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const .symmetric(horizontal: 12),
+      padding: padding,
 
       child: Column(
         spacing: 12,
@@ -92,15 +102,18 @@ class MealContents extends StatelessWidget {
                   itemBuilder: (context, item, borderRadius) {
                     return TileWidget(
                       borderRadius: borderRadius,
-                      titleMaxLines: null,
+                      backgroundColor: invertColor
+                          ? context.c.surfaceContainerLow
+                          : null,
 
+                      titleMaxLines: null,
                       title: Text.rich(
                         TextSpan(
                           children: [
                             for (final food in item.foods)
                               TextSpan(
                                 children: [
-                                  TextSpan(text: '- ${food.name}'),
+                                  TextSpan(text: '- ${food.name.trim()}'),
                                   // TODO: Display allergens and labels here
                                   if (item.foods.last != food)
                                     const TextSpan(text: '\n'),
@@ -115,7 +128,8 @@ class MealContents extends StatelessWidget {
               ],
             ),
 
-          const SafeArea(child: Padding(padding: .symmetric(vertical: 16))),
+          if (addPadding)
+            const SafeArea(child: Padding(padding: .symmetric(vertical: 16))),
         ],
       ),
     );
