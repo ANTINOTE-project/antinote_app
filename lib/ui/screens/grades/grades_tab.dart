@@ -11,7 +11,6 @@ import 'package:collection/collection.dart';
 import 'package:hugeicons_pro/hugeicons.dart';
 import 'package:intl/intl.dart';
 import 'package:material_ui/material_ui.dart';
-import 'package:skeletonizer/skeletonizer.dart';
 
 part 'modal.dart';
 
@@ -233,35 +232,6 @@ class _GradesTabState extends State<GradesTab>
   }
 
   @override
-  Widget buildLoading(
-    BuildContext context,
-    RefreshIndicatorBuilder buildRefreshIndicator,
-    double? progress,
-  ) {
-    return buildRefreshIndicator(
-      child: CustomScrollView(
-        slivers: [
-          const _Averages(data: null),
-
-          _SectionWidget(
-            label: context.l10n.latestGrades,
-            icon: HugeIconsSolid.note,
-          ),
-
-          const _LatestGrades(exams: null),
-
-          _SectionWidget(
-            label: context.l10n.services,
-            icon: HugeIconsSolid.gitbook,
-          ),
-
-          const _ServicesGrades(data: null),
-        ],
-      ),
-    );
-  }
-
-  @override
   Future<void> load(RemoteSession session) async {
     await session.ensurePage(198);
 
@@ -308,7 +278,7 @@ class _SectionWidget extends StatelessWidget {
 }
 
 class _Averages extends StatelessWidget {
-  final LatestGradesPage? data;
+  final LatestGradesPage data;
 
   const _Averages({required this.data});
 
@@ -316,53 +286,47 @@ class _Averages extends StatelessWidget {
   Widget build(BuildContext context) {
     const style = TextStyle(fontSize: 17, fontWeight: FontWeight.w700);
 
-    final selfAvg = data?.selfGeneralAverage?.value;
-    final classAvg = data?.classGeneralAverage?.value;
+    final selfAvg = data.selfGeneralAverage?.value;
+    final classAvg = data.classGeneralAverage?.value;
 
     return SliverToBoxAdapter(
-      child: Skeletonizer.zone(
-        enabled: data == null,
+      child: Padding(
+        padding: const .only(top: 16, left: 12, right: 12, bottom: 8),
 
-        child: Padding(
-          padding: const .only(top: 16, left: 12, right: 12, bottom: 8),
+        child: Container(
+          decoration: BoxDecoration(
+            color: context.c.surfaceContainerHigh,
+            border: .all(color: context.c.outlineVariant),
+            borderRadius: .circular(20),
+          ),
 
-          child: Container(
-            decoration: BoxDecoration(
-              color: context.c.surfaceContainerHigh,
-              border: .all(color: context.c.outlineVariant),
-              borderRadius: .circular(20),
-            ),
+          padding: const .symmetric(vertical: 12),
 
-            padding: const .symmetric(vertical: 12),
+          child: Column(
+            spacing: 16,
 
-            child: Column(
-              spacing: 16,
+            children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                spacing: 12,
 
-              children: [
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  spacing: 12,
+                children: [
+                  _AverageText(
+                    average: selfAvg,
+                    style: style,
+                    color: context.c.primary,
+                    label: context.l10n.averageSelf,
+                  ),
 
-                  children: [
-                    _AverageText(
-                      average: selfAvg,
-                      style: style,
-                      color: context.c.primary,
-                      isLoading: data == null,
-                      label: context.l10n.averageSelf,
-                    ),
-
-                    _AverageText(
-                      average: classAvg,
-                      style: style,
-                      color: context.c.secondary,
-                      isLoading: data == null,
-                      label: context.l10n.averageClass,
-                    ),
-                  ],
-                ),
-              ],
-            ),
+                  _AverageText(
+                    average: classAvg,
+                    style: style,
+                    color: context.c.secondary,
+                    label: context.l10n.averageClass,
+                  ),
+                ],
+              ),
+            ],
           ),
         ),
       ),
@@ -374,61 +338,44 @@ class _AverageText extends StatelessWidget {
   final double? average;
   final TextStyle style;
   final Color color;
-  final bool isLoading;
   final String label;
 
   const _AverageText({
     required this.average,
     required this.style,
     required this.color,
-    required this.isLoading,
     required this.label,
   });
 
   @override
   Widget build(BuildContext context) {
+    if (average == null) return const SizedBox.shrink();
+
     return Column(
-      children: isLoading
-          ? [
-              Bone.text(width: 125, style: style),
+      children: [
+        Text(label, style: style),
 
-              const SizedBox(height: 8),
+        TweenAnimationBuilder<double>(
+          tween: Tween(begin: 0, end: average),
 
-              Bone.text(
-                width: 75,
-                style: TextStyle(fontSize: 27, fontWeight: .w800, color: color),
-              ),
-            ]
-          : average != null
-          ? [
-              Text(label, style: style),
+          duration: const Duration(milliseconds: 600),
+          curve: Curves.easeOutExpo,
 
-              TweenAnimationBuilder<double>(
-                tween: Tween(begin: 0, end: average),
+          builder: (context, value, _) {
+            return Text(
+              Formatters.formatNumber(value),
 
-                duration: const Duration(milliseconds: 600),
-                curve: Curves.easeOutExpo,
-
-                builder: (context, value, _) {
-                  return Text(
-                    Formatters.formatNumber(value),
-
-                    style: TextStyle(
-                      fontSize: 27,
-                      fontWeight: .w800,
-                      color: color,
-                    ),
-                  );
-                },
-              ),
-            ]
-          : [],
+              style: TextStyle(fontSize: 27, fontWeight: .w800, color: color),
+            );
+          },
+        ),
+      ],
     );
   }
 }
 
 class _LatestGrades extends StatelessWidget {
-  final List<Exam>? exams;
+  final List<Exam> exams;
 
   const _LatestGrades({required this.exams});
 
@@ -438,160 +385,110 @@ class _LatestGrades extends StatelessWidget {
     final _ = Theme.of(context);
 
     return SliverToBoxAdapter(
-      child: Skeletonizer.zone(
-        enabled: exams == null,
+      child: SizedBox(
+        height: 170,
 
-        child: SizedBox(
-          height: 170,
+        child: ListView.builder(
+          physics: const BouncingScrollPhysics(
+            parent: AlwaysScrollableScrollPhysics(),
+          ),
+          padding: const .all(12),
 
-          child: ListView.builder(
-            physics: const BouncingScrollPhysics(
-              parent: AlwaysScrollableScrollPhysics(),
-            ),
-            padding: const .all(12),
+          scrollDirection: .horizontal,
+          itemCount: exams.length,
 
-            scrollDirection: .horizontal,
-            itemCount: exams == null ? fakeExams.length : exams!.length,
+          itemBuilder: (context, index) {
+            final exam = exams[index];
 
-            itemBuilder: (context, index) {
-              final exam = exams == null ? fakeExams[index] : exams![index];
+            final scheme = Utils.buildColorScheme(context, exam.service.color);
 
-              final scheme = Utils.buildColorScheme(
-                context,
-                exam.service.color,
-              );
+            final date = DateFormat('dd/MM/yyyy').format(exam.date);
+            final title = Utils.getExamComment(context, exam);
+            final subject = exam.service.name;
 
-              final date = DateFormat('dd/MM/yyyy').format(exam.date);
-              final title = Utils.getExamComment(context, exam);
-              final subject = exam.service.name;
+            return Padding(
+              padding: const .only(right: 8),
 
-              return Padding(
-                padding: const .only(right: 8),
+              child: Pressable(
+                onPressed: () => showExamDetails(context, exam),
+                borderRadius: .circular(12),
 
-                child: Pressable(
-                  onPressed: () => showExamDetails(context, exam),
-                  borderRadius: .circular(12),
+                child: IntrinsicWidth(
+                  child: ConstrainedBox(
+                    constraints: const BoxConstraints(
+                      minWidth: 200,
+                      maxWidth: 250,
+                    ),
 
-                  child: IntrinsicWidth(
-                    child: ConstrainedBox(
-                      constraints: const BoxConstraints(
-                        minWidth: 200,
-                        maxWidth: 250,
+                    child: Ink(
+                      decoration: BoxDecoration(
+                        borderRadius: .circular(12),
+                        border: .all(color: scheme.inversePrimary),
+                        color: scheme.primaryContainer,
                       ),
 
-                      child: Ink(
-                        decoration: BoxDecoration(
-                          borderRadius: .circular(12),
+                      padding: const .symmetric(horizontal: 10, vertical: 6),
 
-                          border: .all(
-                            color: exams == null
-                                ? context.c.outlineVariant
-                                : scheme.inversePrimary,
+                      child: Column(
+                        crossAxisAlignment: .start,
+                        spacing: 12,
+
+                        children: [
+                          Text(
+                            subject,
+
+                            overflow: TextOverflow.ellipsis,
+                            maxLines: 1,
+
+                            style: TextStyle(
+                              fontSize: 20,
+                              fontWeight: .w800,
+                              color: scheme.primary,
+                            ),
                           ),
 
-                          color: exams == null
-                              ? context.c.surfaceContainerHigh
-                              : scheme.primaryContainer,
-                        ),
+                          Expanded(
+                            child: Text(
+                              title,
 
-                        padding: const .symmetric(horizontal: 10, vertical: 6),
+                              overflow: TextOverflow.ellipsis,
+                              maxLines: 2,
 
-                        child: Column(
-                          crossAxisAlignment: .start,
-                          spacing: 12,
+                              style: const TextStyle(
+                                fontSize: 16,
+                                fontWeight: .w600,
+                              ),
+                            ),
+                          ),
 
-                          children: exams == null
-                              ? [
-                                  const Bone.text(
-                                    width: 200,
+                          Row(
+                            children: [
+                              Text(
+                                date,
+                                style: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  color: scheme.onSurfaceVariant,
+                                ),
+                              ),
 
-                                    style: TextStyle(
-                                      fontSize: 20,
-                                      fontWeight: .w800,
-                                    ),
-                                  ),
+                              const Spacer(),
 
-                                  const Bone.text(
-                                    width: 100,
-
-                                    style: TextStyle(
-                                      fontSize: 16,
-                                      fontWeight: .w600,
-                                    ),
-                                  ),
-
-                                  const Spacer(),
-
-                                  const Row(
-                                    children: [
-                                      Bone.text(
-                                        width: 75,
-                                        style: TextStyle(fontWeight: .bold),
-                                      ),
-
-                                      Spacer(),
-
-                                      Bone.text(width: 75, fontSize: 22),
-                                    ],
-                                  ),
-                                ]
-                              : [
-                                  Text(
-                                    subject,
-
-                                    overflow: TextOverflow.ellipsis,
-                                    maxLines: 1,
-
-                                    style: TextStyle(
-                                      fontSize: 20,
-                                      fontWeight: .w800,
-                                      color: scheme.primary,
-                                    ),
-                                  ),
-
-                                  Expanded(
-                                    child: Text(
-                                      title,
-
-                                      overflow: TextOverflow.ellipsis,
-                                      maxLines: 2,
-
-                                      style: const TextStyle(
-                                        fontSize: 16,
-                                        fontWeight: .w600,
-                                      ),
-                                    ),
-                                  ),
-
-                                  Row(
-                                    children: [
-                                      Text(
-                                        date,
-                                        style: TextStyle(
-                                          fontWeight: FontWeight.bold,
-                                          color: scheme.onSurfaceVariant,
-                                        ),
-                                      ),
-
-                                      const Spacer(),
-
-                                      GradeText(
-                                        selfGrade: exam.selfGrade,
-                                        maxGrade: exam.theoreticalMaxGrade,
-                                        defaultMaxGrade: exam.defaultMaxGrade,
-                                        color: scheme.primary,
-                                      ),
-                                    ],
-                                  ),
-                                ],
-                        ),
+                              GradeText(
+                                selfGrade: exam.selfGrade,
+                                maxGrade: exam.theoreticalMaxGrade,
+                                defaultMaxGrade: exam.defaultMaxGrade,
+                                color: scheme.primary,
+                              ),
+                            ],
+                          ),
+                        ],
                       ),
                     ),
                   ),
                 ),
-              );
-            },
-          ),
+              ),
+            );
+          },
         ),
       ),
     );
@@ -599,13 +496,13 @@ class _LatestGrades extends StatelessWidget {
 }
 
 class _ServicesGrades extends StatelessWidget {
-  final _ServiceGradeList? data;
+  final _ServiceGradeList data;
 
   const _ServicesGrades({required this.data});
 
   @override
   Widget build(BuildContext context) {
-    final entries = (data ?? fakeServiceGradeList).entries.sorted(
+    final entries = data.entries.sorted(
       (a, b) => a.key.name.compareTo(b.key.name),
     );
 
@@ -618,15 +515,10 @@ class _ServicesGrades extends StatelessWidget {
             sliver: SliverMainAxisGroup(
               slivers: [
                 PinnedHeaderSliver(
-                  child: _ServiceWidget(
-                    service: entry.key,
-                    exams: entry.value,
-                    isLoading: data == null,
-                  ),
+                  child: _ServiceWidget(service: entry.key, exams: entry.value),
                 ),
 
                 ListWidget<Exam>(
-                  isLoading: data == null,
                   items: entry.value,
 
                   itemBuilder: (context, item, borderRadius) {
@@ -644,13 +536,8 @@ class _ServicesGrades extends StatelessWidget {
 class _ServiceWidget extends StatelessWidget {
   final Service service;
   final List<Exam> exams;
-  final bool isLoading;
 
-  const _ServiceWidget({
-    required this.service,
-    required this.exams,
-    required this.isLoading,
-  });
+  const _ServiceWidget({required this.service, required this.exams});
 
   @override
   Widget build(BuildContext context) {
@@ -659,66 +546,49 @@ class _ServiceWidget extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.only(top: 8, bottom: 2),
 
-      child: Skeletonizer.zone(
-        enabled: isLoading,
+      child: Pressable(
+        onPressed: () => showServiceDetails(context, service, exams),
+        borderRadius: BorderRadius.circular(16),
 
-        child: Pressable(
-          onPressed: () => showServiceDetails(context, service, exams),
-          borderRadius: BorderRadius.circular(16),
+        child: Ink(
+          decoration: BoxDecoration(
+            border: Border.all(color: scheme.inversePrimary),
+            borderRadius: BorderRadius.circular(16),
+            color: scheme.primaryContainer,
+          ),
 
-          child: Ink(
-            decoration: BoxDecoration(
-              border: Border.all(
-                color: isLoading
-                    ? context.c.outlineVariant
-                    : scheme.inversePrimary,
+          padding: const .symmetric(horizontal: 12, vertical: 10),
+
+          child: Row(
+            spacing: 8,
+
+            children: [
+              Expanded(
+                child: Text(
+                  service.name,
+
+                  overflow: TextOverflow.ellipsis,
+                  maxLines: 1,
+
+                  style: TextStyle(
+                    fontSize: 21,
+                    fontWeight: .w800,
+                    color: scheme.onPrimaryContainer,
+                  ),
+                ),
               ),
 
-              borderRadius: BorderRadius.circular(16),
-              color: scheme.primaryContainer,
-            ),
-
-            padding: .symmetric(horizontal: 12, vertical: isLoading ? 15 : 10),
-
-            child: Row(
-              spacing: 8,
-
-              children: isLoading
-                  ? [
-                      const Bone.text(width: 200, fontSize: 21),
-
-                      const Spacer(),
-
-                      const Bone.text(width: 60, fontSize: 23),
-                    ]
-                  : [
-                      Expanded(
-                        child: Text(
-                          service.name,
-
-                          overflow: TextOverflow.ellipsis,
-                          maxLines: 1,
-
-                          style: TextStyle(
-                            fontSize: 21,
-                            fontWeight: .w800,
-                            color: scheme.onPrimaryContainer,
-                          ),
-                        ),
-                      ),
-
-                      if (service.selfAverage != null &&
-                          service.theoreticalMaxGrade != null)
-                        GradeText(
-                          selfGrade: service.selfAverage!,
-                          maxGrade: service.theoreticalMaxGrade!,
-                          defaultMaxGrade: service.defaultTheoreticalMaxGrade!,
-                          isMain: true,
-                          color: scheme.primary,
-                          size: 23,
-                        ),
-                    ],
-            ),
+              if (service.selfAverage != null &&
+                  service.theoreticalMaxGrade != null)
+                GradeText(
+                  selfGrade: service.selfAverage!,
+                  maxGrade: service.theoreticalMaxGrade!,
+                  defaultMaxGrade: service.defaultTheoreticalMaxGrade!,
+                  isMain: true,
+                  color: scheme.primary,
+                  size: 23,
+                ),
+            ],
           ),
         ),
       ),
