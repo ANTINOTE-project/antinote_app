@@ -97,6 +97,7 @@ class _WorkspacesListScreenState extends State<WorkspacesListScreen> {
                         ? context.c.outlineVariant
                         : null,
                   ),
+                  trailing: const Icon(HugeIconsSolid.arrowRight01),
 
                   title: Text(
                     context.l10n.loginStudentAccount,
@@ -116,6 +117,8 @@ class _WorkspacesListScreenState extends State<WorkspacesListScreen> {
 
                 .new(
                   leading: const Icon(HugeIconsSolid.manWoman),
+                  trailing: const Icon(HugeIconsSolid.arrowRight01),
+
                   title: Text(context.l10n.loginParentAccount),
 
                   onPressed: () {
