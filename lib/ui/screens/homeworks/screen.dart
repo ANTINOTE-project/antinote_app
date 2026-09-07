@@ -689,7 +689,7 @@ class _MarkDoneButtonState extends State<_MarkDoneButton> {
                         height: 16,
 
                         child: CircularProgressIndicator(
-                          strokeWidth: 2.5,
+                          strokeWidth: 3,
                           strokeCap: .round,
                           color: _isDone
                               ? widget.scheme.onPrimaryContainer
