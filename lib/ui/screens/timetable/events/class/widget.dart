@@ -20,9 +20,6 @@ class ClassWidget extends StatelessWidget {
     this.showTiming = false,
   });
 
-  static const double radius = 16;
-  static const double reducedRadius = 6;
-
   @override
   Widget build(BuildContext context) {
     final difference = clazz.endDate.difference(clazz.startDate);
@@ -74,12 +71,13 @@ class ClassWidget extends StatelessWidget {
           borderRadius: borderRadius,
         ),
 
-        padding: const .symmetric(horizontal: 10, vertical: 5),
+        padding: .symmetric(horizontal: 10, vertical: canceled ? 8 : 6),
         width: double.infinity,
 
         child: Column(
           crossAxisAlignment: .start,
-          spacing: 2,
+          mainAxisAlignment: .center,
+          spacing: 5,
 
           children: [
             if (hasStatus)
@@ -91,7 +89,7 @@ class ClassWidget extends StatelessWidget {
                       : scheme.surfaceContainer,
                 ),
 
-                padding: const .symmetric(horizontal: 8, vertical: 4),
+                padding: const .symmetric(horizontal: 6, vertical: 3),
 
                 child: Row(
                   mainAxisSize: .min,
@@ -139,13 +137,16 @@ class ClassWidget extends StatelessWidget {
                     color: canceled ? scheme.outline : scheme.primary,
                     fontWeight: canceled ? .bold : .w800,
                     fontSize: canceled ? 21 : 22,
+                    height: canceled ? 1 : 1.2,
                   ),
                 ),
 
                 _ContentOverflowRow(
                   contents: clazz.listContents(),
                   color: canceled ? scheme.outline : scheme.onPrimaryContainer,
-                  dividerColor: scheme.outline,
+                  dividerColor: canceled
+                      ? scheme.outline
+                      : scheme.onPrimaryContainer,
                 ),
 
                 if (timingMessage != null)
@@ -153,7 +154,7 @@ class ClassWidget extends StatelessWidget {
                     timingMessage,
 
                     style: TextStyle(
-                      color: scheme.onSurfaceVariant,
+                      color: scheme.secondary,
                       fontWeight: .w800,
                       fontSize: 14,
                     ),
@@ -215,7 +216,7 @@ class _Divider extends StatelessWidget {
       decoration: BoxDecoration(borderRadius: .circular(90), color: color),
       margin: const .symmetric(vertical: 4),
 
-      height: 18,
+      height: 16,
       width: 2,
     );
   }
@@ -256,7 +257,7 @@ class _ClassContent extends StatelessWidget {
       spacing: 4,
 
       children: [
-        if (icon != null) Icon(icon, color: color, size: 19),
+        if (icon != null) Icon(icon, color: color, size: 18),
 
         if (data != null)
           Text(

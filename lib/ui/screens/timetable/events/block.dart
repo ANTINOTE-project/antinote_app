@@ -204,10 +204,10 @@ List<Block> blocksForDay(
 class BlockWidget extends StatefulWidget {
   const BlockWidget({super.key, required this.block});
 
-  static const _radius = 16.0;
+  static const _radius = 22.0;
   static const _reducedRadius = 6.0;
 
-  static const baseBorderRadius = BorderRadius.all(Radius.circular(_radius));
+  static const baseBorderRadius = BorderRadius.all(.circular(_radius));
   static const connectedBorderRadius = BorderRadius.only(
     topLeft: .circular(_radius),
     bottomLeft: .circular(_radius),
