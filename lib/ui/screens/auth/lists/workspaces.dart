@@ -62,7 +62,7 @@ class _WorkspacesListScreenState extends State<WorkspacesListScreen> {
       appBar: AppBarWidget(title: Text(context.l10n.loginSelect)),
 
       body: Padding(
-        padding: const .symmetric(horizontal: 12, vertical: 6),
+        padding: const .symmetric(horizontal: 12),
 
         child: CustomScrollView(
           slivers: [
@@ -85,7 +85,7 @@ class _WorkspacesListScreenState extends State<WorkspacesListScreen> {
                 ),
               ),
 
-              const SliverPadding(padding: .only(bottom: 8)),
+              const SliverPadding(padding: .only(bottom: 12)),
             ],
 
             ListWidget.list(
