@@ -38,6 +38,12 @@ class _AccountsListScreenState extends State<AccountsListScreen>
 
     _accounts = await ar.storage.listAccounts();
     _accounts.sort((a, b) => a.uid == _defaultUid ? -1 : 1);
+
+    if (_accounts.isEmpty) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (mounted) _pushMethodsScreen(context);
+      });
+    }
   }
 
   @override
@@ -89,7 +95,7 @@ class _AccountsListScreenState extends State<AccountsListScreen>
     });
   }
 
-  Future<void> openAccountModal(
+  Future<void> _openAccountModal(
     BuildContext context,
     AntinoteAccount account,
   ) async {
@@ -106,6 +112,22 @@ class _AccountsListScreenState extends State<AccountsListScreen>
         );
       },
     );
+  }
+
+  Future<void> _pushMethodsScreen(BuildContext context) async {
+    final result = await Navigator.push<RegisterableAccount>(
+      context,
+      MaterialPageRoute(
+        builder: (context) {
+          return const MethodsListScreen();
+        },
+      ),
+    );
+
+    if (!context.mounted || result == null) return;
+    await context.ar.registerAccount(result);
+
+    if (mounted) await reload();
   }
 
   @override
@@ -131,25 +153,10 @@ class _AccountsListScreenState extends State<AccountsListScreen>
 
       floatingActionButtonLocation: .centerFloat,
       floatingActionButton: Padding(
-        padding: const EdgeInsets.only(left: 12, right: 12),
+        padding: const .only(left: 12, right: 12),
 
         child: ButtonWidget(
-          onPressed: () async {
-            final result = await Navigator.push<RegisterableAccount>(
-              context,
-              MaterialPageRoute(
-                builder: (context) {
-                  return const MethodsListScreen();
-                },
-              ),
-            );
-
-            if (!context.mounted || result == null) return;
-            await context.ar.registerAccount(result);
-
-            if (mounted) await reload();
-          },
-
+          onPressed: () => _pushMethodsScreen(context),
           icon: HugeIconsSolid.add02,
           label: context.l10n.addAnAccount,
         ),
@@ -173,7 +180,7 @@ class _AccountsListScreenState extends State<AccountsListScreen>
                     trailing: Skeleton.ignore(
                       child: IconButton(
                         onPressed: () async {
-                          await openAccountModal(context, account);
+                          await _openAccountModal(context, account);
                         },
                         tooltip: context.l10n.openAccountSettings,
                         icon: Icon(
@@ -184,7 +191,7 @@ class _AccountsListScreenState extends State<AccountsListScreen>
                     ),
 
                     onLongPress: () async {
-                      await openAccountModal(context, account);
+                      await _openAccountModal(context, account);
                     },
 
                     title: Row(
