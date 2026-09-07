@@ -12,8 +12,6 @@ class PauseBlockWidget extends StatelessWidget {
   final PauseEvent block;
   final BorderRadius borderRadius;
 
-  static const double radius = 16;
-
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -21,16 +19,15 @@ class PauseBlockWidget extends StatelessWidget {
         border: Border.all(color: context.c.outlineVariant),
         borderRadius: borderRadius,
       ),
-      width: double.infinity,
-      height: double.infinity,
+
+      width: .infinity,
+      height: .infinity,
       alignment: .center,
+
       child: Text(
         block.title,
         textAlign: .center,
-        style: TextStyle(
-          color: context.c.onSurface.withAlpha(128),
-          fontWeight: .w700,
-        ),
+        style: TextStyle(color: context.c.outlineVariant, fontWeight: .w700),
       ),
     );
   }
