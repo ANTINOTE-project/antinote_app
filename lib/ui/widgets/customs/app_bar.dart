@@ -40,11 +40,11 @@ class AppBarWidget extends StatelessWidget implements PreferredSizeWidget {
       bottom: false,
 
       child: Container(
-        padding: const .symmetric(horizontal: 12),
+        padding: const .symmetric(horizontal: 8),
         height: preferredSize.height,
 
         child: Row(
-          spacing: 12,
+          spacing: 8,
 
           children: [
             ?leadingWidget,

@@ -48,7 +48,10 @@ class _HomeScreenState extends State<HomeScreen>
 
     return Scaffold(
       appBar: AppBarWidget(
-        title: Text(context.l10n.homeHiName(account!.name)),
+        title: Padding(
+          padding: const .only(left: 8),
+          child: Text(context.l10n.homeHiName(account!.name)),
+        ),
         titleAlign: .start,
 
         trailing: IconButton(
