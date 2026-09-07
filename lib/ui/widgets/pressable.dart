@@ -1,62 +1,77 @@
-import 'package:material_ui/material_ui.dart';
 import 'package:flutter/services.dart';
+import 'package:material_ui/material_ui.dart';
 
-class Pressable extends StatelessWidget {
+class Pressable extends StatefulWidget {
   final Widget child;
-
   final VoidCallback? onPressed;
   final VoidCallback? onLongPress;
-
   final bool hasFeedback;
   final bool hasVibration;
   final bool hasVisuals;
-
-  final HitTestBehavior behavior;
+  final bool hasScale;
+  final double scaleValue;
   final BorderRadius? borderRadius;
 
   const Pressable({
     super.key,
-
     required this.child,
-
     this.onPressed,
     this.onLongPress,
-
     this.hasFeedback = true,
     this.hasVibration = true,
     this.hasVisuals = true,
-
-    this.behavior = HitTestBehavior.deferToChild,
+    this.hasScale = true,
+    this.scaleValue = 0.97,
     this.borderRadius,
   });
 
-  void _onTapDown() async {
-    if (!hasFeedback || !hasVibration) return;
+  @override
+  State<Pressable> createState() => _PressableState();
+}
 
+class _PressableState extends State<Pressable> {
+  bool _pressed = false;
+
+  bool get _canPress => widget.onPressed != null || widget.onLongPress != null;
+
+  void _onTapDown() async {
+    if (widget.hasScale && _canPress) setState(() => _pressed = true);
+    if (!widget.hasFeedback || !widget.hasVibration) return;
     await HapticFeedback.selectionClick();
+  }
+
+  void _onTapEnd() {
+    if (widget.hasScale && _pressed) setState(() => _pressed = false);
   }
 
   @override
   Widget build(BuildContext context) {
-    return Material(
-      type: MaterialType.transparency,
-      borderRadius: borderRadius,
+    return AnimatedScale(
+      scale: _pressed ? widget.scaleValue : 1.0,
+      duration: const Duration(milliseconds: 120),
+      curve: Curves.easeOut,
 
-      child: InkWell(
-        onTap: onPressed,
-        onLongPress: onLongPress,
-        onTapDown: hasFeedback && (onPressed != null || onLongPress != null)
-            ? (_) => _onTapDown()
-            : null,
+      child: Material(
+        borderRadius: widget.borderRadius,
+        type: .transparency,
 
-        highlightColor: hasFeedback && hasVisuals ? null : Colors.transparent,
-        splashFactory: hasFeedback && hasVisuals
-            ? null
-            : NoSplash.splashFactory,
+        child: InkWell(
+          onTap: widget.onPressed,
+          onLongPress: widget.onLongPress,
+          onTapDown: _canPress ? (_) => _onTapDown() : null,
+          onTapUp: _canPress ? (_) => _onTapEnd() : null,
+          onTapCancel: _canPress ? _onTapEnd : null,
 
-        borderRadius: borderRadius,
+          highlightColor: widget.hasFeedback && widget.hasVisuals
+              ? null
+              : Colors.transparent,
+          splashFactory: widget.hasFeedback && widget.hasVisuals
+              ? null
+              : NoSplash.splashFactory,
+          borderRadius: widget.borderRadius,
 
-        child: child,
+          child: widget.child,
+        ),
       ),
     );
   }

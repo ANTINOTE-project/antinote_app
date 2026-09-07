@@ -73,7 +73,7 @@ class ButtonWidget extends StatelessWidget {
       child: Ink(
         padding: const .symmetric(horizontal: 16, vertical: 8),
 
-        width: double.infinity,
+        width: .infinity,
         height: 50,
 
         decoration: BoxDecoration(
@@ -84,7 +84,7 @@ class ButtonWidget extends StatelessWidget {
 
         child: Center(
           child: Row(
-            mainAxisAlignment: MainAxisAlignment.center,
+            mainAxisAlignment: .center,
             spacing: 6,
 
             children: [
@@ -99,7 +99,7 @@ class ButtonWidget extends StatelessWidget {
                   style: TextStyle(
                     color: _getTextColor(context),
                     fontSize: 16,
-                    fontWeight: FontWeight.w800,
+                    fontWeight: .w800,
                   ),
                 )
               else

@@ -177,22 +177,27 @@ class _AccountsListScreenState extends State<AccountsListScreen>
                     onPressed: () => _onAccountPressed(account),
                     borderRadius: const .all(ListWidget.radius),
 
+                    padding: const .only(
+                      left: 16,
+                      right: 6,
+                      top: 10,
+                      bottom: 10,
+                    ),
+
                     trailing: Skeleton.ignore(
                       child: IconButton(
                         onPressed: () async {
                           await _openAccountModal(context, account);
                         },
                         tooltip: context.l10n.openAccountSettings,
+                        visualDensity: .comfortable,
                         icon: Icon(
                           HugeIconsSolid.settings01,
                           color: context.c.outline,
+                          size: 21,
                         ),
                       ),
                     ),
-
-                    onLongPress: () async {
-                      await _openAccountModal(context, account);
-                    },
 
                     title: Row(
                       spacing: 8,
