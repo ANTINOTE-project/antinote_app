@@ -13,6 +13,7 @@ class ListWidget<T> extends StatelessWidget {
   final bool isColumn;
   final bool shrinkWrap;
   final ScrollPhysics? physics;
+  final double gap;
 
   final bool gotBefore;
   final bool gotAfter;
@@ -28,6 +29,7 @@ class ListWidget<T> extends StatelessWidget {
     this.isColumn = false,
     this.shrinkWrap = false,
     this.physics,
+    this.gap = 2,
 
     this.gotBefore = false,
     this.gotAfter = false,
@@ -61,7 +63,6 @@ class ListWidget<T> extends StatelessWidget {
 
   static const radius = Radius.circular(16);
   static const defaultRadius = Radius.circular(4);
-  static const gap = 2.0;
 
   BorderRadius _getBorderRadius(int index, int length) {
     final isFirst = index == 0 && !gotBefore;
@@ -98,7 +99,7 @@ class ListWidget<T> extends StatelessWidget {
           children: [
             for (int i = 0; i < items.length; i++)
               Padding(
-                padding: i == 0 ? .zero : const .only(top: gap),
+                padding: i == 0 ? .zero : .only(top: gap),
                 child: itemBuilder(
                   context,
                   items[i],
@@ -128,7 +129,7 @@ class ListWidget<T> extends StatelessWidget {
             final borderRadius = _getBorderRadius(index, items.length);
 
             return Padding(
-              padding: index == 0 ? .zero : const .only(top: gap),
+              padding: index == 0 ? .zero : .only(top: gap),
               child: itemBuilder(context, item, borderRadius),
             );
           },
@@ -149,7 +150,7 @@ class ListWidget<T> extends StatelessWidget {
           final borderRadius = _getBorderRadius(index, items.length);
 
           return Padding(
-            padding: index == 0 ? .zero : const .only(top: gap),
+            padding: index == 0 ? .zero : .only(top: gap),
             child: itemBuilder(context, item, borderRadius),
           );
         },

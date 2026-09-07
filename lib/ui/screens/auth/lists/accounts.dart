@@ -163,10 +163,12 @@ class _AccountsListScreenState extends State<AccountsListScreen>
             slivers: [
               ListWidget(
                 items: _accounts,
-                itemBuilder: (context, account, borderRadius) {
+                gap: 8,
+
+                itemBuilder: (context, account, _) {
                   return TileWidget(
                     onPressed: () => _onAccountPressed(account),
-                    borderRadius: borderRadius,
+                    borderRadius: const .all(ListWidget.radius),
 
                     trailing: Skeleton.ignore(
                       child: IconButton(
@@ -186,7 +188,7 @@ class _AccountsListScreenState extends State<AccountsListScreen>
                     },
 
                     title: Row(
-                      spacing: 6,
+                      spacing: 8,
 
                       children: [
                         Flexible(
@@ -196,33 +198,39 @@ class _AccountsListScreenState extends State<AccountsListScreen>
                           ),
                         ),
 
-                        if (account.invalid)
-                          Icon(
-                            HugeIconsSolid.cancel02,
-                            size: 20,
-                            color: context.c.error,
-                          ),
+                        Row(
+                          spacing: 2,
 
-                        if (account.storeSecurely)
-                          Icon(
-                            HugeIconsSolid.biometricAccess,
-                            size: 20,
-                            color: context.c.primary,
-                          ),
+                          children: [
+                            if (account.invalid)
+                              Icon(
+                                HugeIconsSolid.cancel02,
+                                size: 17,
+                                color: context.c.error,
+                              ),
 
-                        if (_defaultUid == account.uid)
-                          Icon(
-                            HugeIconsSolid.star,
-                            size: 20,
-                            color: context.c.secondary,
-                          ),
+                            if (account.storeSecurely)
+                              Icon(
+                                HugeIconsSolid.biometricAccess,
+                                size: 17,
+                                color: context.c.primary,
+                              ),
 
-                        if (account.isDemo)
-                          Icon(
-                            HugeIconsSolid.testTube02,
-                            size: 20,
-                            color: context.c.tertiary,
-                          ),
+                            if (_defaultUid == account.uid)
+                              Icon(
+                                HugeIconsSolid.star,
+                                size: 17,
+                                color: context.c.secondary,
+                              ),
+
+                            if (account.isDemo)
+                              Icon(
+                                HugeIconsSolid.testTube02,
+                                size: 17,
+                                color: context.c.tertiary,
+                              ),
+                          ],
+                        ),
                       ],
                     ),
 
