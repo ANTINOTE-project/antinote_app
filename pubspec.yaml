@@ -29,7 +29,7 @@ dependencies:
 
   # Frontend - useful
   url_launcher: ^6.3.2
-  webview_flutter: ^4.14.1
+  flutter_inappwebview: ^6.1.5
   mobile_scanner: ^7.4.0
   flutter_widget_from_html_core: ^0.17.2
   material_ui: any

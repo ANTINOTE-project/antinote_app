@@ -2,11 +2,10 @@ import 'dart:io';
 
 import 'package:antinote_api/antinote_api.dart';
 import 'package:antinote_app/data/src/session/wrapper.dart';
-import 'package:antinote_app/ui/utils/utils.dart';
+import 'package:antinote_app/ui/utils/src/context.dart';
 import 'package:antinote_app/ui/widgets/customs/app_bar.dart';
-import 'package:flutter/foundation.dart';
+import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 import 'package:material_ui/material_ui.dart';
-import 'package:webview_flutter/webview_flutter.dart';
 
 class WebviewLoginScreen extends StatefulWidget {
   final MobileInstanceParameters parameters;
@@ -23,7 +22,6 @@ class WebviewLoginScreen extends StatefulWidget {
 }
 
 class _WebviewLoginScreenState extends State<WebviewLoginScreen> {
-  late final WebViewController _controller;
   double _loadingProgress = 0;
   bool _loginHandled = false;
 
@@ -43,55 +41,7 @@ class _WebviewLoginScreenState extends State<WebviewLoginScreen> {
   @override
   void initState() {
     super.initState();
-
-    final manager = WebViewCookieManager();
-    if (!kDebugMode) {
-      manager.clearCookies();
-    }
-
-    _controller = WebViewController()
-      ..setJavaScriptMode(JavaScriptMode.unrestricted)
-      ..setNavigationDelegate(
-        NavigationDelegate(
-          onProgress: (p) => setState(() => _loadingProgress = p / 100),
-          onNavigationRequest: (request) async {
-            if (_loginHandled) return NavigationDecision.prevent;
-
-            final url = Uri.tryParse(request.url);
-
-            if (_matchesCriteria(url)) {
-              _loginHandled = true;
-
-              try {
-                final result = await TicketCredentials.loginFromTicketOrId(
-                  url!,
-                  widget.parameters.casToken,
-                  widget.workspace,
-                  Platform.localeName,
-                );
-
-                if (mounted) {
-                  Navigator.pop(context, SessionWrapper.register(result));
-                } else {
-                  return NavigationDecision.navigate;
-                }
-              } catch (e, st) {
-                _loginHandled = false;
-                logger.severe(
-                  'Failed to login although matched criterion',
-                  e,
-                  st,
-                );
-              }
-
-              return NavigationDecision.prevent;
-            }
-
-            return NavigationDecision.navigate;
-          },
-        ),
-      )
-      ..loadRequest(_loginUrl);
+    CookieManager.instance().deleteAllCookies();
   }
 
   @override
@@ -101,7 +51,48 @@ class _WebviewLoginScreenState extends State<WebviewLoginScreen> {
 
       body: Stack(
         children: [
-          WebViewWidget(controller: _controller),
+          InAppWebView(
+            initialUrlRequest: URLRequest(url: WebUri.uri(_loginUrl)),
+
+            onProgressChanged: (controller, progress) {
+              setState(() => _loadingProgress = progress / 100);
+            },
+
+            shouldOverrideUrlLoading: (controller, action) async {
+              if (_loginHandled) return NavigationActionPolicy.CANCEL;
+              final url = action.request.url?.uriValue;
+
+              if (_matchesCriteria(url)) {
+                _loginHandled = true;
+
+                try {
+                  final result = await TicketCredentials.loginFromTicketOrId(
+                    url!,
+                    widget.parameters.casToken,
+                    widget.workspace,
+                    Platform.localeName,
+                  );
+
+                  if (context.mounted) {
+                    Navigator.pop(context, SessionWrapper.register(result));
+                  } else {
+                    return NavigationActionPolicy.ALLOW;
+                  }
+                } catch (e, st) {
+                  _loginHandled = false;
+                  logger.severe(
+                    'Failed to login although matched criterion',
+                    e,
+                    st,
+                  );
+                }
+
+                return NavigationActionPolicy.CANCEL;
+              }
+
+              return NavigationActionPolicy.ALLOW;
+            },
+          ),
 
           if (_loadingProgress < 1)
             LinearProgressIndicator(value: _loadingProgress),
