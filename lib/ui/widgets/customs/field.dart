@@ -43,7 +43,7 @@ class FieldWidget extends StatelessWidget {
     return Container(
       decoration: BoxDecoration(
         color: context.c.surfaceContainer,
-        borderRadius: const BorderRadius.all(Radius.circular(8)),
+        borderRadius: const .all(.circular(18)),
         border: .all(color: context.c.onInverseSurface),
       ),
 
@@ -59,22 +59,15 @@ class FieldWidget extends StatelessWidget {
         obscureText: obscureText,
         autofocus: autofocus,
 
-        textAlignVertical: TextAlignVertical.center,
-        style: const TextStyle(fontWeight: FontWeight.w600),
+        textAlignVertical: .center,
+        style: const TextStyle(fontWeight: .w600),
 
         decoration: InputDecoration(
-          enabledBorder: InputBorder.none,
-          focusedBorder: InputBorder.none,
+          contentPadding: const .symmetric(horizontal: 16, vertical: 12),
+          enabledBorder: .none,
+          focusedBorder: .none,
 
-          contentPadding: const EdgeInsets.symmetric(
-            horizontal: 16,
-            vertical: 12,
-          ),
-
-          hintStyle: TextStyle(
-            color: context.c.outline,
-            fontWeight: FontWeight.w600,
-          ),
+          hintStyle: TextStyle(color: context.c.outline, fontWeight: .w600),
           hintText: hintText,
           hintMaxLines: 1,
 
