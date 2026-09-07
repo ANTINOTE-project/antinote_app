@@ -39,7 +39,7 @@ class _AppearanceState extends State<Appearance> {
                     parent: AlwaysScrollableScrollPhysics(),
                   ),
 
-                  padding: const .symmetric(horizontal: 20, vertical: 14),
+                  padding: const .symmetric(horizontal: 16, vertical: 14),
 
                   itemCount: AppColor.values.length,
                   scrollDirection: .horizontal,
@@ -52,10 +52,10 @@ class _AppearanceState extends State<Appearance> {
                     final color = appColor.color;
 
                     final isSelected = color == context.s.theme.seedColor;
-
+ 
                     return Padding(
                       padding: .only(
-                        right: index == AppColor.values.length - 1 ? 0 : 20,
+                        right: index == AppColor.values.length - 1 ? 0 : 16,
                       ),
 
                       child: Column(
@@ -82,7 +82,10 @@ class _AppearanceState extends State<Appearance> {
                                 color: isDynamic ? color.withAlpha(128) : color,
                                 border: isSelected
                                     ? .all(
-                                        color: currentColorScheme.primary,
+                                        color: isDynamic
+                                            ? currentColorScheme.primary
+                                                  .withAlpha(128)
+                                            : currentColorScheme.primary,
                                         width: 2,
                                       )
                                     : null,
