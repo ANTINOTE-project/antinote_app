@@ -616,6 +616,9 @@ class _MarkDoneButtonState extends State<_MarkDoneButton> {
 
   bool get _isDone => _optimisticIsDone ?? widget.homework.isDone;
 
+  Color get _color =>
+      _isDone ? widget.scheme.onPrimaryContainer : widget.scheme.outline;
+
   @override
   void didUpdateWidget(covariant _MarkDoneButton oldWidget) {
     super.didUpdateWidget(oldWidget);
@@ -691,9 +694,7 @@ class _MarkDoneButtonState extends State<_MarkDoneButton> {
                         child: CircularProgressIndicator(
                           strokeWidth: 3,
                           strokeCap: .round,
-                          color: _isDone
-                              ? widget.scheme.onPrimaryContainer
-                              : widget.scheme.outline,
+                          color: _color,
                         ),
                       )
                     : Icon(
@@ -701,9 +702,7 @@ class _MarkDoneButtonState extends State<_MarkDoneButton> {
                             ? HugeIconsSolid.tick03
                             : HugeIconsStroke.tick03,
                         key: ValueKey(_isDone),
-                        color: _isDone
-                            ? widget.scheme.onPrimaryContainer
-                            : widget.scheme.outline,
+                        color: _color,
                         size: 21,
                       ),
               ),
@@ -715,9 +714,7 @@ class _MarkDoneButtonState extends State<_MarkDoneButton> {
                   : context.l10n.homeworkSetNotDone,
 
               style: TextStyle(
-                color: _isDone
-                    ? widget.scheme.onPrimaryContainer
-                    : widget.scheme.outline,
+                color: _color,
                 fontWeight: .w800,
                 fontSize: 15.5,
               ),
