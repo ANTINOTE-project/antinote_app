@@ -11,6 +11,7 @@ import 'package:antinote_app/ui/widgets/customs/loading.dart';
 import 'package:antinote_app/ui/widgets/pressable.dart';
 import 'package:antinote_app/ui/widgets/remote_html.dart';
 import 'package:collection/collection.dart';
+import 'package:flutter/services.dart';
 import 'package:hugeicons_pro/hugeicons.dart';
 import 'package:material_ui/material_ui.dart';
 
@@ -353,8 +354,12 @@ class _DayState extends State<_Day> {
 
                     builder: (context, value, _) {
                       return CircularProgressIndicator(
+                        color: Color.lerp(
+                          context.c.outline,
+                          context.c.primary,
+                          value,
+                        ),
                         backgroundColor: context.c.outlineVariant,
-                        color: context.c.outline,
                         value: value,
                         strokeWidth: 4,
                         strokeCap: .round,
@@ -643,6 +648,14 @@ class _MarkDoneButtonState extends State<_MarkDoneButton> {
                 _optimisticIsDone = target;
               });
 
+              if (target) {
+                await HapticFeedback.lightImpact();
+              } else {
+                await HapticFeedback.selectionClick();
+              }
+
+              if (!context.mounted) return;
+
               await context.ar.runTask(
                 context: context,
 
@@ -708,15 +721,48 @@ class _MarkDoneButtonState extends State<_MarkDoneButton> {
               ),
             ),
 
-            Text(
-              _isDone
-                  ? context.l10n.homeworkSetDone
-                  : context.l10n.homeworkSetNotDone,
+            AnimatedSize(
+              duration: const Duration(milliseconds: 200),
+              curve: Curves.easeInOutCubic,
 
-              style: TextStyle(
-                color: _color,
-                fontWeight: .w800,
-                fontSize: 15.5,
+              child: AnimatedSwitcher(
+                duration: const Duration(milliseconds: 200),
+                switchInCurve: Curves.easeOutCubic,
+                switchOutCurve: Curves.easeInCubic,
+
+                transitionBuilder: (child, animation) {
+                  return FadeTransition(
+                    opacity: animation,
+
+                    child: SlideTransition(
+                      position:
+                          Tween<Offset>(
+                            begin: const Offset(0.1, 0.0),
+                            end: Offset.zero,
+                          ).animate(
+                            CurvedAnimation(
+                              parent: animation,
+                              curve: Curves.easeOutCubic,
+                            ),
+                          ),
+
+                      child: child,
+                    ),
+                  );
+                },
+
+                child: Text(
+                  _isDone
+                      ? context.l10n.homeworkSetDone
+                      : context.l10n.homeworkSetNotDone,
+
+                  key: ValueKey(_isDone),
+                  style: TextStyle(
+                    color: _color,
+                    fontWeight: .w800,
+                    fontSize: 15.5,
+                  ),
+                ),
               ),
             ),
           ],
