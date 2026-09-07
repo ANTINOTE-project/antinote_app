@@ -346,11 +346,20 @@ class _DayState extends State<_Day> {
                   height: 18,
                   width: 18,
 
-                  child: CircularProgressIndicator(
-                    backgroundColor: context.c.outlineVariant,
-                    color: context.c.outline,
-                    value: progress,
-                    strokeWidth: 4,
+                  child: TweenAnimationBuilder<double>(
+                    tween: Tween(begin: 0, end: progress),
+                    duration: const Duration(milliseconds: 400),
+                    curve: Curves.easeOutCubic,
+
+                    builder: (context, value, _) {
+                      return CircularProgressIndicator(
+                        backgroundColor: context.c.outlineVariant,
+                        color: context.c.outline,
+                        value: value,
+                        strokeWidth: 4,
+                        strokeCap: .round,
+                      );
+                    },
                   ),
                 ),
 
@@ -367,10 +376,27 @@ class _DayState extends State<_Day> {
                   ),
                 ),
 
-                Transform.rotate(
-                  angle: animation.value * pi,
+                AnimatedSwitcher(
+                  duration: const Duration(milliseconds: 200),
+                  switchInCurve: Curves.easeOutExpo,
+                  switchOutCurve: Curves.easeIn,
+
+                  transitionBuilder: (child, anim) {
+                    return ScaleTransition(scale: anim, child: child);
+                  },
+
+                  layoutBuilder: (currentChild, previousChildren) {
+                    return Stack(
+                      alignment: .center,
+                      children: [...previousChildren, ?currentChild],
+                    );
+                  },
+
                   child: Icon(
-                    HugeIconsSolid.arrowDown01,
+                    animation.value > 0.5
+                        ? HugeIconsSolid.arrowUp01
+                        : HugeIconsSolid.arrowDown01,
+                    key: ValueKey(animation.value > 0.5),
                     color: context.c.outline,
                     size: 22,
                   ),
@@ -494,65 +520,10 @@ class _HomeworkCard extends StatelessWidget {
               children: [
                 Divider(height: 0, thickness: 1, color: scheme.inversePrimary),
 
-                Pressable(
-                  borderRadius: const .vertical(bottom: .circular(11)),
-                  onPressed: () async {
-                    await context.ar.runTask(
-                      context: context,
-
-                      callback: (session) async {
-                        final cachedHomework = session.getCachedValue<Homework>(
-                          .HOMEWORK,
-                          homework.visualId,
-                        );
-
-                        await session.access(
-                          ChangeHomeworkStateAccessor(
-                            homeworksToUpdate: {
-                              cachedHomework: !homework.isDone,
-                            },
-                          ),
-                        );
-                      },
-                      debugLabel: 'Update state for homework',
-                    );
-
-                    onReturn();
-                  },
-
-                  child: Padding(
-                    padding: const .symmetric(horizontal: 12, vertical: 8),
-
-                    child: Row(
-                      spacing: 6,
-
-                      children: [
-                        Icon(
-                          homework.isDone
-                              ? HugeIconsSolid.tick03
-                              : HugeIconsStroke.tick03,
-                          color: homework.isDone
-                              ? scheme.onPrimaryContainer
-                              : scheme.outline,
-                          size: 21,
-                        ),
-
-                        Text(
-                          homework.isDone
-                              ? context.l10n.homeworkSetDone
-                              : context.l10n.homeworkSetNotDone,
-
-                          style: TextStyle(
-                            color: homework.isDone
-                                ? scheme.onPrimaryContainer
-                                : scheme.outline,
-                            fontWeight: .w800,
-                            fontSize: 15.5,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
+                _MarkDoneButton(
+                  homework: homework,
+                  scheme: scheme,
+                  onReturn: onReturn,
                 ),
               ],
             ),
@@ -619,6 +590,140 @@ class _DotIndicator extends StatelessWidget {
       decoration: BoxDecoration(
         color: active ? context.c.onSurface : context.c.outlineVariant,
         shape: BoxShape.circle,
+      ),
+    );
+  }
+}
+
+class _MarkDoneButton extends StatefulWidget {
+  final Homework homework;
+  final ColorScheme scheme;
+  final VoidCallback onReturn;
+
+  const _MarkDoneButton({
+    required this.homework,
+    required this.scheme,
+    required this.onReturn,
+  });
+
+  @override
+  State<_MarkDoneButton> createState() => _MarkDoneButtonState();
+}
+
+class _MarkDoneButtonState extends State<_MarkDoneButton> {
+  bool _isLoading = false;
+  bool? _optimisticIsDone;
+
+  bool get _isDone => _optimisticIsDone ?? widget.homework.isDone;
+
+  @override
+  void didUpdateWidget(covariant _MarkDoneButton oldWidget) {
+    super.didUpdateWidget(oldWidget);
+
+    if (widget.homework.isDone == _optimisticIsDone) {
+      _optimisticIsDone = null;
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Pressable(
+      borderRadius: const .vertical(bottom: .circular(11)),
+
+      onPressed: _isLoading
+          ? null
+          : () async {
+              final target = !_isDone;
+
+              setState(() {
+                _isLoading = true;
+                _optimisticIsDone = target;
+              });
+
+              await context.ar.runTask(
+                context: context,
+
+                callback: (session) async {
+                  final cachedHomework = session.getCachedValue<Homework>(
+                    .HOMEWORK,
+                    widget.homework.visualId,
+                  );
+
+                  await session.access(
+                    ChangeHomeworkStateAccessor(
+                      homeworksToUpdate: {cachedHomework: target},
+                    ),
+                  );
+                },
+                debugLabel: 'Update state for homework',
+              );
+
+              if (mounted) setState(() => _isLoading = false);
+              widget.onReturn();
+            },
+
+      child: Padding(
+        padding: const .symmetric(horizontal: 12, vertical: 8),
+
+        child: Row(
+          spacing: 6,
+
+          children: [
+            SizedBox(
+              width: 21,
+              height: 21,
+
+              child: AnimatedSwitcher(
+                duration: const Duration(milliseconds: 200),
+                switchInCurve: Curves.easeOutExpo,
+                switchOutCurve: Curves.easeIn,
+
+                transitionBuilder: (child, anim) {
+                  return ScaleTransition(scale: anim, child: child);
+                },
+
+                child: _isLoading
+                    ? SizedBox(
+                        key: const ValueKey('loading'),
+                        width: 16,
+                        height: 16,
+
+                        child: CircularProgressIndicator(
+                          strokeWidth: 2.5,
+                          strokeCap: .round,
+                          color: _isDone
+                              ? widget.scheme.onPrimaryContainer
+                              : widget.scheme.outline,
+                        ),
+                      )
+                    : Icon(
+                        _isDone
+                            ? HugeIconsSolid.tick03
+                            : HugeIconsStroke.tick03,
+                        key: ValueKey(_isDone),
+                        color: _isDone
+                            ? widget.scheme.onPrimaryContainer
+                            : widget.scheme.outline,
+                        size: 21,
+                      ),
+              ),
+            ),
+
+            Text(
+              _isDone
+                  ? context.l10n.homeworkSetDone
+                  : context.l10n.homeworkSetNotDone,
+
+              style: TextStyle(
+                color: _isDone
+                    ? widget.scheme.onPrimaryContainer
+                    : widget.scheme.outline,
+                fontWeight: .w800,
+                fontSize: 15.5,
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
