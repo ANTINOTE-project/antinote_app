@@ -71,17 +71,10 @@ class _WorkspacesListScreenState extends State<WorkspacesListScreen> {
                 child: TileWidget(
                   borderRadius: const .all(ListWidget.radius),
                   title: Text(context.l10n.activateCas),
-
-                  onPressed: () => setState(() {
-                    _casLoginActive = !_casLoginActive;
+                  switchValue: _casLoginActive,
+                  onSwitchChanged: (value) => setState(() {
+                    _casLoginActive = value;
                   }),
-
-                  trailing: Switch(
-                    value: _casLoginActive,
-                    onChanged: (value) => setState(() {
-                      _casLoginActive = value;
-                    }),
-                  ),
                 ),
               ),
 

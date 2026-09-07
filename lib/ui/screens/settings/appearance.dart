@@ -112,22 +112,14 @@ class _AppearanceState extends State<Appearance> {
             TileWidgetData(
               title: Text(context.l10n.deviceTheme),
               subtitle: Text(context.l10n.deviceThemeDescription, maxLines: 3),
+              switchValue: context.s.theme.isDynamic,
+              onSwitchChanged: (value) async {
+                await context.s.theme.setIsDynamic(value);
 
-              onPressed: () async {
-                await context.s.theme.setIsDynamic(!context.s.theme.isDynamic);
-                if (context.mounted) setState(() {});
+                if (context.mounted) {
+                  setState(() {});
+                }
               },
-
-              trailing: Switch(
-                value: context.s.theme.isDynamic,
-                onChanged: (value) async {
-                  await context.s.theme.setIsDynamic(value);
-
-                  if (context.mounted) {
-                    setState(() {});
-                  }
-                },
-              ),
             ),
           ],
         ),

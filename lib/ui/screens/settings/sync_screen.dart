@@ -179,13 +179,8 @@ class _SettingsSyncScreenState extends State<SettingsSyncScreen>
                       .new(
                         title: Text(context.l10n.calendarSync),
                         subtitle: Text(context.l10n.calendarSyncSubtitle),
-                        onPressed: syncing
-                            ? null
-                            : () => toggleCalendarSync(!calendarData.enabled),
-                        trailing: Switch(
-                          value: calendarData.enabled,
-                          onChanged: syncing ? null : toggleCalendarSync,
-                        ),
+                        switchValue: calendarData.enabled,
+                        onSwitchChanged: syncing ? null : toggleCalendarSync,
                       ),
                     ],
                   ),
@@ -229,61 +224,57 @@ class _SettingsSyncScreenState extends State<SettingsSyncScreen>
                         if (mounted) setState(() {});
                       }
 
-                      Widget createSwitch(
-                        SyncTaskData_Notification_EntryType type,
-                      ) {
-                        return Switch(
-                          value: notificationSettings.enabledTypes.contains(
-                            type,
-                          ),
-                          onChanged: availableTypes[type]! && !syncing
-                              ? (value) => toggle(type, value)
-                              : null,
-                        );
-                      }
-
-                      VoidCallback? createOnPressed(
-                        SyncTaskData_Notification_EntryType type,
-                      ) {
-                        if (!availableTypes[type]! || syncing) return null;
-
-                        return () => toggle(
-                          type,
-                          !notificationSettings.enabledTypes.contains(type),
-                        );
-                      }
-
                       return ListWidget.list(
                         items: [
                           .new(
                             title: Text(context.l10n.newsSync),
                             subtitle: Text(context.l10n.newsSyncSubtitle),
-                            trailing: createSwitch(.INFORMATION),
-                            onPressed: createOnPressed(.INFORMATION),
+                            switchValue: notificationSettings.enabledTypes
+                                .contains(
+                                  SyncTaskData_Notification_EntryType
+                                      .INFORMATION,
+                                ),
+                            onSwitchChanged: (value) =>
+                                toggle(.INFORMATION, value),
                           ),
                           .new(
                             title: Text(context.l10n.discussionSync),
                             subtitle: Text(context.l10n.discussionSyncSubtitle),
-                            trailing: createSwitch(.DISCUSSION),
-                            onPressed: createOnPressed(.DISCUSSION),
+                            switchValue: notificationSettings.enabledTypes
+                                .contains(
+                                  SyncTaskData_Notification_EntryType
+                                      .DISCUSSION,
+                                ),
+                            onSwitchChanged: (value) =>
+                                toggle(.DISCUSSION, value),
                           ),
                           .new(
                             title: Text(context.l10n.homeworkSync),
                             subtitle: Text(context.l10n.homeworkSyncSubtitle),
-                            trailing: createSwitch(.HOMEWORK),
-                            onPressed: createOnPressed(.HOMEWORK),
+                            switchValue: notificationSettings.enabledTypes
+                                .contains(
+                                  SyncTaskData_Notification_EntryType.HOMEWORK,
+                                ),
+                            onSwitchChanged: (value) =>
+                                toggle(.HOMEWORK, value),
                           ),
                           .new(
                             title: Text(context.l10n.gradeSync),
                             subtitle: Text(context.l10n.gradeSyncSubtitle),
-                            trailing: createSwitch(.GRADE),
-                            onPressed: createOnPressed(.GRADE),
+                            switchValue: notificationSettings.enabledTypes
+                                .contains(
+                                  SyncTaskData_Notification_EntryType.GRADE,
+                                ),
+                            onSwitchChanged: (value) => toggle(.GRADE, value),
                           ),
                           .new(
                             title: Text(context.l10n.menuSync),
                             subtitle: Text(context.l10n.menuSyncSubtitle),
-                            trailing: createSwitch(.MENU),
-                            onPressed: createOnPressed(.MENU),
+                            switchValue: notificationSettings.enabledTypes
+                                .contains(
+                                  SyncTaskData_Notification_EntryType.MENU,
+                                ),
+                            onSwitchChanged: (value) => toggle(.MENU, value),
                           ),
                         ],
                       );

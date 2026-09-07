@@ -373,41 +373,41 @@ class _AccountModalState extends State<_AccountModal> {
                 .new(
                   title: Text(context.l10n.autoLogin),
                   subtitle: Text(context.l10n.autoLoginSubtitle),
-                  trailing: Switch(
-                    value: widget.defaultUid == widget.account.uid,
-                    onChanged: (value) async {
-                      await context.ar.storage.setDefault(
-                        value ? widget.account.uid : null,
-                      );
-                      await widget.reload();
-                      if (context.mounted) {
-                        Navigator.pop(context);
-                      }
-                    },
-                  ),
+                  switchValue: widget.defaultUid == widget.account.uid,
+                  onSwitchChanged: (value) async {
+                    await context.ar.storage.setDefault(
+                      value ? widget.account.uid : null,
+                    );
+                    await widget.reload();
+
+                    if (context.mounted) {
+                      Navigator.pop(context);
+                    }
+                  },
                 ),
+
                 .new(
                   title: Text(context.l10n.secureStore),
                   subtitle: Text(context.l10n.secureStoreSubtitle),
-                  trailing: Switch(
-                    value: widget.account.storeSecurely,
-                    onChanged: (value) async {
-                      if (value == widget.account.storeSecurely) {
-                        return;
-                      }
+                  switchValue: widget.account.storeSecurely,
+                  onSwitchChanged: (value) async {
+                    if (value == widget.account.storeSecurely) {
+                      return;
+                    }
 
-                      await context.ar.storage.updateAccount(
-                        widget.account.rebuild((acc) {
-                          acc.storeSecurely = value;
-                        }),
-                        widget.account.uid,
-                      );
-                      await widget.reload();
-                      if (context.mounted) {
-                        Navigator.pop(context);
-                      }
-                    },
-                  ),
+                    await context.ar.storage.updateAccount(
+                      widget.account.rebuild((acc) {
+                        acc.storeSecurely = value;
+                      }),
+                      widget.account.uid,
+                    );
+
+                    await widget.reload();
+
+                    if (context.mounted) {
+                      Navigator.pop(context);
+                    }
+                  },
                 ),
 
                 if (kDebugMode)

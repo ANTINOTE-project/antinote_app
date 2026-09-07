@@ -170,6 +170,9 @@ class TileWidgetData {
   final VoidCallback? onPressed;
   final VoidCallback? onLongPressed;
 
+  final bool? switchValue;
+  final ValueChanged<bool>? onSwitchChanged;
+
   final Color? backgroundColor;
   final EdgeInsets? padding;
 
@@ -178,8 +181,13 @@ class TileWidgetData {
     this.subtitle,
     this.leading,
     this.trailing,
+
     this.onPressed,
     this.onLongPressed,
+
+    this.switchValue,
+    this.onSwitchChanged,
+
     this.backgroundColor,
     this.padding,
   });
@@ -196,6 +204,9 @@ class TileWidget extends StatelessWidget {
 
   final VoidCallback? onPressed;
   final VoidCallback? onLongPress;
+
+  final bool? switchValue;
+  final ValueChanged<bool>? onSwitchChanged;
 
   final BorderRadius borderRadius;
   final EdgeInsets? padding;
@@ -216,6 +227,9 @@ class TileWidget extends StatelessWidget {
     this.onPressed,
     this.onLongPress,
 
+    this.switchValue,
+    this.onSwitchChanged,
+
     this.backgroundColor,
     this.padding,
 
@@ -233,6 +247,8 @@ class TileWidget extends StatelessWidget {
       trailing: data.trailing,
       onPressed: data.onPressed,
       onLongPress: data.onLongPressed,
+      switchValue: data.switchValue,
+      onSwitchChanged: data.onSwitchChanged,
       backgroundColor: data.backgroundColor,
       padding: data.padding,
       borderRadius: borderRadius,
@@ -244,7 +260,12 @@ class TileWidget extends StatelessWidget {
     return Pressable(
       borderRadius: borderRadius,
 
-      onPressed: onPressed,
+      onPressed:
+          onPressed ??
+          (switchValue != null && onSwitchChanged != null
+              ? () => onSwitchChanged!(!switchValue!)
+              : null),
+
       onLongPress: onLongPress,
 
       child: Ink(
@@ -299,7 +320,19 @@ class TileWidget extends StatelessWidget {
               ),
             ),
 
-            ?trailing,
+            if (trailing != null)
+              trailing!
+            else if (switchValue != null)
+              SizedBox(
+                height: 38,
+                child: FittedBox(
+                  fit: .fitHeight,
+                  child: Switch(
+                    value: switchValue!,
+                    onChanged: onSwitchChanged,
+                  ),
+                ),
+              ),
           ],
         ),
       ),

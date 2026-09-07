@@ -36,34 +36,19 @@ class _NetworkingState extends State<Networking> {
                     maxLines: 10,
                   ),
 
-                  onPressed: () async {
+                  switchValue: !context
+                      .s
+                      .networking
+                      .sessionOptions
+                      .saveNavigationRequests,
+
+                  onSwitchChanged: (value) async {
                     final options = context.s.networking.sessionOptions.rebuild(
-                      (options) => options.saveNavigationRequests = !context
-                          .s
-                          .networking
-                          .sessionOptions
-                          .saveNavigationRequests,
+                      (options) => options.saveNavigationRequests = !value,
                     );
 
                     await context.s.networking.setSessionOptions(options);
                   },
-
-                  trailing: Switch(
-                    value: !context
-                        .s
-                        .networking
-                        .sessionOptions
-                        .saveNavigationRequests,
-                    onChanged: (value) async {
-                      final options = context.s.networking.sessionOptions
-                          .rebuild(
-                            (options) =>
-                                options.saveNavigationRequests = !value,
-                          );
-
-                      await context.s.networking.setSessionOptions(options);
-                    },
-                  ),
                 ),
               ],
             ),
