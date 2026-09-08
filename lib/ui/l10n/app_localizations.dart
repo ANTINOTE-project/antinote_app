@@ -287,13 +287,13 @@ abstract class AppLocalizations {
   /// No description provided for @chooseAnAccount.
   ///
   /// In fr, this message translates to:
-  /// **'Choisir un compte'**
+  /// **'Changer de compte'**
   String get chooseAnAccount;
 
   /// No description provided for @chooseAnAccountSubtitle.
   ///
   /// In fr, this message translates to:
-  /// **'Changer de compter ou en ajouter un'**
+  /// **'Changer de compte ou en ajouter un'**
   String get chooseAnAccountSubtitle;
 
   /// No description provided for @addAnAccount.

@@ -105,10 +105,10 @@ class AppLocalizationsFr extends AppLocalizations {
       'Demande votre biométrie pour se connecter au compte';
 
   @override
-  String get chooseAnAccount => 'Choisir un compte';
+  String get chooseAnAccount => 'Changer de compte';
 
   @override
-  String get chooseAnAccountSubtitle => 'Changer de compter ou en ajouter un';
+  String get chooseAnAccountSubtitle => 'Changer de compte ou en ajouter un';
 
   @override
   String get addAnAccount => 'Ajouter un compte';

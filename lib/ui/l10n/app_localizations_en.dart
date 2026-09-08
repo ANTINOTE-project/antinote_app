@@ -105,7 +105,7 @@ class AppLocalizationsEn extends AppLocalizations {
       'Asks for biometrics each time a new connection to this account is made';
 
   @override
-  String get chooseAnAccount => 'Pick account';
+  String get chooseAnAccount => 'Change account';
 
   @override
   String get chooseAnAccountSubtitle => 'Change account or add one';

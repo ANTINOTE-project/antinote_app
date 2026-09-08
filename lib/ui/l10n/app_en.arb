@@ -34,7 +34,7 @@
   "loginDemoText": "Demo",
   "autoLogin": "Auto-login",
   "autoLoginSubtitle": "Marks this account to open upon the start of the app",
-  "chooseAnAccount": "Pick account",
+  "chooseAnAccount": "Change account",
   "chooseAnAccountSubtitle": "Change account or add one",
   "addAnAccount": "Add account",
   "deleteAccount": "Delete account",
