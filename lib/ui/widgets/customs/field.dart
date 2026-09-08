@@ -44,7 +44,6 @@ class FieldWidget extends StatelessWidget {
       decoration: BoxDecoration(
         color: context.c.surfaceContainer,
         borderRadius: const .all(.circular(18)),
-        border: .all(color: context.c.onInverseSurface),
       ),
 
       child: TextField(
