@@ -43,10 +43,12 @@ class _HomeScreenState extends State<HomeScreen>
     return Scaffold(
       appBar: AppBarWidget(
         titleAlign: .start,
-        title: Padding(
-          padding: const .only(left: 8),
-          child: Text(context.l10n.homeHiName(account?.name ?? '')),
-        ),
+        title: account != null
+            ? Padding(
+                padding: const .only(left: 8),
+                child: Text(context.l10n.homeHiName(account!.name)),
+              )
+            : null,
 
         trailing: IconButton(
           icon: const Icon(HugeIconsSolid.settings02),
