@@ -216,13 +216,10 @@ class _Categories extends StatelessWidget {
 
             sliver: ListWidget(
               items: uncategorized,
+              gap: 4,
 
-              itemBuilder: (context, service, borderRadius) {
-                return _ServiceWidget(
-                  borderRadius: borderRadius,
-                  service: service,
-                  report: report,
-                );
+              itemBuilder: (context, service, _) {
+                return _ServiceWidget(service: service, report: report);
               },
             ),
           ),
@@ -259,13 +256,10 @@ class _Categories extends StatelessWidget {
 
                 sliver: ListWidget(
                   items: services,
+                  gap: 4,
 
-                  itemBuilder: (context, service, borderRadius) {
-                    return _ServiceWidget(
-                      borderRadius: borderRadius,
-                      service: service,
-                      report: report,
-                    );
+                  itemBuilder: (context, service, _) {
+                    return _ServiceWidget(service: service, report: report);
                   },
                 ),
               ),
@@ -353,13 +347,8 @@ class _MiniAverage extends StatelessWidget {
 class _ServiceWidget extends StatelessWidget {
   final ReportService service;
   final PublishedReport report;
-  final BorderRadius borderRadius;
 
-  const _ServiceWidget({
-    required this.service,
-    required this.report,
-    required this.borderRadius,
-  });
+  const _ServiceWidget({required this.service, required this.report});
 
   @override
   Widget build(BuildContext context) {
@@ -383,13 +372,12 @@ class _ServiceWidget extends StatelessWidget {
     final scheme = Utils.buildColorScheme(context, service.color);
 
     return Pressable(
-      borderRadius: borderRadius,
+      borderRadius: const .all(ListWidget.radius),
 
       child: Ink(
         decoration: BoxDecoration(
-          border: .all(color: scheme.inversePrimary),
+          borderRadius: const .all(ListWidget.radius),
           color: scheme.primaryContainer,
-          borderRadius: borderRadius,
         ),
 
         padding: const .symmetric(horizontal: 12, vertical: 10),
@@ -613,7 +601,7 @@ class _ServiceWidget extends StatelessWidget {
                         ),
 
                       if (index != service.sections.length - 1)
-                        Divider(color: scheme.outline),
+                        Divider(color: scheme.inversePrimary),
                     ],
                   );
                 },
