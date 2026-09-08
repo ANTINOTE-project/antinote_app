@@ -15,37 +15,41 @@ Future<void> _showDetails({
       final scheme = Utils.buildColorScheme(context, serviceColor ?? 0);
 
       return Container(
-        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
+        padding: const .fromLTRB(12, 0, 12, 20),
         width: double.infinity,
 
         child: SingleChildScrollView(
           child: Column(
-            mainAxisSize: MainAxisSize.min,
+            mainAxisSize: .min,
             spacing: 16,
+
             children: [
               Column(
                 mainAxisAlignment: .center,
+                spacing: 8,
+
                 children: [
-                  Text(
-                    name,
-                    textAlign: TextAlign.center,
-                    overflow: TextOverflow.ellipsis,
-                    maxLines: 1,
-                    style: const TextStyle(
-                      fontWeight: FontWeight.w800,
-                      fontSize: 26,
+                  Padding(
+                    padding: const .symmetric(horizontal: 12),
+                    child: Text(
+                      name,
+                      textAlign: .center,
+                      style: context.tt.headlineSmall?.copyWith(
+                        fontWeight: .w800,
+                        height: 1,
+                      ),
                     ),
                   ),
 
                   if (title != null)
                     Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 25),
+                      padding: const .symmetric(horizontal: 25),
                       child: Text(
                         title,
-                        textAlign: TextAlign.center,
-                        style: const TextStyle(
-                          fontWeight: FontWeight.w700,
-                          fontSize: 17,
+                        textAlign: .center,
+                        style: context.tt.bodyLarge?.copyWith(
+                          fontWeight: .w600,
+                          height: 1.25,
                         ),
                       ),
                     ),
@@ -58,21 +62,20 @@ Future<void> _showDetails({
                   shrinkWrap: true,
                   isSliver: false,
                   items: items,
+
                   itemBuilder: (context, item, borderRadius) {
                     return TileWidget(
-                      borderRadius: borderRadius,
                       backgroundColor: scheme.primaryContainer,
+                      borderRadius: borderRadius,
+
                       leading: Icon(
                         item.icon,
                         color: scheme.onPrimaryContainer,
                       ),
+
                       title: Text(
                         item.label,
-                        style: TextStyle(
-                          color: scheme.onSurface,
-                          fontSize: 18,
-                          fontWeight: .bold,
-                        ),
+                        style: TextStyle(color: scheme.onSurface),
                       ),
 
                       trailing: item.coefficient != null
@@ -80,8 +83,8 @@ Future<void> _showDetails({
                               '×${Formatters.formatNumber(item.coefficient)}',
                               style: TextStyle(
                                 color: scheme.primary,
-                                fontSize: 20,
-                                fontWeight: FontWeight.w800,
+                                fontSize: 17,
+                                fontWeight: .w800,
                               ),
                             )
                           : item.grade != null &&
@@ -91,15 +94,15 @@ Future<void> _showDetails({
                               maxGrade: item.theoreticalMaxGrade!,
                               defaultMaxGrade: item.defaultMaxGrade!,
                               color: scheme.primary,
-                              size: 20,
+                              size: 17,
                             )
                           : item.rawValue != null
                           ? Text(
                               item.rawValue!,
                               style: TextStyle(
                                 color: scheme.primary,
-                                fontSize: 20,
-                                fontWeight: FontWeight.w800,
+                                fontSize: 17,
+                                fontWeight: .w800,
                               ),
                             )
                           : null,
