@@ -486,7 +486,7 @@ class _TimetableDisplayState extends State<TimetableDisplay>
     RelevantSlots slots,
     DayBlocks blocks,
   ) {
-    const gap = 4.0;
+    // TODO: Add spacing between events
 
     final displays = <Widget>[];
     DateTime curTime = _scheduleDisplayData.timeForSlot(
@@ -502,10 +502,6 @@ class _TimetableDisplayState extends State<TimetableDisplay>
             child: const SizedBox.expand(),
           ),
         );
-      }
-
-      if (displays.isNotEmpty) {
-        displays.add(const SizedBox(height: gap));
       }
 
       displays.add(

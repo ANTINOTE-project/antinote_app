@@ -150,7 +150,8 @@ class _HomeworksScreenState extends State<HomeworksScreen>
 
           final displayableDays = days
               .where(
-                (element) => _homeworks[element]!.value?.isNotEmpty ?? true,
+                (element) =>
+                    _homeworks[element]!.value?.isNotEmpty ?? true, // TODO: Fix
               )
               .toList(growable: false);
 
