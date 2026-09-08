@@ -291,8 +291,7 @@ class _Averages extends StatelessWidget {
         child: Container(
           decoration: BoxDecoration(
             color: context.c.surfaceContainerHigh,
-            border: .all(color: context.c.outlineVariant),
-            borderRadius: .circular(20),
+            borderRadius: .circular(22),
           ),
 
           padding: const .symmetric(vertical: 12),
