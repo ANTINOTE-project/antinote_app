@@ -77,7 +77,6 @@ class ButtonWidget extends StatelessWidget {
         height: 50,
 
         decoration: BoxDecoration(
-          border: .all(color: _getBorderColor(context)),
           color: _getButtonColor(context),
           borderRadius: .circular(90),
         ),
