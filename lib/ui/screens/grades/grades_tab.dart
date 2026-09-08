@@ -9,7 +9,6 @@ import 'package:antinote_app/ui/widgets/grade_text.dart';
 import 'package:antinote_app/ui/widgets/pressable.dart';
 import 'package:collection/collection.dart';
 import 'package:hugeicons_pro/hugeicons.dart';
-import 'package:intl/intl.dart';
 import 'package:material_ui/material_ui.dart';
 
 part 'modal.dart';
@@ -379,116 +378,128 @@ class _LatestGrades extends StatelessWidget {
 
   const _LatestGrades({required this.exams});
 
+  static const double _tileHeight = 60;
+
   @override
   Widget build(BuildContext context) {
-    // rebuild when theme mode changes
     final _ = Theme.of(context);
 
     return SliverToBoxAdapter(
       child: SizedBox(
-        height: 170,
+        height: _tileHeight + 20,
 
         child: ListView.builder(
           physics: const BouncingScrollPhysics(
             parent: AlwaysScrollableScrollPhysics(),
           ),
-          padding: const .all(12),
+          padding: const .symmetric(horizontal: 12, vertical: 10),
 
           scrollDirection: .horizontal,
           itemCount: exams.length,
 
           itemBuilder: (context, index) {
-            final exam = exams[index];
-
-            final scheme = Utils.buildColorScheme(context, exam.service.color);
-
-            final date = DateFormat('dd/MM/yyyy').format(exam.date);
-            final title = Utils.getExamComment(context, exam);
-            final subject = exam.service.name;
-
             return Padding(
               padding: const .only(right: 8),
-
-              child: Pressable(
-                onPressed: () => showExamDetails(context, exam),
-                borderRadius: .circular(12),
-
-                child: IntrinsicWidth(
-                  child: ConstrainedBox(
-                    constraints: const BoxConstraints(
-                      minWidth: 200,
-                      maxWidth: 250,
-                    ),
-
-                    child: Ink(
-                      decoration: BoxDecoration(
-                        borderRadius: .circular(12),
-                        border: .all(color: scheme.inversePrimary),
-                        color: scheme.primaryContainer,
-                      ),
-
-                      padding: const .symmetric(horizontal: 10, vertical: 6),
-
-                      child: Column(
-                        crossAxisAlignment: .start,
-                        spacing: 12,
-
-                        children: [
-                          Text(
-                            subject,
-
-                            overflow: TextOverflow.ellipsis,
-                            maxLines: 1,
-
-                            style: TextStyle(
-                              fontSize: 20,
-                              fontWeight: .w800,
-                              color: scheme.primary,
-                            ),
-                          ),
-
-                          Expanded(
-                            child: Text(
-                              title,
-
-                              overflow: TextOverflow.ellipsis,
-                              maxLines: 2,
-
-                              style: const TextStyle(
-                                fontSize: 16,
-                                fontWeight: .w600,
-                              ),
-                            ),
-                          ),
-
-                          Row(
-                            children: [
-                              Text(
-                                date,
-                                style: TextStyle(
-                                  fontWeight: FontWeight.bold,
-                                  color: scheme.onSurfaceVariant,
-                                ),
-                              ),
-
-                              const Spacer(),
-
-                              GradeText(
-                                selfGrade: exam.selfGrade,
-                                maxGrade: exam.theoreticalMaxGrade,
-                                defaultMaxGrade: exam.defaultMaxGrade,
-                                color: scheme.primary,
-                              ),
-                            ],
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                ),
-              ),
+              child: _ExamTile(exam: exams[index]),
             );
           },
+        ),
+      ),
+    );
+  }
+}
+
+class _ExamTile extends StatelessWidget {
+  final Exam exam;
+
+  const _ExamTile({required this.exam});
+
+  bool get _isTopGrade {
+    final self = exam.selfGrade;
+    final max = exam.maxGrade;
+
+    if (max == null) return false;
+
+    return self.value >= max.value;
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final scheme = Utils.buildColorScheme(context, exam.service.color);
+
+    return Pressable(
+      onPressed: () => showExamDetails(context, exam),
+      borderRadius: .circular(18),
+
+      child: Ink(
+        height: _LatestGrades._tileHeight,
+
+        decoration: BoxDecoration(
+          borderRadius: .circular(18),
+          color: scheme.primaryContainer,
+        ),
+
+        child: IntrinsicWidth(
+          child: Padding(
+            padding: const .symmetric(horizontal: 10, vertical: 8),
+
+            child: Row(
+              mainAxisSize: .min,
+              spacing: 10,
+
+              children: [
+                Ink(
+                  width: 36,
+                  height: 36,
+
+                  decoration: BoxDecoration(
+                    shape: .circle,
+                    color: scheme.primary,
+                  ),
+
+                  child: Icon(
+                    _isTopGrade ? HugeIconsSolid.star : HugeIconsSolid.note,
+                    size: 18,
+                    color: scheme.onPrimary,
+                  ),
+                ),
+
+                Column(
+                  mainAxisSize: .min,
+                  crossAxisAlignment: .start,
+
+                  children: [
+                    ConstrainedBox(
+                      constraints: const BoxConstraints(maxWidth: 120),
+
+                      child: Text(
+                        exam.service.name,
+                        overflow: .ellipsis,
+                        maxLines: 1,
+
+                        style: TextStyle(
+                          fontSize: 12,
+                          fontWeight: .w800,
+                          color: scheme.onPrimaryContainer.withValues(
+                            alpha: .7,
+                          ),
+                        ),
+                      ),
+                    ),
+
+                    GradeText(
+                      selfGrade: exam.selfGrade,
+                      maxGrade: exam.theoreticalMaxGrade,
+                      defaultMaxGrade: exam.defaultMaxGrade,
+                      color: scheme.onPrimaryContainer,
+                      isMain: true,
+                      size: 17,
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
         ),
       ),
     );

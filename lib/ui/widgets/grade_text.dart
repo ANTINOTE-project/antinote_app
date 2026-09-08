@@ -26,7 +26,7 @@ class GradeText extends StatelessWidget {
     this.isMain = false,
     this.size = 22,
 
-    this.overflow = TextOverflow.visible,
+    this.overflow = .visible,
   });
 
   @override
