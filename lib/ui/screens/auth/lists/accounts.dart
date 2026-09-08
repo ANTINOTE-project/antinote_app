@@ -170,7 +170,7 @@ class _AccountsListScreenState extends State<AccountsListScreen>
             slivers: [
               ListWidget(
                 items: _accounts,
-                gap: 8,
+                gap: 4,
 
                 itemBuilder: (context, account, _) {
                   return TileWidget(
