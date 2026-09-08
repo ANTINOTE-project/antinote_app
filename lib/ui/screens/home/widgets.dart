@@ -28,9 +28,8 @@ class HomeWidget extends StatelessWidget {
       width: double.infinity,
 
       decoration: BoxDecoration(
-        border: .all(color: context.c.outlineVariant),
         color: context.c.surfaceContainer,
-        borderRadius: .circular(20),
+        borderRadius: .circular(22),
       ),
 
       child: Column(
