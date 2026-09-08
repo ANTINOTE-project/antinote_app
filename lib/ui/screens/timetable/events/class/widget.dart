@@ -61,13 +61,7 @@ class ClassWidget extends StatelessWidget {
           color: canceled
               ? scheme.surfaceContainerLow
               : scheme.primaryContainer,
-          border: Border.all(
-            color: hasStatus
-                ? canceled
-                      ? scheme.error
-                      : scheme.secondary
-                : scheme.inversePrimary,
-          ),
+
           borderRadius: borderRadius,
         ),
 

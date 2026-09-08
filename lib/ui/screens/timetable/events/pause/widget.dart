@@ -1,5 +1,6 @@
 import 'package:antinote_app/ui/screens/timetable/events/block.dart';
 import 'package:antinote_app/ui/utils/utils.dart';
+import 'package:antinote_app/ui/widgets/stripes_painter.dart';
 import 'package:material_ui/material_ui.dart';
 
 class PauseBlockWidget extends StatelessWidget {
@@ -14,20 +15,29 @@ class PauseBlockWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      decoration: BoxDecoration(
-        border: Border.all(color: context.c.outlineVariant),
-        borderRadius: borderRadius,
-      ),
+    return ClipRRect(
+      borderRadius: borderRadius,
 
-      width: .infinity,
-      height: .infinity,
-      alignment: .center,
+      child: CustomPaint(
+        painter: StripesPainter(
+          backgroundColor: context.c.surfaceContainerHighest,
+          stripeColor: context.c.onSurfaceVariant.withValues(alpha: .08),
+        ),
 
-      child: Text(
-        block.title,
-        textAlign: .center,
-        style: TextStyle(color: context.c.outlineVariant, fontWeight: .w700),
+        child: Container(
+          width: .infinity,
+          height: .infinity,
+          alignment: .center,
+
+          child: Text(
+            block.title,
+            textAlign: .center,
+            style: TextStyle(
+              color: context.c.onSurfaceVariant,
+              fontWeight: .w700,
+            ),
+          ),
+        ),
       ),
     );
   }

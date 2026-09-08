@@ -3,6 +3,7 @@ import 'package:antinote_app/ui/screens/timetable/events/block.dart';
 import 'package:antinote_app/ui/screens/timetable/events/meal/modal.dart';
 import 'package:antinote_app/ui/utils/utils.dart';
 import 'package:antinote_app/ui/widgets/pressable.dart';
+import 'package:antinote_app/ui/widgets/stripes_painter.dart';
 import 'package:hugeicons_pro/hugeicons.dart';
 import 'package:material_ui/material_ui.dart';
 
@@ -20,19 +21,31 @@ class MealBlockWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return Pressable(
       borderRadius: borderRadius,
+
       onPressed: () async {
         await showMealModal(context, block.startTime.toDay());
       },
-      child: Ink(
-        decoration: BoxDecoration(borderRadius: borderRadius),
-        child: Container(
-          decoration: BoxDecoration(
-            borderRadius: borderRadius,
-            border: Border.all(color: context.c.outline),
+
+      child: ClipRRect(
+        borderRadius: borderRadius,
+
+        child: CustomPaint(
+          painter: StripesPainter(
+            backgroundColor: context.c.primaryContainer,
+            stripeColor: context.c.onPrimaryContainer.withValues(alpha: .08),
           ),
-          width: double.infinity,
-          height: double.infinity,
-          child: const Icon(HugeIconsSolid.spoonAndKnife),
+
+          child: Container(
+            width: .infinity,
+            height: .infinity,
+            alignment: .center,
+
+            child: Icon(
+              HugeIconsSolid.spoonAndKnife,
+              color: context.c.onPrimaryContainer,
+              size: 32,
+            ),
+          ),
         ),
       ),
     );
