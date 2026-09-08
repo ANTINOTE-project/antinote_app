@@ -98,6 +98,7 @@
   "reportCoefficient": "Coef. {value}",
   "gradeMin": "Min.",
   "gradeMax": "Max.",
+  "gradeCountShort": "{count} grades",
 
   "noCourseToday": "You don't have any class,\nenjoy!",
   "holidayDay": "It's a holiday,\nhave fun!",

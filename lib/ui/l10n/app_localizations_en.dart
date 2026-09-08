@@ -362,6 +362,11 @@ class AppLocalizationsEn extends AppLocalizations {
   String get gradeMax => 'Max.';
 
   @override
+  String gradeCountShort(Object count) {
+    return '$count grades';
+  }
+
+  @override
   String get noCourseToday => 'You don\'t have any class,\nenjoy!';
 
   @override

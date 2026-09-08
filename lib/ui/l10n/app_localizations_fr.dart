@@ -362,6 +362,11 @@ class AppLocalizationsFr extends AppLocalizations {
   String get gradeMax => 'Max.';
 
   @override
+  String gradeCountShort(Object count) {
+    return '$count notes';
+  }
+
+  @override
   String get noCourseToday => 'Tu n\'as pas de cours,\nprofite bien !';
 
   @override

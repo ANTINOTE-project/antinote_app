@@ -157,6 +157,7 @@
   "reportCoefficient": "Coeff. {value}",
   "gradeMin": "Min.",
   "gradeMax": "Max.",
+  "gradeCountShort": "{count} notes",
 
   "noCourseToday": "Tu n'as pas de cours,\nprofite bien !",
   "holidayDay": "C'est les vacances,\namuse toi bien !",

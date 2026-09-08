@@ -684,6 +684,12 @@ abstract class AppLocalizations {
   /// **'Max.'**
   String get gradeMax;
 
+  /// No description provided for @gradeCountShort.
+  ///
+  /// In fr, this message translates to:
+  /// **'{count} notes'**
+  String gradeCountShort(Object count);
+
   /// No description provided for @noCourseToday.
   ///
   /// In fr, this message translates to:

@@ -216,15 +216,11 @@ class _GradesTabState extends State<GradesTab>
           ],
 
           if (organizedData.isNotEmpty) ...[
-            _SectionWidget(
-              label: context.l10n.services,
-              icon: HugeIconsSolid.gitbook,
-            ),
-
+            const SliverPadding(padding: .only(top: 16)),
             _ServicesGrades(data: organizedData),
           ],
 
-          const BottomPadding(padding: 10),
+          const BottomPadding(padding: 16),
         ],
       ),
     );
@@ -252,21 +248,21 @@ class _SectionWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return SliverToBoxAdapter(
       child: Padding(
-        padding: const EdgeInsets.only(left: 20, top: 20),
+        padding: const .only(left: 12, top: 20),
 
         child: Row(
           spacing: 6,
 
           children: [
-            Icon(icon, size: 22, color: context.c.onSurfaceVariant),
+            Icon(icon, size: 22, color: context.c.outline),
 
             Text(
               label,
 
               style: TextStyle(
                 fontSize: 15,
-                fontWeight: FontWeight.bold,
-                color: context.c.onSurfaceVariant,
+                fontWeight: .bold,
+                color: context.c.outline,
               ),
             ),
           ],
@@ -283,7 +279,7 @@ class _Averages extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    const style = TextStyle(fontSize: 17, fontWeight: FontWeight.w700);
+    const style = TextStyle(fontSize: 17, fontWeight: .w700);
 
     final selfAvg = data.selfGeneralAverage?.value;
     final classAvg = data.classGeneralAverage?.value;
@@ -306,7 +302,7 @@ class _Averages extends StatelessWidget {
 
             children: [
               Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                mainAxisAlignment: .spaceEvenly,
                 spacing: 12,
 
                 children: [
@@ -363,7 +359,6 @@ class _AverageText extends StatelessWidget {
           builder: (context, value, _) {
             return Text(
               Formatters.formatNumber(value),
-
               style: TextStyle(fontSize: 27, fontWeight: .w800, color: color),
             );
           },
@@ -536,55 +531,52 @@ class _ServicesGrades extends StatelessWidget {
     return SliverMainAxisGroup(
       slivers: [
         for (final entry in entries)
-          SliverPadding(
-            padding: const EdgeInsets.only(left: 12, right: 12, top: 10),
+          SliverMainAxisGroup(
+            slivers: [
+              PinnedHeaderSliver(
+                child: _ServiceHeader(service: entry.key, exams: entry.value),
+              ),
 
-            sliver: SliverMainAxisGroup(
-              slivers: [
-                PinnedHeaderSliver(
-                  child: _ServiceWidget(service: entry.key, exams: entry.value),
+              SliverPadding(
+                padding: const .symmetric(horizontal: 12),
+
+                sliver: SliverPrototypeExtentList(
+                  prototypeItem: _ExamWidget.prototype,
+
+                  delegate: SliverChildBuilderDelegate(
+                    (context, index) => _ExamWidget(exam: entry.value[index]),
+                    childCount: entry.value.length,
+                  ),
                 ),
+              ),
 
-                ListWidget<Exam>(
-                  items: entry.value,
-
-                  itemBuilder: (context, item, borderRadius) {
-                    return _ExamWidget(exam: item, borderRadius: borderRadius);
-                  },
-                ),
-              ],
-            ),
+              const SliverToBoxAdapter(child: SizedBox(height: 20)),
+            ],
           ),
       ],
     );
   }
 }
 
-class _ServiceWidget extends StatelessWidget {
+class _ServiceHeader extends StatelessWidget {
   final Service service;
   final List<Exam> exams;
 
-  const _ServiceWidget({required this.service, required this.exams});
+  const _ServiceHeader({required this.service, required this.exams});
 
   @override
   Widget build(BuildContext context) {
     final scheme = Utils.buildColorScheme(context, service.color);
 
-    return Padding(
-      padding: const EdgeInsets.only(top: 8, bottom: 2),
+    return ColoredBox(
+      color: context.c.surface,
 
       child: Pressable(
         onPressed: () => showServiceDetails(context, service, exams),
-        borderRadius: BorderRadius.circular(16),
+        hasVisuals: false,
 
-        child: Ink(
-          decoration: BoxDecoration(
-            border: Border.all(color: scheme.inversePrimary),
-            borderRadius: BorderRadius.circular(16),
-            color: scheme.primaryContainer,
-          ),
-
-          padding: const .symmetric(horizontal: 12, vertical: 10),
+        child: Container(
+          padding: const .fromLTRB(18, 12, 16, 12),
 
           child: Row(
             spacing: 8,
@@ -593,28 +585,53 @@ class _ServiceWidget extends StatelessWidget {
               Expanded(
                 child: Text(
                   service.name,
-
-                  overflow: TextOverflow.ellipsis,
+                  overflow: .ellipsis,
                   maxLines: 1,
 
                   style: TextStyle(
-                    fontSize: 21,
+                    color: scheme.primary,
                     fontWeight: .w800,
-                    color: scheme.onPrimaryContainer,
+                    fontSize: 17,
                   ),
                 ),
               ),
 
+              Text(
+                context.l10n.gradeCountShort(exams.length),
+
+                style: TextStyle(
+                  color: context.c.outline,
+                  fontWeight: .w700,
+                  fontSize: 13,
+                ),
+              ),
+
               if (service.selfAverage != null &&
-                  service.theoreticalMaxGrade != null)
+                  service.theoreticalMaxGrade != null) ...[
+                Container(
+                  width: 2,
+                  height: 16,
+                  decoration: BoxDecoration(
+                    borderRadius: .circular(90),
+                    color: context.c.outlineVariant,
+                  ),
+                ),
+
                 GradeText(
                   selfGrade: service.selfAverage!,
                   maxGrade: service.theoreticalMaxGrade!,
                   defaultMaxGrade: service.defaultTheoreticalMaxGrade!,
                   isMain: true,
-                  color: scheme.primary,
-                  size: 23,
+                  color: scheme.secondary,
+                  size: 17,
                 ),
+              ],
+
+              Icon(
+                HugeIconsSolid.arrowRight01,
+                size: 16,
+                color: context.c.onSurfaceVariant,
+              ),
             ],
           ),
         ),
@@ -624,37 +641,54 @@ class _ServiceWidget extends StatelessWidget {
 }
 
 class _ExamWidget extends StatelessWidget {
-  final BorderRadius borderRadius;
-  final Exam exam;
+  final Exam? exam;
 
-  const _ExamWidget({required this.exam, required this.borderRadius});
+  const _ExamWidget({required this.exam});
+
+  static const prototype = _ExamWidget(exam: null);
 
   @override
   Widget build(BuildContext context) {
-    final scheme = Utils.buildColorScheme(context, exam.service.color);
+    final exam = this.exam;
 
-    final title = Utils.getExamComment(context, exam);
-    final subtitle = exam.date.asRelativeDate(context);
+    final scheme = exam != null
+        ? Utils.buildColorScheme(context, exam.service.color)
+        : null;
 
-    return TileWidget(
-      backgroundColor: scheme.secondaryContainer,
-      borderRadius: borderRadius,
+    final title = exam != null ? Utils.getExamComment(context, exam) : ' ';
+    final subtitle = exam != null ? exam.date.asRelativeDate(context) : ' ';
 
-      title: Text(title, style: TextStyle(color: scheme.onSecondaryContainer)),
-      subtitle: Text(
-        subtitle,
-        style: TextStyle(color: scheme.onSurfaceVariant, fontWeight: .bold),
+    return Padding(
+      padding: const .only(bottom: 3),
+
+      child: TileWidget(
+        backgroundColor: scheme?.primaryContainer ?? Colors.transparent,
+        borderRadius: const .all(ListWidget.radius),
+
+        onPressed: exam != null ? () => showExamDetails(context, exam) : null,
+
+        title: Text(
+          title,
+          overflow: .ellipsis,
+          maxLines: 1,
+          style: TextStyle(color: scheme?.onPrimaryContainer),
+        ),
+
+        subtitle: Text(
+          subtitle,
+          style: TextStyle(color: scheme?.outline, fontWeight: .w600),
+        ),
+
+        trailing: exam != null
+            ? GradeText(
+                selfGrade: exam.selfGrade,
+                maxGrade: exam.theoreticalMaxGrade,
+                defaultMaxGrade: exam.defaultMaxGrade,
+                color: scheme!.primary,
+                size: 17,
+              )
+            : const SizedBox(width: 30, height: 17),
       ),
-
-      trailing: GradeText(
-        selfGrade: exam.selfGrade,
-        maxGrade: exam.theoreticalMaxGrade,
-        defaultMaxGrade: exam.defaultMaxGrade,
-        color: scheme.primary,
-        size: 19,
-      ),
-
-      onPressed: () => showExamDetails(context, exam),
     );
   }
 }
