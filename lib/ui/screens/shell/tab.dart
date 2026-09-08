@@ -59,20 +59,28 @@ mixin PageMixin<T extends StatefulWidget> on State<T> {
     child: Column(
       mainAxisAlignment: .center,
       children: [
-        const Icon(HugeIconsSolid.bug02, size: 48),
+        Icon(HugeIconsSolid.bug02, size: 48, color: context.c.error),
+
         Padding(
           padding: const .symmetric(vertical: 4),
           child: Text(
             context.l10n.anErrorOccurred,
-            style: context.tt.titleMedium,
+            style: context.tt.titleMedium?.copyWith(
+              color: context.c.error,
+              fontWeight: .bold,
+            ),
           ),
         ),
+
         if (kDebugMode)
-          ButtonWidget(
-            onPressed: () {
-              logger.fine('${error.runtimeType}', error, stackTrace);
-            },
-            label: 'Show error in console',
+          Padding(
+            padding: const .only(left: 12, right: 12, top: 16),
+            child: ButtonWidget(
+              onPressed: () {
+                logger.fine('${error.runtimeType}', error, stackTrace);
+              },
+              label: 'Show error in console',
+            ),
           ),
       ],
     ),
