@@ -414,13 +414,33 @@ class _ExamTile extends StatelessWidget {
 
   const _ExamTile({required this.exam});
 
-  bool get _isTopGrade {
+  IconData get _statusIcon {
     final self = exam.selfGrade;
     final max = exam.maxGrade;
+    final min = exam.minGrade;
+    final classAvg = exam.classAverage;
 
-    if (max == null) return false;
+    // best grade
+    if (max != null && self.value >= max.value) {
+      return HugeIconsSolid.crown03;
+    }
 
-    return self.value >= max.value;
+    // worst grade
+    if (min != null && self.value <= min.value) {
+      return HugeIconsStroke.crying;
+    }
+
+    // above average
+    if (classAvg != null && self.value > classAvg.value) {
+      return HugeIconsSolid.arrowUpDouble;
+    }
+
+    // under average
+    if (classAvg != null && self.value < classAvg.value) {
+      return HugeIconsSolid.arrowDownDouble;
+    }
+
+    return HugeIconsSolid.note;
   }
 
   @override
@@ -457,11 +477,7 @@ class _ExamTile extends StatelessWidget {
                     color: scheme.primary,
                   ),
 
-                  child: Icon(
-                    _isTopGrade ? HugeIconsSolid.crown03 : HugeIconsSolid.note,
-                    size: 18,
-                    color: scheme.onPrimary,
-                  ),
+                  child: Icon(_statusIcon, size: 18, color: scheme.onPrimary),
                 ),
 
                 Column(
