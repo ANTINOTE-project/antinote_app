@@ -461,7 +461,6 @@ class _HomeworkCard extends StatelessWidget {
 
       child: Ink(
         decoration: BoxDecoration(
-          border: .all(color: scheme.inversePrimary),
           borderRadius: .circular(22),
           color: scheme.primaryContainer,
         ),
@@ -523,7 +522,13 @@ class _HomeworkCard extends StatelessWidget {
 
             Column(
               children: [
-                Divider(height: 0, thickness: 1, color: scheme.inversePrimary),
+                Divider(
+                  height: 1,
+                  thickness: 1,
+                  indent: 16,
+                  endIndent: 16,
+                  color: scheme.inversePrimary,
+                ),
 
                 _MarkDoneButton(
                   homework: homework,
@@ -562,7 +567,7 @@ class _WeekPickerState extends State<_WeekPicker>
     final canGoForward = widget.curWeekIndex < widget.weekCount - 1;
 
     return Row(
-      mainAxisAlignment: MainAxisAlignment.center,
+      mainAxisAlignment: .center,
       spacing: 8,
 
       children: [
@@ -570,7 +575,7 @@ class _WeekPickerState extends State<_WeekPicker>
 
         Text(
           context.l10n.weekNumber(widget.weekNumber),
-          style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
+          style: const TextStyle(fontWeight: .bold, fontSize: 18),
         ),
 
         _DotIndicator(active: canGoForward),
@@ -594,7 +599,7 @@ class _DotIndicator extends StatelessWidget {
 
       decoration: BoxDecoration(
         color: active ? context.c.onSurface : context.c.outlineVariant,
-        shape: BoxShape.circle,
+        shape: .circle,
       ),
     );
   }
@@ -636,7 +641,7 @@ class _MarkDoneButtonState extends State<_MarkDoneButton> {
   @override
   Widget build(BuildContext context) {
     return Pressable(
-      borderRadius: const .vertical(bottom: .circular(11)),
+      borderRadius: const .vertical(bottom: .circular(21)),
 
       onPressed: _isLoading
           ? null
