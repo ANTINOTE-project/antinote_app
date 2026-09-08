@@ -110,7 +110,7 @@ class _SectionText extends StatelessWidget {
 
       child: Text(
         label,
-        style: const TextStyle(fontWeight: FontWeight.w800, fontSize: 24),
+        style: context.tt.headlineSmall?.copyWith(fontWeight: .w800),
       ),
     );
   }
