@@ -343,41 +343,49 @@ class _DayState extends State<_Day> {
 
             child: Row(
               children: [
-                SizedBox(
-                  height: 18,
-                  width: 18,
-
+                Expanded(
                   child: TweenAnimationBuilder<double>(
                     tween: Tween(begin: 0, end: progress),
                     duration: const Duration(milliseconds: 400),
                     curve: Curves.easeOutCubic,
 
                     builder: (context, value, _) {
-                      return CircularProgressIndicator(
-                        color: Color.lerp(
-                          context.c.outline,
-                          context.c.primary,
-                          value,
-                        ),
-                        backgroundColor: context.c.outlineVariant,
-                        value: value,
-                        strokeWidth: 4,
-                        strokeCap: .round,
+                      final color = Color.lerp(
+                        context.c.outline,
+                        context.c.primary,
+                        value,
+                      );
+
+                      return Row(
+                        children: [
+                          SizedBox(
+                            height: 18,
+                            width: 18,
+
+                            child: CircularProgressIndicator(
+                              color: color,
+                              backgroundColor: context.c.outlineVariant,
+                              value: value,
+                              strokeWidth: 4,
+                              strokeCap: .round,
+                            ),
+                          ),
+
+                          const SizedBox(width: 12),
+
+                          Expanded(
+                            child: Text(
+                              widget.day.asRelativeDate(context),
+                              style: TextStyle(
+                                color: color,
+                                fontWeight: .bold,
+                                fontSize: 16,
+                              ),
+                            ),
+                          ),
+                        ],
                       );
                     },
-                  ),
-                ),
-
-                const SizedBox(width: 12),
-
-                Expanded(
-                  child: Text(
-                    widget.day.asRelativeDate(context),
-                    style: TextStyle(
-                      color: context.c.outline,
-                      fontWeight: .bold,
-                      fontSize: 16,
-                    ),
                   ),
                 ),
 
