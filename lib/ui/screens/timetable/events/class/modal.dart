@@ -28,6 +28,7 @@ Future<void> showClassModal(BuildContext context, Class defaultClass) async {
   );
 
   await showModalBottomSheet(
+    backgroundColor: context.c.surfaceContainerLowest,
     context: context,
     showDragHandle: true,
 

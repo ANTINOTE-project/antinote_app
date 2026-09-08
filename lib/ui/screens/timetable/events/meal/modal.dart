@@ -17,6 +17,7 @@ Future<void> showMealModal(BuildContext context, DateTime date) async {
   );
 
   await showModalBottomSheet(
+    backgroundColor: context.c.surfaceContainerLowest,
     context: context,
     showDragHandle: true,
 

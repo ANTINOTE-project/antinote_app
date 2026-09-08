@@ -100,6 +100,7 @@ class _AccountsListScreenState extends State<AccountsListScreen>
     AntinoteAccount account,
   ) async {
     await showModalBottomSheet(
+      backgroundColor: context.c.surfaceContainerLowest,
       isScrollControlled: true,
       showDragHandle: true,
       context: context,

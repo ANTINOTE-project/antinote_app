@@ -9,8 +9,10 @@ Future<void> _showDetails({
   String? subtitle,
 }) async {
   await showModalBottomSheet(
+    backgroundColor: context.c.surfaceContainerLowest,
     context: context,
     showDragHandle: true,
+
     builder: (context) {
       final scheme = Utils.buildColorScheme(context, serviceColor ?? 0);
 
