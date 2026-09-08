@@ -92,7 +92,7 @@ android {
             optimization {
                 enable = true
             }
-            
+
             if (keystorePropertiesFile.exists()) {
                 signingConfig = signingConfigs.getByName("release")
             }
@@ -123,6 +123,8 @@ android {
 
         create("independent") {
             dimension = "store"
+            applicationIdSuffix = ".indep"
+            versionNameSuffix = "-indep"
         }
     }
 }
