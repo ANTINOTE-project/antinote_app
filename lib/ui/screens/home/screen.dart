@@ -39,20 +39,14 @@ class _HomeScreenState extends State<HomeScreen>
   AntinoteAccount? account;
 
   @override
-  Widget buildLoaded(
-    BuildContext context,
-    RefreshIndicatorBuilder buildRefreshIndicator,
-    bool partial,
-  ) {
-    assert(!partial, 'This loaded page does not support partial loading yet.');
-
+  Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBarWidget(
+        titleAlign: .start,
         title: Padding(
           padding: const .only(left: 8),
-          child: Text(context.l10n.homeHiName(account!.name)),
+          child: Text(context.l10n.homeHiName(account?.name ?? '')),
         ),
-        titleAlign: .start,
 
         trailing: IconButton(
           icon: const Icon(HugeIconsSolid.settings02),
@@ -70,37 +64,48 @@ class _HomeScreenState extends State<HomeScreen>
         ),
       ),
 
-      body: buildRefreshIndicator(
-        child: HomePageScope(
-          manager: homePageManager,
+      body: super.build(context),
+    );
+  }
 
-          child: Padding(
-            padding: const .symmetric(horizontal: 12),
+  @override
+  Widget buildLoaded(
+    BuildContext context,
+    RefreshIndicatorBuilder buildRefreshIndicator,
+    bool partial,
+  ) {
+    assert(!partial, 'This loaded page does not support partial loading yet.');
 
-            child: CustomScrollView(
-              slivers: [
-                for (final widget in homePageManager.loadedWidgets)
-                  SliverSafeArea(
-                    top: false,
-                    bottom: false,
-                    minimum: const .symmetric(vertical: 12),
-                    sliver: ValueListenableBuilder(
-                      valueListenable: widget,
-                      builder: (context, value, child) {
-                        return widget.descriptor.buildSliver(
-                          context,
-                          widget,
-                          value,
-                        );
-                      },
-                    ),
+    return buildRefreshIndicator(
+      child: HomePageScope(
+        manager: homePageManager,
+
+        child: Padding(
+          padding: const .symmetric(horizontal: 12),
+
+          child: CustomScrollView(
+            slivers: [
+              for (final widget in homePageManager.loadedWidgets)
+                SliverSafeArea(
+                  top: false,
+                  bottom: false,
+                  minimum: const .symmetric(vertical: 12),
+                  sliver: ValueListenableBuilder(
+                    valueListenable: widget,
+                    builder: (context, value, child) {
+                      return widget.descriptor.buildSliver(
+                        context,
+                        widget,
+                        value,
+                      );
+                    },
                   ),
-
-                const SliverSafeArea(
-                  sliver: SliverPadding(padding: .only(top: 32)),
                 ),
-              ],
-            ),
+
+              const SliverSafeArea(
+                sliver: SliverPadding(padding: .only(top: 32)),
+              ),
+            ],
           ),
         ),
       ),
@@ -113,7 +118,11 @@ class _HomeScreenState extends State<HomeScreen>
     await homePageManager.initialize(context, session);
 
     if (!mounted) return;
-    account = await context.ar.storage.getAccount(context.ar.curAccountUid!);
+
+    final storedAccount = await context.ar.storage.getAccount(
+      context.ar.curAccountUid!,
+    );
+    setState(() => account = storedAccount);
 
     logger.info(
       'Loaded home page with ${homePageManager.loadedWidgets.length} widget(s) using ${homePageManager.initialized}',
