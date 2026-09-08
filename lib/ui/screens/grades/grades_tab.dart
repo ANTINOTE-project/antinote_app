@@ -458,7 +458,7 @@ class _ExamTile extends StatelessWidget {
                   ),
 
                   child: Icon(
-                    _isTopGrade ? HugeIconsSolid.star : HugeIconsSolid.note,
+                    _isTopGrade ? HugeIconsSolid.crown03 : HugeIconsSolid.note,
                     size: 18,
                     color: scheme.onPrimary,
                   ),
