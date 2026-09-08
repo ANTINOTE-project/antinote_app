@@ -152,6 +152,7 @@ class _AccountsListScreenState extends State<AccountsListScreen>
       ),
 
       floatingActionButtonLocation: .centerFloat,
+      floatingActionButtonAnimator: .noAnimation,
       floatingActionButton: Padding(
         padding: const .only(left: 12, right: 12),
 
