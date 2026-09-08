@@ -6,7 +6,10 @@
       "name": "dev",
       "request": "launch",
       "type": "dart",
-      "args": ["--flavor", "dev"]
+      "args": [
+        "--flavor",
+        "devplaystore"
+      ]
     }
   ]
 }
