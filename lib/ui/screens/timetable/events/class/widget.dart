@@ -71,7 +71,6 @@ class ClassWidget extends StatelessWidget {
         child: Column(
           crossAxisAlignment: .start,
           mainAxisAlignment: .center,
-          spacing: 5,
 
           children: [
             if (hasStatus)
