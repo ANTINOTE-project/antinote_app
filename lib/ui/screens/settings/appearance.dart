@@ -52,28 +52,28 @@ class _AppearanceState extends State<Appearance> {
                     final color = appColor.color;
 
                     final isSelected = color == context.s.theme.seedColor;
- 
+
                     return Padding(
                       padding: .only(
                         right: index == AppColor.values.length - 1 ? 0 : 16,
                       ),
 
-                      child: Column(
-                        mainAxisAlignment: .center,
-                        spacing: 4,
+                      child: Pressable(
+                        hasVisuals: false,
 
-                        children: [
-                          Pressable(
-                            borderRadius: .circular(90),
+                        onPressed: isDynamic
+                            ? null
+                            : () async {
+                                await context.s.theme.setSeedColor(color);
+                                if (mounted) setState(() {});
+                              },
 
-                            onPressed: isDynamic
-                                ? null
-                                : () async {
-                                    await context.s.theme.setSeedColor(color);
-                                    if (mounted) setState(() {});
-                                  },
+                        child: Column(
+                          mainAxisAlignment: .center,
+                          spacing: 4,
 
-                            child: Ink(
+                          children: [
+                            Ink(
                               height: 48,
                               width: 48,
 
@@ -91,20 +91,22 @@ class _AppearanceState extends State<Appearance> {
                                     : null,
                               ),
                             ),
-                          ),
 
-                          Text(
-                            label,
-                            overflow: .ellipsis,
-                            style: TextStyle(
-                              fontWeight: .w600,
-                              fontSize: 15,
-                              color: isDynamic
-                                  ? currentColorScheme.onSurface.withAlpha(128)
-                                  : null,
+                            Text(
+                              label,
+                              overflow: .ellipsis,
+                              style: TextStyle(
+                                fontWeight: .w600,
+                                fontSize: 15,
+                                color: isDynamic
+                                    ? currentColorScheme.onSurface.withAlpha(
+                                        128,
+                                      )
+                                    : null,
+                              ),
                             ),
-                          ),
-                        ],
+                          ],
+                        ),
                       ),
                     );
                   },
