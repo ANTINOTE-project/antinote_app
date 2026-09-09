@@ -133,3 +133,6 @@ app.*.symbols
 missing-translations.txt
 
 pubspec_overrides.yaml
+
+screenshot.sh
+screenshots/

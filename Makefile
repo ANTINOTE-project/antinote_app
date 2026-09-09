@@ -2,6 +2,7 @@ generate-code:
 	sh protos/run.sh
 	sh pigeons/run.sh
 
+
 build-release-apk:
 	env ORG_GRADLE_PROJECT_dev.steenbakker.mobile_scanner.useUnbundled=false flutter build apk --flavor=prodindependent --split-per-abi --obfuscate --split-debug-info=./debug-info --dart-define=protobuf.omit_enum_names=true
 
