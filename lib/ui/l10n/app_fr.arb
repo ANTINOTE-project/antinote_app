@@ -384,5 +384,6 @@
   "syncFailed": "Synchronisation échouée…",
 
   "markedThreadRead": "Le fil a été marqué comme lu",
-  "renameAccount": "Propose un autre nom pour ton compte"
+  "renameAccount": "Propose un autre nom pour ton compte",
+  "seeMeal": "Voir le menu"
 }

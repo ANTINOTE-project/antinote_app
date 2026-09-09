@@ -40,10 +40,25 @@ class MealBlockWidget extends StatelessWidget {
             height: .infinity,
             alignment: .center,
 
-            child: Icon(
-              HugeIconsSolid.spoonAndKnife,
-              color: context.c.onPrimaryContainer,
-              size: 32,
+            child: Column(
+              mainAxisAlignment: .center,
+              spacing: 2,
+
+              children: [
+                Icon(
+                  HugeIconsSolid.spoonAndKnife,
+                  color: context.c.onPrimaryContainer,
+                  size: 28,
+                ),
+
+                Text(
+                  context.l10n.seeMeal,
+                  style: context.tt.bodyMedium?.copyWith(
+                    color: context.c.onPrimaryContainer,
+                    fontWeight: .bold,
+                  ),
+                ),
+              ],
             ),
           ),
         ),

@@ -777,4 +777,7 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get renameAccount => 'Propose un autre nom pour ton compte';
+
+  @override
+  String get seeMeal => 'Voir le menu';
 }

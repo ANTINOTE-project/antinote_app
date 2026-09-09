@@ -1349,6 +1349,12 @@ abstract class AppLocalizations {
   /// In fr, this message translates to:
   /// **'Propose un autre nom pour ton compte'**
   String get renameAccount;
+
+  /// No description provided for @seeMeal.
+  ///
+  /// In fr, this message translates to:
+  /// **'Voir le menu'**
+  String get seeMeal;
 }
 
 class _AppLocalizationsDelegate

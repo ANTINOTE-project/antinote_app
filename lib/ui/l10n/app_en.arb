@@ -249,5 +249,6 @@
   "loginParentAccount": "I'm a parent",
   "loginParentMessage": "Sorry but ANTINOTE is not available for you.\n\nPromise it will be in future updates !",
   "dialogClose": "Close",
-  "renameAccount": "Give your account a new name"
+  "renameAccount": "Give your account a new name",
+  "seeMeal": "See the menu"
 }
