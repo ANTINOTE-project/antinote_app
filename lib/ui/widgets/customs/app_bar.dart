@@ -5,6 +5,7 @@ import 'package:material_ui/material_ui.dart';
 class AppBarWidget extends StatelessWidget implements PreferredSizeWidget {
   final Widget? title;
   final TextAlign? titleAlign;
+  final Widget? subtitle;
 
   final bool backButton;
   final Widget? leading;
@@ -14,13 +15,18 @@ class AppBarWidget extends StatelessWidget implements PreferredSizeWidget {
     super.key,
     this.title,
     this.titleAlign,
+    this.subtitle,
     this.backButton = true,
     this.leading,
     this.trailing,
   });
 
   @override
-  Size get preferredSize => const Size.fromHeight(kToolbarHeight + 4); // 56 + 4
+  Size get preferredSize {
+    return Size.fromHeight(
+      kToolbarHeight + 4 + (subtitle != null ? 16 : 0),
+    ); // 56 + 4 (+ 16 if subtitle)
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -51,12 +57,35 @@ class AppBarWidget extends StatelessWidget implements PreferredSizeWidget {
 
             Expanded(
               child: title != null
-                  ? DefaultTextStyle(
-                      overflow: .ellipsis,
-                      textAlign: titleAlign,
-                      maxLines: 1,
-                      style: context.tt.titleLarge!.copyWith(fontWeight: .bold),
-                      child: title!,
+                  ? Column(
+                      mainAxisAlignment: .center,
+                      crossAxisAlignment: titleAlign == .center
+                          ? .center
+                          : .start,
+
+                      children: [
+                        DefaultTextStyle(
+                          overflow: .ellipsis,
+                          textAlign: titleAlign,
+                          maxLines: 1,
+                          style: context.tt.titleLarge!.copyWith(
+                            fontWeight: .bold,
+                          ),
+                          child: title!,
+                        ),
+
+                        if (subtitle != null)
+                          DefaultTextStyle(
+                            overflow: .ellipsis,
+                            textAlign: titleAlign,
+                            maxLines: 1,
+                            style: context.tt.bodyMedium!.copyWith(
+                              color: context.c.outline,
+                              fontWeight: .w500,
+                            ),
+                            child: subtitle!,
+                          ),
+                      ],
                     )
                   : const SizedBox.shrink(),
             ),
