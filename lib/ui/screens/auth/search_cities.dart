@@ -3,7 +3,7 @@ import 'dart:math';
 
 import 'package:antinote_app/data/src/accounts/place.dart';
 import 'package:antinote_app/data/src/session/wrapper.dart';
-import 'package:antinote_app/ui/screens/auth/methods/search/search_schools.dart';
+import 'package:antinote_app/ui/screens/auth/search_schools.dart';
 import 'package:antinote_app/ui/utils/utils.dart';
 import 'package:antinote_app/ui/widgets/bottom_padding.dart';
 import 'package:antinote_app/ui/widgets/customs/app_bar.dart';
@@ -12,15 +12,18 @@ import 'package:antinote_app/ui/widgets/customs/list.dart';
 import 'package:hugeicons_pro/hugeicons.dart';
 import 'package:material_ui/material_ui.dart';
 
-class SearchCitiesMethodScreen extends StatefulWidget {
-  const SearchCitiesMethodScreen({super.key});
+import 'account_type.dart';
+
+class SearchCitiesScreen extends StatefulWidget {
+  final AccountType accountType;
+
+  const SearchCitiesScreen({super.key, required this.accountType});
 
   @override
-  State<SearchCitiesMethodScreen> createState() =>
-      _SearchCitiesMethodScreenState();
+  State<SearchCitiesScreen> createState() => _SearchCitiesScreenState();
 }
 
-class _SearchCitiesMethodScreenState extends State<SearchCitiesMethodScreen> {
+class _SearchCitiesScreenState extends State<SearchCitiesScreen> {
   final List<City> _mockCities = List.generate(15, (i) {
     final r = Random(i);
 
@@ -82,7 +85,10 @@ class _SearchCitiesMethodScreenState extends State<SearchCitiesMethodScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBarWidget(title: Text(context.l10n.loginCity)),
+      appBar: AppBarWidget(
+        title: Text(context.l10n.loginCity),
+        subtitle: Text(context.l10n.loginCitySubtitle),
+      ),
 
       body: Padding(
         padding: const .symmetric(horizontal: 12),
@@ -97,8 +103,9 @@ class _SearchCitiesMethodScreenState extends State<SearchCitiesMethodScreen> {
               // TODO: Faire en sorte que ça n'overflow pas.
               child: FieldWidget(
                 controller: _controller,
-                hintText: context.l10n.loginCitySubtitle,
+                hintText: context.l10n.loginCityHint,
                 onChanged: (_) => _onQueryChanged(),
+                prefixIcon: const Icon(HugeIconsSolid.globalSearch),
                 autofocus: true,
               ),
             ),
@@ -109,29 +116,7 @@ class _SearchCitiesMethodScreenState extends State<SearchCitiesMethodScreen> {
 
                 builder: (context, snapshot) {
                   if (snapshot.connectionState == .none) {
-                    return Center(
-                      child: Column(
-                        mainAxisAlignment: .center,
-                        spacing: 6,
-
-                        children: [
-                          Icon(
-                            HugeIconsSolid.mapsSearch,
-                            color: context.c.outlineVariant,
-                            size: 48,
-                          ),
-
-                          Text(
-                            context.l10n.loginCity,
-
-                            style: TextStyle(
-                              color: context.c.outlineVariant,
-                              fontWeight: .bold,
-                            ),
-                          ),
-                        ],
-                      ),
-                    );
+                    return const SizedBox.shrink();
                   }
 
                   final cities = _isLoading(snapshot)
@@ -154,9 +139,10 @@ class _SearchCitiesMethodScreenState extends State<SearchCitiesMethodScreen> {
                                     context,
                                     MaterialPageRoute(
                                       builder: (context) {
-                                        return SearchSchoolsMethodScreen(
+                                        return SearchSchoolsScreen(
                                           lat: city.latitude,
                                           long: city.longitude,
+                                          accountType: widget.accountType,
                                         );
                                       },
                                     ),

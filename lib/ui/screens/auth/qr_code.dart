@@ -12,14 +12,14 @@ import 'package:image_picker/image_picker.dart';
 import 'package:material_ui/material_ui.dart';
 import 'package:mobile_scanner/mobile_scanner.dart';
 
-class QRCodeMethodScreen extends StatefulWidget {
-  const QRCodeMethodScreen({super.key});
+class QRCodeLoginScreen extends StatefulWidget {
+  const QRCodeLoginScreen({super.key});
 
   @override
-  State<QRCodeMethodScreen> createState() => _QRCodeMethodScreenState();
+  State<QRCodeLoginScreen> createState() => _QRCodeLoginScreenState();
 }
 
-class _QRCodeMethodScreenState extends State<QRCodeMethodScreen> {
+class _QRCodeLoginScreenState extends State<QRCodeLoginScreen> {
   final _scanController = MobileScannerController();
   bool _isProcessing = false;
 
@@ -70,7 +70,10 @@ class _QRCodeMethodScreenState extends State<QRCodeMethodScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBarWidget(title: Text(context.l10n.loginQrCode)),
+      appBar: AppBarWidget(
+        title: Text(context.l10n.loginQrCode),
+        subtitle: Text(context.l10n.loginQrCodeSubtitle),
+      ),
 
       body: SafeArea(
         child: Padding(
@@ -210,7 +213,7 @@ class _QRCodeMethodScreenState extends State<QRCodeMethodScreen> {
               ),
 
               ButtonWidget(
-                label: context.l10n.loginQrCodeFromGallery,
+                label: context.l10n.loginQrCodeGallery,
                 onPressed: _scanFromGallery,
                 variant: .secondary,
               ),

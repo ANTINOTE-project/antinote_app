@@ -254,198 +254,6 @@ abstract class AppLocalizations {
   /// **'Réception'**
   String get communication;
 
-  /// No description provided for @loginDemoText.
-  ///
-  /// In fr, this message translates to:
-  /// **'Démo'**
-  String get loginDemoText;
-
-  /// No description provided for @autoLogin.
-  ///
-  /// In fr, this message translates to:
-  /// **'Connexion automatique'**
-  String get autoLogin;
-
-  /// No description provided for @autoLoginSubtitle.
-  ///
-  /// In fr, this message translates to:
-  /// **'Sélectionne ce compte dès l\'ouverture de l\'application'**
-  String get autoLoginSubtitle;
-
-  /// No description provided for @secureStore.
-  ///
-  /// In fr, this message translates to:
-  /// **'Chiffrage du compte'**
-  String get secureStore;
-
-  /// No description provided for @secureStoreSubtitle.
-  ///
-  /// In fr, this message translates to:
-  /// **'Demande votre biométrie pour se connecter au compte'**
-  String get secureStoreSubtitle;
-
-  /// No description provided for @chooseAnAccount.
-  ///
-  /// In fr, this message translates to:
-  /// **'Changer de compte'**
-  String get chooseAnAccount;
-
-  /// No description provided for @chooseAnAccountSubtitle.
-  ///
-  /// In fr, this message translates to:
-  /// **'Changer de compte ou en ajouter un'**
-  String get chooseAnAccountSubtitle;
-
-  /// No description provided for @addAnAccount.
-  ///
-  /// In fr, this message translates to:
-  /// **'Ajouter un compte'**
-  String get addAnAccount;
-
-  /// No description provided for @deleteAccount.
-  ///
-  /// In fr, this message translates to:
-  /// **'Supprimer'**
-  String get deleteAccount;
-
-  /// No description provided for @accounts.
-  ///
-  /// In fr, this message translates to:
-  /// **'Comptes'**
-  String get accounts;
-
-  /// No description provided for @loginQrCode.
-  ///
-  /// In fr, this message translates to:
-  /// **'QR Code'**
-  String get loginQrCode;
-
-  /// No description provided for @loginQrCodeSubtitle.
-  ///
-  /// In fr, this message translates to:
-  /// **'Scanne un QR code depuis un ordinateur déjà connecté à PRONOTE'**
-  String get loginQrCodeSubtitle;
-
-  /// No description provided for @loginQrCodeFromGallery.
-  ///
-  /// In fr, this message translates to:
-  /// **'Scanner depuis une image'**
-  String get loginQrCodeFromGallery;
-
-  /// No description provided for @loginCity.
-  ///
-  /// In fr, this message translates to:
-  /// **'Recherche ta ville'**
-  String get loginCity;
-
-  /// No description provided for @loginCitySubtitle.
-  ///
-  /// In fr, this message translates to:
-  /// **'Entre le nom de ta ville et choisis ton établissement'**
-  String get loginCitySubtitle;
-
-  /// No description provided for @loginUrl.
-  ///
-  /// In fr, this message translates to:
-  /// **'URL de ton établissement'**
-  String get loginUrl;
-
-  /// No description provided for @loginUrlSubtitle.
-  ///
-  /// In fr, this message translates to:
-  /// **'Renseigne l\'URL de ton espace PRONOTE pour t\'y connecter'**
-  String get loginUrlSubtitle;
-
-  /// No description provided for @loginButton.
-  ///
-  /// In fr, this message translates to:
-  /// **'Se connecter'**
-  String get loginButton;
-
-  /// No description provided for @loginSchool.
-  ///
-  /// In fr, this message translates to:
-  /// **'Choisis ton établissement'**
-  String get loginSchool;
-
-  /// No description provided for @loginSelect.
-  ///
-  /// In fr, this message translates to:
-  /// **'Choisis ton espace'**
-  String get loginSelect;
-
-  /// No description provided for @activateCas.
-  ///
-  /// In fr, this message translates to:
-  /// **'Se connecter via ENT'**
-  String get activateCas;
-
-  /// No description provided for @loginCredentials.
-  ///
-  /// In fr, this message translates to:
-  /// **'Renseigne tes identifiants'**
-  String get loginCredentials;
-
-  /// No description provided for @loginToAccount.
-  ///
-  /// In fr, this message translates to:
-  /// **'Connecte toi à ton compte'**
-  String get loginToAccount;
-
-  /// No description provided for @loginUsername.
-  ///
-  /// In fr, this message translates to:
-  /// **'Identifiant'**
-  String get loginUsername;
-
-  /// No description provided for @loginPassword.
-  ///
-  /// In fr, this message translates to:
-  /// **'Mot de passe'**
-  String get loginPassword;
-
-  /// No description provided for @loginPinCode.
-  ///
-  /// In fr, this message translates to:
-  /// **'Code PIN'**
-  String get loginPinCode;
-
-  /// No description provided for @loginPinCodeSubtitle.
-  ///
-  /// In fr, this message translates to:
-  /// **'Veuillez rentrer votre code PIN vous connecter à votre compte PRONOTE'**
-  String get loginPinCodeSubtitle;
-
-  /// No description provided for @loginDemo.
-  ///
-  /// In fr, this message translates to:
-  /// **'Compte de démonstration'**
-  String get loginDemo;
-
-  /// No description provided for @loginDemoSubtitle.
-  ///
-  /// In fr, this message translates to:
-  /// **'Connecte toi à un compte de test pour explorer l\'application et ses fonctionnalités'**
-  String get loginDemoSubtitle;
-
-  /// No description provided for @loginStudentAccount.
-  ///
-  /// In fr, this message translates to:
-  /// **'Je suis un élève'**
-  String get loginStudentAccount;
-
-  /// No description provided for @loginParentAccount.
-  ///
-  /// In fr, this message translates to:
-  /// **'Je suis un parent'**
-  String get loginParentAccount;
-
-  /// No description provided for @loginParentMessage.
-  ///
-  /// In fr, this message translates to:
-  /// **'Désolé mais ANTINOTE n\'est pas encore disponible pour toi.\n\nPromis ça arrive dans une future mise à jour !'**
-  String get loginParentMessage;
-
   /// No description provided for @homeShowMore.
   ///
   /// In fr, this message translates to:
@@ -1355,6 +1163,270 @@ abstract class AppLocalizations {
   /// In fr, this message translates to:
   /// **'Voir le menu'**
   String get seeMeal;
+
+  /// No description provided for @accountType.
+  ///
+  /// In fr, this message translates to:
+  /// **'Type de compte'**
+  String get accountType;
+
+  /// No description provided for @whoAreYou.
+  ///
+  /// In fr, this message translates to:
+  /// **'Qui es tu ?'**
+  String get whoAreYou;
+
+  /// No description provided for @whoAreYouSubtitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Sélectionne ton profil pour continuer'**
+  String get whoAreYouSubtitle;
+
+  /// No description provided for @loginStudentAccount.
+  ///
+  /// In fr, this message translates to:
+  /// **'Je suis un élève'**
+  String get loginStudentAccount;
+
+  /// No description provided for @loginParentAccount.
+  ///
+  /// In fr, this message translates to:
+  /// **'Je suis un parent'**
+  String get loginParentAccount;
+
+  /// No description provided for @loginStudentAccountSubtitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Accède à ton emploi du temps, tes devoirs et tes notes'**
+  String get loginStudentAccountSubtitle;
+
+  /// No description provided for @loginParentAccountSubtitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Suis la scolarité de ton enfant au quotidien'**
+  String get loginParentAccountSubtitle;
+
+  /// No description provided for @loginMethodsTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Comment te connecter ?'**
+  String get loginMethodsTitle;
+
+  /// No description provided for @loginMethodsSubtitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Choisis la méthode la plus simple pour toi'**
+  String get loginMethodsSubtitle;
+
+  /// No description provided for @loginCity.
+  ///
+  /// In fr, this message translates to:
+  /// **'Trouve ta ville'**
+  String get loginCity;
+
+  /// No description provided for @loginCitySubtitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'On te proposera les établissements à proximité'**
+  String get loginCitySubtitle;
+
+  /// No description provided for @loginCityHint.
+  ///
+  /// In fr, this message translates to:
+  /// **'Recherche ta ville'**
+  String get loginCityHint;
+
+  /// No description provided for @loginSchool.
+  ///
+  /// In fr, this message translates to:
+  /// **'Choisis ton établissement'**
+  String get loginSchool;
+
+  /// No description provided for @loginSchoolSubtitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Voici les établissements les plus proches de toi'**
+  String get loginSchoolSubtitle;
+
+  /// No description provided for @loginSchoolHint.
+  ///
+  /// In fr, this message translates to:
+  /// **'Recherche ton établissement'**
+  String get loginSchoolHint;
+
+  /// No description provided for @loginQrCode.
+  ///
+  /// In fr, this message translates to:
+  /// **'Scanne un QR code'**
+  String get loginQrCode;
+
+  /// No description provided for @loginQrCodeSubtitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Scanne un QR code depuis un ordinateur déjà connecté à PRONOTE'**
+  String get loginQrCodeSubtitle;
+
+  /// No description provided for @loginQrCodeGallery.
+  ///
+  /// In fr, this message translates to:
+  /// **'Scanner depuis une image'**
+  String get loginQrCodeGallery;
+
+  /// No description provided for @loginUrl.
+  ///
+  /// In fr, this message translates to:
+  /// **'URL de ton établissement'**
+  String get loginUrl;
+
+  /// No description provided for @loginUrlSubtitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Tu la trouveras dans la barre d\'adresse de ton espace PRONOTE'**
+  String get loginUrlSubtitle;
+
+  /// No description provided for @loginCredentials.
+  ///
+  /// In fr, this message translates to:
+  /// **'Renseigne tes identifiants'**
+  String get loginCredentials;
+
+  /// No description provided for @loginToAccount.
+  ///
+  /// In fr, this message translates to:
+  /// **'Connecte toi à ton compte'**
+  String get loginToAccount;
+
+  /// No description provided for @loginWebviewSubtitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Suis les instructions sur la page de ton établissement'**
+  String get loginWebviewSubtitle;
+
+  /// No description provided for @loginConfirmTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Dernière étape'**
+  String get loginConfirmTitle;
+
+  /// No description provided for @loginConfirmSubtitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Vérifie les informations avant de te connecter'**
+  String get loginConfirmSubtitle;
+
+  /// No description provided for @loginWorkspaceUnavailable.
+  ///
+  /// In fr, this message translates to:
+  /// **'Non proposé par cet établissement'**
+  String get loginWorkspaceUnavailable;
+
+  /// No description provided for @loginButton.
+  ///
+  /// In fr, this message translates to:
+  /// **'Me connecter'**
+  String get loginButton;
+
+  /// No description provided for @activateCas.
+  ///
+  /// In fr, this message translates to:
+  /// **'Me connecter via ENT'**
+  String get activateCas;
+
+  /// No description provided for @loginDemoText.
+  ///
+  /// In fr, this message translates to:
+  /// **'Démo'**
+  String get loginDemoText;
+
+  /// No description provided for @autoLogin.
+  ///
+  /// In fr, this message translates to:
+  /// **'Connexion automatique'**
+  String get autoLogin;
+
+  /// No description provided for @autoLoginSubtitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Sélectionne ce compte dès l\'ouverture de l\'application'**
+  String get autoLoginSubtitle;
+
+  /// No description provided for @secureStore.
+  ///
+  /// In fr, this message translates to:
+  /// **'Chiffrage du compte'**
+  String get secureStore;
+
+  /// No description provided for @secureStoreSubtitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Demande votre biométrie pour se connecter au compte'**
+  String get secureStoreSubtitle;
+
+  /// No description provided for @chooseAnAccount.
+  ///
+  /// In fr, this message translates to:
+  /// **'Changer de compte'**
+  String get chooseAnAccount;
+
+  /// No description provided for @chooseAnAccountSubtitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Changer de compte ou en ajouter un'**
+  String get chooseAnAccountSubtitle;
+
+  /// No description provided for @addAnAccount.
+  ///
+  /// In fr, this message translates to:
+  /// **'Ajouter un compte'**
+  String get addAnAccount;
+
+  /// No description provided for @deleteAccount.
+  ///
+  /// In fr, this message translates to:
+  /// **'Supprimer'**
+  String get deleteAccount;
+
+  /// No description provided for @accounts.
+  ///
+  /// In fr, this message translates to:
+  /// **'Comptes'**
+  String get accounts;
+
+  /// No description provided for @loginUsername.
+  ///
+  /// In fr, this message translates to:
+  /// **'Identifiant'**
+  String get loginUsername;
+
+  /// No description provided for @loginPassword.
+  ///
+  /// In fr, this message translates to:
+  /// **'Mot de passe'**
+  String get loginPassword;
+
+  /// No description provided for @loginPinCode.
+  ///
+  /// In fr, this message translates to:
+  /// **'Code PIN'**
+  String get loginPinCode;
+
+  /// No description provided for @loginPinCodeSubtitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Veuillez rentrer votre code PIN vous connecter à votre compte PRONOTE'**
+  String get loginPinCodeSubtitle;
+
+  /// No description provided for @loginDemo.
+  ///
+  /// In fr, this message translates to:
+  /// **'Compte de démonstration'**
+  String get loginDemo;
+
+  /// No description provided for @loginDemoSubtitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Connecte toi à un compte de test pour explorer l\'application et ses fonctionnalités'**
+  String get loginDemoSubtitle;
 }
 
 class _AppLocalizationsDelegate

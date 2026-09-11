@@ -3,7 +3,7 @@ import 'dart:async';
 import 'package:antinote_api/antinote_api.dart';
 import 'package:antinote_app/data/protos/account.pb.dart';
 import 'package:antinote_app/data/src/session/wrapper.dart';
-import 'package:antinote_app/ui/screens/auth/lists/methods.dart';
+import 'package:antinote_app/ui/screens/auth/account_type.dart';
 import 'package:antinote_app/ui/screens/settings/sync_screen.dart';
 import 'package:antinote_app/ui/screens/shell/tab.dart';
 import 'package:antinote_app/ui/utils/utils.dart';
@@ -16,15 +16,15 @@ import 'package:hugeicons_pro/hugeicons.dart';
 import 'package:material_ui/material_ui.dart';
 import 'package:skeletonizer/skeletonizer.dart';
 
-class AccountsListScreen extends StatefulWidget {
-  const AccountsListScreen({super.key});
+class AccountsScreen extends StatefulWidget {
+  const AccountsScreen({super.key});
 
   @override
-  State<AccountsListScreen> createState() => _AccountsListScreenState();
+  State<AccountsScreen> createState() => _AccountsScreenState();
 }
 
-class _AccountsListScreenState extends State<AccountsListScreen>
-    with WidgetsBindingObserver, PageMixin<AccountsListScreen> {
+class _AccountsScreenState extends State<AccountsScreen>
+    with WidgetsBindingObserver, PageMixin<AccountsScreen> {
   late List<AntinoteAccount> _accounts;
 
   String? _defaultUid;
@@ -41,7 +41,7 @@ class _AccountsListScreenState extends State<AccountsListScreen>
 
     if (_accounts.isEmpty) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
-        if (mounted) _pushMethodsScreen(context);
+        if (mounted) _pushAccountTypeScreen(context);
       });
     }
   }
@@ -115,12 +115,12 @@ class _AccountsListScreenState extends State<AccountsListScreen>
     );
   }
 
-  Future<void> _pushMethodsScreen(BuildContext context) async {
+  Future<void> _pushAccountTypeScreen(BuildContext context) async {
     final result = await Navigator.push<RegisterableAccount>(
       context,
       MaterialPageRoute(
         builder: (context) {
-          return const MethodsListScreen();
+          return const AccountTypeLoginScreen();
         },
       ),
     );
@@ -158,7 +158,7 @@ class _AccountsListScreenState extends State<AccountsListScreen>
         padding: const .only(left: 12, right: 12),
 
         child: ButtonWidget(
-          onPressed: () => _pushMethodsScreen(context),
+          onPressed: () => _pushAccountTypeScreen(context),
           icon: HugeIconsSolid.add02,
           label: context.l10n.addAnAccount,
         ),

@@ -1,8 +1,6 @@
 import 'dart:async';
 
 import 'package:antinote_api/antinote_api.dart';
-import 'package:antinote_app/data/src/session/wrapper.dart';
-import 'package:antinote_app/ui/screens/auth/lists/workspaces.dart';
 import 'package:antinote_app/ui/utils/utils.dart';
 import 'package:antinote_app/ui/widgets/customs/app_bar.dart';
 import 'package:antinote_app/ui/widgets/customs/button.dart';
@@ -12,14 +10,19 @@ import 'package:antinote_app/ui/widgets/customs/loading.dart';
 import 'package:flutter/foundation.dart';
 import 'package:material_ui/material_ui.dart';
 
-class UrlMethodScreen extends StatefulWidget {
-  const UrlMethodScreen({super.key});
+import 'account_type.dart';
+import 'cas_modal.dart';
+
+class UrlLoginScreen extends StatefulWidget {
+  final AccountType accountType;
+
+  const UrlLoginScreen({super.key, required this.accountType});
 
   @override
-  State<UrlMethodScreen> createState() => _UrlMethodScreenState();
+  State<UrlLoginScreen> createState() => _UrlLoginScreenState();
 }
 
-class _UrlMethodScreenState extends State<UrlMethodScreen> {
+class _UrlLoginScreenState extends State<UrlLoginScreen> {
   final _controller = TextEditingController(
     text: kDebugMode ? 'https://demo.index-education.net/pronote' : null,
   );
@@ -104,7 +107,10 @@ class _UrlMethodScreenState extends State<UrlMethodScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBarWidget(title: Text(context.l10n.loginUrl)),
+      appBar: AppBarWidget(
+        title: Text(context.l10n.loginUrl),
+        subtitle: Text(context.l10n.loginUrlSubtitle),
+      ),
 
       body: CustomScrollView(
         slivers: [
@@ -201,17 +207,11 @@ class _UrlMethodScreenState extends State<UrlMethodScreen> {
 
                             if (!context.mounted) return;
 
-                            final result =
-                                await Navigator.push<RegisterableAccount>(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) {
-                                      return WorkspacesListScreen(
-                                        parameters: parameters!,
-                                      );
-                                    },
-                                  ),
-                                );
+                            final result = await showCasModal(
+                              context,
+                              parameters: parameters!,
+                              accountType: widget.accountType,
+                            );
 
                             if (result != null && context.mounted) {
                               Navigator.pop(context, result);

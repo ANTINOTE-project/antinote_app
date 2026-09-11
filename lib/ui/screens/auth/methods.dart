@@ -1,8 +1,9 @@
 import 'package:antinote_api/antinote_api.dart';
 import 'package:antinote_app/data/src/session/wrapper.dart';
-import 'package:antinote_app/ui/screens/auth/methods/qr_code.dart';
-import 'package:antinote_app/ui/screens/auth/methods/search/search_cities.dart';
-import 'package:antinote_app/ui/screens/auth/methods/url.dart';
+import 'package:antinote_app/ui/screens/auth/account_type.dart';
+import 'package:antinote_app/ui/screens/auth/qr_code.dart';
+import 'package:antinote_app/ui/screens/auth/search_cities.dart';
+import 'package:antinote_app/ui/screens/auth/url.dart';
 import 'package:antinote_app/ui/utils/utils.dart';
 import 'package:antinote_app/ui/widgets/customs/app_bar.dart';
 import 'package:antinote_app/ui/widgets/customs/list.dart';
@@ -18,8 +19,10 @@ typedef Method = ({
   VoidCallback onPressed,
 });
 
-class MethodsListScreen extends StatelessWidget with WidgetsBindingObserver {
-  const MethodsListScreen({super.key});
+class LoginMethodsScreen extends StatelessWidget with WidgetsBindingObserver {
+  final AccountType accountType;
+
+  const LoginMethodsScreen({super.key, required this.accountType});
 
   List<Method> buildOptions(BuildContext context) {
     return [
@@ -34,7 +37,7 @@ class MethodsListScreen extends StatelessWidget with WidgetsBindingObserver {
             context,
             MaterialPageRoute(
               builder: (context) {
-                return const SearchCitiesMethodScreen();
+                return SearchCitiesScreen(accountType: accountType);
               },
             ),
           );
@@ -54,7 +57,7 @@ class MethodsListScreen extends StatelessWidget with WidgetsBindingObserver {
             context,
             MaterialPageRoute(
               builder: (context) {
-                return const QRCodeMethodScreen();
+                return const QRCodeLoginScreen();
               },
             ),
           );
@@ -74,7 +77,7 @@ class MethodsListScreen extends StatelessWidget with WidgetsBindingObserver {
             context,
             MaterialPageRoute(
               builder: (context) {
-                return const UrlMethodScreen();
+                return UrlLoginScreen(accountType: accountType);
               },
             ),
           );
@@ -91,7 +94,10 @@ class MethodsListScreen extends StatelessWidget with WidgetsBindingObserver {
     final options = buildOptions(context);
 
     return Scaffold(
-      appBar: AppBarWidget(title: Text(context.l10n.addAnAccount)),
+      appBar: AppBarWidget(
+        title: Text(context.l10n.loginMethodsTitle),
+        subtitle: Text(context.l10n.loginMethodsSubtitle),
+      ),
 
       body: CustomScrollView(
         slivers: [

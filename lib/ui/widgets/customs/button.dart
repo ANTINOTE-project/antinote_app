@@ -1,12 +1,11 @@
 import 'package:antinote_app/ui/utils/utils.dart';
 import 'package:antinote_app/ui/widgets/pressable.dart';
-import 'package:dynamic_color/dynamic_color.dart';
 import 'package:material_ui/material_ui.dart';
 
 enum ButtonVariant { primary, secondary, tertiary, dangerous }
 
 class ButtonWidget extends StatelessWidget {
-  final VoidCallback onPressed;
+  final VoidCallback? onPressed;
 
   final String? label;
   final IconData? icon;
@@ -16,7 +15,7 @@ class ButtonWidget extends StatelessWidget {
 
   const ButtonWidget({
     super.key,
-    required this.onPressed,
+    this.onPressed,
 
     this.label,
     this.icon,
@@ -29,7 +28,7 @@ class ButtonWidget extends StatelessWidget {
 
   Future<void> _onPressed() async {
     if (notEnabled) return;
-    onPressed.call();
+    onPressed?.call();
   }
 
   Color _getButtonColor(BuildContext context) {
@@ -41,14 +40,6 @@ class ButtonWidget extends StatelessWidget {
       .secondary => context.c.secondaryContainer,
       .primary => context.c.primaryContainer,
     };
-  }
-
-  Color _getBorderColor(BuildContext context) {
-    if (notEnabled) return context.c.outlineVariant;
-
-    return context.c.outline
-        .harmonizeWith(_getButtonColor(context))
-        .withAlpha(64);
   }
 
   Color _getTextColor(BuildContext context) {

@@ -1,8 +1,7 @@
 import 'dart:math';
 
 import 'package:antinote_api/antinote_api.dart';
-import 'package:antinote_app/data/src/session/wrapper.dart';
-import 'package:antinote_app/ui/screens/auth/lists/workspaces.dart';
+import 'package:antinote_app/ui/screens/auth/cas_modal.dart';
 import 'package:antinote_app/ui/utils/utils.dart';
 import 'package:antinote_app/ui/widgets/bottom_padding.dart';
 import 'package:antinote_app/ui/widgets/customs/app_bar.dart';
@@ -11,22 +10,25 @@ import 'package:antinote_app/ui/widgets/customs/list.dart';
 import 'package:hugeicons_pro/hugeicons.dart';
 import 'package:material_ui/material_ui.dart';
 
-class SearchSchoolsMethodScreen extends StatefulWidget {
+import 'account_type.dart';
+
+class SearchSchoolsScreen extends StatefulWidget {
   final double lat;
   final double long;
+  final AccountType accountType;
 
-  const SearchSchoolsMethodScreen({
+  const SearchSchoolsScreen({
     super.key,
     required this.lat,
     required this.long,
+    required this.accountType,
   });
 
   @override
-  State<SearchSchoolsMethodScreen> createState() =>
-      _SearchSchoolsMethodScreenState();
+  State<SearchSchoolsScreen> createState() => _SearchSchoolsScreenState();
 }
 
-class _SearchSchoolsMethodScreenState extends State<SearchSchoolsMethodScreen> {
+class _SearchSchoolsScreenState extends State<SearchSchoolsScreen> {
   final _controller = TextEditingController();
 
   final List<GeolocatedInstance> _mockInstances = List.generate(20, (i) {
@@ -80,7 +82,10 @@ class _SearchSchoolsMethodScreenState extends State<SearchSchoolsMethodScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBarWidget(title: Text(context.l10n.loginSchool)),
+      appBar: AppBarWidget(
+        title: Text(context.l10n.loginSchool),
+        subtitle: Text(context.l10n.loginSchoolSubtitle),
+      ),
 
       body: Padding(
         padding: const .symmetric(horizontal: 12),
@@ -94,7 +99,8 @@ class _SearchSchoolsMethodScreenState extends State<SearchSchoolsMethodScreen> {
 
               child: FieldWidget(
                 controller: _controller,
-                hintText: context.l10n.loginCitySubtitle,
+                hintText: context.l10n.loginSchoolHint,
+                prefixIcon: const Icon(HugeIconsSolid.searchList01),
                 onChanged: _onSearch,
                 autofocus: true,
               ),
@@ -121,17 +127,11 @@ class _SearchSchoolsMethodScreenState extends State<SearchSchoolsMethodScreen> {
                                 );
 
                             if (context.mounted) {
-                              final result =
-                                  await Navigator.push<RegisterableAccount>(
-                                    context,
-                                    MaterialPageRoute(
-                                      builder: (context) {
-                                        return WorkspacesListScreen(
-                                          parameters: parameters!,
-                                        );
-                                      },
-                                    ),
-                                  );
+                              final result = await showCasModal(
+                                context,
+                                parameters: parameters!,
+                                accountType: widget.accountType,
+                              );
 
                               if (result != null && context.mounted) {
                                 Navigator.pop(context, result);
@@ -146,13 +146,10 @@ class _SearchSchoolsMethodScreenState extends State<SearchSchoolsMethodScreen> {
                           }
                         },
 
-                        leading: const Icon(HugeIconsSolid.school),
-
                         title: Text(instance.name),
                         subtitle: Text(
                           '${instance.distance.toStringAsFixed(2)} km',
                         ),
-
                         trailing: Icon(
                           HugeIconsSolid.arrowRight01,
                           color: context.c.outline,

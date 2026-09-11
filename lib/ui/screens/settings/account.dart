@@ -1,4 +1,4 @@
-import 'package:antinote_app/ui/screens/auth/lists/accounts.dart';
+import 'package:antinote_app/ui/screens/auth/accounts.dart';
 import 'package:antinote_app/ui/utils/src/context.dart';
 import 'package:antinote_app/ui/widgets/customs/list.dart';
 import 'package:antinote_app/ui/widgets/customs/loading.dart';
@@ -42,7 +42,7 @@ class _AccountState extends State<Account> {
                 context,
                 MaterialPageRoute(
                   builder: (context) {
-                    return const AccountsListScreen();
+                    return const AccountsScreen();
                   },
                 ),
               ),

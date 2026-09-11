@@ -88,110 +88,6 @@ class AppLocalizationsFr extends AppLocalizations {
   String get communication => 'Réception';
 
   @override
-  String get loginDemoText => 'Démo';
-
-  @override
-  String get autoLogin => 'Connexion automatique';
-
-  @override
-  String get autoLoginSubtitle =>
-      'Sélectionne ce compte dès l\'ouverture de l\'application';
-
-  @override
-  String get secureStore => 'Chiffrage du compte';
-
-  @override
-  String get secureStoreSubtitle =>
-      'Demande votre biométrie pour se connecter au compte';
-
-  @override
-  String get chooseAnAccount => 'Changer de compte';
-
-  @override
-  String get chooseAnAccountSubtitle => 'Changer de compte ou en ajouter un';
-
-  @override
-  String get addAnAccount => 'Ajouter un compte';
-
-  @override
-  String get deleteAccount => 'Supprimer';
-
-  @override
-  String get accounts => 'Comptes';
-
-  @override
-  String get loginQrCode => 'QR Code';
-
-  @override
-  String get loginQrCodeSubtitle =>
-      'Scanne un QR code depuis un ordinateur déjà connecté à PRONOTE';
-
-  @override
-  String get loginQrCodeFromGallery => 'Scanner depuis une image';
-
-  @override
-  String get loginCity => 'Recherche ta ville';
-
-  @override
-  String get loginCitySubtitle =>
-      'Entre le nom de ta ville et choisis ton établissement';
-
-  @override
-  String get loginUrl => 'URL de ton établissement';
-
-  @override
-  String get loginUrlSubtitle =>
-      'Renseigne l\'URL de ton espace PRONOTE pour t\'y connecter';
-
-  @override
-  String get loginButton => 'Se connecter';
-
-  @override
-  String get loginSchool => 'Choisis ton établissement';
-
-  @override
-  String get loginSelect => 'Choisis ton espace';
-
-  @override
-  String get activateCas => 'Se connecter via ENT';
-
-  @override
-  String get loginCredentials => 'Renseigne tes identifiants';
-
-  @override
-  String get loginToAccount => 'Connecte toi à ton compte';
-
-  @override
-  String get loginUsername => 'Identifiant';
-
-  @override
-  String get loginPassword => 'Mot de passe';
-
-  @override
-  String get loginPinCode => 'Code PIN';
-
-  @override
-  String get loginPinCodeSubtitle =>
-      'Veuillez rentrer votre code PIN vous connecter à votre compte PRONOTE';
-
-  @override
-  String get loginDemo => 'Compte de démonstration';
-
-  @override
-  String get loginDemoSubtitle =>
-      'Connecte toi à un compte de test pour explorer l\'application et ses fonctionnalités';
-
-  @override
-  String get loginStudentAccount => 'Je suis un élève';
-
-  @override
-  String get loginParentAccount => 'Je suis un parent';
-
-  @override
-  String get loginParentMessage =>
-      'Désolé mais ANTINOTE n\'est pas encore disponible pour toi.\n\nPromis ça arrive dans une future mise à jour !';
-
-  @override
   String get homeShowMore => 'Voir plus';
 
   @override
@@ -780,4 +676,149 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get seeMeal => 'Voir le menu';
+
+  @override
+  String get accountType => 'Type de compte';
+
+  @override
+  String get whoAreYou => 'Qui es tu ?';
+
+  @override
+  String get whoAreYouSubtitle => 'Sélectionne ton profil pour continuer';
+
+  @override
+  String get loginStudentAccount => 'Je suis un élève';
+
+  @override
+  String get loginParentAccount => 'Je suis un parent';
+
+  @override
+  String get loginStudentAccountSubtitle =>
+      'Accède à ton emploi du temps, tes devoirs et tes notes';
+
+  @override
+  String get loginParentAccountSubtitle =>
+      'Suis la scolarité de ton enfant au quotidien';
+
+  @override
+  String get loginMethodsTitle => 'Comment te connecter ?';
+
+  @override
+  String get loginMethodsSubtitle =>
+      'Choisis la méthode la plus simple pour toi';
+
+  @override
+  String get loginCity => 'Trouve ta ville';
+
+  @override
+  String get loginCitySubtitle =>
+      'On te proposera les établissements à proximité';
+
+  @override
+  String get loginCityHint => 'Recherche ta ville';
+
+  @override
+  String get loginSchool => 'Choisis ton établissement';
+
+  @override
+  String get loginSchoolSubtitle =>
+      'Voici les établissements les plus proches de toi';
+
+  @override
+  String get loginSchoolHint => 'Recherche ton établissement';
+
+  @override
+  String get loginQrCode => 'Scanne un QR code';
+
+  @override
+  String get loginQrCodeSubtitle =>
+      'Scanne un QR code depuis un ordinateur déjà connecté à PRONOTE';
+
+  @override
+  String get loginQrCodeGallery => 'Scanner depuis une image';
+
+  @override
+  String get loginUrl => 'URL de ton établissement';
+
+  @override
+  String get loginUrlSubtitle =>
+      'Tu la trouveras dans la barre d\'adresse de ton espace PRONOTE';
+
+  @override
+  String get loginCredentials => 'Renseigne tes identifiants';
+
+  @override
+  String get loginToAccount => 'Connecte toi à ton compte';
+
+  @override
+  String get loginWebviewSubtitle =>
+      'Suis les instructions sur la page de ton établissement';
+
+  @override
+  String get loginConfirmTitle => 'Dernière étape';
+
+  @override
+  String get loginConfirmSubtitle =>
+      'Vérifie les informations avant de te connecter';
+
+  @override
+  String get loginWorkspaceUnavailable => 'Non proposé par cet établissement';
+
+  @override
+  String get loginButton => 'Me connecter';
+
+  @override
+  String get activateCas => 'Me connecter via ENT';
+
+  @override
+  String get loginDemoText => 'Démo';
+
+  @override
+  String get autoLogin => 'Connexion automatique';
+
+  @override
+  String get autoLoginSubtitle =>
+      'Sélectionne ce compte dès l\'ouverture de l\'application';
+
+  @override
+  String get secureStore => 'Chiffrage du compte';
+
+  @override
+  String get secureStoreSubtitle =>
+      'Demande votre biométrie pour se connecter au compte';
+
+  @override
+  String get chooseAnAccount => 'Changer de compte';
+
+  @override
+  String get chooseAnAccountSubtitle => 'Changer de compte ou en ajouter un';
+
+  @override
+  String get addAnAccount => 'Ajouter un compte';
+
+  @override
+  String get deleteAccount => 'Supprimer';
+
+  @override
+  String get accounts => 'Comptes';
+
+  @override
+  String get loginUsername => 'Identifiant';
+
+  @override
+  String get loginPassword => 'Mot de passe';
+
+  @override
+  String get loginPinCode => 'Code PIN';
+
+  @override
+  String get loginPinCodeSubtitle =>
+      'Veuillez rentrer votre code PIN vous connecter à votre compte PRONOTE';
+
+  @override
+  String get loginDemo => 'Compte de démonstration';
+
+  @override
+  String get loginDemoSubtitle =>
+      'Connecte toi à un compte de test pour explorer l\'application et ses fonctionnalités';
 }
