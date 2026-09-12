@@ -61,36 +61,6 @@ class FieldWidget extends StatelessWidget {
         textAlignVertical: .center,
         style: const TextStyle(fontWeight: .w600),
 
-        // flutter broke the menu so we need to do this
-        contextMenuBuilder: (context, editableTextState) {
-          final buttonItems = editableTextState.contextMenuButtonItems;
-          final anchors = editableTextState.contextMenuAnchors;
-
-          return TextSelectionToolbar(
-            anchorAbove: anchors.primaryAnchor,
-            anchorBelow: anchors.secondaryAnchor ?? anchors.primaryAnchor,
-
-            children: buttonItems.asMap().entries.map((entry) {
-              return TextSelectionToolbarTextButton(
-                padding: TextSelectionToolbarTextButton.getPadding(
-                  entry.key,
-                  buttonItems.length,
-                ),
-
-                onPressed: entry.value.onPressed,
-                alignment: .centerLeft,
-
-                child: Text(
-                  AdaptiveTextSelectionToolbar.getButtonLabel(
-                    context,
-                    entry.value,
-                  ),
-                  style: const TextStyle(fontWeight: .w600),
-                ),
-              );
-            }).toList(),
-          );
-        },
         decoration: InputDecoration(
           contentPadding: const .symmetric(horizontal: 16, vertical: 12),
           enabledBorder: .none,
