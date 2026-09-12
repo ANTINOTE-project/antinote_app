@@ -305,7 +305,7 @@ class _AccountModalState extends State<_AccountModal> {
     return SafeArea(
       child: Padding(
         padding: .only(
-          bottom: 16 + MediaQuery.of(context).viewInsets.bottom,
+          bottom: 16 + MediaQuery.viewInsetsOf(context).bottom,
           right: 12,
           left: 12,
         ),
@@ -317,11 +317,14 @@ class _AccountModalState extends State<_AccountModal> {
 
           children: [
             Row(
+              spacing: 4,
+
               children: [
                 Expanded(
                   child: FieldWidget(
                     controller: _nameController,
                     hintText: context.l10n.renameAccount,
+                    leading: const Icon(HugeIconsSolid.userEdit01),
                   ),
                 ),
 
@@ -330,40 +333,24 @@ class _AccountModalState extends State<_AccountModal> {
                   builder: (context, value, child) {
                     final show = value.text.trim() != widget.account.name;
 
-                    return AnimatedSwitcher(
-                      duration: const Duration(milliseconds: 250),
-                      switchInCurve: Curves.easeOutBack,
-                      switchOutCurve: Curves.easeIn,
+                    return IconButton.filledTonal(
+                      icon: const Icon(HugeIconsSolid.tick03),
+                      iconSize: 20,
 
-                      transitionBuilder: (child, animation) {
-                        return ScaleTransition(scale: animation, child: child);
-                      },
+                      onPressed: show
+                          ? () async {
+                              await context.ar.storage.updateAccount(
+                                widget.account.rebuild((acc) {
+                                  acc.name = _nameController.text.trim();
+                                }),
+                                widget.account.uid,
+                              );
 
-                      child: show
-                          ? Padding(
-                              padding: const .only(left: 8),
+                              await widget.reload();
 
-                              child: IconButton.filledTonal(
-                                key: const ValueKey('confirm'),
-
-                                icon: const Icon(HugeIconsSolid.tick03),
-                                iconSize: 20,
-
-                                onPressed: () async {
-                                  await context.ar.storage.updateAccount(
-                                    widget.account.rebuild((acc) {
-                                      acc.name = _nameController.text;
-                                    }),
-                                    widget.account.uid,
-                                  );
-
-                                  await widget.reload();
-
-                                  if (context.mounted) Navigator.pop(context);
-                                },
-                              ),
-                            )
-                          : const SizedBox.shrink(key: ValueKey('empty')),
+                              if (context.mounted) Navigator.pop(context);
+                            }
+                          : null,
                     );
                   },
                 ),
