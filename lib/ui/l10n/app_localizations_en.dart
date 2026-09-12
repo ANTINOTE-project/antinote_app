@@ -13,25 +13,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get theme => 'Theme';
 
   @override
-  String get themePrimary => 'Primary';
-
-  @override
-  String get themeSecondary => 'Secondary';
-
-  @override
-  String get themeTertiary => 'Tertiary';
-
-  @override
-  String get themeSurface => 'Surface';
-
-  @override
-  String get themeError => 'Error';
-
-  @override
   String get themeCoral => 'Coral';
-
-  @override
-  String get themeIndigo => 'Indigo';
 
   @override
   String get themeGreen => 'Green';
@@ -70,9 +52,6 @@ class AppLocalizationsEn extends AppLocalizations {
   String get retry => 'Try again';
 
   @override
-  String get dialogClose => 'Close';
-
-  @override
   String get home => 'Home';
 
   @override
@@ -94,9 +73,6 @@ class AppLocalizationsEn extends AppLocalizations {
   String get homeAttendance => 'School Life';
 
   @override
-  String get homeNews => 'News';
-
-  @override
   String get homeExams => 'Exams';
 
   @override
@@ -106,9 +82,6 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get absenceNotJustified => 'Unjustified absence';
-
-  @override
-  String get absenceJustified => 'Justified absence';
 
   @override
   String absenceDuration(DateTime date, DateTime startTime, DateTime endTime) {
@@ -190,9 +163,6 @@ class AppLocalizationsEn extends AppLocalizations {
   String get averageClass => 'Class avg.';
 
   @override
-  String get gradesHistory => 'Grades history';
-
-  @override
   String get coefficient => 'Coefficient';
 
   @override
@@ -232,6 +202,11 @@ class AppLocalizationsEn extends AppLocalizations {
   String get gradeCongratulations => 'Congratulations';
 
   @override
+  String gradeCountShort(Object count) {
+    return '$count grades';
+  }
+
+  @override
   String get gradesReport => 'Report';
 
   @override
@@ -258,18 +233,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get gradeMax => 'Max.';
 
   @override
-  String gradeCountShort(Object count) {
-    return '$count grades';
-  }
-
-  @override
   String get noCourseToday => 'You don\'t have any class,\nenjoy!';
-
-  @override
-  String get holidayDay => 'It\'s a holiday,\nhave fun!';
-
-  @override
-  String get weekend => 'It\'s the weekend,\nrest well!';
 
   @override
   String get lunch => 'Bon appetit!';
@@ -280,9 +244,6 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
-  String get cancelled => 'CANCELED';
-
-  @override
   String get detention => 'Detention';
 
   @override
@@ -290,9 +251,6 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get noSubject => 'Unknown subject';
-
-  @override
-  String get noRoom => 'Undefined room';
 
   @override
   String get contentTeachers => 'Teachers';
@@ -443,9 +401,6 @@ class AppLocalizationsEn extends AppLocalizations {
       'The theme will change according to your wallpaper';
 
   @override
-  String get displayProfilePicture => 'Show the profile picture';
-
-  @override
   String get network => 'Network';
 
   @override
@@ -503,11 +458,6 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get classConfig => 'Class';
-
-  @override
-  String explainCurrentConfig(String mode) {
-    return 'You are in more \"$mode\"';
-  }
 
   @override
   String get no => 'No';
@@ -625,8 +575,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get newsSync => 'News';
 
   @override
-  String get newsSyncSubtitle =>
-      'Upon the reception of a new discussion message';
+  String get newsSyncSubtitle => 'When you receive an announcement or a poll';
 
   @override
   String get discussionSync => 'Direct Messages';
@@ -669,60 +618,51 @@ class AppLocalizationsEn extends AppLocalizations {
   String get markedThreadRead => 'The thread was marked as read';
 
   @override
-  String get renameAccount => 'Give your account a new name';
+  String get accountType => 'Account type';
 
   @override
-  String get seeMeal => 'See the menu';
+  String get whoAreYou => 'Who are you?';
 
   @override
-  String get accountType => 'Type de compte';
-
-  @override
-  String get whoAreYou => 'Qui es tu ?';
-
-  @override
-  String get whoAreYouSubtitle => 'Sélectionne ton profil pour continuer';
+  String get whoAreYouSubtitle => 'Select your profile to continue';
 
   @override
   String get loginStudentAccount => 'I\'m a student';
 
   @override
+  String get loginStudentAccountSubtitle =>
+      'Access your timetable, homework and grades';
+
+  @override
   String get loginParentAccount => 'I\'m a parent';
 
   @override
-  String get loginStudentAccountSubtitle =>
-      'Accède à ton emploi du temps, tes devoirs et tes notes';
-
-  @override
   String get loginParentAccountSubtitle =>
-      'Suis la scolarité de ton enfant au quotidien';
+      'Follow your child\'s schooling day to day';
 
   @override
-  String get loginMethodsTitle => 'Comment te connecter ?';
+  String get loginMethodsTitle => 'How would you like to log in?';
 
   @override
-  String get loginMethodsSubtitle =>
-      'Choisis la méthode la plus simple pour toi';
+  String get loginMethodsSubtitle => 'Choose whichever method suits you best';
 
   @override
   String get loginCity => 'Find your city';
 
   @override
-  String get loginCitySubtitle =>
-      'Enter the name of your city and pick your school';
+  String get loginCitySubtitle => 'We\'ll suggest nearby schools';
 
   @override
-  String get loginCityHint => 'Recherche ta ville';
+  String get loginCityHint => 'Search for your city';
 
   @override
   String get loginSchool => 'Pick your school';
 
   @override
-  String get loginSchoolSubtitle =>
-      'Voici les établissements les plus proches de toi';
+  String get loginSchoolSubtitle => 'Here are the schools closest to you';
 
   @override
-  String get loginSchoolHint => 'Recherche ton établissement';
+  String get loginSchoolHint => 'Search for your school';
 
   @override
   String get loginQrCode => 'QR Code';
@@ -732,7 +672,7 @@ class AppLocalizationsEn extends AppLocalizations {
       'Scan a QR Code from your computer that\'s already logged into PRONOTE';
 
   @override
-  String get loginQrCodeGallery => 'Scanner depuis une image';
+  String get loginQrCodeGallery => 'Scan from a picture';
 
   @override
   String get loginUrl => 'School PRONOTE URL';
@@ -745,33 +685,36 @@ class AppLocalizationsEn extends AppLocalizations {
   String get loginUrlHint => 'https://demo.index-education.net/pronote';
 
   @override
-  String get loginCredentials => 'Enter your credentials';
-
-  @override
   String get loginToAccount => 'Connect to your account';
 
   @override
   String get loginWebviewSubtitle =>
-      'Suis les instructions sur la page de ton établissement';
+      'Follow the instructions on your school\'s page';
 
   @override
-  String get loginConfirmTitle => 'Dernière étape';
+  String get loginConfirmTitle => 'Last step';
 
   @override
-  String get loginConfirmSubtitle =>
-      'Vérifie les informations avant de te connecter';
+  String get loginConfirmSubtitle => 'Check the information before logging in';
 
   @override
-  String get loginWorkspaceUnavailable => 'Non proposé par cet établissement';
+  String get loginWorkspaceUnavailable => 'Not offered by this school';
 
   @override
   String get loginButton => 'Login';
 
   @override
-  String get activateCas => 'Connect via your DW';
+  String get activateCas => 'Connect via your school portal';
 
   @override
   String get loginDemoText => 'Demo';
+
+  @override
+  String get loginDemo => 'Demo account';
+
+  @override
+  String get loginDemoSubtitle =>
+      'Login to a test account to explore the app and its features';
 
   @override
   String get autoLogin => 'Auto-login';
@@ -803,6 +746,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get accounts => 'Accounts';
 
   @override
+  String get renameAccount => 'Give your account a new name';
+
+  @override
   String get loginUsername => 'Username';
 
   @override
@@ -816,9 +762,5 @@ class AppLocalizationsEn extends AppLocalizations {
       'Please enter your PIN code to connect to your PRONOTE account';
 
   @override
-  String get loginDemo => 'Demo account';
-
-  @override
-  String get loginDemoSubtitle =>
-      'Login to a test account to explore the app and its features';
+  String get seeMeal => 'See the menu';
 }

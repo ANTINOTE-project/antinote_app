@@ -2,13 +2,7 @@
   "@@locale": "en",
 
   "theme": "Theme",
-  "themePrimary": "Primary",
-  "themeSecondary": "Secondary",
-  "themeTertiary": "Tertiary",
-  "themeSurface": "Surface",
-  "themeError": "Error",
   "themeCoral": "Coral",
-  "themeIndigo": "Indigo",
   "themeGreen": "Green",
   "themeTeal": "Teal",
   "themePurple": "Purple",
@@ -31,44 +25,68 @@
   "homeworks": "Homework",
   "communication": "Inbox",
 
-  "loginDemoText": "Demo",
-  "autoLogin": "Auto-login",
-  "autoLoginSubtitle": "Marks this account to open upon the start of the app",
-  "chooseAnAccount": "Change account",
-  "chooseAnAccountSubtitle": "Change account or add one",
-  "addAnAccount": "Add account",
-  "deleteAccount": "Delete account",
-  "accounts": "Accounts",
-  "loginQrCode": "QR Code",
-  "loginQrCodeSubtitle": "Scan a QR Code from your computer that's already logged into PRONOTE",
-  "loginCity": "Find your city",
-  "loginCitySubtitle": "Enter the name of your city and pick your school",
-  "loginUrl": "School PRONOTE URL",
-  "loginUrlSubtitle": "Enter the URL to your PRONOTE instance to login",
-  "loginButton": "Login",
-  "loginSchool": "Pick your school",
-  "loginSelect": "Pick your workspace",
-  "activateCas": "Connect via your DW",
-  "loginCredentials": "Enter your credentials",
-  "loginToAccount": "Connect to your account",
-  "loginUsername": "Username",
-  "loginPassword": "Password",
-  "loginPinCode": "PIN code",
-  "loginPinCodeSubtitle": "Please enter your PIN code to connect to your PRONOTE account",
-
   "homeShowMore": "Show more",
   "homeAttendance": "School Life",
-  "homeNews": "News",
   "homeExams": "Exams",
+  "homeHiName": "Hi {name}!",
+
   "absenceNotJustified": "Unjustified absence",
-  "absenceJustified": "Justified absence",
   "absenceDuration": "{date} from {startTime} to {endTime}",
+  "@absenceDuration": {
+    "placeholders": {
+      "date": {
+        "type": "DateTime",
+        "format": "MMMMEEEEd"
+      },
+      "startTime": {
+        "type": "DateTime",
+        "isCustomDateFormat": true,
+        "format": "HH'h'mm"
+      },
+      "endTime": {
+        "type": "DateTime",
+        "isCustomDateFormat": true,
+        "format": "HH'h'mm"
+      }
+    }
+  },
 
   "fieldNotFilled": "Not specified",
 
   "classTiming": "{startTime} - {endTime}",
+  "@classTiming": {
+    "placeholders": {
+      "startTime": {
+        "type": "DateTime",
+        "isCustomDateFormat": true,
+        "format": "HH'h'mm"
+      },
+      "endTime": {
+        "type": "DateTime",
+        "isCustomDateFormat": true,
+        "format": "HH'h'mm"
+      }
+    }
+  },
 
   "classTimingDuration": "{startTime} - {endTime} ({duration})",
+  "@classTimingDuration": {
+    "placeholders": {
+      "startTime": {
+        "type": "DateTime",
+        "isCustomDateFormat": true,
+        "format": "HH'h'mm"
+      },
+      "endTime": {
+        "type": "DateTime",
+        "isCustomDateFormat": true,
+        "format": "HH'h'mm"
+      },
+      "duration": {
+        "type": "String"
+      }
+    }
+  },
 
   "latestGrades": "Latest grades",
   "services": "Services",
@@ -76,7 +94,6 @@
   "averageSelf": "General avg.",
   "selfServiceAverage": "Service avg.",
   "averageClass": "Class avg.",
-  "gradesHistory": "Grades history",
   "coefficient": "Coefficient",
   "gradeCount": "Grade count",
   "youGot": "You got",
@@ -90,6 +107,7 @@
   "gradeNotGraded": "Not graded",
   "gradeInapt": "Inapt",
   "gradeCongratulations": "Congratulations",
+  "gradeCountShort": "{count} grades",
   "gradesReport": "Report",
   "classGradesReport": "Class report",
   "reportUnpublished": "Report not yet published",
@@ -98,19 +116,13 @@
   "reportCoefficient": "Coef. {value}",
   "gradeMin": "Min.",
   "gradeMax": "Max.",
-  "gradeCountShort": "{count} grades",
 
   "noCourseToday": "You don't have any class,\nenjoy!",
-  "holidayDay": "It's a holiday,\nhave fun!",
-
-  "weekend": "It's the weekend,\nrest well!",
   "lunch": "Bon appetit!",
   "gap": "{duration} of free time",
-  "cancelled": "CANCELED",
   "detention": "Detention",
   "pedagogicalActivity": "Pedagogical activity",
   "noSubject": "Unknown subject",
-  "noRoom": "Undefined room",
 
   "contentTeachers": "Teachers",
   "contentPersonal": "Personal",
@@ -132,8 +144,22 @@
   "remoteVersion": "Instance version",
   "remoteYear": "Year",
   "remoteYearSubtitle": "{start} ➔ {end}",
-
+  "@remoteYearSubtitle": {
+    "placeholders": {
+      "start": {
+        "type": "DateTime",
+        "isCustomDateFormat": true,
+        "format": "dd/MM/yy"
+      },
+      "end": {
+        "type": "DateTime",
+        "isCustomDateFormat": true,
+        "format": "dd/MM/yy"
+      }
+    }
+  },
   "remotePeriods": "Periods",
+
   "virtualClassroom": "Conf. call",
 
   "homeworkSetDone": "I finished",
@@ -142,6 +168,20 @@
   "homeworkDescription": "Description",
   "homeworkAttachments": "Attachments",
   "givenTheForThe": "Given on {given} for {deadline}",
+  "@givenTheForThe": {
+    "placeholders": {
+      "given": {
+        "type": "DateTime",
+        "isCustomDateFormat": true,
+        "format": "dd/MM"
+      },
+      "deadline": {
+        "type": "DateTime",
+        "isCustomDateFormat": true,
+        "format": "dd/MM"
+      }
+    }
+  },
   "homeworkDifficulty": "Difficulty",
   "homeworkState": "State",
   "homeworkRenderPronote": "To be submitted online",
@@ -153,9 +193,10 @@
 
   "appSettings": "App settings",
   "goToAppSettings": "Go to app settings",
+
   "deviceTheme": "Use the device theme",
   "deviceThemeDescription": "The theme will change according to your wallpaper",
-  "displayProfilePicture": "Show the profile picture",
+
   "network": "Network",
   "reconnectAccount": "Reconnect the account",
   "sendNavigationRequests": "Send navigation requests",
@@ -164,7 +205,25 @@
   "noMenuForToday": "No menu for today!",
   "menu": "Menu",
   "lunchFor": "Lunch for {day}",
+  "@lunchFor": {
+    "placeholders": {
+      "day": {
+        "type": "DateTime",
+        "isCustomDateFormat": true,
+        "format": "dd/MM"
+      }
+    }
+  },
   "dinnerFor": "Dinner for {day}",
+  "@dinnerFor": {
+    "placeholders": {
+      "day": {
+        "type": "DateTime",
+        "isCustomDateFormat": true,
+        "format": "dd/MM"
+      }
+    }
+  },
 
   "defaultConfig": "Default configuration",
   "breakConfig": "Break",
@@ -174,8 +233,6 @@
   "lunchConfig": "Lunch",
   "pauseConfig": "Study time",
   "classConfig": "Class",
-
-  "explainCurrentConfig": "You are in more \"{mode}\"",
 
   "no": "No",
   "yes": "Yes",
@@ -192,19 +249,38 @@
 
   "boardOpinion": "Board opinion",
 
-  "secureStore": "Secure store",
-  "secureStoreSubtitle": "Asks for biometrics each time a new connection to this account is made",
+  "shortDate": "{date}",
+  "@shortDate": {
+    "placeholders": {
+      "date": {
+        "type": "DateTime",
+        "isCustomDateFormat": "true",
+        "format": "EEEE dd MMMM"
+      }
+    }
+  },
+  "shortWeekday": "{date}",
+  "@shortWeekday": {
+    "placeholders": {
+      "date": {
+        "type": "DateTime",
+        "isCustomDateFormat": "true",
+        "format": "EEEE"
+      }
+    }
+  },
 
-  "loginQrCodeFromGallery": "Pick from gallery",
-  "loginDemo": "Demo account",
-  "loginDemoSubtitle": "Login to a test account to explore the app and its features",
-  "homeHiName": "Hi {name}!",
+  "monthDay": "{date}",
+  "@monthDay": {
+    "placeholders": {
+      "date": {
+        "type": "DateTime",
+        "format": "MMMMd"
+      }
+    }
+  },
 
   "communicationUnavailable": "The communication page will be available in an upcoming update, stay tuned!",
-
-  "shortDate": "{date}",
-  "shortWeekday": "{date}",
-  "monthDay": "{date}",
 
   "application": "Application",
   "about": "About",
@@ -215,6 +291,17 @@
 
   "homeworksNotificationDescription": "Notification when a new homework is published",
   "newHomework": "{subject} → {date}",
+  "@newHomework": {
+    "placeholders": {
+      "subject": {
+        "type": "String"
+      },
+      "date": {
+        "type": "DateTime",
+        "format": "MMMd"
+      }
+    }
+  },
 
   "accountSyncSettings": "Background sync",
   "accountSyncSettingsSubtitle": "Choose what you want to sync in the background",
@@ -224,7 +311,7 @@
   "calendarSyncSubtitle": "Syncs your timetable with your phone's calendar and updates it in the backgorund",
 
   "newsSync": "News",
-  "newsSyncSubtitle": "Upon the reception of a new discussion message",
+  "newsSyncSubtitle": "When you receive an announcement or a poll",
 
   "discussionSync": "Direct Messages",
   "discussionSyncSubtitle": "When a DM is received",
@@ -245,10 +332,65 @@
 
   "markedThreadRead": "The thread was marked as read",
 
+  "accountType": "Account type",
+  "whoAreYou": "Who are you?",
+  "whoAreYouSubtitle": "Select your profile to continue",
+
   "loginStudentAccount": "I'm a student",
+  "loginStudentAccountSubtitle": "Access your timetable, homework and grades",
   "loginParentAccount": "I'm a parent",
-  "loginParentMessage": "Sorry but ANTINOTE is not available for you.\n\nPromise it will be in future updates !",
-  "dialogClose": "Close",
+  "loginParentAccountSubtitle": "Follow your child's schooling day to day",
+
+  "loginMethodsTitle": "How would you like to log in?",
+  "loginMethodsSubtitle": "Choose whichever method suits you best",
+
+  "loginCity": "Find your city",
+  "loginCitySubtitle": "We'll suggest nearby schools",
+  "loginCityHint": "Search for your city",
+
+  "loginSchool": "Pick your school",
+  "loginSchoolSubtitle": "Here are the schools closest to you",
+  "loginSchoolHint": "Search for your school",
+
+  "loginQrCode": "QR Code",
+  "loginQrCodeSubtitle": "Scan a QR Code from your computer that's already logged into PRONOTE",
+  "loginQrCodeGallery": "Scan from a picture",
+
+  "loginUrl": "School PRONOTE URL",
+  "loginUrlSubtitle": "Enter the URL to your PRONOTE instance to login",
+  "loginUrlHint": "https://demo.index-education.net/pronote",
+
+  "loginToAccount": "Connect to your account",
+  "loginWebviewSubtitle": "Follow the instructions on your school's page",
+
+  "loginConfirmTitle": "Last step",
+  "loginConfirmSubtitle": "Check the information before logging in",
+  "loginWorkspaceUnavailable": "Not offered by this school",
+
+  "loginButton": "Login",
+  "activateCas": "Connect via your school portal",
+
+  "loginDemoText": "Demo",
+  "loginDemo": "Demo account",
+  "loginDemoSubtitle": "Login to a test account to explore the app and its features",
+
+  "autoLogin": "Auto-login",
+  "autoLoginSubtitle": "Marks this account to open upon the start of the app",
+
+  "secureStore": "Secure store",
+  "secureStoreSubtitle": "Asks for biometrics each time a new connection to this account is made",
+
+  "chooseAnAccount": "Change account",
+  "chooseAnAccountSubtitle": "Change account or add one",
+  "addAnAccount": "Add account",
+  "deleteAccount": "Delete account",
+  "accounts": "Accounts",
   "renameAccount": "Give your account a new name",
+
+  "loginUsername": "Username",
+  "loginPassword": "Password",
+  "loginPinCode": "PIN code",
+  "loginPinCodeSubtitle": "Please enter your PIN code to connect to your PRONOTE account",
+
   "seeMeal": "See the menu"
 }

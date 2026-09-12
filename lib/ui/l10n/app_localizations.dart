@@ -104,47 +104,11 @@ abstract class AppLocalizations {
   /// **'Thème'**
   String get theme;
 
-  /// No description provided for @themePrimary.
-  ///
-  /// In fr, this message translates to:
-  /// **'Primaire'**
-  String get themePrimary;
-
-  /// No description provided for @themeSecondary.
-  ///
-  /// In fr, this message translates to:
-  /// **'Secondaire'**
-  String get themeSecondary;
-
-  /// No description provided for @themeTertiary.
-  ///
-  /// In fr, this message translates to:
-  /// **'Tertiaire'**
-  String get themeTertiary;
-
-  /// No description provided for @themeSurface.
-  ///
-  /// In fr, this message translates to:
-  /// **'Surface'**
-  String get themeSurface;
-
-  /// No description provided for @themeError.
-  ///
-  /// In fr, this message translates to:
-  /// **'Erreur'**
-  String get themeError;
-
   /// No description provided for @themeCoral.
   ///
   /// In fr, this message translates to:
   /// **'Corail'**
   String get themeCoral;
-
-  /// No description provided for @themeIndigo.
-  ///
-  /// In fr, this message translates to:
-  /// **'Indigo'**
-  String get themeIndigo;
 
   /// No description provided for @themeGreen.
   ///
@@ -218,12 +182,6 @@ abstract class AppLocalizations {
   /// **'Réessayer'**
   String get retry;
 
-  /// No description provided for @dialogClose.
-  ///
-  /// In fr, this message translates to:
-  /// **'Fermer'**
-  String get dialogClose;
-
   /// No description provided for @home.
   ///
   /// In fr, this message translates to:
@@ -266,12 +224,6 @@ abstract class AppLocalizations {
   /// **'Vie Scolaire'**
   String get homeAttendance;
 
-  /// No description provided for @homeNews.
-  ///
-  /// In fr, this message translates to:
-  /// **'Actualités'**
-  String get homeNews;
-
   /// No description provided for @homeExams.
   ///
   /// In fr, this message translates to:
@@ -289,12 +241,6 @@ abstract class AppLocalizations {
   /// In fr, this message translates to:
   /// **'Absence non justifiée'**
   String get absenceNotJustified;
-
-  /// No description provided for @absenceJustified.
-  ///
-  /// In fr, this message translates to:
-  /// **'Absence justifiée'**
-  String get absenceJustified;
 
   /// No description provided for @absenceDuration.
   ///
@@ -359,12 +305,6 @@ abstract class AppLocalizations {
   /// In fr, this message translates to:
   /// **'Moy. classe'**
   String get averageClass;
-
-  /// No description provided for @gradesHistory.
-  ///
-  /// In fr, this message translates to:
-  /// **'Historique de tes notes'**
-  String get gradesHistory;
 
   /// No description provided for @coefficient.
   ///
@@ -444,6 +384,12 @@ abstract class AppLocalizations {
   /// **'Félicitations'**
   String get gradeCongratulations;
 
+  /// No description provided for @gradeCountShort.
+  ///
+  /// In fr, this message translates to:
+  /// **'{count} notes'**
+  String gradeCountShort(Object count);
+
   /// No description provided for @gradesReport.
   ///
   /// In fr, this message translates to:
@@ -492,29 +438,11 @@ abstract class AppLocalizations {
   /// **'Max.'**
   String get gradeMax;
 
-  /// No description provided for @gradeCountShort.
-  ///
-  /// In fr, this message translates to:
-  /// **'{count} notes'**
-  String gradeCountShort(Object count);
-
   /// No description provided for @noCourseToday.
   ///
   /// In fr, this message translates to:
   /// **'Tu n\'as pas de cours,\nprofite bien !'**
   String get noCourseToday;
-
-  /// No description provided for @holidayDay.
-  ///
-  /// In fr, this message translates to:
-  /// **'C\'est les vacances,\namuse toi bien !'**
-  String get holidayDay;
-
-  /// No description provided for @weekend.
-  ///
-  /// In fr, this message translates to:
-  /// **'C\'est le weekend !'**
-  String get weekend;
 
   /// No description provided for @lunch.
   ///
@@ -527,12 +455,6 @@ abstract class AppLocalizations {
   /// In fr, this message translates to:
   /// **'{duration} de libre'**
   String gap(Object duration);
-
-  /// No description provided for @cancelled.
-  ///
-  /// In fr, this message translates to:
-  /// **'ANNULÉ'**
-  String get cancelled;
 
   /// No description provided for @detention.
   ///
@@ -551,12 +473,6 @@ abstract class AppLocalizations {
   /// In fr, this message translates to:
   /// **'Matière inconnue'**
   String get noSubject;
-
-  /// No description provided for @noRoom.
-  ///
-  /// In fr, this message translates to:
-  /// **'Salle non définie'**
-  String get noRoom;
 
   /// No description provided for @contentTeachers.
   ///
@@ -786,12 +702,6 @@ abstract class AppLocalizations {
   /// **'Le thème utilisé dans l\'application changera selon ton fond d\'écran'**
   String get deviceThemeDescription;
 
-  /// No description provided for @displayProfilePicture.
-  ///
-  /// In fr, this message translates to:
-  /// **'Afficher la photo de profile'**
-  String get displayProfilePicture;
-
   /// No description provided for @network.
   ///
   /// In fr, this message translates to:
@@ -887,12 +797,6 @@ abstract class AppLocalizations {
   /// In fr, this message translates to:
   /// **'Cours'**
   String get classConfig;
-
-  /// No description provided for @explainCurrentConfig.
-  ///
-  /// In fr, this message translates to:
-  /// **'Vous êtes en mode \"{mode}\"'**
-  String explainCurrentConfig(String mode);
 
   /// No description provided for @no.
   ///
@@ -1152,18 +1056,6 @@ abstract class AppLocalizations {
   /// **'Le fil a été marqué comme lu'**
   String get markedThreadRead;
 
-  /// No description provided for @renameAccount.
-  ///
-  /// In fr, this message translates to:
-  /// **'Propose un autre nom pour ton compte'**
-  String get renameAccount;
-
-  /// No description provided for @seeMeal.
-  ///
-  /// In fr, this message translates to:
-  /// **'Voir le menu'**
-  String get seeMeal;
-
   /// No description provided for @accountType.
   ///
   /// In fr, this message translates to:
@@ -1188,17 +1080,17 @@ abstract class AppLocalizations {
   /// **'Je suis un élève'**
   String get loginStudentAccount;
 
-  /// No description provided for @loginParentAccount.
-  ///
-  /// In fr, this message translates to:
-  /// **'Je suis un parent'**
-  String get loginParentAccount;
-
   /// No description provided for @loginStudentAccountSubtitle.
   ///
   /// In fr, this message translates to:
   /// **'Accède à ton emploi du temps, tes devoirs et tes notes'**
   String get loginStudentAccountSubtitle;
+
+  /// No description provided for @loginParentAccount.
+  ///
+  /// In fr, this message translates to:
+  /// **'Je suis un parent'**
+  String get loginParentAccount;
 
   /// No description provided for @loginParentAccountSubtitle.
   ///
@@ -1290,12 +1182,6 @@ abstract class AppLocalizations {
   /// **'https://demo.index-education.net/pronote'**
   String get loginUrlHint;
 
-  /// No description provided for @loginCredentials.
-  ///
-  /// In fr, this message translates to:
-  /// **'Renseigne tes identifiants'**
-  String get loginCredentials;
-
   /// No description provided for @loginToAccount.
   ///
   /// In fr, this message translates to:
@@ -1343,6 +1229,18 @@ abstract class AppLocalizations {
   /// In fr, this message translates to:
   /// **'Démo'**
   String get loginDemoText;
+
+  /// No description provided for @loginDemo.
+  ///
+  /// In fr, this message translates to:
+  /// **'Compte de démonstration'**
+  String get loginDemo;
+
+  /// No description provided for @loginDemoSubtitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Connecte toi à un compte de test pour explorer l\'application et ses fonctionnalités'**
+  String get loginDemoSubtitle;
 
   /// No description provided for @autoLogin.
   ///
@@ -1398,6 +1296,12 @@ abstract class AppLocalizations {
   /// **'Comptes'**
   String get accounts;
 
+  /// No description provided for @renameAccount.
+  ///
+  /// In fr, this message translates to:
+  /// **'Propose un autre nom pour ton compte'**
+  String get renameAccount;
+
   /// No description provided for @loginUsername.
   ///
   /// In fr, this message translates to:
@@ -1422,17 +1326,11 @@ abstract class AppLocalizations {
   /// **'Veuillez rentrer votre code PIN vous connecter à votre compte PRONOTE'**
   String get loginPinCodeSubtitle;
 
-  /// No description provided for @loginDemo.
+  /// No description provided for @seeMeal.
   ///
   /// In fr, this message translates to:
-  /// **'Compte de démonstration'**
-  String get loginDemo;
-
-  /// No description provided for @loginDemoSubtitle.
-  ///
-  /// In fr, this message translates to:
-  /// **'Connecte toi à un compte de test pour explorer l\'application et ses fonctionnalités'**
-  String get loginDemoSubtitle;
+  /// **'Voir le menu'**
+  String get seeMeal;
 }
 
 class _AppLocalizationsDelegate

@@ -2,13 +2,7 @@
   "@@locale": "fr",
 
   "theme": "Thème",
-  "themePrimary": "Primaire",
-  "themeSecondary": "Secondaire",
-  "themeTertiary": "Tertiaire",
-  "themeSurface": "Surface",
-  "themeError": "Erreur",
   "themeCoral": "Corail",
-  "themeIndigo": "Indigo",
   "themeGreen": "Vert",
   "themeTeal": "Sarcelle",
   "themePurple": "Violet",
@@ -24,7 +18,6 @@
   "cancel": "Annuler",
   "validate": "Valider",
   "retry": "Réessayer",
-  "dialogClose": "Fermer",
 
   "home": "Accueil",
   "timetable": "Cours",
@@ -34,11 +27,10 @@
 
   "homeShowMore": "Voir plus",
   "homeAttendance": "Vie Scolaire",
-  "homeNews": "Actualités",
   "homeExams": "Évaluations",
   "homeHiName": "Salut, {name} !",
+
   "absenceNotJustified": "Absence non justifiée",
-  "absenceJustified": "Absence justifiée",
   "absenceDuration": "{date} de {startTime} à {endTime}",
   "@absenceDuration": {
     "placeholders": {
@@ -102,7 +94,6 @@
   "averageSelf": "Moy. générale",
   "selfServiceAverage": "Moy. de la matière",
   "averageClass": "Moy. classe",
-  "gradesHistory": "Historique de tes notes",
   "coefficient": "Coefficient",
   "gradeCount": "Nombre de notes",
   "youGot": "Tu as eu",
@@ -116,6 +107,7 @@
   "gradeNotGraded": "Non noté",
   "gradeInapt": "Inapte",
   "gradeCongratulations": "Félicitations",
+  "gradeCountShort": "{count} notes",
   "gradesReport": "Bulletin",
   "classGradesReport": "Bulletin de classe",
   "reportUnpublished": "Bulletin non publié",
@@ -124,18 +116,13 @@
   "reportCoefficient": "Coeff. {value}",
   "gradeMin": "Min.",
   "gradeMax": "Max.",
-  "gradeCountShort": "{count} notes",
 
   "noCourseToday": "Tu n'as pas de cours,\nprofite bien !",
-  "holidayDay": "C'est les vacances,\namuse toi bien !",
-  "weekend": "C'est le weekend !",
   "lunch": "Bon appétit !",
   "gap": "{duration} de libre",
-  "cancelled": "ANNULÉ",
   "detention": "Retenue",
   "pedagogicalActivity": "Activité pédagogique",
   "noSubject": "Matière inconnue",
-  "noRoom": "Salle non définie",
 
   "contentTeachers": "Enseignants",
   "contentPersonal": "Personnels",
@@ -171,8 +158,8 @@
       }
     }
   },
-
   "remotePeriods": "Périodes",
+
   "virtualClassroom": "Visio",
 
   "homeworkSetDone": "J'ai terminé",
@@ -206,9 +193,10 @@
 
   "appSettings": "Paramètres de l'application",
   "goToAppSettings": "Naviguer vers les paramètres de l'application",
+
   "deviceTheme": "Utiliser le thème de l'appareil",
   "deviceThemeDescription": "Le thème utilisé dans l'application changera selon ton fond d'écran",
-  "displayProfilePicture": "Afficher la photo de profile",
+
   "network": "Réseau",
   "reconnectAccount": "Reconnecter le compte",
   "sendNavigationRequests": "Envoyer les requêtes de navigation",
@@ -245,15 +233,6 @@
   "lunchConfig": "Demi-pension",
   "pauseConfig": "Étude",
   "classConfig": "Cours",
-
-  "explainCurrentConfig": "Vous êtes en mode \"{mode}\"",
-  "@explainCurrentConfig": {
-    "placeholders": {
-      "mode": {
-        "type": "String"
-      }
-    }
-  },
 
   "no": "Non",
   "yes": "Oui",
@@ -302,6 +281,7 @@
   },
 
   "communicationUnavailable": "La page de communication sera disponible dans une prochaine mise à jour",
+
   "application": "Application",
   "about": "À propos",
   "appName": "ANTINOTE",
@@ -351,15 +331,14 @@
   "syncFailed": "Synchronisation échouée…",
 
   "markedThreadRead": "Le fil a été marqué comme lu",
-  "renameAccount": "Propose un autre nom pour ton compte",
-  "seeMeal": "Voir le menu",
 
   "accountType": "Type de compte",
   "whoAreYou": "Qui es tu ?",
   "whoAreYouSubtitle": "Sélectionne ton profil pour continuer",
+
   "loginStudentAccount": "Je suis un élève",
-  "loginParentAccount": "Je suis un parent",
   "loginStudentAccountSubtitle": "Accède à ton emploi du temps, tes devoirs et tes notes",
+  "loginParentAccount": "Je suis un parent",
   "loginParentAccountSubtitle": "Suis la scolarité de ton enfant au quotidien",
 
   "loginMethodsTitle": "Comment te connecter ?",
@@ -381,30 +360,37 @@
   "loginUrlSubtitle": "Tu la trouveras dans la barre d'adresse de ton espace PRONOTE",
   "loginUrlHint": "https://demo.index-education.net/pronote",
 
-  "loginCredentials": "Renseigne tes identifiants",
   "loginToAccount": "Connecte toi à ton compte",
   "loginWebviewSubtitle": "Suis les instructions sur la page de ton établissement",
 
   "loginConfirmTitle": "Dernière étape",
   "loginConfirmSubtitle": "Vérifie les informations avant de te connecter",
   "loginWorkspaceUnavailable": "Non proposé par cet établissement",
+
   "loginButton": "Me connecter",
   "activateCas": "Me connecter via ENT",
 
   "loginDemoText": "Démo",
+  "loginDemo": "Compte de démonstration",
+  "loginDemoSubtitle": "Connecte toi à un compte de test pour explorer l'application et ses fonctionnalités",
+
   "autoLogin": "Connexion automatique",
   "autoLoginSubtitle": "Sélectionne ce compte dès l'ouverture de l'application",
+
   "secureStore": "Chiffrage du compte",
   "secureStoreSubtitle": "Demande votre biométrie pour se connecter au compte",
+
   "chooseAnAccount": "Changer de compte",
   "chooseAnAccountSubtitle": "Changer de compte ou en ajouter un",
   "addAnAccount": "Ajouter un compte",
   "deleteAccount": "Supprimer",
   "accounts": "Comptes",
+  "renameAccount": "Propose un autre nom pour ton compte",
+
   "loginUsername": "Identifiant",
   "loginPassword": "Mot de passe",
   "loginPinCode": "Code PIN",
   "loginPinCodeSubtitle": "Veuillez rentrer votre code PIN vous connecter à votre compte PRONOTE",
-  "loginDemo": "Compte de démonstration",
-  "loginDemoSubtitle": "Connecte toi à un compte de test pour explorer l'application et ses fonctionnalités"
+
+  "seeMeal": "Voir le menu"
 }
