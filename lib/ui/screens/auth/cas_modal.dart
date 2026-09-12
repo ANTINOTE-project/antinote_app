@@ -105,7 +105,7 @@ class _CasModalState extends State<_CasModal> {
   Widget build(BuildContext context) {
     return Padding(
       padding: .only(
-        bottom: MediaQuery.of(context).viewInsets.bottom + 16,
+        bottom: MediaQuery.viewInsetsOf(context).bottom + 16,
         right: 12,
         left: 12,
       ),
