@@ -16,8 +16,8 @@ class FieldWidget extends StatelessWidget {
   final bool obscureText;
   final bool autofocus;
 
-  final Widget? prefixIcon;
-  final Widget? suffixIcon;
+  final Widget? leading;
+  final Widget? trailing;
 
   const FieldWidget({
     super.key,
@@ -34,8 +34,8 @@ class FieldWidget extends StatelessWidget {
     this.inputAction,
     this.autofocus = false,
 
-    this.prefixIcon,
-    this.suffixIcon,
+    this.leading,
+    this.trailing,
   });
 
   @override
@@ -70,10 +70,10 @@ class FieldWidget extends StatelessWidget {
           hintText: hintText,
           hintMaxLines: 1,
 
-          prefixIcon: prefixIcon,
+          prefixIcon: leading,
           prefixIconConstraints: const BoxConstraints(minWidth: 48),
 
-          suffixIcon: suffixIcon,
+          suffixIcon: trailing,
           suffixIconConstraints: const BoxConstraints(minWidth: 48),
         ),
       ),

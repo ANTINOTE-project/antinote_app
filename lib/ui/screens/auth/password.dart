@@ -47,7 +47,7 @@ class _PasswordLoginScreenState extends State<PasswordLoginScreen> {
                 FieldWidget(
                   controller: _usernameController,
 
-                  prefixIcon: const Icon(HugeIconsSolid.user),
+                  leading: const Icon(HugeIconsSolid.user),
                   hintText: context.l10n.loginUsername,
 
                   keyboardType: .name,
@@ -59,9 +59,9 @@ class _PasswordLoginScreenState extends State<PasswordLoginScreen> {
                 FieldWidget(
                   controller: _passwordController,
 
-                  prefixIcon: const Icon(HugeIconsSolid.lockPassword),
+                  leading: const Icon(HugeIconsSolid.lockPassword),
 
-                  suffixIcon: IconButton(
+                  trailing: IconButton(
                     onPressed: () {
                       setState(() {
                         _showPassword = !_showPassword;

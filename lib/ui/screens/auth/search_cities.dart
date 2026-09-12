@@ -105,7 +105,7 @@ class _SearchCitiesScreenState extends State<SearchCitiesScreen> {
                 controller: _controller,
                 hintText: context.l10n.loginCityHint,
                 onChanged: (_) => _onQueryChanged(),
-                prefixIcon: const Icon(HugeIconsSolid.globalSearch),
+                leading: const Icon(HugeIconsSolid.globalSearch),
                 autofocus: true,
               ),
             ),

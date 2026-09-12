@@ -742,6 +742,9 @@ class AppLocalizationsEn extends AppLocalizations {
       'Enter the URL to your PRONOTE instance to login';
 
   @override
+  String get loginUrlHint => 'https://demo.index-education.net/pronote';
+
+  @override
   String get loginCredentials => 'Enter your credentials';
 
   @override

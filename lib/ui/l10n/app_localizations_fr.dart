@@ -745,6 +745,9 @@ class AppLocalizationsFr extends AppLocalizations {
       'Tu la trouveras dans la barre d\'adresse de ton espace PRONOTE';
 
   @override
+  String get loginUrlHint => 'https://demo.index-education.net/pronote';
+
+  @override
   String get loginCredentials => 'Renseigne tes identifiants';
 
   @override

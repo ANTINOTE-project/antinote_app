@@ -1284,6 +1284,12 @@ abstract class AppLocalizations {
   /// **'Tu la trouveras dans la barre d\'adresse de ton espace PRONOTE'**
   String get loginUrlSubtitle;
 
+  /// No description provided for @loginUrlHint.
+  ///
+  /// In fr, this message translates to:
+  /// **'https://demo.index-education.net/pronote'**
+  String get loginUrlHint;
+
   /// No description provided for @loginCredentials.
   ///
   /// In fr, this message translates to:

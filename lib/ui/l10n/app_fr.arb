@@ -379,6 +379,7 @@
 
   "loginUrl": "URL de ton établissement",
   "loginUrlSubtitle": "Tu la trouveras dans la barre d'adresse de ton espace PRONOTE",
+  "loginUrlHint": "https://demo.index-education.net/pronote",
 
   "loginCredentials": "Renseigne tes identifiants",
   "loginToAccount": "Connecte toi à ton compte",

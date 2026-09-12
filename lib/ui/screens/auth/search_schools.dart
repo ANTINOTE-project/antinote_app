@@ -100,7 +100,7 @@ class _SearchSchoolsScreenState extends State<SearchSchoolsScreen> {
               child: FieldWidget(
                 controller: _controller,
                 hintText: context.l10n.loginSchoolHint,
-                prefixIcon: const Icon(HugeIconsSolid.searchList01),
+                leading: const Icon(HugeIconsSolid.searchList01),
                 onChanged: _onSearch,
                 autofocus: true,
               ),

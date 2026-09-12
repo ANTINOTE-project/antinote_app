@@ -2,12 +2,14 @@ import 'dart:async';
 
 import 'package:antinote_api/antinote_api.dart';
 import 'package:antinote_app/ui/utils/utils.dart';
+import 'package:antinote_app/ui/widgets/bottom_padding.dart';
 import 'package:antinote_app/ui/widgets/customs/app_bar.dart';
 import 'package:antinote_app/ui/widgets/customs/button.dart';
 import 'package:antinote_app/ui/widgets/customs/field.dart';
 import 'package:antinote_app/ui/widgets/customs/list.dart';
 import 'package:antinote_app/ui/widgets/customs/loading.dart';
 import 'package:flutter/foundation.dart';
+import 'package:hugeicons_pro/hugeicons.dart';
 import 'package:material_ui/material_ui.dart';
 
 import 'account_type.dart';
@@ -112,128 +114,141 @@ class _UrlLoginScreenState extends State<UrlLoginScreen> {
         subtitle: Text(context.l10n.loginUrlSubtitle),
       ),
 
-      body: CustomScrollView(
-        slivers: [
-          SliverToBoxAdapter(
-            child: Padding(
-              padding: const .symmetric(horizontal: 12, vertical: 8),
+      body: Padding(
+        padding: const .symmetric(horizontal: 12),
+
+        child: Column(
+          crossAxisAlignment: .start,
+
+          children: [
+            Padding(
+              padding: const .only(bottom: 12),
 
               // TODO: Make it so it doesn't overflow
               child: FieldWidget(
                 controller: _controller,
-                hintText: context.l10n.loginCitySubtitle,
+                hintText: context.l10n.loginUrlHint,
+                leading: const Icon(HugeIconsSolid.link04),
                 onChanged: (_) => _onQueryChanged(),
               ),
             ),
-          ),
 
-          FutureBuilder(
-            future: lastApplicableParameters?.future,
+            Expanded(
+              child: CustomScrollView(
+                slivers: [
+                  FutureBuilder(
+                    future: lastApplicableParameters?.future,
 
-            builder: (context, snapshot) {
-              if (snapshot.connectionState == .none) {
-                return const SliverToBoxAdapter(child: SizedBox.shrink());
-              }
+                    builder: (context, snapshot) {
+                      if (snapshot.connectionState == .none) {
+                        return const SliverToBoxAdapter(
+                          child: SizedBox.shrink(),
+                        );
+                      }
 
-              if (snapshot.connectionState != .done) {
-                return const SliverFillRemaining(child: LoadingWidget());
-              }
+                      if (snapshot.connectionState != .done) {
+                        return const SliverFillRemaining(
+                          child: LoadingWidget(),
+                        );
+                      }
 
-              if (!snapshot.hasData) {
-                return SliverFillRemaining(
-                  child: Center(child: Text(context.l10n.couldNotLoad)),
-                );
-              }
+                      if (!snapshot.hasData) {
+                        return SliverFillRemaining(
+                          child: Center(child: Text(context.l10n.couldNotLoad)),
+                        );
+                      }
 
-              final instance = snapshot.requireData!;
+                      final instance = snapshot.requireData!;
 
-              return SliverPadding(
-                padding: const EdgeInsets.symmetric(horizontal: 12),
+                      return SliverToBoxAdapter(
+                        child: Column(
+                          spacing: 8,
 
-                sliver: SliverToBoxAdapter(
-                  child: Column(
-                    spacing: 8,
+                          children: [
+                            ListWidget.list(
+                              physics: const NeverScrollableScrollPhysics(),
+                              shrinkWrap: true,
+                              isSliver: false,
 
-                    children: [
-                      ListWidget.list(
-                        physics: const NeverScrollableScrollPhysics(),
-                        shrinkWrap: true,
-                        isSliver: false,
-
-                        items: [
-                          .new(
-                            title: Text(context.l10n.instanceName),
-                            subtitle: Text(
-                              context.l10n.instanceNameValue(
-                                instance.establishmentName,
-                                instance.loginEstablishmentName,
-                              ),
+                              items: [
+                                .new(
+                                  title: Text(context.l10n.instanceName),
+                                  subtitle: Text(
+                                    context.l10n.instanceNameValue(
+                                      instance.establishmentName,
+                                      instance.loginEstablishmentName,
+                                    ),
+                                  ),
+                                ),
+                                .new(
+                                  title: Text(context.l10n.remoteVersion),
+                                  subtitle: Text(instance.version.toString()),
+                                ),
+                                .new(
+                                  title: Text(context.l10n.remoteYear),
+                                  subtitle: Text(
+                                    context.l10n.remoteYearSubtitle(
+                                      instance.firstDate,
+                                      instance.lastDate,
+                                    ),
+                                  ),
+                                ),
+                                .new(
+                                  title: Text(context.l10n.remotePeriods),
+                                  subtitle: Text(
+                                    instance.periods
+                                        .map(
+                                          (e) =>
+                                              '- ${e.name} (${e.startDate} → ${e.endDate})',
+                                        )
+                                        .join('\n'),
+                                  ),
+                                ),
+                              ],
                             ),
-                          ),
-                          .new(
-                            title: Text(context.l10n.remoteVersion),
-                            subtitle: Text(instance.version.toString()),
-                          ),
-                          .new(
-                            title: Text(context.l10n.remoteYear),
-                            subtitle: Text(
-                              context.l10n.remoteYearSubtitle(
-                                instance.firstDate,
-                                instance.lastDate,
-                              ),
+
+                            ButtonWidget(
+                              onPressed: () async {
+                                try {
+                                  final parameters =
+                                      await MobileInstanceParameters.fetch(
+                                        instanceUrl!,
+                                      );
+
+                                  if (!context.mounted) return;
+
+                                  final result = await showCasModal(
+                                    context,
+                                    parameters: parameters!,
+                                    accountType: widget.accountType,
+                                  );
+
+                                  if (result != null && context.mounted) {
+                                    Navigator.pop(context, result);
+                                  }
+                                } catch (e, st) {
+                                  logger.severe(
+                                    'Error during fetch of parameters',
+                                    e,
+                                    st,
+                                  );
+                                }
+                              },
+
+                              label: context.l10n.loginButton,
                             ),
-                          ),
-                          .new(
-                            title: Text(context.l10n.remotePeriods),
-                            subtitle: Text(
-                              instance.periods
-                                  .map(
-                                    (e) =>
-                                        '- ${e.name} (${e.startDate} → ${e.endDate})',
-                                  )
-                                  .join('\n'),
-                            ),
-                          ),
-                        ],
-                      ),
-
-                      ButtonWidget(
-                        onPressed: () async {
-                          try {
-                            final parameters =
-                                await MobileInstanceParameters.fetch(
-                                  instanceUrl!,
-                                );
-
-                            if (!context.mounted) return;
-
-                            final result = await showCasModal(
-                              context,
-                              parameters: parameters!,
-                              accountType: widget.accountType,
-                            );
-
-                            if (result != null && context.mounted) {
-                              Navigator.pop(context, result);
-                            }
-                          } catch (e, st) {
-                            logger.severe(
-                              'Error during fetch of parameters',
-                              e,
-                              st,
-                            );
-                          }
-                        },
-
-                        label: context.l10n.loginButton,
-                      ),
-                    ],
+                          ],
+                        ),
+                      );
+                    },
                   ),
-                ),
-              );
-            },
-          ),
-        ],
+
+                  const BottomPadding(padding: 16),
+                ],
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
