@@ -22,13 +22,13 @@ class CompactCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Pressable(
-      borderRadius: .circular(22),
+      borderRadius: .circular(20),
 
       onPressed: onPressed,
 
       child: Ink(
         decoration: BoxDecoration(
-          borderRadius: .circular(22),
+          borderRadius: .circular(20),
           color: scheme.primaryContainer,
         ),
 
