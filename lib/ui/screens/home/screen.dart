@@ -50,6 +50,13 @@ class _HomeScreenState extends State<HomeScreen>
               )
             : null,
 
+        subtitle: account != null
+            ? Padding(
+                padding: const .only(left: 8),
+                child: Text(account!.establishmentName),
+              )
+            : null,
+
         trailing: IconButton(
           icon: const Icon(HugeIconsSolid.settings02),
           tooltip: context.l10n.goToAppSettings,
