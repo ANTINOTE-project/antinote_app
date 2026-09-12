@@ -10,7 +10,7 @@ import 'package:collection/collection.dart';
 import 'package:hugeicons_pro/hugeicons.dart';
 import 'package:material_ui/material_ui.dart';
 
-typedef RelevantSlots = ({int firstSlot, int lastSlot});
+typedef DisplayWindow = ({DateTime startTime, DateTime endTime});
 typedef Classes = Map<DateTime, ValueNotifier<DayBlocks?>>;
 
 class TimetableScreen extends StatefulWidget {
@@ -183,7 +183,7 @@ class _TimetableDisplayState extends State<TimetableDisplay>
           final dayGroup = _currentGroups[index];
           final days = dayGroup.listDays();
 
-          final slots = findRelevantSlots(days);
+          final slots = findDisplayWindow(days);
 
           return Scaffold(
             backgroundColor: widget.transparent ? Colors.transparent : null,
@@ -335,92 +335,74 @@ class _TimetableDisplayState extends State<TimetableDisplay>
     );
   }
 
-  RelevantSlots? findRelevantSlots(List<DateTime> days) {
-    final relevantSlots = <int>{};
+  DisplayWindow? findDisplayWindow(List<DateTime> days) {
+    DateTime? start;
+    DateTime? end;
 
     for (final day in days) {
       for (final block in _blocks[day]!.value ?? <Block>[]) {
-        relevantSlots.add(block.startSlot % _scheduleDisplayData.slotsPerDay);
-        relevantSlots.add(block.endSlot % _scheduleDisplayData.slotsPerDay - 1);
+        final startTime = block.startTime.toTime();
+        final endTime = block.endTime.toTime();
+
+        if (start == null || startTime.isBefore(start)) {
+          start = startTime;
+        }
+        if (end == null || endTime.isAfter(end)) {
+          end = endTime;
+        }
       }
     }
 
-    if (relevantSlots.isEmpty) return null;
+    if (start == null || end == null) return null;
 
-    final sortedSlots = relevantSlots.sorted((a, b) => a.compareTo(b));
-    return (firstSlot: sortedSlots.first, lastSlot: sortedSlots.last);
+    return (startTime: start, endTime: end);
   }
 
   Widget _buildTimeColumn(
     BuildContext context,
-    RelevantSlots slots,
+    DisplayWindow window,
     List<DateTime> days,
   ) {
-    final relevantFirst = slots.firstSlot;
-    final relevantLast = slots.lastSlot;
-
     final displays = <Widget>[];
-    int? lastAppliedSlot;
+    int? lastApplied;
 
     final borderSide = BorderSide(color: context.c.outlineVariant);
 
-    for (int i = relevantFirst; i <= relevantLast; i++) {
+    for (int i = 0; i < _scheduleDisplayData.starts.length; i++) {
       final curSlot = _scheduleDisplayData.starts[i];
       final curEndSlot = _scheduleDisplayData.endings[i];
+
+      if (curEndSlot.timing.isBefore(window.startTime) ||
+          curSlot.timing.isAfter(window.endTime)) {
+        continue;
+      }
 
       final nexSlot = _scheduleDisplayData.starts.elementAtOrNull(i + 1);
       final prevEndSlot = i == 0
           ? null
           : _scheduleDisplayData.endings.elementAtOrNull(i - 1);
 
-      if (lastAppliedSlot != null && lastAppliedSlot + 1 != i) {
-        final from = _scheduleDisplayData.starts[lastAppliedSlot + 1];
-        final to = _scheduleDisplayData.endings[i - 1];
-
-        final value =
-            (to.timing.hour - from.timing.hour) * Duration.minutesPerHour +
-            to.timing.minute -
-            from.timing.minute;
-
-        displays.add(Expanded(flex: value, child: const SizedBox.shrink()));
+      final from = lastApplied == null
+          ? window.startTime
+          : _scheduleDisplayData.endings[lastApplied].timing;
+      final diffValue = curSlot.timing.difference(from).inMinutes;
+      if (diffValue > 0) {
+        displays.add(Expanded(flex: diffValue, child: const SizedBox.shrink()));
       }
 
-      if (curEndSlot.timing == curSlot.timing) continue;
-
-      if (i > 0) {
-        final previous = _scheduleDisplayData.endings[i - 1];
-
-        final transitionValue =
-            (curSlot.timing.hour - previous.timing.hour) *
-                Duration.minutesPerHour +
-            curSlot.timing.minute -
-            previous.timing.minute;
-
-        if (transitionValue > 0 && displays.isNotEmpty) {
-          displays.add(
-            Expanded(flex: transitionValue, child: const SizedBox.shrink()),
-          );
-        }
-      }
-
-      final value =
-          (curEndSlot.timing.hour - curSlot.timing.hour) *
-              Duration.minutesPerHour +
-          curEndSlot.timing.minute -
-          curSlot.timing.minute;
+      final value = curEndSlot.timing.difference(curSlot.timing).inMinutes;
 
       final showStart =
           curSlot.active ||
-          i == relevantFirst ||
+          lastApplied == null ||
           (prevEndSlot != null &&
               prevEndSlot.timing == curSlot.timing &&
               prevEndSlot.active);
 
+      final isLast = nexSlot == null || nexSlot.timing.isAfter(window.endTime);
       final showEnd =
-          (curEndSlot.active || i == relevantLast) &&
-          !(nexSlot != null &&
-              nexSlot.timing == curEndSlot.timing &&
-              i != relevantLast);
+          (curEndSlot.active || isLast) &&
+          !(nexSlot != null && nexSlot.timing == curEndSlot.timing && !isLast);
 
       displays.add(
         Expanded(
@@ -474,7 +456,16 @@ class _TimetableDisplayState extends State<TimetableDisplay>
         ),
       );
 
-      lastAppliedSlot = i;
+      lastApplied = i;
+    }
+
+    if (lastApplied != null) {
+      final value = window.endTime
+          .difference(_scheduleDisplayData.endings[lastApplied].timing)
+          .inMinutes;
+      if (value > 0) {
+        displays.add(Expanded(flex: value, child: const SizedBox.shrink()));
+      }
     }
 
     return Column(children: displays);
@@ -483,15 +474,15 @@ class _TimetableDisplayState extends State<TimetableDisplay>
   Widget _buildEventsColumn(
     BuildContext context,
     DateTime day,
-    RelevantSlots slots,
+    DisplayWindow window,
     DayBlocks blocks,
   ) {
     // TODO: Add spacing between events
 
     final displays = <Widget>[];
-    DateTime curTime = _scheduleDisplayData.timeForSlot(
-      _scheduleDisplayData.starts[slots.firstSlot],
-      day,
+    DateTime curTime = day.copyWith(
+      hour: window.startTime.hour,
+      minute: window.startTime.minute,
     );
 
     for (final block in blocks) {
@@ -514,9 +505,9 @@ class _TimetableDisplayState extends State<TimetableDisplay>
       curTime = block.endTime;
     }
 
-    final endTime = _scheduleDisplayData.timeForSlot(
-      _scheduleDisplayData.endings[slots.lastSlot],
-      day,
+    final endTime = day.copyWith(
+      hour: window.endTime.hour,
+      minute: window.endTime.minute,
     );
 
     if (!endTime.isAtSameMomentAs(curTime)) {
