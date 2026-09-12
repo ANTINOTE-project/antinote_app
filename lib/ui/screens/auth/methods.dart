@@ -139,7 +139,9 @@ class LoginMethodsScreen extends StatelessWidget with WidgetsBindingObserver {
                         username: 'demonstration',
                         password: 'pronotevs',
 
-                        workspace: .studentMobile,
+                        workspace: accountType == .parent
+                            ? .parentMobile
+                            : .studentMobile,
 
                         deviceUuid: Credentials.generateDeviceUuid(),
                         baseUrl: Uri.parse(
