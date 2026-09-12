@@ -18,7 +18,7 @@ Future<void> showClassModal(BuildContext context, Class defaultClass) async {
       return (await session.access(
         ClassContentAccessor(
           classToAccess: latestClass,
-          resource: session.userResource,
+          resource: session.curResource,
           withStudentCount: true,
           withStudentList: true,
         ),

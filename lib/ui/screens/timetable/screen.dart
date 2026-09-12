@@ -31,7 +31,7 @@ class _TimetableScreenState extends State<TimetableScreen> {
 
     for (final clazz in (await session.access(
       TimetableAccessor.forRange(
-        resource: session.userResource,
+        resource: session.curResource,
         from: days.start,
         to: days.end,
       ),

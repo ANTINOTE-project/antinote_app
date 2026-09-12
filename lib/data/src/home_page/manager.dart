@@ -76,6 +76,7 @@ mixin DatesHomePageRequestMixin<T> on HomePageRequest {
   abstract final DateRange dates;
 
   bool checkDay(Date day, RemoteSession session);
+
   HomePageModuleRequest createModule(Date day, num value);
 
   @override
@@ -178,7 +179,7 @@ final class const TimetableHomePageRequest({
   ) async {
     final timetable = await session.access(
       TimetableAccessor.forRange(
-        resource: session.userResource,
+        resource: session.curResource,
         from: dates.start,
         to: dates.end,
       ),
@@ -241,6 +242,7 @@ final class const MenuHomePageRequest({
   @override
   bool checkDay(Date day, RemoteSession session) =>
       session.instance.lunchDays.contains(day.weekday - 1);
+
   @override
   HomePageModuleRequest createModule(
     Date day,
@@ -467,15 +469,20 @@ final class HomePageCache {
 
   /// Ensures at least events for the day and the app states are loaded.
   bool hasDayBaseSchedules(Date day) => _daySchedules.containsKey(day);
+
   List<Event> dayEvents(Date day) => _daySchedules[day]!.events;
+
   List<AppStateEntry> dayAppStates(Date day) => _daySchedules[day]!.appStates;
+
   List<Block> dayBlocks(Date day) => _daySchedules[day]!.blocks;
 
   /// Ensures the menu for a day is loaded.
   bool hasMenuForDay(Date day) => _dayMenus.containsKey(day);
+
   Menu dayMenu(Date day) => _dayMenus[day] ?? Menu(time: day, meals: []);
 
   bool hasHomeworksForDay(Date day) => _dayHomeworks.containsKey(day);
+
   List<Homework> dayHomeworks(Date day) => _dayHomeworks[day]!;
 
   /// We expect the most important requests to be put at the start.

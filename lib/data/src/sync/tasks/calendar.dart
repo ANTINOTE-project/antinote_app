@@ -14,10 +14,13 @@ Future<TaskReturnData> _syncCalendar(
   final (timetables, user, instanceDomain, address) = await wrapper.runTask(
     callback: (session) async {
       final timetables = <UserResource, List<RecurringClass<Class>>>{};
-      for (final resource in session.user.resources) {
+      for (final resource
+          in (session.user.childResources.isEmpty
+              ? [session.user.rootResource]
+              : session.user.childResources)) {
         final recurringTimetable = (await session.access(
           TimetableAccessor.forYear(
-            resource: session.userResource,
+            resource: session.curResource,
             session: session,
           ),
         )).asRecurringTimetable(session);

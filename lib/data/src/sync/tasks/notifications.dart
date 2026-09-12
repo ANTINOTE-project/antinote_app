@@ -52,11 +52,12 @@ Future<TaskReturnData> _syncNotifications(
         }
 
         final _NotificationTypeFetchResult entryResult = {
-          for (final resource in session.user.resources) resource: [],
+          for (final resource in session.user.requestableResources)
+            resource: [],
         };
         switch (entryType) {
           case SyncTaskData_Notification_EntryType.DISCUSSION:
-            for (int i = 0; i < session.user.resources.length; i++) {
+            for (int i = 0; i < session.user.requestableResources.length; i++) {
               session.currentUserResourceId = i;
               final page = await session.access(
                 const DiscussionPageAccessor(
@@ -65,16 +66,16 @@ Future<TaskReturnData> _syncNotifications(
                 ),
               );
 
-              entryResult[session.userResource]!.addAll(page.discussions);
+              entryResult[session.curResource]!.addAll(page.discussions);
             }
             break;
           case SyncTaskData_Notification_EntryType.GRADE:
-            for (int i = 0; i < session.user.resources.length; i++) {
+            for (int i = 0; i < session.user.requestableResources.length; i++) {
               session.currentUserResourceId = i;
               final page = await session.access(
                 LatestGradesPageAccessor(
                   period:
-                      session.userResource.tabsForPeriods
+                      session.curResource.tabsForPeriods
                           .firstWhere(
                             (element) =>
                                 element.location ==
@@ -87,11 +88,11 @@ Future<TaskReturnData> _syncNotifications(
                 ),
               );
 
-              entryResult[session.userResource]!.addAll(page.exams);
+              entryResult[session.curResource]!.addAll(page.exams);
             }
             break;
           case SyncTaskData_Notification_EntryType.HOMEWORK:
-            for (int i = 0; i < session.user.resources.length; i++) {
+            for (int i = 0; i < session.user.requestableResources.length; i++) {
               session.currentUserResourceId = i;
               final startDay = (session.instance.demoDateTime ?? DateTime.now())
                   .toDay(true);
@@ -122,7 +123,7 @@ Future<TaskReturnData> _syncNotifications(
                 ),
               );
 
-              entryResult[session.userResource]!.addAll(
+              entryResult[session.curResource]!.addAll(
                 (page.homeworkSet?.homeworks ?? []).where(
                   (element) => range.contains(element.deadlineDate),
                 ),
@@ -130,14 +131,14 @@ Future<TaskReturnData> _syncNotifications(
             }
             break;
           case SyncTaskData_Notification_EntryType.INFORMATION:
-            for (int i = 0; i < session.user.resources.length; i++) {
+            for (int i = 0; i < session.user.requestableResources.length; i++) {
               session.currentUserResourceId = i;
               final page = await session.access(
                 const NewsPageAccessor.defaultMode(),
               );
 
               for (final collection in page.collections) {
-                entryResult[session.userResource]!.addAll(collection.news);
+                entryResult[session.curResource]!.addAll(collection.news);
               }
             }
             break;
@@ -147,7 +148,7 @@ Future<TaskReturnData> _syncNotifications(
               MenuPageAccessor(date: DateTime.now().toDay(true)),
             );
 
-            for (final resource in session.user.resources) {
+            for (final resource in session.user.requestableResources) {
               entryResult[resource]!.add(page);
             }
             break;
@@ -156,7 +157,7 @@ Future<TaskReturnData> _syncNotifications(
         result[entryType] = entryResult;
       }
 
-      return (result, session.user.resources);
+      return (result, session.user.requestableResources);
     },
     storage: registry.storage,
     options: registry.settings.sessionOptions,

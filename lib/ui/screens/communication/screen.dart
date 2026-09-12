@@ -229,7 +229,7 @@ class _CommunicationScreenState extends State<CommunicationScreen>
               title: e.subject,
               publishDate: e.parsedDateLabel,
               commType: .discussion,
-              authorName: e.initiator ?? session.userResource.name,
+              authorName: e.initiator ?? session.curResource.name,
               visualId: e.visualId,
               read: e.read,
             ),
