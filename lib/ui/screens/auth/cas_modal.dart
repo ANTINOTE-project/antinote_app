@@ -49,9 +49,11 @@ Future<RegisterableAccount?> showCasModal(
   }
 
   return showModalBottomSheet<RegisterableAccount>(
-    context: context,
+    backgroundColor: context.c.surfaceContainerLowest,
     isScrollControlled: true,
     showDragHandle: true,
+    context: context,
+
     builder: (context) => _CasModal(
       parameters: parameters,
       accountType: accountType,
@@ -104,30 +106,36 @@ class _CasModalState extends State<_CasModal> {
     return Padding(
       padding: .only(
         bottom: MediaQuery.of(context).viewInsets.bottom + 16,
-        right: 16,
-        left: 16,
+        right: 12,
+        left: 12,
       ),
 
       child: Column(
         crossAxisAlignment: .start,
         mainAxisSize: .min,
-        spacing: 16,
+        spacing: 8,
 
         children: [
-          Column(
-            crossAxisAlignment: .start,
+          Padding(
+            padding: const .only(left: 8, right: 8, bottom: 16),
 
-            children: [
-              Text(
-                context.l10n.loginConfirmTitle,
-                style: context.tt.titleLarge?.copyWith(fontWeight: .bold),
-              ),
+            child: Column(
+              crossAxisAlignment: .start,
 
-              Text(
-                context.l10n.loginConfirmSubtitle,
-                style: context.tt.bodyLarge?.copyWith(color: context.c.outline),
-              ),
-            ],
+              children: [
+                Text(
+                  context.l10n.loginConfirmTitle,
+                  style: context.tt.titleLarge?.copyWith(fontWeight: .bold),
+                ),
+
+                Text(
+                  context.l10n.loginConfirmSubtitle,
+                  style: context.tt.bodyLarge?.copyWith(
+                    color: context.c.outline,
+                  ),
+                ),
+              ],
+            ),
           ),
 
           TileWidget(
