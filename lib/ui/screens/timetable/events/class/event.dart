@@ -4,11 +4,7 @@ final class ClassEvent extends Event {
   final Class value;
 
   @override
-  final int startSlot;
-  @override
   final DateTime startTime;
-  @override
-  final int endSlot;
   @override
   final DateTime endTime;
 
@@ -23,9 +19,7 @@ final class ClassEvent extends Event {
 
   const ClassEvent({
     required this.value,
-    required this.startSlot,
     required this.startTime,
-    required this.endSlot,
     required this.endTime,
   });
 }
@@ -35,12 +29,6 @@ List<ClassEvent> classEventsForDay(
   SpecificInstanceParameters params,
 ) {
   return classes.mapL(
-    (e) => ClassEvent(
-      value: e,
-      startSlot: e.blockSlot % params.slotsPerDay,
-      startTime: e.startDate,
-      endSlot: (e.blockSlot + e.blockLength) % params.slotsPerDay,
-      endTime: e.endDate,
-    ),
+    (e) => ClassEvent(value: e, startTime: e.startDate, endTime: e.endDate),
   );
 }

@@ -91,7 +91,6 @@ class FieldWidget extends StatelessWidget {
             }).toList(),
           );
         },
-
         decoration: InputDecoration(
           contentPadding: const .symmetric(horizontal: 16, vertical: 12),
           enabledBorder: .none,

@@ -4,21 +4,12 @@ class MealEvent extends Event {
   @override
   final DateTime startTime;
   @override
-  final int startSlot;
-  @override
   final DateTime endTime;
-  @override
-  final int endSlot;
 
   @override
   int get priority => 3;
 
-  const new({
-    required this.startTime,
-    required this.startSlot,
-    required this.endTime,
-    required this.endSlot,
-  });
+  const new({required this.startTime, required this.endTime});
 }
 
 List<MealEvent> mealEventsForDay(
@@ -83,14 +74,7 @@ List<MealEvent> mealEventsForDay(
         );
 
         if (!startTime.isAtSameMomentAs(endTime)) {
-          events.add(
-            MealEvent(
-              startTime: startTime,
-              startSlot: eventStart,
-              endTime: endTime,
-              endSlot: eventEnd,
-            ),
-          );
+          events.add(MealEvent(startTime: startTime, endTime: endTime));
         }
 
         eventStart = curSlot;
@@ -107,14 +91,7 @@ List<MealEvent> mealEventsForDay(
     final endTime = parameters.timeForSlot(parameters.endings[eventEnd], day);
 
     if (!startTime.isAtSameMomentAs(endTime)) {
-      events.add(
-        MealEvent(
-          startTime: startTime,
-          startSlot: eventStart,
-          endTime: endTime,
-          endSlot: eventEnd + 1,
-        ),
-      );
+      events.add(MealEvent(startTime: startTime, endTime: endTime));
     }
   }
 

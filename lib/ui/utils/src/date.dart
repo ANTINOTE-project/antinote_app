@@ -37,4 +37,12 @@ extension DateTimeInDateTimeRange<T extends DateTime> on DateTimeRange<T> {
   bool containsRange(DateTimeRange<T> range) {
     return contains(range.start) && contains(range.end);
   }
+
+  bool containsInEx(T time) {
+    return !time.isBefore(start) && time.isBefore(end);
+  }
+
+  bool rangeOverlaps(DateTimeRange<T> range) {
+    return start.isBefore(range.end) && range.start.isBefore(end);
+  }
 }

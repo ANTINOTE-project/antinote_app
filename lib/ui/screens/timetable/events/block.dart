@@ -19,12 +19,7 @@ part 'pause/event.dart';
 typedef DayBlocks = List<Block>;
 
 sealed class Event {
-  int get startSlot;
-
   DateTime get startTime;
-
-  int get endSlot;
-
   DateTime get endTime;
 
   int get priority;
@@ -46,25 +41,18 @@ List<Event> eventsForDay(
 final class Block {
   final List<List<Event>> configurations;
 
-  final int startSlot;
   final DateTime startTime;
-
-  final int endSlot;
   final DateTime endTime;
 
   const new({
     required this.configurations,
-    required this.startSlot,
     required this.startTime,
-    required this.endSlot,
     required this.endTime,
   });
 
   factory Block.createConfigurations({
     required List<Event> events,
-    required int startSlot,
     required DateTime startTime,
-    required int endSlot,
     required DateTime endTime,
   }) {
     final remaining = <int, List<Event>>{};
@@ -119,9 +107,7 @@ final class Block {
 
     return Block(
       configurations: configs,
-      startSlot: startSlot,
       startTime: startTime,
-      endSlot: endSlot,
       endTime: endTime,
     );
   }
@@ -141,17 +127,13 @@ List<Block> blocksForDay(
 
   final blocks = <Block>[];
 
-  int? blockStart;
   DateTime? blockStartTime;
-  int? blockEnd;
   DateTime? blockEndTime;
   List<Event> curEvents = [];
 
   for (final event in events) {
-    if (blockStart == null) {
-      blockStart = event.startSlot;
+    if (blockStartTime == null) {
       blockStartTime = event.startTime;
-      blockEnd = event.endSlot;
       blockEndTime = event.endTime;
 
       curEvents.add(event);
@@ -162,23 +144,18 @@ List<Block> blocksForDay(
     if (event.startTime.isBefore(blockEndTime!)) {
       curEvents.add(event);
       if (event.endTime.isAfter(blockEndTime)) {
-        blockEnd = event.endSlot;
         blockEndTime = event.endTime;
       }
     } else {
       blocks.add(
         Block.createConfigurations(
           events: curEvents,
-          startSlot: blockStart,
-          startTime: blockStartTime!,
-          endSlot: blockEnd!,
+          startTime: blockStartTime,
           endTime: blockEndTime,
         ),
       );
 
-      blockStart = event.startSlot;
       blockStartTime = event.startTime;
-      blockEnd = event.endSlot;
       blockEndTime = event.endTime;
 
       curEvents.clear();
@@ -190,9 +167,7 @@ List<Block> blocksForDay(
     blocks.add(
       Block.createConfigurations(
         events: curEvents,
-        startSlot: blockStart!,
         startTime: blockStartTime!,
-        endSlot: blockEnd!,
         endTime: blockEndTime!,
       ),
     );

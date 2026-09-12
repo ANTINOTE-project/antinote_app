@@ -4,11 +4,7 @@ final class PauseEvent extends Event {
   final String title;
 
   @override
-  final int startSlot;
-  @override
   final DateTime startTime;
-  @override
-  final int endSlot;
   @override
   final DateTime endTime;
 
@@ -18,9 +14,7 @@ final class PauseEvent extends Event {
   const new({
     required this.title,
 
-    required this.startSlot,
     required this.startTime,
-    required this.endSlot,
     required this.endTime,
   });
 }
@@ -55,9 +49,7 @@ List<PauseEvent> pauseEventsForDay(
     events.add(
       PauseEvent(
         title: classBreak.label,
-        startSlot: classBreak.slot % parameters.slotsPerDay,
         startTime: startTime,
-        endSlot: (classBreak.slot + 1) % parameters.slotsPerDay,
         endTime: endTime,
       ),
     );
@@ -68,12 +60,18 @@ List<PauseEvent> pauseEventsForDay(
       continue;
     }
 
-    final slot = clazz.blockSlot % parameters.slotsPerDay;
-    final duration = clazz.blockLength;
+    final range = DateTimeRange(
+      start: clazz.startDate.toTime(),
+      end: clazz.endDate.toTime(),
+    );
 
     events.removeWhere(
-      (element) =>
-          slot < element.startSlot && element.startSlot < slot + duration,
+      (element) => range.rangeOverlaps(
+        DateTimeRange(
+          start: element.startTime.toTime(),
+          end: element.endTime.toTime(),
+        ),
+      ),
     );
 
     if (events.isEmpty) break;
