@@ -183,7 +183,8 @@ class _TimetableDisplayState extends State<TimetableDisplay>
           final dayGroup = _currentGroups[index];
           final days = dayGroup.listDays();
 
-          final slots = findDisplayWindow(days);
+          final window = findDisplayWindow(days);
+          logger.info(window);
 
           return Scaffold(
             backgroundColor: widget.transparent ? Colors.transparent : null,
@@ -207,7 +208,8 @@ class _TimetableDisplayState extends State<TimetableDisplay>
                   final Widget partialChild;
 
                   if (anyLoading) {
-                    partialChild = const Center(child: LoadingWidget());
+                    // we already got the refresh indicator spinning
+                    partialChild = const SizedBox.shrink();
                   } else if (allEmpty) {
                     final holiday = _getHolidayForDay(days.first);
 
@@ -239,10 +241,10 @@ class _TimetableDisplayState extends State<TimetableDisplay>
                       child: Row(
                         spacing: 8,
                         children: [
-                          if (slots != null)
+                          if (window != null)
                             Flexible(
                               flex: days.length * 15,
-                              child: _buildTimeColumn(context, slots, days),
+                              child: _buildTimeColumn(context, window, days),
                             ),
 
                           for (final day in days)
@@ -254,14 +256,14 @@ class _TimetableDisplayState extends State<TimetableDisplay>
                                   if (dayClasses == null) {
                                     return const LoadingWidget();
                                   }
-                                  if (dayClasses.isEmpty || slots == null) {
+                                  if (dayClasses.isEmpty || window == null) {
                                     return const SizedBox.shrink();
                                   }
 
                                   return _buildEventsColumn(
                                     context,
                                     day,
-                                    slots,
+                                    window,
                                     dayClasses,
                                   );
                                 },
