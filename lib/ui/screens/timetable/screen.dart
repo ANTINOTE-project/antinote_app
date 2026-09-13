@@ -374,8 +374,8 @@ class _TimetableDisplayState extends State<TimetableDisplay>
       final curSlot = _scheduleDisplayData.starts[i];
       final curEndSlot = _scheduleDisplayData.endings[i];
 
-      if (curEndSlot.timing.isBefore(window.startTime) ||
-          curSlot.timing.isAfter(window.endTime)) {
+      if (!curEndSlot.timing.isAfter(window.startTime) ||
+          !curSlot.timing.isBefore(window.endTime)) {
         continue;
       }
 
@@ -401,7 +401,8 @@ class _TimetableDisplayState extends State<TimetableDisplay>
               prevEndSlot.timing == curSlot.timing &&
               prevEndSlot.active);
 
-      final isLast = nexSlot == null || nexSlot.timing.isAfter(window.endTime);
+      final isLast =
+          nexSlot == null || !nexSlot.timing.isBefore(window.endTime);
       final showEnd =
           (curEndSlot.active || isLast) &&
           !(nexSlot != null && nexSlot.timing == curEndSlot.timing && !isLast);
