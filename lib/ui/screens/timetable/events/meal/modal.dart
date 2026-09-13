@@ -39,7 +39,7 @@ Future<void> showMealModal(BuildContext context, DateTime date) async {
           } else {
             child = const Padding(
               padding: .only(bottom: 24),
-              child: Center(child: LoadingWidget()),
+              child: Center(child: LoadingWidget(size: 22)),
             );
           }
 
