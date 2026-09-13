@@ -29,6 +29,7 @@ class const TimetableDayWidgetSliver({
 
           child: TimetableDisplay(
             baseDate: state.reloadArguments.get(TimetableDayArgument.day),
+            normalPicker: false,
             transparent: true,
 
             updateBlocks: (session, days, businessDays, forceReload) async {
