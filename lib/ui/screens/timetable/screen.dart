@@ -70,7 +70,6 @@ class const TimetableDisplay({
 
   final bool scrollable = true,
   final bool transparent = false,
-  final bool normalPicker = true,
 }) extends StatefulWidget {
   @override
   State<TimetableDisplay> createState() => _TimetableDisplayState();
@@ -84,12 +83,16 @@ class _TimetableDisplayState extends State<TimetableDisplay>
   final Classes _blocks = {};
 
   PageController? _pageController;
+  int _currentGroupIndex = 0;
 
   bool _animating = false;
   int? _lastPage;
 
+  DateRange get dayGroup => _currentGroups[_currentGroupIndex];
+
   Future<void> _animateToDay(Date day) async {
     final index = _currentGroups.indexWhere((element) => element.contains(day));
+    setState(() => _currentGroupIndex = index);
 
     _animating = true;
 
@@ -112,7 +115,7 @@ class _TimetableDisplayState extends State<TimetableDisplay>
 
     if (_lastPage != curPage) {
       _lastPage = curPage;
-
+      setState(() => _currentGroupIndex = curPage);
       reload();
     }
   }
@@ -174,22 +177,94 @@ class _TimetableDisplayState extends State<TimetableDisplay>
   ) {
     ensureCorrectConfiguration();
 
-    return buildRefreshIndicator(
-      child: PageView.builder(
-        itemCount: _currentGroups.length,
-        controller: _pageController,
+    return Scaffold(
+      backgroundColor: widget.transparent ? Colors.transparent : null,
 
-        itemBuilder: (context, index) {
-          final dayGroup = _currentGroups[index];
-          final days = dayGroup.listDays();
+      appBar: AppBarWidget(
+        title: Row(
+          children: [
+            IconButton(
+              onPressed: () async {
+                final previous = dayGroup.start.add(const Duration(days: -1));
+                _animateToDay(previous.copyWith(isUtc: true).toDay());
+              },
 
-          final slots = findDisplayWindow(days);
+              visualDensity: .comfortable,
+              icon: Icon(
+                HugeIconsSolid.arrowLeft01,
+                color: context.c.outline,
+                size: 20,
+              ),
+            ),
 
-          return Scaffold(
-            backgroundColor: widget.transparent ? Colors.transparent : null,
-            appBar: _buildAppBar(dayGroup, context),
+            Expanded(
+              child: TextButton(
+                onPressed: () async {
+                  final selected = await showDatePicker(
+                    context: context,
+                    currentDate: dayGroup.start,
+                    firstDate: _scheduleDisplayData.firstDate,
+                    lastDate: _scheduleDisplayData.lastDate,
+                  );
 
-            body: RefreshIndicator(
+                  if (selected == null) return;
+                  _animateToDay(selected.copyWith(isUtc: true).toDay());
+                },
+
+                child: AnimatedSize(
+                  duration: const Duration(milliseconds: 250),
+                  curve: Curves.easeOutCubic,
+                  alignment: .centerLeft,
+
+                  child: Row(
+                    mainAxisSize: .min,
+                    spacing: 8,
+
+                    children: [
+                      const Icon(HugeIconsSolid.calendar03, size: 20),
+
+                      Text(
+                        dayGroup.pprint(context),
+                        key: ValueKey(dayGroup.start),
+                        style: context.tt.titleMedium?.copyWith(
+                          fontWeight: .w600,
+                          color: context.c.primary,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+
+            IconButton(
+              onPressed: () async {
+                final next = dayGroup.start.add(const Duration(days: 1));
+                _animateToDay(next.copyWith(isUtc: true).toDay());
+              },
+
+              visualDensity: .comfortable,
+              icon: Icon(
+                HugeIconsSolid.arrowRight01,
+                color: context.c.outline,
+                size: 20,
+              ),
+            ),
+          ],
+        ),
+      ),
+
+      body: buildRefreshIndicator(
+        child: PageView.builder(
+          itemCount: _currentGroups.length,
+          controller: _pageController,
+
+          itemBuilder: (context, index) {
+            final dayGroup = _currentGroups[index];
+            final days = dayGroup.listDays();
+            final slots = findDisplayWindow(days);
+
+            return RefreshIndicator(
               onRefresh: () => reload(fromRefreshIndicator: true),
 
               child: ValueListenableBuilder(
@@ -207,7 +282,8 @@ class _TimetableDisplayState extends State<TimetableDisplay>
                   final Widget partialChild;
 
                   if (anyLoading) {
-                    partialChild = const Center(child: LoadingWidget());
+                    // we already got the refresh indicator spinning
+                    partialChild = const SizedBox.shrink();
                   } else if (allEmpty) {
                     final holiday = _getHolidayForDay(days.first);
 
@@ -300,37 +376,9 @@ class _TimetableDisplayState extends State<TimetableDisplay>
                   );
                 },
               ),
-            ),
-          );
-        },
-      ),
-    );
-  }
-
-  PreferredSizeWidget _buildAppBar(DateRange dayGroup, BuildContext context) {
-    return AppBarWidget(
-      title: TextButton.icon(
-        label: Text(
-          dayGroup.pprint(context),
-          style: const TextStyle(fontWeight: .bold, fontSize: 16),
+            );
+          },
         ),
-
-        icon: widget.normalPicker
-            ? const Icon(HugeIconsSolid.calendar03, size: 22)
-            : null,
-
-        onPressed: () async {
-          final selected = await showDatePicker(
-            context: context,
-            currentDate: dayGroup.start,
-            firstDate: _scheduleDisplayData.firstDate,
-            lastDate: _scheduleDisplayData.lastDate,
-          );
-
-          if (selected == null) return;
-
-          _animateToDay(selected.copyWith(isUtc: true).toDay());
-        },
       ),
     );
   }
@@ -612,6 +660,7 @@ class _TimetableDisplayState extends State<TimetableDisplay>
 
     _currentConfiguration = daysConfiguration;
     _currentGroups = newGroups;
+    _currentGroupIndex = currentGroupIndex;
 
     if (_pageController == null) {
       for (final day in days) {
