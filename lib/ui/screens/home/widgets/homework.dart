@@ -36,7 +36,7 @@ final class const HomeworkWidgetSliver({
           context.sc.goToTab(.homeworks);
         },
 
-        content: ListWidget(
+        child: ListWidget(
           physics: const NeverScrollableScrollPhysics(),
           shrinkWrap: true,
           isSliver: false,

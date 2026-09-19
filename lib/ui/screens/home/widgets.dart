@@ -10,14 +10,14 @@ import 'package:material_ui/material_ui.dart';
 class HomeWidget extends StatelessWidget {
   final Widget icon;
   final Widget label;
-  final Widget content;
+  final Widget child;
   final VoidCallback? onShowMorePressed;
 
   const HomeWidget({
     super.key,
     required this.icon,
     required this.label,
-    required this.content,
+    required this.child,
     required this.onShowMorePressed,
   });
 
@@ -96,7 +96,7 @@ class HomeWidget extends StatelessWidget {
             ),
           ),
 
-          content,
+          child,
         ],
       ),
     );
@@ -120,7 +120,7 @@ class AttendanceWidget extends StatelessWidget {
             : context.l10n.homeAttendance,
       ),
 
-      content: ListWidget(
+      child: ListWidget(
         physics: const NeverScrollableScrollPhysics(),
         shrinkWrap: true,
         isSliver: false,
@@ -171,7 +171,7 @@ class ExamsWidget extends StatelessWidget {
       icon: const Icon(HugeIconsSolid.schoolReportCard),
       label: Text(context.l10n.homeExams),
       onShowMorePressed: () {},
-      content: const SizedBox.shrink(),
+      child: const SizedBox.shrink(),
     );
   }
 }
@@ -198,7 +198,7 @@ class GradesWidget extends StatelessWidget {
         context.sc.goToTab(.grades);
       },
 
-      content: ListWidget(
+      child: ListWidget(
         physics: const NeverScrollableScrollPhysics(),
         shrinkWrap: true,
         isSliver: false,

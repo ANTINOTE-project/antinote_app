@@ -13,13 +13,13 @@ class const MenuWidgetSliver({super.key, required final Menu value})
       child: HomeWidget(
         icon: const Icon(HugeIconsSolid.spoonAndKnife),
         label: Text(context.l10n.menu),
-        content: MealContents(
+        onShowMorePressed: null,
+        child: MealContents(
           menu: value,
           addPadding: false,
           invertColor: true,
           padding: .zero,
         ),
-        onShowMorePressed: null,
       ),
     );
   }

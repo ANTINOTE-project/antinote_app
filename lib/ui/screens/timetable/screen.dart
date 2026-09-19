@@ -7,6 +7,7 @@ import 'package:antinote_app/ui/utils/utils.dart';
 import 'package:antinote_app/ui/widgets/customs/app_bar.dart';
 import 'package:antinote_app/ui/widgets/customs/loading.dart';
 import 'package:collection/collection.dart';
+import 'package:expandable_page_view/expandable_page_view.dart';
 import 'package:hugeicons_pro/hugeicons.dart';
 import 'package:material_ui/material_ui.dart';
 
@@ -69,6 +70,7 @@ class const TimetableDisplay({
   final Date? baseDate,
 
   final bool scrollable = true,
+  final bool resize = false,
   final bool transparent = false,
   final bool normalPicker = true,
 }) extends StatefulWidget {
@@ -86,7 +88,7 @@ class _TimetableDisplayState extends State<TimetableDisplay>
   PageController? _pageController;
 
   bool _animating = false;
-  int? _lastPage;
+  final ValueNotifier<int?> _lastPageNotifier = ValueNotifier(null);
 
   Future<void> _animateToDay(Date day) async {
     final index = _currentGroups.indexWhere((element) => element.contains(day));
@@ -108,10 +110,10 @@ class _TimetableDisplayState extends State<TimetableDisplay>
     final curPage = _pageController?.page?.round();
     if (curPage == null) return;
 
-    _lastPage ??= curPage;
+    _lastPageNotifier.value ??= curPage;
 
-    if (_lastPage != curPage) {
-      _lastPage = curPage;
+    if (_lastPageNotifier.value != curPage) {
+      _lastPageNotifier.value = curPage;
 
       reload();
     }
@@ -166,6 +168,122 @@ class _TimetableDisplayState extends State<TimetableDisplay>
     super.dispose();
   }
 
+  Widget _pageBuilder(BuildContext context, int index) {
+    final dayGroup = _currentGroups[index];
+    final days = dayGroup.listDays();
+
+    final window = findDisplayWindow(days);
+
+    return ValueListenableBuilder(
+      valueListenable: _blocks[days.first]!,
+
+      builder: (context, _, _) {
+        final allEmpty = days.every(
+          (day) => _blocks[day]!.value?.isEmpty ?? false,
+        );
+
+        final anyLoading = days.any((day) => _blocks[day]!.value == null);
+
+        final Widget partialChild;
+
+        if (anyLoading) {
+          // we already got the refresh indicator spinning
+          partialChild = const SizedBox.shrink();
+        } else if (allEmpty) {
+          final holiday = _getHolidayForDay(days.first);
+
+          partialChild = Center(
+            child: Column(
+              mainAxisAlignment: .center,
+              spacing: 6,
+              children: [
+                Icon(
+                  holiday == null
+                      ? HugeIconsSolid.calendar04
+                      : HugeIconsSolid.beach,
+                  color: context.c.outline,
+                  size: 44,
+                ),
+                Text(
+                  holiday?.name ?? context.l10n.noCourseToday,
+                  textAlign: .center,
+                  style: TextStyle(fontWeight: .bold, color: context.c.outline),
+                ),
+              ],
+            ),
+          );
+        } else {
+          final child = IntrinsicHeight(
+            child: Row(
+              spacing: 8,
+              children: [
+                if (window != null)
+                  Flexible(
+                    flex: days.length * 15,
+                    child: _buildTimeColumn(context, window, days),
+                  ),
+
+                for (final day in days)
+                  Expanded(
+                    flex: 85,
+                    child: ValueListenableBuilder(
+                      valueListenable: _blocks[day]!,
+                      builder: (context, dayClasses, child) {
+                        if (dayClasses == null) {
+                          return const LoadingWidget();
+                        }
+                        if (dayClasses.isEmpty || window == null) {
+                          return const SizedBox.shrink();
+                        }
+
+                        return _buildEventsColumn(
+                          context,
+                          day,
+                          window,
+                          dayClasses,
+                        );
+                      },
+                    ),
+                  ),
+              ],
+            ),
+          );
+
+          if (widget.scrollable) {
+            partialChild = Align(
+              alignment: .topCenter,
+              child: SingleChildScrollView(
+                padding: widget.transparent
+                    ? null
+                    : .only(
+                        bottom: MediaQuery.paddingOf(context).bottom + 20,
+                        right: 12,
+                      ),
+                child: child,
+              ),
+            );
+          } else if (!widget.resize) {
+            partialChild = Padding(
+              padding: .only(
+                bottom: MediaQuery.paddingOf(context).bottom + 20,
+                right: 12,
+              ),
+              child: child,
+            );
+          } else {
+            partialChild = child;
+          }
+        }
+
+        return AnimatedSwitcher(
+          duration: const Duration(milliseconds: 300),
+          switchInCurve: Curves.fastOutSlowIn,
+          child: partialChild,
+        );
+      },
+    );
+  }
+
   @override
   Widget buildLoaded(
     BuildContext context,
@@ -174,164 +292,79 @@ class _TimetableDisplayState extends State<TimetableDisplay>
   ) {
     ensureCorrectConfiguration();
 
-    return buildRefreshIndicator(
-      child: PageView.builder(
+    final Widget child;
+
+    if (widget.resize) {
+      child = ExpandablePageView.builder(
         itemCount: _currentGroups.length,
         controller: _pageController,
+        itemBuilder: _pageBuilder,
+        animationCurve: Curves.fastOutSlowIn,
+      );
+    } else {
+      child = PageView.builder(
+        itemCount: _currentGroups.length,
+        controller: _pageController,
+        itemBuilder: _pageBuilder,
+      );
+    }
 
-        itemBuilder: (context, index) {
-          final dayGroup = _currentGroups[index];
-          final days = dayGroup.listDays();
+    final appBar = _buildAppBar(context);
 
-          final window = findDisplayWindow(days);
-          logger.info(window);
+    if (widget.resize) {
+      return Column(mainAxisSize: .min, children: [appBar, child]);
+    }
 
-          return Scaffold(
-            backgroundColor: widget.transparent ? Colors.transparent : null,
-            appBar: _buildAppBar(dayGroup, context),
-
-            body: RefreshIndicator(
-              onRefresh: () => reload(fromRefreshIndicator: true),
-
-              child: ValueListenableBuilder(
-                valueListenable: _blocks[days.first]!,
-
-                builder: (context, _, _) {
-                  final allEmpty = days.every(
-                    (day) => _blocks[day]!.value?.isEmpty ?? false,
-                  );
-
-                  final anyLoading = days.any(
-                    (day) => _blocks[day]!.value == null,
-                  );
-
-                  final Widget partialChild;
-
-                  if (anyLoading) {
-                    // we already got the refresh indicator spinning
-                    partialChild = const SizedBox.shrink();
-                  } else if (allEmpty) {
-                    final holiday = _getHolidayForDay(days.first);
-
-                    partialChild = Center(
-                      child: Column(
-                        mainAxisAlignment: .center,
-                        spacing: 6,
-                        children: [
-                          Icon(
-                            holiday == null
-                                ? HugeIconsSolid.calendar04
-                                : HugeIconsSolid.beach,
-                            color: context.c.outline,
-                            size: 44,
-                          ),
-                          Text(
-                            holiday?.name ?? context.l10n.noCourseToday,
-                            textAlign: .center,
-                            style: TextStyle(
-                              fontWeight: .bold,
-                              color: context.c.outline,
-                            ),
-                          ),
-                        ],
-                      ),
-                    );
-                  } else {
-                    final child = IntrinsicHeight(
-                      child: Row(
-                        spacing: 8,
-                        children: [
-                          if (window != null)
-                            Flexible(
-                              flex: days.length * 15,
-                              child: _buildTimeColumn(context, window, days),
-                            ),
-
-                          for (final day in days)
-                            Expanded(
-                              flex: 85,
-                              child: ValueListenableBuilder(
-                                valueListenable: _blocks[day]!,
-                                builder: (context, dayClasses, child) {
-                                  if (dayClasses == null) {
-                                    return const LoadingWidget();
-                                  }
-                                  if (dayClasses.isEmpty || window == null) {
-                                    return const SizedBox.shrink();
-                                  }
-
-                                  return _buildEventsColumn(
-                                    context,
-                                    day,
-                                    window,
-                                    dayClasses,
-                                  );
-                                },
-                              ),
-                            ),
-                        ],
-                      ),
-                    );
-
-                    if (widget.scrollable) {
-                      partialChild = SingleChildScrollView(
-                        padding: widget.transparent
-                            ? null
-                            : .only(
-                                bottom:
-                                    MediaQuery.paddingOf(context).bottom + 20,
-                                right: 12,
-                              ),
-                        child: child,
-                      );
-                    } else {
-                      partialChild = Padding(
-                        padding: .only(
-                          bottom: MediaQuery.paddingOf(context).bottom + 20,
-                          right: 12,
-                        ),
-                        child: child,
-                      );
-                    }
-                  }
-
-                  return AnimatedSwitcher(
-                    duration: const Duration(milliseconds: 300),
-                    switchInCurve: Curves.fastOutSlowIn,
-                    child: partialChild,
-                  );
-                },
-              ),
-            ),
-          );
-        },
-      ),
+    return Scaffold(
+      backgroundColor: widget.transparent ? Colors.transparent : null,
+      appBar: appBar,
+      body: buildRefreshIndicator(child: child),
     );
   }
 
-  PreferredSizeWidget _buildAppBar(DateRange dayGroup, BuildContext context) {
+  @override
+  Widget buildLoading(
+    BuildContext context,
+    RefreshIndicatorBuilder buildRefreshIndicator,
+    double? progress,
+  ) {
+    if (!widget.resize) {
+      return super.buildLoading(context, buildRefreshIndicator, progress);
+    }
+
+    return const Padding(padding: EdgeInsets.all(32), child: LoadingWidget());
+  }
+
+  PreferredSizeWidget _buildAppBar(BuildContext context) {
     return AppBarWidget(
-      title: TextButton.icon(
-        label: Text(
-          dayGroup.pprint(context),
-          style: const TextStyle(fontWeight: .bold, fontSize: 16),
-        ),
+      title: ValueListenableBuilder(
+        valueListenable: _lastPageNotifier,
+        builder: (context, value, child) {
+          final curPage = _currentGroups[value ?? _pageController!.initialPage];
 
-        icon: widget.normalPicker
-            ? const Icon(HugeIconsSolid.calendar03, size: 22)
-            : null,
+          return TextButton.icon(
+            label: Text(
+              curPage.pprint(context),
+              style: const TextStyle(fontWeight: .bold, fontSize: 16),
+            ),
 
-        onPressed: () async {
-          final selected = await showDatePicker(
-            context: context,
-            currentDate: dayGroup.start,
-            firstDate: _scheduleDisplayData.firstDate,
-            lastDate: _scheduleDisplayData.lastDate,
+            icon: widget.normalPicker
+                ? const Icon(HugeIconsSolid.calendar03, size: 22)
+                : null,
+
+            onPressed: () async {
+              final selected = await showDatePicker(
+                context: context,
+                currentDate: curPage.start,
+                firstDate: _scheduleDisplayData.firstDate,
+                lastDate: _scheduleDisplayData.lastDate,
+              );
+
+              if (selected == null) return;
+
+              _animateToDay(selected.copyWith(isUtc: true).toDay());
+            },
           );
-
-          if (selected == null) return;
-
-          _animateToDay(selected.copyWith(isUtc: true).toDay());
         },
       ),
     );
@@ -389,7 +422,7 @@ class _TimetableDisplayState extends State<TimetableDisplay>
           : _scheduleDisplayData.endings[lastApplied].timing;
       final diffValue = curSlot.timing.difference(from).inMinutes;
       if (diffValue > 0) {
-        displays.add(Expanded(flex: diffValue, child: const SizedBox.shrink()));
+        displays.add(Expanded(flex: diffValue, child: const SizedBox.expand()));
       }
 
       final value = curEndSlot.timing.difference(curSlot.timing).inMinutes;
@@ -467,7 +500,7 @@ class _TimetableDisplayState extends State<TimetableDisplay>
           .difference(_scheduleDisplayData.endings[lastApplied].timing)
           .inMinutes;
       if (value > 0) {
-        displays.add(Expanded(flex: value, child: const SizedBox.shrink()));
+        displays.add(Expanded(flex: value, child: const SizedBox.expand()));
       }
     }
 
@@ -553,7 +586,9 @@ class _TimetableDisplayState extends State<TimetableDisplay>
           _scheduleDisplayData.demoDateTime?.toDay() ??
           _scheduleDisplayData.nextBusinessDay;
 
-      logger.info('Initializing timetable with base date $selectedBaseDate');
+      logger.info(
+        'Initializing timetable with base date $selectedBaseDate, ${_pageController?.hasClients} ${_pageController?.positions.length}',
+      );
 
       currentGroupIndex = _currentGroups.indexWhere((element) {
         return element.contains(selectedBaseDate);
@@ -622,6 +657,7 @@ class _TimetableDisplayState extends State<TimetableDisplay>
       }
 
       _pageController = PageController(initialPage: currentGroupIndex);
+
       _pageController?.addListener(_onPageDrag);
     }
 

@@ -47,7 +47,12 @@ mixin PageMixin<T extends StatefulWidget> on State<T> {
     RefreshIndicatorBuilder buildRefreshIndicator,
     double? progress,
   ) {
-    return Scaffold(body: LoadingWidget(progress: progress));
+    return buildRefreshIndicator(
+      child: Column(
+        mainAxisAlignment: .center,
+        children: [LoadingWidget(progress: progress)],
+      ),
+    );
   }
 
   Widget buildErrored(
@@ -69,6 +74,7 @@ mixin PageMixin<T extends StatefulWidget> on State<T> {
               color: context.c.error,
               fontWeight: .bold,
             ),
+            textAlign: .center,
           ),
         ),
 
@@ -77,7 +83,7 @@ mixin PageMixin<T extends StatefulWidget> on State<T> {
             padding: const .only(left: 12, right: 12, top: 16),
             child: ButtonWidget(
               onPressed: () {
-                logger.fine('${error.runtimeType}', error, stackTrace);
+                logger.fine('[${error.runtimeType}] $error', error, stackTrace);
               },
               label: 'Show error in console',
             ),
@@ -152,8 +158,8 @@ mixin PageMixin<T extends StatefulWidget> on State<T> {
             snapshot.stackTrace,
           );
         } else if (snapshot.connectionState == .done ||
-            (snapshot.connectionState == .active && snapshot.hasData) ||
-            (loaded && snapshot.connectionState == .none)) {
+            loaded ||
+            (snapshot.connectionState == .active && snapshot.hasData)) {
           child = buildLoaded(
             context,
             buildRefreshIndicator,
