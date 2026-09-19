@@ -252,14 +252,17 @@ class _TimetableDisplayState extends State<TimetableDisplay>
           if (widget.scrollable) {
             partialChild = Align(
               alignment: .topCenter,
-              child: SingleChildScrollView(
-                padding: widget.transparent
-                    ? null
-                    : .only(
-                        bottom: MediaQuery.paddingOf(context).bottom + 20,
-                        right: 12,
-                      ),
-                child: child,
+              child: RefreshIndicator(
+                onRefresh: () => reload(fromRefreshIndicator: true),
+                child: SingleChildScrollView(
+                  padding: widget.transparent
+                      ? null
+                      : .only(
+                          bottom: MediaQuery.paddingOf(context).bottom + 20,
+                          right: 12,
+                        ),
+                  child: child,
+                ),
               ),
             );
           } else if (!widget.resize) {
@@ -318,7 +321,7 @@ class _TimetableDisplayState extends State<TimetableDisplay>
     return Scaffold(
       backgroundColor: widget.transparent ? Colors.transparent : null,
       appBar: appBar,
-      body: buildRefreshIndicator(child: child),
+      body: buildRefreshIndicator(child: child, pullable: false),
     );
   }
 
