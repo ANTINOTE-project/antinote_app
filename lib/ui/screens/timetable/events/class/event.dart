@@ -1,13 +1,9 @@
 part of '../block.dart';
 
-final class ClassEvent extends Event {
-  final Class value;
-
-  @override
-  final DateTime startTime;
-  @override
-  final DateTime endTime;
-
+final class const ClassEvent({
+  required final Class value,
+  @override required final DateTimeRange range,
+}) extends Event {
   @override
   int get priority => !selfPresent ? 2 : (value.status == null ? 0 : 1);
 
@@ -16,12 +12,6 @@ final class ClassEvent extends Event {
   bool get selfPresent =>
       !value.canceled &&
       !(value is Lesson && (value as Lesson).exemptedLabel != null);
-
-  const ClassEvent({
-    required this.value,
-    required this.startTime,
-    required this.endTime,
-  });
 }
 
 List<ClassEvent> classEventsForDay(
@@ -29,6 +19,9 @@ List<ClassEvent> classEventsForDay(
   SpecificInstanceParameters params,
 ) {
   return classes.mapL(
-    (e) => ClassEvent(value: e, startTime: e.startDate, endTime: e.endDate),
+    (e) => ClassEvent(
+      value: e,
+      range: .new(start: e.startDate, end: e.endDate),
+    ),
   );
 }

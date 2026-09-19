@@ -1,22 +1,12 @@
 part of '../block.dart';
 
-final class PauseEvent extends Event {
-  final String title;
+final class const PauseEvent({
+  required final String title,
 
-  @override
-  final DateTime startTime;
-  @override
-  final DateTime endTime;
-
+  @override required final DateTimeRange range,
+}) extends Event {
   @override
   int get priority => 0;
-
-  const new({
-    required this.title,
-
-    required this.startTime,
-    required this.endTime,
-  });
 }
 
 List<PauseEvent> pauseEventsForDay(
@@ -49,8 +39,7 @@ List<PauseEvent> pauseEventsForDay(
     events.add(
       PauseEvent(
         title: classBreak.label,
-        startTime: startTime,
-        endTime: endTime,
+        range: .new(start: startTime, end: endTime),
       ),
     );
   }
@@ -68,8 +57,8 @@ List<PauseEvent> pauseEventsForDay(
     events.removeWhere(
       (element) => range.rangeOverlaps(
         DateTimeRange(
-          start: element.startTime.toTime(),
-          end: element.endTime.toTime(),
+          start: element.range.start.toTime(),
+          end: element.range.end.toTime(),
         ),
       ),
     );

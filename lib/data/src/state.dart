@@ -19,7 +19,7 @@ enum AppState(final int priority) {
   clazz(5),
 
   /// Default state, before and after classes.
-  defaultState(0)
+  defaultState(0),
 }
 
 enum TimeRelation { before, during, after, none }
@@ -43,8 +43,8 @@ class AppStateScheduler {
       if (event is! ClassEvent) continue;
       if (!event.selfPresent) continue;
 
-      if (classEnd == null || classEnd.isBefore(event.endTime)) {
-        classEnd = event.endTime;
+      if (classEnd == null || classEnd.isBefore(event.range.end)) {
+        classEnd = event.range.end;
       }
     }
 
@@ -53,8 +53,8 @@ class AppStateScheduler {
     final ends = <_Marker>[
       (time: day, event: null, isTransfer: false, start: true),
       for (final event in events) ...[
-        (time: event.startTime, event: event, isTransfer: false, start: true),
-        (time: event.endTime, event: event, isTransfer: false, start: false),
+        (time: event.range.start, event: event, isTransfer: false, start: true),
+        (time: event.range.end, event: event, isTransfer: false, start: false),
       ],
 
       for (final transferEntry in params.transferTimes) ...[

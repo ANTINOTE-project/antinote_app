@@ -23,7 +23,7 @@ class MealBlockWidget extends StatelessWidget {
       borderRadius: borderRadius,
 
       onPressed: () async {
-        await showMealModal(context, block.startTime.toDay());
+        await showMealModal(context, block.range.start.toDay());
       },
 
       child: ClipRRect(

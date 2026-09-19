@@ -1,7 +1,6 @@
 import 'dart:math';
 
 import 'package:antinote_api/antinote_api.dart';
-import 'package:antinote_app/data/src/state.dart';
 import 'package:antinote_app/ui/screens/timetable/events/class/widget.dart';
 import 'package:antinote_app/ui/screens/timetable/events/meal/widget.dart';
 import 'package:antinote_app/ui/screens/timetable/events/pause/widget.dart';
@@ -19,8 +18,7 @@ part 'pause/event.dart';
 typedef DayBlocks = List<Block>;
 
 sealed class Event {
-  DateTime get startTime;
-  DateTime get endTime;
+  DateTimeRange get range;
 
   int get priority;
 
@@ -35,7 +33,7 @@ List<Event> eventsForDay(
     ...classEventsForDay(classes, parameters),
     ...pauseEventsForDay(classes, parameters),
     ...mealEventsForDay(classes, parameters),
-  ]..sort((a, b) => a.startTime.compareTo(b.startTime));
+  ]..sort((a, b) => a.range.start.compareTo(b.range.start));
 }
 
 final class Block {
@@ -52,15 +50,13 @@ final class Block {
 
   factory Block.createConfigurations({
     required List<Event> events,
-    required DateTime startTime,
-    required DateTime endTime,
+    required DateTimeRange range,
   }) {
     final remaining = <int, List<Event>>{};
 
     int biggest = 0;
     for (final remainingEvent in events) {
-      if (remainingEvent.endTime.difference(remainingEvent.startTime) ==
-          .zero) {
+      if (remainingEvent.range.duration == .zero) {
         continue;
       }
 
@@ -72,7 +68,7 @@ final class Block {
     }
 
     for (final key in remaining.keys) {
-      remaining[key]?.sort((a, b) => a.startTime.compareTo(b.startTime));
+      remaining[key]?.sort((a, b) => a.range.start.compareTo(b.range.start));
     }
 
     final configs = <List<Event>>[];
@@ -84,12 +80,8 @@ final class Block {
         final curCandidates = <Event>[];
 
         for (final candidate in remaining[i]!) {
-          if (curConfig.any(
-            (element) =>
-                (!candidate.startTime.isBefore(element.startTime) &&
-                    candidate.startTime.isBefore(element.endTime)) ||
-                (!element.startTime.isBefore(candidate.startTime) &&
-                    element.startTime.isBefore(candidate.endTime)),
+          if ((curCandidates + curConfig).any(
+            (element) => candidate.range.rangeOverlaps(element.range),
           )) {
             continue;
           }
@@ -107,8 +99,8 @@ final class Block {
 
     return Block(
       configurations: configs,
-      startTime: startTime,
-      endTime: endTime,
+      startTime: range.start,
+      endTime: range.end,
     );
   }
 }
@@ -119,12 +111,6 @@ List<Block> blocksForDay(
 ) {
   if (events.isEmpty) return const [];
 
-  AppStateScheduler.scheduleForDay(
-    events.first.startTime.toDay(),
-    events: events,
-    params: parameters,
-  );
-
   final blocks = <Block>[];
 
   DateTime? blockStartTime;
@@ -133,30 +119,29 @@ List<Block> blocksForDay(
 
   for (final event in events) {
     if (blockStartTime == null) {
-      blockStartTime = event.startTime;
-      blockEndTime = event.endTime;
+      blockStartTime = event.range.start;
+      blockEndTime = event.range.end;
 
       curEvents.add(event);
 
       continue;
     }
 
-    if (event.startTime.isBefore(blockEndTime!)) {
+    if (event.range.start.isBefore(blockEndTime!)) {
       curEvents.add(event);
-      if (event.endTime.isAfter(blockEndTime)) {
-        blockEndTime = event.endTime;
+      if (event.range.end.isAfter(blockEndTime)) {
+        blockEndTime = event.range.end;
       }
     } else {
       blocks.add(
         Block.createConfigurations(
           events: curEvents,
-          startTime: blockStartTime,
-          endTime: blockEndTime,
+          range: DateTimeRange(start: blockStartTime, end: blockEndTime),
         ),
       );
 
-      blockStartTime = event.startTime;
-      blockEndTime = event.endTime;
+      blockStartTime = event.range.start;
+      blockEndTime = event.range.end;
 
       curEvents.clear();
       curEvents.add(event);
@@ -167,8 +152,7 @@ List<Block> blocksForDay(
     blocks.add(
       Block.createConfigurations(
         events: curEvents,
-        startTime: blockStartTime!,
-        endTime: blockEndTime!,
+        range: DateTimeRange(start: blockStartTime!, end: blockEndTime!),
       ),
     );
   }
@@ -203,7 +187,7 @@ class _BlockWidgetState extends State<BlockWidget> {
     BuildContext context,
     List<Event> configuration,
   ) {
-    configuration.sort((a, b) => a.startTime.compareTo(b.startTime));
+    configuration.sort((a, b) => a.range.start.compareTo(b.range.start));
 
     final display = <Widget>[];
     final borderRadius = widget.block.configurations.length > 1
@@ -212,15 +196,15 @@ class _BlockWidgetState extends State<BlockWidget> {
 
     var curTime = widget.block.startTime;
     for (final event in configuration) {
-      final diff = event.startTime.difference(curTime);
+      final diff = event.range.start.difference(curTime);
       if (diff > Duration.zero) {
         display.add(
           Expanded(flex: diff.inMinutes, child: const SizedBox.expand()),
         );
       }
 
-      final durationMinutes = event.endTime
-          .difference(event.startTime)
+      final durationMinutes = event.range.end
+          .difference(event.range.start)
           .inMinutes;
 
       if (durationMinutes > 0) {
@@ -245,7 +229,7 @@ class _BlockWidgetState extends State<BlockWidget> {
         );
       }
 
-      curTime = event.endTime;
+      curTime = event.range.end;
     }
 
     final lastDiff = widget.block.endTime.difference(curTime);

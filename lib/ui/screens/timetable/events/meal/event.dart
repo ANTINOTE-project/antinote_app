@@ -1,15 +1,9 @@
 part of '../block.dart';
 
-class MealEvent extends Event {
-  @override
-  final DateTime startTime;
-  @override
-  final DateTime endTime;
-
+class const MealEvent({@override required final DateTimeRange range})
+    extends Event {
   @override
   int get priority => 3;
-
-  const new({required this.startTime, required this.endTime});
 }
 
 List<MealEvent> mealEventsForDay(
@@ -74,7 +68,11 @@ List<MealEvent> mealEventsForDay(
         );
 
         if (!startTime.isAtSameMomentAs(endTime)) {
-          events.add(MealEvent(startTime: startTime, endTime: endTime));
+          events.add(
+            MealEvent(
+              range: .new(start: startTime, end: endTime),
+            ),
+          );
         }
 
         eventStart = curSlot;
@@ -91,7 +89,11 @@ List<MealEvent> mealEventsForDay(
     final endTime = parameters.timeForSlot(parameters.endings[eventEnd], day);
 
     if (!startTime.isAtSameMomentAs(endTime)) {
-      events.add(MealEvent(startTime: startTime, endTime: endTime));
+      events.add(
+        MealEvent(
+          range: .new(start: startTime, end: endTime),
+        ),
+      );
     }
   }
 
