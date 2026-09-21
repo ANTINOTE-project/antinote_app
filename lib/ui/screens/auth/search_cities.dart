@@ -155,11 +155,12 @@ class _SearchCitiesScreenState extends State<SearchCitiesScreen> {
 
                             leading: Icon(switch (city.placeType) {
                               .city => HugeIconsSolid.building01,
-                              .town => HugeIconsSolid.building02,
-                              .village => HugeIconsSolid.home01,
-                              .hamlet => HugeIconsSolid.house01,
-                              .suburb => HugeIconsSolid.house04,
-                              .municipality => HugeIconsSolid.city01,
+                              .town ||
+                              .municipality => HugeIconsSolid.building02,
+                              .village || .hamlet => HugeIconsSolid.home01,
+                              .suburb ||
+                              .neighbourhood => HugeIconsSolid.house04,
+                              .region || .locality => HugeIconsSolid.globe02,
                               .other => HugeIconsSolid.location01,
                             }),
 
