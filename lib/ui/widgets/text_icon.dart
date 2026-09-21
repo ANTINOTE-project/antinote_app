@@ -9,26 +9,8 @@ class SliverTextIcon extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return SliverPadding(
-      padding: const .only(left: 8, top: 16, bottom: 8),
-      sliver: SliverToBoxAdapter(
-        child: Row(
-          spacing: 8,
-
-          children: [
-            if (icon != null) Icon(icon, color: context.c.outline, size: 22),
-
-            Text(
-              label,
-              style: TextStyle(
-                color: context.c.outline,
-                fontWeight: .bold,
-                fontSize: 18,
-              ),
-            ),
-          ],
-        ),
-      ),
+    return SliverToBoxAdapter(
+      child: TextIcon(label: label, icon: icon),
     );
   }
 }
@@ -42,19 +24,20 @@ class TextIcon extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const .only(left: 6, top: 16, bottom: 4),
+      padding: const .only(left: 6, top: 0, bottom: 6),
+
       child: Row(
-        spacing: 8,
+        spacing: 6,
 
         children: [
-          if (icon != null) Icon(icon, color: context.c.outline, size: 22),
+          if (icon != null) Icon(icon, color: context.c.outline, size: 19),
 
           Text(
             label,
             style: TextStyle(
               color: context.c.outline,
               fontWeight: .bold,
-              fontSize: 18,
+              fontSize: 16,
             ),
           ),
         ],

@@ -128,8 +128,6 @@ class _AppearanceState extends State<Appearance> {
             ),
           ],
         ),
-
-        const SliverPadding(padding: .only(top: 12)),
       ],
     );
   }

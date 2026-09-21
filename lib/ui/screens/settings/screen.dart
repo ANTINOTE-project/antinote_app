@@ -45,11 +45,17 @@ class SettingsScreen extends StatelessWidget {
         child: CustomScrollView(
           slivers: [
             Appearance(),
+            SliverPadding(padding: .only(bottom: 16)),
+
             Networking(),
+            SliverPadding(padding: .only(bottom: 16)),
+
             Account(),
+            SliverPadding(padding: .only(bottom: 16)),
+
             Application(),
 
-            BottomPadding(padding: 20),
+            BottomPadding(padding: 16),
           ],
         ),
       ),
