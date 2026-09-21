@@ -45,7 +45,7 @@ final class const City({
       'q': query,
       'format': 'json',
       'limit': '15',
-      'featuretype': 'settlement',
+      'featureType': 'settlement',
       'addressdetails': '1',
     });
 
