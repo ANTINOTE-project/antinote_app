@@ -340,20 +340,36 @@ class _TimetableDisplayState extends State<TimetableDisplay>
 
   PreferredSizeWidget _buildAppBar(BuildContext context) {
     return AppBarWidget(
+      titleAlign: .center,
       title: ValueListenableBuilder(
         valueListenable: _lastPageNotifier,
         builder: (context, value, child) {
           final curPage = _currentGroups[value ?? _pageController!.initialPage];
 
-          return TextButton.icon(
-            label: Text(
-              curPage.pprint(context),
-              style: const TextStyle(fontWeight: .bold, fontSize: 16),
-            ),
+          return TextButton(
+            child: AnimatedSize(
+              duration: const Duration(milliseconds: 250),
+              curve: Curves.easeOutCubic,
+              alignment: .centerLeft,
 
-            icon: widget.normalPicker
-                ? const Icon(HugeIconsSolid.calendar03, size: 22)
-                : null,
+              child: Row(
+                mainAxisSize: .min,
+                spacing: 8,
+
+                children: [
+                  const Icon(HugeIconsSolid.calendar03, size: 20),
+
+                  Text(
+                    curPage.pprint(context),
+                    key: ValueKey(curPage.start),
+                    style: context.tt.titleMedium?.copyWith(
+                      fontWeight: .w600,
+                      color: context.c.primary,
+                    ),
+                  ),
+                ],
+              ),
+            ),
 
             onPressed: () async {
               final selected = await showDatePicker(
