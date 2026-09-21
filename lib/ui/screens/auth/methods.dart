@@ -129,6 +129,7 @@ class LoginMethodsScreen extends StatelessWidget with WidgetsBindingObserver {
                   },
                 ),
 
+                const SliverPadding(padding: .only(top: 16)),
                 SliverTextIcon(label: context.l10n.loginDemoText),
 
                 SliverToBoxAdapter(
