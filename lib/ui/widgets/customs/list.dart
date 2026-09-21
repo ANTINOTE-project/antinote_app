@@ -93,7 +93,12 @@ class ListWidget<T> extends StatelessWidget {
   Widget build(BuildContext context) {
     if (isColumn) {
       final child = Skeletonizer(
+        effect: ShimmerEffect(
+          baseColor: context.c.surfaceContainerHigh,
+          highlightColor: context.c.surfaceContainerHighest,
+        ),
         enabled: isLoading,
+
         child: Column(
           mainAxisSize: shrinkWrap ? .min : .max,
           children: [
@@ -119,6 +124,10 @@ class ListWidget<T> extends StatelessWidget {
 
     if (isSliver) {
       return Skeletonizer.sliver(
+        effect: ShimmerEffect(
+          baseColor: context.c.surfaceContainerHigh,
+          highlightColor: context.c.surfaceContainerHighest,
+        ),
         enabled: isLoading,
 
         child: SliverList.builder(
@@ -138,6 +147,10 @@ class ListWidget<T> extends StatelessWidget {
     }
 
     return Skeletonizer(
+      effect: ShimmerEffect(
+        baseColor: context.c.surfaceContainerHigh,
+        highlightColor: context.c.surfaceContainerHighest,
+      ),
       enabled: isLoading,
 
       child: ListView.builder(
