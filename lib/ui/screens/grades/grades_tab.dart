@@ -4,6 +4,7 @@ import 'package:antinote_api/antinote_api.dart';
 import 'package:antinote_app/ui/screens/shell/tab.dart';
 import 'package:antinote_app/ui/utils/utils.dart';
 import 'package:antinote_app/ui/widgets/bottom_padding.dart';
+import 'package:antinote_app/ui/widgets/customs/app_bar.dart';
 import 'package:antinote_app/ui/widgets/customs/list.dart';
 import 'package:antinote_app/ui/widgets/grade_text.dart';
 import 'package:antinote_app/ui/widgets/pressable.dart';
@@ -11,7 +12,7 @@ import 'package:collection/collection.dart';
 import 'package:hugeicons_pro/hugeicons.dart';
 import 'package:material_ui/material_ui.dart';
 
-part 'modal.dart';
+part 'details.dart';
 
 typedef _ServiceGradeList = Map<Service, List<Exam>>;
 
@@ -82,13 +83,16 @@ Future<void> showExamDetails(BuildContext context, Exam exam) async {
       ),
   ];
 
-  await _showDetails(
-    context: context,
-    name: exam.service.name,
-    serviceColor: exam.service.color,
-    items: items,
-    title: Utils.getExamComment(context, exam),
-    subtitle: exam.date.asRelativeDate(context),
+  await Navigator.push(
+    context,
+    MaterialPageRoute(
+      builder: (context) => _DetailsScreen(
+        serviceColor: exam.service.color,
+        title: Utils.getExamComment(context, exam),
+        subtitle: exam.date.asRelativeDate(context),
+        items: items,
+      ),
+    ),
   );
 }
 
@@ -151,11 +155,15 @@ Future<void> showServiceDetails(
       ),
   ];
 
-  await _showDetails(
-    context: context,
-    name: service.name,
-    serviceColor: service.color,
-    items: items,
+  await Navigator.push(
+    context,
+    MaterialPageRoute(
+      builder: (context) => _DetailsScreen(
+        serviceColor: service.color,
+        title: service.name,
+        items: items,
+      ),
+    ),
   );
 }
 
