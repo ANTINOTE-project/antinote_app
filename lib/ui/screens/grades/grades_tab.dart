@@ -217,7 +217,11 @@ class _GradesTabState extends State<GradesTab>
           _Averages(data: _data),
 
           if (orderedExams.isNotEmpty) ...[
-            TextIcon.sliver(label: context.l10n.latestGrades),
+            TextIcon.sliver(
+              label: context.l10n.latestGrades,
+              padding: const .only(left: 12, top: 12),
+            ),
+
             _LatestGrades(exams: orderedExams),
           ],
 
