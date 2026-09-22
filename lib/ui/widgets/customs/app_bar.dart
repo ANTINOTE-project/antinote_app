@@ -70,6 +70,7 @@ class AppBarWidget extends StatelessWidget implements PreferredSizeWidget {
                           maxLines: 1,
                           style: context.tt.titleLarge!.copyWith(
                             fontWeight: .bold,
+                            height: 1.25,
                           ),
                           child: title!,
                         ),
