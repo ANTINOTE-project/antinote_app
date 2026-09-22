@@ -21,7 +21,7 @@ class _NetworkingState extends State<Networking> {
       builder: (context, child) {
         return SliverMainAxisGroup(
           slivers: [
-            SliverTextIcon(
+            TextIcon.sliver(
               icon: HugeIconsSolid.securedNetwork,
               label: context.l10n.network,
             ),

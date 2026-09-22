@@ -23,7 +23,7 @@ class _AccountState extends State<Account> {
   Widget build(BuildContext context) {
     return SliverMainAxisGroup(
       slivers: [
-        SliverTextIcon(
+        TextIcon.sliver(
           icon: HugeIconsSolid.userAccount,
           label: context.l10n.accounts,
         ),

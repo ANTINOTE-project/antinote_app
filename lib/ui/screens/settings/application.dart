@@ -12,7 +12,7 @@ class Application extends StatelessWidget {
   Widget build(BuildContext context) {
     return SliverMainAxisGroup(
       slivers: [
-        SliverTextIcon(
+        TextIcon.sliver(
           icon: HugeIconsSolid.more,
           label: context.l10n.application,
         ),

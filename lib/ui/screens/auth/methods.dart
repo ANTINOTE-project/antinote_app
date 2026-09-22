@@ -206,7 +206,7 @@ class _LoginMethodsScreenState extends State<LoginMethodsScreen> {
                 ),
 
                 const SliverPadding(padding: .only(top: 16)),
-                SliverTextIcon(label: context.l10n.loginAlternativeLabel),
+                TextIcon.sliver(label: context.l10n.loginAlternativeLabel),
 
                 ListWidget(
                   items: alternativeOptions,
@@ -217,7 +217,7 @@ class _LoginMethodsScreenState extends State<LoginMethodsScreen> {
                 ),
 
                 const SliverPadding(padding: .only(top: 16)),
-                SliverTextIcon(label: context.l10n.loginDemoLabel),
+                TextIcon.sliver(label: context.l10n.loginDemoLabel),
 
                 SliverToBoxAdapter(
                   child: _Item(

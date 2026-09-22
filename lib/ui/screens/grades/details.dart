@@ -53,7 +53,7 @@ class _DetailsScreen extends StatelessWidget {
                 if (orderedExams != null && orderedExams.isNotEmpty) ...[
                   const SliverPadding(padding: .only(top: 20)),
 
-                  SliverTextIcon(label: context.l10n.detailsAllExams),
+                  TextIcon.sliver(label: context.l10n.detailsAllExams),
 
                   SliverPrototypeExtentList(
                     prototypeItem: _ExamWidget.prototype,

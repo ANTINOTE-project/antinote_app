@@ -21,7 +21,7 @@ class _AppearanceState extends State<Appearance> {
 
     return SliverMainAxisGroup(
       slivers: [
-        SliverTextIcon(
+        TextIcon.sliver(
           icon: HugeIconsSolid.paintBoard,
           label: context.l10n.theme,
         ),
