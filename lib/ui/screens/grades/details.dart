@@ -5,17 +5,23 @@ class _DetailsScreen extends StatelessWidget {
   final List<_DetailsItem> items;
   final String? title;
   final String? subtitle;
+  final List<Exam>? exams;
 
   const _DetailsScreen({
     this.serviceColor,
     this.items = const [],
     this.title,
     this.subtitle,
+    this.exams,
   });
 
   @override
   Widget build(BuildContext context) {
     final scheme = Utils.buildColorScheme(context, serviceColor ?? 0);
+
+    final orderedExams = exams != null
+        ? (List<Exam>.from(exams!)..sort((a, b) => b.date.compareTo(a.date)))
+        : null;
 
     return Scaffold(
       appBar: AppBarWidget(
@@ -30,20 +36,42 @@ class _DetailsScreen extends StatelessWidget {
           SliverPadding(
             padding: const .symmetric(horizontal: 12),
 
-            sliver: ListWidget(
-              items: items,
+            sliver: SliverMainAxisGroup(
+              slivers: [
+                ListWidget(
+                  items: items,
 
-              itemBuilder: (context, item, borderRadius) {
-                return _DetailsTile(
-                  item: item,
-                  scheme: scheme,
-                  borderRadius: borderRadius,
-                );
-              },
+                  itemBuilder: (context, item, borderRadius) {
+                    return _DetailsTile(
+                      item: item,
+                      scheme: scheme,
+                      borderRadius: borderRadius,
+                    );
+                  },
+                ),
+
+                if (orderedExams != null && orderedExams.isNotEmpty) ...[
+                  const SliverPadding(padding: .only(top: 20)),
+
+                  SliverTextIcon(label: context.l10n.detailsAllExams),
+
+                  SliverPrototypeExtentList(
+                    prototypeItem: _ExamWidget.prototype,
+
+                    delegate: SliverChildBuilderDelegate(
+                      childCount: orderedExams.length,
+
+                      (context, index) {
+                        return _ExamWidget(exam: orderedExams[index]);
+                      },
+                    ),
+                  ),
+                ],
+
+                const BottomPadding(padding: 16),
+              ],
             ),
           ),
-
-          const BottomPadding(padding: 16),
         ],
       ),
     );

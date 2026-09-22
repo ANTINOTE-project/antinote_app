@@ -8,6 +8,7 @@ import 'package:antinote_app/ui/widgets/customs/app_bar.dart';
 import 'package:antinote_app/ui/widgets/customs/list.dart';
 import 'package:antinote_app/ui/widgets/grade_text.dart';
 import 'package:antinote_app/ui/widgets/pressable.dart';
+import 'package:antinote_app/ui/widgets/text_icon.dart';
 import 'package:collection/collection.dart';
 import 'package:hugeicons_pro/hugeicons.dart';
 import 'package:material_ui/material_ui.dart';
@@ -160,8 +161,9 @@ Future<void> showServiceDetails(
     MaterialPageRoute(
       builder: (context) => _DetailsScreen(
         serviceColor: service.color,
-        title: service.name,
         items: items,
+        title: service.name,
+        exams: exams,
       ),
     ),
   );
@@ -215,11 +217,7 @@ class _GradesTabState extends State<GradesTab>
           _Averages(data: _data),
 
           if (orderedExams.isNotEmpty) ...[
-            _SectionWidget(
-              label: context.l10n.latestGrades,
-              icon: HugeIconsSolid.note,
-            ),
-
+            SliverTextIcon(label: context.l10n.latestGrades),
             _LatestGrades(exams: orderedExams),
           ],
 
@@ -243,40 +241,6 @@ class _GradesTabState extends State<GradesTab>
     );
 
     _data = await session.access(LatestGradesPageAccessor(period: period));
-  }
-}
-
-class _SectionWidget extends StatelessWidget {
-  final String label;
-  final IconData icon;
-
-  const _SectionWidget({required this.label, required this.icon});
-
-  @override
-  Widget build(BuildContext context) {
-    return SliverToBoxAdapter(
-      child: Padding(
-        padding: const .only(left: 12, top: 20),
-
-        child: Row(
-          spacing: 6,
-
-          children: [
-            Icon(icon, size: 22, color: context.c.outline),
-
-            Text(
-              label,
-
-              style: TextStyle(
-                fontSize: 15,
-                fontWeight: .bold,
-                color: context.c.outline,
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
   }
 }
 

@@ -166,6 +166,9 @@ class AppLocalizationsFr extends AppLocalizations {
   String get coefficient => 'Coefficient';
 
   @override
+  String get detailsAllExams => 'Toutes les évaluations';
+
+  @override
   String get gradeCount => 'Nombre de notes';
 
   @override

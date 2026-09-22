@@ -312,6 +312,12 @@ abstract class AppLocalizations {
   /// **'Coefficient'**
   String get coefficient;
 
+  /// No description provided for @detailsAllExams.
+  ///
+  /// In fr, this message translates to:
+  /// **'Toutes les évaluations'**
+  String get detailsAllExams;
+
   /// No description provided for @gradeCount.
   ///
   /// In fr, this message translates to:
