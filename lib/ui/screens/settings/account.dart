@@ -1,7 +1,7 @@
 import 'package:antinote_app/ui/screens/auth/accounts.dart';
 import 'package:antinote_app/ui/utils/src/context.dart';
-import 'package:antinote_app/ui/widgets/customs/list.dart';
-import 'package:antinote_app/ui/widgets/customs/loading.dart';
+import 'package:antinote_app/ui/widgets/list.dart';
+import 'package:antinote_app/ui/widgets/loading.dart';
 import 'package:antinote_app/ui/widgets/text_icon.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';

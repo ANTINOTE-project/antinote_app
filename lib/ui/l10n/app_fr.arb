@@ -184,13 +184,13 @@
     }
   },
   "homeworkDifficulty": "Difficulté",
-  "homeworkState": "État",
   "homeworkRenderPronote": "À rendre en ligne",
   "homeworkRenderNone": "Rien à rendre",
   "homeworkRenderPaper": "À rendre en main propre",
   "homeworkRenderKiosque": "À rendre au kiosque",
   "homeworkRenderPronoteAudio": "Enregistrement audio à rendre en ligne",
   "noHomeworkForWeek": "Pas de travaux à faire pour cette semaine !",
+  "homeworkRenderLabel": "Restitution",
 
   "appSettings": "Paramètres de l'application",
   "goToAppSettings": "Naviguer vers les paramètres de l'application",

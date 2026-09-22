@@ -1,8 +1,8 @@
 import 'package:antinote_app/data/src/session/wrapper.dart';
 import 'package:antinote_app/ui/screens/auth/methods.dart';
 import 'package:antinote_app/ui/utils/src/context.dart';
-import 'package:antinote_app/ui/widgets/customs/app_bar.dart';
-import 'package:antinote_app/ui/widgets/customs/list.dart';
+import 'package:antinote_app/ui/widgets/app_bar.dart';
+import 'package:antinote_app/ui/widgets/list.dart';
 import 'package:hugeicons_pro/hugeicons.dart';
 import 'package:material_ui/material_ui.dart';
 

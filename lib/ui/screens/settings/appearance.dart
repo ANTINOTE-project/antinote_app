@@ -1,6 +1,6 @@
 import 'package:antinote_app/ui/screens/settings/screen.dart';
 import 'package:antinote_app/ui/utils/utils.dart';
-import 'package:antinote_app/ui/widgets/customs/list.dart';
+import 'package:antinote_app/ui/widgets/list.dart';
 import 'package:antinote_app/ui/widgets/pressable.dart';
 import 'package:antinote_app/ui/widgets/text_icon.dart';
 import 'package:hugeicons_pro/hugeicons.dart';

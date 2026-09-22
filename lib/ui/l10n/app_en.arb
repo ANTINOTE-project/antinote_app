@@ -184,13 +184,13 @@
     }
   },
   "homeworkDifficulty": "Difficulty",
-  "homeworkState": "State",
   "homeworkRenderPronote": "To be submitted online",
   "homeworkRenderNone": "Nothing to submit",
   "homeworkRenderPaper": "To be submitted by hand",
   "homeworkRenderKiosque": "To be submitted at the kiosk",
   "homeworkRenderPronoteAudio": "Audio recording to be submitted online",
   "noHomeworkForWeek": "No homework for this week!",
+  "homeworkRenderLabel": "Submission",
 
   "appSettings": "App settings",
   "goToAppSettings": "Go to app settings",

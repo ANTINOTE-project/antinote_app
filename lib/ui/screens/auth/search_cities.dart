@@ -5,10 +5,10 @@ import 'package:antinote_app/data/src/accounts/place.dart';
 import 'package:antinote_app/data/src/session/wrapper.dart';
 import 'package:antinote_app/ui/screens/auth/search_schools.dart';
 import 'package:antinote_app/ui/utils/utils.dart';
+import 'package:antinote_app/ui/widgets/app_bar.dart';
 import 'package:antinote_app/ui/widgets/bottom_padding.dart';
-import 'package:antinote_app/ui/widgets/customs/app_bar.dart';
-import 'package:antinote_app/ui/widgets/customs/field.dart';
-import 'package:antinote_app/ui/widgets/customs/list.dart';
+import 'package:antinote_app/ui/widgets/field.dart';
+import 'package:antinote_app/ui/widgets/list.dart';
 import 'package:hugeicons_pro/hugeicons.dart';
 import 'package:material_ui/material_ui.dart';
 

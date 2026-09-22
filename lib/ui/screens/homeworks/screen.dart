@@ -2,12 +2,12 @@ import 'dart:async';
 import 'dart:math';
 
 import 'package:antinote_api/antinote_api.dart';
-import 'package:antinote_app/ui/screens/homeworks/detail.dart';
+import 'package:antinote_app/ui/screens/homeworks/details.dart';
 import 'package:antinote_app/ui/screens/shell/tab.dart';
 import 'package:antinote_app/ui/utils/utils.dart';
+import 'package:antinote_app/ui/widgets/app_bar.dart';
 import 'package:antinote_app/ui/widgets/bottom_padding.dart';
-import 'package:antinote_app/ui/widgets/customs/app_bar.dart';
-import 'package:antinote_app/ui/widgets/customs/loading.dart';
+import 'package:antinote_app/ui/widgets/loading.dart';
 import 'package:antinote_app/ui/widgets/pressable.dart';
 import 'package:antinote_app/ui/widgets/remote_html.dart';
 import 'package:collection/collection.dart';
@@ -459,7 +459,7 @@ class _HomeworkCard extends StatelessWidget {
 
           MaterialPageRoute(
             builder: (context) {
-              return HomeworkDetailScreen(
+              return HomeworkDetailsScreen(
                 homework: homework,
                 onHomeworkChange: (_) => onReturn(),
               );

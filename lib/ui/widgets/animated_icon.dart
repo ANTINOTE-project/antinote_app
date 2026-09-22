@@ -1,8 +1,8 @@
 import 'package:antinote_app/ui/utils/utils.dart';
-import 'package:material_ui/material_ui.dart';
 import 'package:flutter/services.dart';
+import 'package:material_ui/material_ui.dart';
 
-class IconWidget extends StatefulWidget {
+class AnimatedIconWidget extends StatefulWidget {
   final IconData iconOn;
   final IconData iconOff;
 
@@ -13,7 +13,7 @@ class IconWidget extends StatefulWidget {
 
   final double size;
 
-  const IconWidget({
+  const AnimatedIconWidget({
     super.key,
 
     required this.iconOn,
@@ -28,10 +28,10 @@ class IconWidget extends StatefulWidget {
   });
 
   @override
-  State<IconWidget> createState() => _IconWidgetState();
+  State<AnimatedIconWidget> createState() => _AnimatedIconWidgetState();
 }
 
-class _IconWidgetState extends State<IconWidget>
+class _AnimatedIconWidgetState extends State<AnimatedIconWidget>
     with SingleTickerProviderStateMixin {
   late AnimationController _controller;
   late bool _showOn;
@@ -47,7 +47,7 @@ class _IconWidgetState extends State<IconWidget>
   }
 
   @override
-  void didUpdateWidget(IconWidget oldWidget) {
+  void didUpdateWidget(AnimatedIconWidget oldWidget) {
     super.didUpdateWidget(oldWidget);
     if (oldWidget.value != widget.value) _triggerAnimation();
   }

@@ -3,10 +3,10 @@ import 'dart:math';
 import 'package:antinote_api/antinote_api.dart';
 import 'package:antinote_app/ui/screens/auth/cas_modal.dart';
 import 'package:antinote_app/ui/utils/utils.dart';
+import 'package:antinote_app/ui/widgets/app_bar.dart';
 import 'package:antinote_app/ui/widgets/bottom_padding.dart';
-import 'package:antinote_app/ui/widgets/customs/app_bar.dart';
-import 'package:antinote_app/ui/widgets/customs/field.dart';
-import 'package:antinote_app/ui/widgets/customs/list.dart';
+import 'package:antinote_app/ui/widgets/field.dart';
+import 'package:antinote_app/ui/widgets/list.dart';
 import 'package:hugeicons_pro/hugeicons.dart';
 import 'package:material_ui/material_ui.dart';
 

@@ -642,12 +642,6 @@ abstract class AppLocalizations {
   /// **'Difficulté'**
   String get homeworkDifficulty;
 
-  /// No description provided for @homeworkState.
-  ///
-  /// In fr, this message translates to:
-  /// **'État'**
-  String get homeworkState;
-
   /// No description provided for @homeworkRenderPronote.
   ///
   /// In fr, this message translates to:
@@ -683,6 +677,12 @@ abstract class AppLocalizations {
   /// In fr, this message translates to:
   /// **'Pas de travaux à faire pour cette semaine !'**
   String get noHomeworkForWeek;
+
+  /// No description provided for @homeworkRenderLabel.
+  ///
+  /// In fr, this message translates to:
+  /// **'Restitution'**
+  String get homeworkRenderLabel;
 
   /// No description provided for @appSettings.
   ///

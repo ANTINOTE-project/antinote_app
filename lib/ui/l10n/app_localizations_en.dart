@@ -369,9 +369,6 @@ class AppLocalizationsEn extends AppLocalizations {
   String get homeworkDifficulty => 'Difficulty';
 
   @override
-  String get homeworkState => 'State';
-
-  @override
   String get homeworkRenderPronote => 'To be submitted online';
 
   @override
@@ -389,6 +386,9 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get noHomeworkForWeek => 'No homework for this week!';
+
+  @override
+  String get homeworkRenderLabel => 'Submission';
 
   @override
   String get appSettings => 'App settings';

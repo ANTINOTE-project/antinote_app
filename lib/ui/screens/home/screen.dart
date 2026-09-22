@@ -4,7 +4,7 @@ import 'package:antinote_app/data/src/home_page/manager.dart';
 import 'package:antinote_app/ui/screens/settings/screen.dart';
 import 'package:antinote_app/ui/screens/shell/tab.dart';
 import 'package:antinote_app/ui/utils/utils.dart';
-import 'package:antinote_app/ui/widgets/customs/app_bar.dart';
+import 'package:antinote_app/ui/widgets/app_bar.dart';
 import 'package:hugeicons_pro/hugeicons.dart';
 import 'package:material_ui/material_ui.dart';
 

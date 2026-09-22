@@ -1,7 +1,7 @@
 import 'package:antinote_app/ui/l10n/app_localizations.dart';
 import 'package:antinote_app/ui/utils/utils.dart';
+import 'package:antinote_app/ui/widgets/app_bar.dart';
 import 'package:antinote_app/ui/widgets/bottom_padding.dart';
-import 'package:antinote_app/ui/widgets/customs/app_bar.dart';
 import 'package:material_ui/material_ui.dart';
 
 import 'account.dart';
