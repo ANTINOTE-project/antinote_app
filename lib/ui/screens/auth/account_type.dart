@@ -20,6 +20,8 @@ class AccountTypeLoginScreen extends StatelessWidget {
       ),
 
       body: CustomScrollView(
+        physics: const ClampingScrollPhysics(),
+
         slivers: [
           SliverPadding(
             padding: const .symmetric(horizontal: 12),

@@ -344,6 +344,12 @@
   "loginMethodsTitle": "How would you like to log in?",
   "loginMethodsSubtitle": "Choose whichever method suits you best",
 
+  "loginAlternativeLabel": "Other methods",
+  "loginDemoLabel": "Demo",
+
+  "loginGeolocation": "Use your location",
+  "loginGeolocationSubtitle": "We'll suggest nearby schools",
+
   "loginCity": "Find your city",
   "loginCitySubtitle": "We'll suggest nearby schools",
   "loginCityHint": "Search for your city",
@@ -370,7 +376,6 @@
   "loginButton": "Login",
   "activateCas": "Connect via your school portal",
 
-  "loginDemoText": "Demo",
   "loginDemo": "Demo account",
   "loginDemoSubtitle": "Login to a test account to explore the app and its features",
 

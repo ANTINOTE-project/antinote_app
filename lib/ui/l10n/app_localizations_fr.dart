@@ -652,6 +652,19 @@ class AppLocalizationsFr extends AppLocalizations {
       'Choisis la méthode la plus simple pour toi';
 
   @override
+  String get loginAlternativeLabel => 'Autres méthodes';
+
+  @override
+  String get loginDemoLabel => 'Démo';
+
+  @override
+  String get loginGeolocation => 'Utilise ta position';
+
+  @override
+  String get loginGeolocationSubtitle =>
+      'On te proposera les établissements à proximité';
+
+  @override
   String get loginCity => 'Trouve ta ville';
 
   @override
@@ -713,9 +726,6 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get activateCas => 'Me connecter via ENT';
-
-  @override
-  String get loginDemoText => 'Démo';
 
   @override
   String get loginDemo => 'Compte de démonstration';

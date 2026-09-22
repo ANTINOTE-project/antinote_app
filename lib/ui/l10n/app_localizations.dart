@@ -1110,6 +1110,30 @@ abstract class AppLocalizations {
   /// **'Choisis la méthode la plus simple pour toi'**
   String get loginMethodsSubtitle;
 
+  /// No description provided for @loginAlternativeLabel.
+  ///
+  /// In fr, this message translates to:
+  /// **'Autres méthodes'**
+  String get loginAlternativeLabel;
+
+  /// No description provided for @loginDemoLabel.
+  ///
+  /// In fr, this message translates to:
+  /// **'Démo'**
+  String get loginDemoLabel;
+
+  /// No description provided for @loginGeolocation.
+  ///
+  /// In fr, this message translates to:
+  /// **'Utilise ta position'**
+  String get loginGeolocation;
+
+  /// No description provided for @loginGeolocationSubtitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'On te proposera les établissements à proximité'**
+  String get loginGeolocationSubtitle;
+
   /// No description provided for @loginCity.
   ///
   /// In fr, this message translates to:
@@ -1223,12 +1247,6 @@ abstract class AppLocalizations {
   /// In fr, this message translates to:
   /// **'Me connecter via ENT'**
   String get activateCas;
-
-  /// No description provided for @loginDemoText.
-  ///
-  /// In fr, this message translates to:
-  /// **'Démo'**
-  String get loginDemoText;
 
   /// No description provided for @loginDemo.
   ///

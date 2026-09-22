@@ -647,6 +647,18 @@ class AppLocalizationsEn extends AppLocalizations {
   String get loginMethodsSubtitle => 'Choose whichever method suits you best';
 
   @override
+  String get loginAlternativeLabel => 'Other methods';
+
+  @override
+  String get loginDemoLabel => 'Demo';
+
+  @override
+  String get loginGeolocation => 'Use your location';
+
+  @override
+  String get loginGeolocationSubtitle => 'We\'ll suggest nearby schools';
+
+  @override
   String get loginCity => 'Find your city';
 
   @override
@@ -705,9 +717,6 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get activateCas => 'Connect via your school portal';
-
-  @override
-  String get loginDemoText => 'Demo';
 
   @override
   String get loginDemo => 'Demo account';

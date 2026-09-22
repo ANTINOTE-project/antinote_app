@@ -14,7 +14,7 @@ class LoadingWidget extends StatelessWidget {
         height: size,
 
         child: CircularProgressIndicator(
-          strokeWidth: size / 7,
+          strokeWidth: size / 6,
           strokeCap: .round,
           value: progress,
         ),

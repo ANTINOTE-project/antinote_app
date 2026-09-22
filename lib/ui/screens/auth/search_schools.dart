@@ -95,7 +95,7 @@ class _SearchSchoolsScreenState extends State<SearchSchoolsScreen> {
 
           children: [
             Padding(
-              padding: const .only(bottom: 12),
+              padding: const .only(bottom: 8),
 
               child: FieldWidget(
                 controller: _controller,

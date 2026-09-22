@@ -344,6 +344,12 @@
   "loginMethodsTitle": "Comment te connecter ?",
   "loginMethodsSubtitle": "Choisis la méthode la plus simple pour toi",
 
+  "loginAlternativeLabel": "Autres méthodes",
+  "loginDemoLabel": "Démo",
+
+  "loginGeolocation": "Utilise ta position",
+  "loginGeolocationSubtitle": "On te proposera les établissements à proximité",
+
   "loginCity": "Trouve ta ville",
   "loginCitySubtitle": "On te proposera les établissements à proximité",
   "loginCityHint": "Recherche ta ville",
@@ -370,7 +376,6 @@
   "loginButton": "Me connecter",
   "activateCas": "Me connecter via ENT",
 
-  "loginDemoText": "Démo",
   "loginDemo": "Compte de démonstration",
   "loginDemoSubtitle": "Connecte toi à un compte de test pour explorer l'application et ses fonctionnalités",
 
