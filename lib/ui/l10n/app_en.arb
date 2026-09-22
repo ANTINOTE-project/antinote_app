@@ -368,6 +368,7 @@
 
   "loginToAccount": "Connect to your account",
   "loginWebviewSubtitle": "Follow the instructions on your school's page",
+  "loginPasswordSubtitle": "Enter your username and password",
 
   "loginConfirmTitle": "Last step",
   "loginConfirmSubtitle": "Check the information before logging in",

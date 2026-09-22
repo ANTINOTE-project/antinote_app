@@ -704,6 +704,9 @@ class AppLocalizationsEn extends AppLocalizations {
       'Follow the instructions on your school\'s page';
 
   @override
+  String get loginPasswordSubtitle => 'Enter your username and password';
+
+  @override
   String get loginConfirmTitle => 'Last step';
 
   @override

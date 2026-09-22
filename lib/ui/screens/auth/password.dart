@@ -33,7 +33,51 @@ class _PasswordLoginScreenState extends State<PasswordLoginScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBarWidget(title: Text(context.l10n.loginToAccount)),
+      appBar: AppBarWidget(
+        title: Text(context.l10n.loginToAccount),
+        subtitle: Text(context.l10n.loginPasswordSubtitle),
+      ),
+
+      floatingActionButtonAnimator: .noAnimation,
+      floatingActionButtonLocation: .centerFloat,
+      floatingActionButton: Padding(
+        padding: const .symmetric(horizontal: 12),
+
+        child: ButtonWidget(
+          onPressed: () async {
+            final credentials = PasswordCredentials(
+              username: _usernameController.text.trim(),
+              password: _passwordController.text.trim(),
+
+              workspace: widget.workspace,
+              baseUrl: widget.baseUrl,
+              cookies: [],
+
+              deviceUuid: Credentials.generateDeviceUuid(),
+            );
+
+            try {
+              final result = await credentials.login(
+                options: context.s.networking.sessionOptions,
+              );
+
+              if (context.mounted) {
+                TextInput.finishAutofillContext();
+
+                Navigator.pop(
+                  context,
+                  SessionWrapper.register(result, credentials),
+                );
+              }
+            } catch (e, st) {
+              logger.severe('Could not login using password', e, st);
+              loginJustFailed = true;
+            }
+          },
+
+          label: context.l10n.loginButton,
+        ),
+      ),
 
       body: Center(
         child: SingleChildScrollView(
@@ -41,7 +85,7 @@ class _PasswordLoginScreenState extends State<PasswordLoginScreen> {
 
           child: AutofillGroup(
             child: Column(
-              spacing: 8,
+              spacing: 6,
 
               children: [
                 FieldWidget(
@@ -82,43 +126,6 @@ class _PasswordLoginScreenState extends State<PasswordLoginScreen> {
                   autoCorrect: false,
                   inputAction: .done,
                   obscureText: !_showPassword,
-                ),
-
-                const SizedBox(height: 4),
-
-                ButtonWidget(
-                  onPressed: () async {
-                    final credentials = PasswordCredentials(
-                      username: _usernameController.text.trim(),
-                      password: _passwordController.text.trim(),
-
-                      workspace: widget.workspace,
-                      baseUrl: widget.baseUrl,
-                      cookies: [],
-
-                      deviceUuid: Credentials.generateDeviceUuid(),
-                    );
-
-                    try {
-                      final result = await credentials.login(
-                        options: context.s.networking.sessionOptions,
-                      );
-
-                      if (context.mounted) {
-                        TextInput.finishAutofillContext();
-
-                        Navigator.pop(
-                          context,
-                          SessionWrapper.register(result, credentials),
-                        );
-                      }
-                    } catch (e, st) {
-                      logger.severe('Could not login using password', e, st);
-                      loginJustFailed = true;
-                    }
-                  },
-
-                  label: context.l10n.loginButton,
                 ),
               ],
             ),

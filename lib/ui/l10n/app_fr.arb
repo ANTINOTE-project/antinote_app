@@ -368,6 +368,7 @@
 
   "loginToAccount": "Connecte toi à ton compte",
   "loginWebviewSubtitle": "Suis les instructions sur la page de ton établissement",
+  "loginPasswordSubtitle": "Renseigne ton identifiant et ton mot de passe",
 
   "loginConfirmTitle": "Dernière étape",
   "loginConfirmSubtitle": "Vérifie les informations avant de te connecter",

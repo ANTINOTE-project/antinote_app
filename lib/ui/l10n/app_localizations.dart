@@ -1218,6 +1218,12 @@ abstract class AppLocalizations {
   /// **'Suis les instructions sur la page de ton établissement'**
   String get loginWebviewSubtitle;
 
+  /// No description provided for @loginPasswordSubtitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Renseigne ton identifiant et ton mot de passe'**
+  String get loginPasswordSubtitle;
+
   /// No description provided for @loginConfirmTitle.
   ///
   /// In fr, this message translates to:

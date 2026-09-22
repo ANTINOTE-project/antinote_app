@@ -712,6 +712,10 @@ class AppLocalizationsFr extends AppLocalizations {
       'Suis les instructions sur la page de ton établissement';
 
   @override
+  String get loginPasswordSubtitle =>
+      'Renseigne ton identifiant et ton mot de passe';
+
+  @override
   String get loginConfirmTitle => 'Dernière étape';
 
   @override
