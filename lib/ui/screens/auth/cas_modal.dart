@@ -103,59 +103,57 @@ class _CasModalState extends State<_CasModal> {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: .only(
-        bottom: MediaQuery.viewInsetsOf(context).bottom + 16,
-        right: 12,
-        left: 12,
-      ),
+    return SafeArea(
+      child: Padding(
+        padding: const .only(bottom: 16, right: 12, left: 12),
 
-      child: Column(
-        crossAxisAlignment: .start,
-        mainAxisSize: .min,
-        spacing: 8,
+        child: Column(
+          crossAxisAlignment: .start,
+          mainAxisSize: .min,
+          spacing: 8,
 
-        children: [
-          Padding(
-            padding: const .only(left: 8, right: 8, bottom: 16),
+          children: [
+            Padding(
+              padding: const .only(left: 8, right: 8, bottom: 16),
 
-            child: Column(
-              crossAxisAlignment: .start,
+              child: Column(
+                crossAxisAlignment: .start,
 
-              children: [
-                Text(
-                  context.l10n.loginConfirmTitle,
-                  style: context.tt.titleLarge?.copyWith(fontWeight: .bold),
-                ),
-
-                Text(
-                  context.l10n.loginConfirmSubtitle,
-                  style: context.tt.bodyLarge?.copyWith(
-                    color: context.c.outline,
+                children: [
+                  Text(
+                    context.l10n.loginConfirmTitle,
+                    style: context.tt.titleLarge?.copyWith(fontWeight: .bold),
                   ),
-                ),
-              ],
+
+                  Text(
+                    context.l10n.loginConfirmSubtitle,
+                    style: context.tt.bodyLarge?.copyWith(
+                      color: context.c.outline,
+                    ),
+                  ),
+                ],
+              ),
             ),
-          ),
 
-          TileWidget(
-            borderRadius: const .all(ListWidget.radius),
-            title: Text(context.l10n.activateCas),
-            switchValue: _casLoginActive,
-            onSwitchChanged: (value) => setState(() {
-              _casLoginActive = value;
-            }),
-          ),
+            TileWidget(
+              borderRadius: const .all(ListWidget.radius),
+              title: Text(context.l10n.activateCas),
+              switchValue: _casLoginActive,
+              onSwitchChanged: (value) => setState(() {
+                _casLoginActive = value;
+              }),
+            ),
 
-          ButtonWidget(
-            onPressed: _onContinue,
-            label: context.l10n.loginButton,
-            icon: switch (widget.accountType) {
-              .student => HugeIconsSolid.student,
-              .parent => HugeIconsSolid.manWoman,
-            },
-          ),
-        ],
+            ButtonWidget(
+              onPressed: _onContinue,
+              label: context.l10n.loginButton,
+              icon: switch (widget.accountType) {
+                .student => HugeIconsSolid.student,
+                .parent => HugeIconsSolid.manWoman,
+              },
+            ),
+          ],
+        ),
       ),
     );
   }
