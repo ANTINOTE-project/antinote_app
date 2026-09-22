@@ -135,6 +135,8 @@ class _UrlLoginScreenState extends State<UrlLoginScreen> {
 
             Expanded(
               child: CustomScrollView(
+                physics: const ClampingScrollPhysics(),
+
                 slivers: [
                   FutureBuilder(
                     future: lastApplicableParameters?.future,
