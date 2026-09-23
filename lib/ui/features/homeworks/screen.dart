@@ -1,0 +1,787 @@
+import 'dart:async';
+import 'dart:math';
+
+import 'package:antinote_api/antinote_api.dart';
+import 'package:antinote_app/ui/features/homeworks/details.dart';
+import 'package:antinote_app/ui/features/shell/tab.dart';
+import 'package:antinote_app/ui/utils/utils.dart';
+import 'package:antinote_app/ui/widgets/app_bar.dart';
+import 'package:antinote_app/ui/widgets/bottom_padding.dart';
+import 'package:antinote_app/ui/widgets/loading.dart';
+import 'package:antinote_app/ui/widgets/pressable.dart';
+import 'package:antinote_app/ui/widgets/remote_html.dart';
+import 'package:collection/collection.dart';
+import 'package:flutter/services.dart';
+import 'package:hugeicons_pro/hugeicons.dart';
+import 'package:material_ui/material_ui.dart';
+
+typedef Homeworks = Map<DateTime, ValueNotifier<List<Homework>?>>;
+
+class HomeworksScreen extends StatefulWidget {
+  const HomeworksScreen({super.key});
+
+  @override
+  State<HomeworksScreen> createState() => _HomeworksScreenState();
+}
+
+class _HomeworksScreenState extends State<HomeworksScreen>
+    with PageMixin<HomeworksScreen>, TabMixin<HomeworksScreen> {
+  late Map<int, GlobalKey<SliverAnimatedListState>> _weeks;
+  late SpecificInstanceParameters _data;
+  final Homeworks _homeworks = {};
+
+  PageController? _pageController;
+  int? _lastPage;
+
+  void _onPageDrag() {
+    final curPage = _pageController?.page?.round();
+    if (curPage == null) return;
+
+    _lastPage ??= curPage;
+
+    if (_lastPage != curPage) {
+      _lastPage = curPage;
+
+      reload();
+    }
+  }
+
+  Future<void> _updateHomeworks(int weekIndex, {RemoteSession? session}) async {
+    Future<void> update(RemoteSession session) async {
+      final weekStart = session.instance.firstMonday
+          .add(Duration(days: 7 * weekIndex))
+          .toDay();
+      final weekEnd = weekStart.add(const Duration(days: 6)).toDay();
+      final days = DateRange(start: weekStart, end: weekEnd).listDays();
+
+      final week = session.instance.getWeekNumberForDate(
+        weekStart,
+        forceRelativeToSchoolYear: true,
+      );
+
+      for (final day in days) {
+        _homeworks.putIfAbsent(day, () => ValueNotifier([]));
+      }
+
+      final pageData = await session.access(
+        NotebookPageAccessor(section: .homework, weeks: {week}),
+      );
+
+      final triaged = {for (final day in days) day: <Homework>[]};
+
+      for (final homework in pageData.homeworkSet?.homeworks ?? <Homework>[]) {
+        triaged[homework.deadlineDate]!.add(homework);
+      }
+
+      for (final day in triaged.keys.sorted((a, b) => b.compareTo(a))) {
+        final newHomeworks = triaged[day]!.toList(growable: false);
+        final oldHomeworks = _homeworks[day]?.value;
+        _homeworks[day]!.value = newHomeworks;
+
+        if (newHomeworks.isEmpty && (oldHomeworks?.isNotEmpty ?? true)) {
+          _weeks[weekIndex]?.currentState?.removeItem(days.indexOf(day), (
+            context,
+            animation,
+          ) {
+            return AnimatedScale(
+              alignment: .topCenter,
+              scale: animation.value,
+              duration: const Duration(seconds: 4),
+              curve: Curves.fastOutSlowIn,
+              child: _Day(day: day, homeworks: const [], onReturn: () {}),
+            );
+          });
+        }
+      }
+    }
+
+    if (session != null) {
+      await update(session);
+    } else {
+      await context.ar.runTask(
+        context: context,
+        callback: update,
+        debugLabel: 'Fetch new homeworks',
+      );
+    }
+  }
+
+  @override
+  void dispose() {
+    _pageController?.removeListener(_onPageDrag);
+    _pageController?.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget buildLoaded(
+    BuildContext context,
+    RefreshIndicatorBuilder buildRefreshIndicator,
+    bool partial,
+  ) {
+    return buildRefreshIndicator(
+      child: PageView.builder(
+        itemCount: _weeks.length,
+        controller: _pageController,
+
+        itemBuilder: (context, index) {
+          final weekStart = _data.firstMonday
+              .add(Duration(days: 7 * index))
+              .toDay();
+          final weekNumber = _data.getWeekNumberForDate(
+            weekStart,
+            forceRelativeToSchoolYear: true,
+          );
+
+          final rawWeekEnd = weekStart.add(const Duration(days: 6));
+          final weekEnd = DateTime.fromMillisecondsSinceEpoch(
+            min(
+              _data.lastDate.millisecondsSinceEpoch,
+              rawWeekEnd.millisecondsSinceEpoch,
+            ),
+            isUtc: true,
+          ).toDay();
+
+          final days = DateRange(start: weekStart, end: weekEnd).listDays();
+
+          final loaded = days.every(
+            (element) => _homeworks[element]?.value != null,
+          );
+
+          final displayableDays = days
+              .where(
+                (element) =>
+                    _homeworks[element]!.value?.isNotEmpty ?? true, // TODO: Fix
+              )
+              .toList(growable: false);
+
+          final Widget child;
+
+          if (!loaded) {
+            child = const Center(key: ValueKey(false), child: LoadingWidget());
+          } else if (displayableDays.isEmpty) {
+            child = Center(
+              key: const ValueKey(true),
+              child: Text(context.l10n.noHomeworkForWeek),
+            );
+          } else {
+            child = CustomScrollView(
+              slivers: [
+                SliverPadding(
+                  padding: const .symmetric(horizontal: 4),
+
+                  sliver: SliverList.builder(
+                    itemCount: displayableDays.length,
+
+                    itemBuilder: (context, index) {
+                      final day = displayableDays[index];
+                      final value = _homeworks[day]!.value;
+
+                      if (value == null) {
+                        return const SizedBox.shrink();
+                      }
+
+                      return _Day(
+                        day: day,
+                        homeworks: value,
+                        onReturn: () {
+                          reload(fromRefreshIndicator: true);
+                        },
+                      );
+                    },
+                  ),
+                ),
+
+                const BottomPadding(padding: 20),
+              ],
+            );
+          }
+
+          return Scaffold(
+            appBar: AppBarWidget(
+              title: _WeekPicker(
+                weekNumber: weekNumber,
+                weekCount: _weeks.length,
+                curWeekIndex: index,
+              ),
+            ),
+
+            body: RefreshIndicator(
+              onRefresh: () => reload(fromRefreshIndicator: true),
+
+              child: AnimatedSwitcher(
+                switchInCurve: Curves.fastOutSlowIn,
+                duration: const Duration(milliseconds: 300),
+                child: child,
+              ),
+            ),
+          );
+        },
+      ),
+    );
+  }
+
+  @override
+  Future<void> load(RemoteSession session) async {
+    _data = session.instance;
+
+    final weekCount =
+        ((session.instance.lastDate.millisecondsSinceEpoch -
+                session.instance.firstMonday.millisecondsSinceEpoch) ~/
+            (Duration.millisecondsPerSecond *
+                Duration.secondsPerMinute *
+                Duration.minutesPerHour *
+                Duration.hoursPerDay *
+                7)) +
+        1;
+
+    if (!loaded) {
+      _weeks = {
+        for (int weekIndex = 0; weekIndex < weekCount; weekIndex++)
+          weekIndex: GlobalKey(),
+      };
+    }
+
+    final int currentWeekIndex;
+
+    if (_pageController == null ||
+        !_pageController!.hasClients ||
+        _pageController?.page == null) {
+      final now =
+          session.instance.demoDateTime ??
+          session.instance.findBusinessDay(
+            DateTime.now().toDay(true),
+            const .new(days: 1),
+          );
+      final diffWeeks =
+          ((now.millisecondsSinceEpoch -
+                  session.instance.firstMonday.millisecondsSinceEpoch) ~/
+              (Duration.millisecondsPerSecond *
+                  Duration.secondsPerMinute *
+                  Duration.minutesPerHour *
+                  Duration.hoursPerDay)) ~/
+          7;
+      currentWeekIndex = diffWeeks.clamp(0, weekCount - 1);
+    } else {
+      currentWeekIndex = _pageController!.page!.round();
+    }
+
+    if (_pageController == null) {
+      for (final day in DateRange(
+        start: session.instance.firstDate.toDay(),
+        end: session.instance.lastDate.toDay(),
+      ).listDays()) {
+        _homeworks[day] = ValueNotifier(null);
+      }
+
+      _pageController = PageController(initialPage: currentWeekIndex);
+      _pageController?.addListener(_onPageDrag);
+    }
+
+    await _updateHomeworks(currentWeekIndex, session: session);
+  }
+}
+
+class _Day extends StatefulWidget {
+  final DateTime day;
+  final List<Homework> homeworks;
+  final VoidCallback onReturn;
+
+  const _Day({
+    required this.day,
+    required this.homeworks,
+    required this.onReturn,
+  });
+
+  @override
+  State<_Day> createState() => _DayState();
+}
+
+class _DayState extends State<_Day> {
+  final ExpansibleController controller = ExpansibleController();
+
+  bool get needToDisplay =>
+      !DateTime.now().copyWith(isUtc: true).toDay().isAfter(widget.day) ||
+      (widget.homeworks.any((element) => !element.isDone));
+
+  double get progress =>
+      widget.homeworks.where((element) => element.isDone).length /
+      widget.homeworks.length;
+
+  void _displayIfNeeded() {
+    if (needToDisplay) {
+      controller.expand();
+    }
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _displayIfNeeded();
+  }
+
+  @override
+  void didUpdateWidget(covariant _Day oldWidget) {
+    super.didUpdateWidget(oldWidget);
+
+    if (oldWidget.homeworks != widget.homeworks) {
+      _displayIfNeeded();
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Expansible(
+      controller: controller,
+
+      headerBuilder: (context, animation) {
+        return Padding(
+          padding: const .only(left: 12, right: 8, top: 6, bottom: 8),
+
+          child: Pressable(
+            onPressed: controller.toggle,
+            hasVisuals: false,
+
+            child: Row(
+              children: [
+                Expanded(
+                  child: TweenAnimationBuilder<double>(
+                    tween: Tween(begin: 0, end: progress),
+                    duration: const Duration(milliseconds: 400),
+                    curve: Curves.easeOutCubic,
+
+                    builder: (context, value, _) {
+                      final color = Color.lerp(
+                        context.c.outline,
+                        context.c.primary,
+                        value,
+                      );
+
+                      return Row(
+                        children: [
+                          SizedBox(
+                            height: 18,
+                            width: 18,
+
+                            child: CircularProgressIndicator(
+                              color: color,
+                              backgroundColor: context.c.outlineVariant,
+                              value: value,
+                              strokeWidth: 4,
+                              strokeCap: .round,
+                            ),
+                          ),
+
+                          const SizedBox(width: 12),
+
+                          Expanded(
+                            child: Text(
+                              widget.day.asRelativeDate(context),
+                              style: TextStyle(
+                                color: color,
+                                fontWeight: .bold,
+                                fontSize: 16,
+                              ),
+                            ),
+                          ),
+                        ],
+                      );
+                    },
+                  ),
+                ),
+
+                AnimatedSwitcher(
+                  duration: const Duration(milliseconds: 200),
+                  switchInCurve: Curves.easeOutExpo,
+                  switchOutCurve: Curves.easeIn,
+
+                  transitionBuilder: (child, anim) {
+                    return ScaleTransition(scale: anim, child: child);
+                  },
+
+                  layoutBuilder: (currentChild, previousChildren) {
+                    return Stack(
+                      alignment: .center,
+                      children: [...previousChildren, ?currentChild],
+                    );
+                  },
+
+                  child: Icon(
+                    animation.value > 0.5
+                        ? HugeIconsSolid.arrowUp01
+                        : HugeIconsSolid.arrowDown01,
+                    key: ValueKey(animation.value > 0.5),
+                    color: context.c.outline,
+                    size: 22,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+
+      bodyBuilder: (BuildContext context, Animation<double> animation) {
+        return Padding(
+          padding: const .fromLTRB(8, 0, 8, 16),
+
+          child: Column(
+            spacing: 6,
+
+            children: [
+              for (final homework in widget.homeworks)
+                _HomeworkCard(homework: homework, onReturn: widget.onReturn),
+            ],
+          ),
+        );
+      },
+    );
+  }
+}
+
+class _HomeworkCard extends StatelessWidget {
+  final Homework homework;
+  final VoidCallback onReturn;
+
+  const _HomeworkCard({required this.homework, required this.onReturn});
+
+  @override
+  Widget build(BuildContext context) {
+    final scheme = Utils.buildColorScheme(context, homework.backgroundColor);
+    final date = homework.deadlineDate.asLongNumericDate();
+
+    return Pressable(
+      borderRadius: .circular(22),
+
+      onPressed: () async {
+        await Navigator.push(
+          context,
+
+          MaterialPageRoute(
+            builder: (context) {
+              return HomeworkDetailsScreen(
+                homework: homework,
+                onHomeworkChange: (_) => onReturn(),
+              );
+            },
+          ),
+        );
+      },
+
+      child: Ink(
+        decoration: BoxDecoration(
+          borderRadius: .circular(22),
+          color: scheme.primaryContainer,
+        ),
+
+        child: Column(
+          crossAxisAlignment: .start,
+          spacing: 6,
+
+          children: [
+            Padding(
+              padding: const .symmetric(horizontal: 12, vertical: 8),
+
+              child: Column(
+                children: [
+                  Row(
+                    mainAxisAlignment: .spaceBetween,
+                    spacing: 10,
+
+                    children: [
+                      Expanded(
+                        child: Text(
+                          homework.subject.name ?? context.l10n.noSubject,
+
+                          overflow: .ellipsis,
+                          maxLines: 1,
+
+                          style: TextStyle(
+                            color: scheme.primary,
+                            fontWeight: .w800,
+                            fontSize: 21,
+                          ),
+                        ),
+                      ),
+
+                      Text(
+                        date,
+                        style: TextStyle(
+                          fontWeight: .bold,
+                          color: scheme.outline,
+                        ),
+                      ),
+                    ],
+                  ),
+
+                  RemoteHtml(
+                    rawHtml: homework.description,
+                    compact: true,
+                    maxLines: 3,
+
+                    style: TextStyle(
+                      color: scheme.onSurface,
+                      fontWeight: .w600,
+                      fontSize: 15,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+
+            Column(
+              children: [
+                Divider(
+                  height: 1,
+                  thickness: 1,
+                  indent: 16,
+                  endIndent: 16,
+                  color: scheme.inversePrimary,
+                ),
+
+                _MarkDoneButton(
+                  homework: homework,
+                  scheme: scheme,
+                  onReturn: onReturn,
+                ),
+              ],
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _WeekPicker extends StatefulWidget {
+  final int weekCount;
+  final int curWeekIndex;
+  final int weekNumber;
+
+  const _WeekPicker({
+    required this.weekCount,
+    required this.curWeekIndex,
+    required this.weekNumber,
+  });
+
+  @override
+  State<_WeekPicker> createState() => _WeekPickerState();
+}
+
+class _WeekPickerState extends State<_WeekPicker>
+    with SingleTickerProviderStateMixin {
+  @override
+  Widget build(BuildContext context) {
+    final canGoBack = widget.curWeekIndex > 0;
+    final canGoForward = widget.curWeekIndex < widget.weekCount - 1;
+
+    return Row(
+      mainAxisAlignment: .center,
+      spacing: 8,
+
+      children: [
+        _DotIndicator(active: canGoBack),
+
+        Text(
+          context.l10n.weekNumber(widget.weekNumber),
+          style: const TextStyle(fontWeight: .bold, fontSize: 18),
+        ),
+
+        _DotIndicator(active: canGoForward),
+      ],
+    );
+  }
+}
+
+class _DotIndicator extends StatelessWidget {
+  final bool active;
+
+  const _DotIndicator({required this.active});
+
+  @override
+  Widget build(BuildContext context) {
+    return AnimatedContainer(
+      duration: const Duration(milliseconds: 200),
+
+      width: 7,
+      height: 7,
+
+      decoration: BoxDecoration(
+        color: active ? context.c.onSurface : context.c.outlineVariant,
+        shape: .circle,
+      ),
+    );
+  }
+}
+
+class _MarkDoneButton extends StatefulWidget {
+  final Homework homework;
+  final ColorScheme scheme;
+  final VoidCallback onReturn;
+
+  const _MarkDoneButton({
+    required this.homework,
+    required this.scheme,
+    required this.onReturn,
+  });
+
+  @override
+  State<_MarkDoneButton> createState() => _MarkDoneButtonState();
+}
+
+class _MarkDoneButtonState extends State<_MarkDoneButton> {
+  bool _isLoading = false;
+  bool? _optimisticIsDone;
+
+  bool get _isDone => _optimisticIsDone ?? widget.homework.isDone;
+
+  Color get _color =>
+      _isDone ? widget.scheme.onPrimaryContainer : widget.scheme.outline;
+
+  @override
+  void didUpdateWidget(covariant _MarkDoneButton oldWidget) {
+    super.didUpdateWidget(oldWidget);
+
+    if (widget.homework.isDone == _optimisticIsDone) {
+      _optimisticIsDone = null;
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Pressable(
+      borderRadius: const .vertical(bottom: .circular(21)),
+
+      onPressed: _isLoading
+          ? null
+          : () async {
+              final target = !_isDone;
+
+              setState(() {
+                _isLoading = true;
+                _optimisticIsDone = target;
+              });
+
+              if (target) {
+                await HapticFeedback.lightImpact();
+              } else {
+                await HapticFeedback.selectionClick();
+              }
+
+              if (!context.mounted) return;
+
+              await context.ar.runTask(
+                context: context,
+
+                callback: (session) async {
+                  final cachedHomework = session.getCachedValue<Homework>(
+                    .HOMEWORK,
+                    widget.homework.visualId,
+                  );
+
+                  await session.access(
+                    ChangeHomeworkStateAccessor(
+                      homeworksToUpdate: {cachedHomework: target},
+                    ),
+                  );
+                },
+                debugLabel: 'Update state for homework',
+              );
+
+              if (mounted) setState(() => _isLoading = false);
+              widget.onReturn();
+            },
+
+      child: Padding(
+        padding: const .symmetric(horizontal: 12, vertical: 8),
+
+        child: Row(
+          spacing: 6,
+
+          children: [
+            SizedBox(
+              width: 21,
+              height: 21,
+
+              child: AnimatedSwitcher(
+                duration: const Duration(milliseconds: 200),
+                switchInCurve: Curves.easeOutExpo,
+                switchOutCurve: Curves.easeIn,
+
+                transitionBuilder: (child, anim) {
+                  return ScaleTransition(scale: anim, child: child);
+                },
+
+                child: _isLoading
+                    ? SizedBox(
+                        key: const ValueKey('loading'),
+                        width: 16,
+                        height: 16,
+
+                        child: CircularProgressIndicator(
+                          strokeWidth: 3,
+                          strokeCap: .round,
+                          color: _color,
+                        ),
+                      )
+                    : Icon(
+                        _isDone
+                            ? HugeIconsSolid.tick03
+                            : HugeIconsStroke.tick03,
+                        key: ValueKey(_isDone),
+                        color: _color,
+                        size: 21,
+                      ),
+              ),
+            ),
+
+            AnimatedSize(
+              duration: const Duration(milliseconds: 200),
+              curve: Curves.easeInOutCubic,
+
+              child: AnimatedSwitcher(
+                duration: const Duration(milliseconds: 200),
+                switchInCurve: Curves.easeOutCubic,
+                switchOutCurve: Curves.easeInCubic,
+
+                transitionBuilder: (child, animation) {
+                  return FadeTransition(
+                    opacity: animation,
+
+                    child: SlideTransition(
+                      position:
+                          Tween<Offset>(
+                            begin: const Offset(0.1, 0.0),
+                            end: Offset.zero,
+                          ).animate(
+                            CurvedAnimation(
+                              parent: animation,
+                              curve: Curves.easeOutCubic,
+                            ),
+                          ),
+
+                      child: child,
+                    ),
+                  );
+                },
+
+                child: Text(
+                  _isDone
+                      ? context.l10n.homeworkSetDone
+                      : context.l10n.homeworkSetNotDone,
+
+                  key: ValueKey(_isDone),
+                  style: TextStyle(
+                    color: _color,
+                    fontWeight: .w800,
+                    fontSize: 15.5,
+                  ),
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}

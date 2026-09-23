@@ -7,7 +7,7 @@ import 'package:antinote_app/data/src/home_page/widget/configuration.dart';
 import 'package:antinote_app/data/src/home_page/widget/parameters.dart';
 import 'package:antinote_app/data/src/home_page/widget/widget.dart';
 import 'package:antinote_app/data/src/state.dart';
-import 'package:antinote_app/ui/screens/timetable/events/block.dart';
+import 'package:antinote_app/ui/features/timetable/events/block.dart';
 import 'package:antinote_app/ui/utils/utils.dart';
 import 'package:collection/collection.dart';
 import 'package:flutter/foundation.dart';

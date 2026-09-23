@@ -1,9 +1,9 @@
 import 'package:antinote_api/antinote_api.dart';
-import 'package:antinote_app/ui/screens/communication/screen.dart';
-import 'package:antinote_app/ui/screens/grades/screen.dart';
-import 'package:antinote_app/ui/screens/home/screen.dart';
-import 'package:antinote_app/ui/screens/homeworks/screen.dart';
-import 'package:antinote_app/ui/screens/timetable/screen.dart';
+import 'package:antinote_app/ui/features/communication/screen.dart';
+import 'package:antinote_app/ui/features/grades/screen.dart';
+import 'package:antinote_app/ui/features/home/screen.dart';
+import 'package:antinote_app/ui/features/homeworks/screen.dart';
+import 'package:antinote_app/ui/features/timetable/screen.dart';
 import 'package:antinote_app/ui/utils/src/context.dart';
 import 'package:hugeicons_pro/hugeicons.dart';
 import 'package:material_ui/material_ui.dart';

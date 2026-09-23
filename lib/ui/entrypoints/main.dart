@@ -4,7 +4,7 @@ import 'package:antinote_app/data/src/accounts/registry.dart';
 import 'package:antinote_app/data/src/accounts/storage/widget.dart';
 import 'package:antinote_app/data/src/settings/registry.dart';
 import 'package:antinote_app/ui/app.dart';
-import 'package:antinote_app/ui/screens/shell/shell.dart';
+import 'package:antinote_app/ui/features/shell/shell.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:logging/logging.dart';

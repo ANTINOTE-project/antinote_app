@@ -1,6 +1,6 @@
 import 'package:antinote_api/antinote_api.dart';
 import 'package:antinote_app/data/src/utils/various.dart';
-import 'package:antinote_app/ui/screens/timetable/events/block.dart';
+import 'package:antinote_app/ui/features/timetable/events/block.dart';
 
 enum AppState(final int priority) {
   /// Any kind of break during classday (excluding pauses).
