@@ -37,11 +37,17 @@ class _CommunicationScreenState extends State<CommunicationScreen>
                 items: threads,
 
                 itemBuilder: (context, thread, borderRadius) {
+                  final subtitle = thread.category != null
+                      ? '${thread.category} — ${thread.authorName}'
+                      : thread.authorName;
+
                   return TileWidget(
                     borderRadius: borderRadius,
 
-                    title: Text(thread.title),
-                    subtitle: Text(thread.authorName),
+                    title: Text(
+                      thread.title == null ? subtitle : thread.title!,
+                    ),
+                    subtitle: thread.title == null ? null : Text(subtitle),
 
                     leading: Badge(
                       isLabelVisible: !thread.read,
@@ -201,11 +207,13 @@ class _CommunicationScreenState extends State<CommunicationScreen>
                 (collection) => collection.news.map(
                   (e) => InformationThreadPreview(
                     title: e.label,
+                    category: e.category?.label,
                     publishDate: e.creationTime,
                     commType: e.isPoll ? .poll : .news,
                     authorName: e.author,
                     visualId: e.visualId,
                     read: e.read,
+                    hasAttachment: e.previewData?.withAttachments ?? false,
                     mode: collection.mode,
                   ),
                 ),
@@ -227,11 +235,13 @@ class _CommunicationScreenState extends State<CommunicationScreen>
           return page.discussions.mapL(
             (e) => DiscussionThreadPreview(
               title: e.subject,
+              category: null,
               publishDate: e.parsedDateLabel,
               commType: .discussion,
               authorName: e.initiator ?? session.curResource.name,
               visualId: e.visualId,
               read: e.read,
+              hasAttachment: false,
             ),
           );
         }

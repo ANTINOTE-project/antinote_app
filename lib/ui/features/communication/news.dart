@@ -92,18 +92,22 @@ class _NewsScreenState extends State<NewsScreen>
                 spacing: 8,
 
                 children: [
-                  Padding(
-                    padding: const .only(left: 6),
+                  if (_news.label != null)
+                    Padding(
+                      padding: const .only(left: 6),
 
-                    child: Align(
-                      alignment: .centerLeft,
+                      child: Align(
+                        alignment: .centerLeft,
 
-                      child: Text(
-                        _news.label,
-                        style: const TextStyle(fontWeight: .w800, fontSize: 22),
+                        child: Text(
+                          _news.label!,
+                          style: const TextStyle(
+                            fontWeight: .w800,
+                            fontSize: 22,
+                          ),
+                        ),
                       ),
                     ),
-                  ),
 
                   TileWidget(
                     borderRadius: const .all(ListWidget.radius),
