@@ -336,16 +336,7 @@ class TileWidget extends StatelessWidget {
             if (trailing != null)
               trailing!
             else if (switchValue != null)
-              SizedBox(
-                height: 38,
-                child: FittedBox(
-                  fit: .fitHeight,
-                  child: Switch(
-                    value: switchValue!,
-                    onChanged: onSwitchChanged,
-                  ),
-                ),
-              ),
+              Switch(value: switchValue!, onChanged: onSwitchChanged),
           ],
         ),
       ),
