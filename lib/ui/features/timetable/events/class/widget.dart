@@ -65,12 +65,11 @@ class ClassWidget extends StatelessWidget {
           borderRadius: borderRadius,
         ),
 
-        padding: .symmetric(horizontal: 10, vertical: canceled ? 8 : 6),
+        padding: const .symmetric(horizontal: 10, vertical: 6),
         width: double.infinity,
 
         child: Column(
           crossAxisAlignment: .start,
-          spacing: canceled ? 3 : 0,
 
           children: [
             if (hasStatus)
@@ -117,21 +116,58 @@ class ClassWidget extends StatelessWidget {
 
             Column(
               crossAxisAlignment: .start,
-              spacing: canceled ? 0 : 2,
 
               children: [
-                Text(
-                  clazz.classTitle(context),
+                Builder(
+                  builder: (context) {
+                    final title = clazz.classTitle(context);
+                    final style = TextStyle(
+                      color: canceled ? scheme.outline : scheme.primary,
 
-                  overflow: .ellipsis,
-                  maxLines: 1,
+                      fontWeight: .w800,
+                      fontSize: 22,
+                      height: 1.2,
+                    );
 
-                  style: TextStyle(
-                    color: canceled ? scheme.outline : scheme.primary,
-                    fontWeight: canceled ? .bold : .w800,
-                    fontSize: canceled ? 21 : 22,
-                    height: canceled ? 1 : 1.2,
-                  ),
+                    if (!canceled) {
+                      return Text(
+                        title,
+                        overflow: .ellipsis,
+                        maxLines: 1,
+                        style: style,
+                      );
+                    }
+
+                    // Using foreground alone is janky on the sides.
+                    return Stack(
+                      children: [
+                        Text(
+                          title,
+
+                          overflow: .ellipsis,
+                          maxLines: 1,
+
+                          style: style.copyWith(
+                            foreground: Paint()
+                              ..style = .stroke
+                              ..strokeWidth = 2.5
+                              ..color = scheme.outline,
+                          ),
+                        ),
+
+                        Text(
+                          title,
+
+                          overflow: .ellipsis,
+                          maxLines: 1,
+
+                          style: style.copyWith(
+                            color: scheme.surfaceContainerLow,
+                          ),
+                        ),
+                      ],
+                    );
+                  },
                 ),
 
                 _ContentOverflowRow(

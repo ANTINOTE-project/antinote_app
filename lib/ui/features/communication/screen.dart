@@ -38,7 +38,7 @@ class _CommunicationScreenState extends State<CommunicationScreen>
 
                 itemBuilder: (context, thread, borderRadius) {
                   final subtitle = thread.category != null
-                      ? '${thread.category} — ${thread.authorName}'
+                      ? '${thread.category} - ${thread.authorName}'
                       : thread.authorName;
 
                   return TileWidget(
