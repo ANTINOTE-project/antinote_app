@@ -4,6 +4,7 @@ import 'package:antinote_app/ui/widgets/app_bar.dart';
 import 'package:antinote_app/ui/widgets/bottom_padding.dart';
 import 'package:antinote_app/ui/widgets/list.dart';
 import 'package:collection/collection.dart';
+import 'package:hugeicons_pro/hugeicons.dart';
 import 'package:material_ui/material_ui.dart';
 
 Future<void> showClassDetails(BuildContext context, Class defaultClass) async {
@@ -106,6 +107,9 @@ class _ClassDetailsBody extends StatelessWidget {
 
     final scheme = Utils.buildColorScheme(context, clazz.accentColor);
 
+    final hasStatus = clazz.status != null;
+    final canceled = clazz.canceled;
+
     return CustomScrollView(
       physics: const ClampingScrollPhysics(),
 
@@ -122,7 +126,32 @@ class _ClassDetailsBody extends StatelessWidget {
                   alignment: .topCenter,
 
                   child: Column(
+                    spacing: 12,
+
                     children: [
+                      if (hasStatus)
+                        TileWidget(
+                          borderRadius: const .all(ListWidget.radius),
+                          backgroundColor: canceled
+                              ? scheme.errorContainer
+                              : scheme.surfaceContainer,
+
+                          leading: Icon(
+                            canceled
+                                ? HugeIconsSolid.alertCircle
+                                : HugeIconsSolid.informationCircle,
+                            color: canceled ? scheme.error : scheme.secondary,
+                          ),
+
+                          title: Text(
+                            clazz.status!,
+                            style: TextStyle(
+                              color: canceled ? scheme.error : scheme.secondary,
+                              fontWeight: .w900,
+                            ),
+                          ),
+                        ),
+
                       ListWidget(
                         shrinkWrap: true,
                         isSliver: false,
@@ -162,14 +191,11 @@ class _ClassDetailsBody extends StatelessWidget {
                         },
                       ),
 
-                      Padding(
-                        padding: const .symmetric(vertical: 12),
-                        child: Text(
-                          '${clazz.startDate.asLongNumericDate()} ${clazz.startDate.asNumericTime()} - ${clazz.endDate.asNumericTime()} (${Formatters.formatDuration(clazz.endDate.difference(clazz.startDate))})',
-                          style: TextStyle(
-                            color: context.c.onSurface,
-                            fontWeight: .bold,
-                          ),
+                      Text(
+                        '${clazz.startDate.asLongNumericDate()} ${clazz.startDate.asNumericTime()} - ${clazz.endDate.asNumericTime()} (${Formatters.formatDuration(clazz.endDate.difference(clazz.startDate))})',
+                        style: TextStyle(
+                          color: context.c.onSurface,
+                          fontWeight: .bold,
                         ),
                       ),
                     ],
