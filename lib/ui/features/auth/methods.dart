@@ -11,6 +11,7 @@ import 'package:antinote_app/ui/widgets/bottom_padding.dart';
 import 'package:antinote_app/ui/widgets/list.dart';
 import 'package:antinote_app/ui/widgets/loading.dart';
 import 'package:antinote_app/ui/widgets/text_icon.dart';
+import 'package:flutter/foundation.dart';
 import 'package:hugeicons_pro/hugeicons.dart';
 import 'package:material_ui/material_ui.dart';
 import 'package:skeletonizer/skeletonizer.dart';
@@ -39,43 +40,45 @@ class _LoginMethodsScreenState extends State<LoginMethodsScreen> {
 
   List<Method> buildLocationOptions(BuildContext context) {
     return [
-      (
-        icon: HugeIconsSolid.location04,
-        title: context.l10n.loginGeolocation,
-        subtitle: context.l10n.loginGeolocationSubtitle,
-        loading: _geolocationLoading,
+      if (kDebugMode)
+        (
+          icon: HugeIconsSolid.location04,
+          title: context.l10n.loginGeolocation,
+          subtitle: context.l10n.loginGeolocationSubtitle,
+          loading: _geolocationLoading,
 
-        onPressed: () async {
-          if (_geolocationLoading) return;
-          setState(() => _geolocationLoading = true);
+          onPressed: () async {
+            if (_geolocationLoading) return;
+            setState(() => _geolocationLoading = true);
 
-          final position = await fetchPosition();
-          if (!context.mounted) return;
+            final position = await fetchPosition();
+            if (!context.mounted) return;
 
-          if (position == null) {
-            setState(() => _geolocationLoading = false);
-            return;
-          }
+            if (position == null) {
+              setState(() => _geolocationLoading = false);
+              return;
+            }
 
-          final result = await Navigator.push<RegisterableAccount>(
-            context,
-            MaterialPageRoute(
-              builder: (context) => SearchSchoolsScreen(
-                lat: position.latitude,
-                long: position.longitude,
-                accountType: widget.accountType,
+            final result = await Navigator.push<RegisterableAccount>(
+              context,
+              MaterialPageRoute(
+                builder: (context) => SearchSchoolsScreen(
+                  lat: position.latitude,
+                  long: position.longitude,
+                  accountType: widget.accountType,
+                ),
               ),
-            ),
-          );
+            );
 
-          if (!context.mounted) return;
-          setState(() => _geolocationLoading = false);
+            if (!context.mounted) return;
+            setState(() => _geolocationLoading = false);
 
-          if (result != null && context.mounted) {
-            Navigator.pop(context, result);
-          }
-        },
-      ),
+            if (result != null && context.mounted) {
+              Navigator.pop(context, result);
+            }
+          },
+        ),
+
       (
         icon: HugeIconsSolid.mapsSearch,
         title: context.l10n.loginCity,
