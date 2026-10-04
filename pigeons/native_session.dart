@@ -7,7 +7,7 @@ import 'package:pigeon/pigeon.dart';
     kotlinOut: 'android/app/src/main/kotlin/fr/antinote/antinote_app/pigeon_posts/NativeSession.g.kt',
     kotlinOptions: KotlinOptions(
       errorClassName: 'SessionManagerError',
-      package: 'fr.antinote.studies_management.antinote_app.pigeon_posts',
+      package: 'fr.antinote.antinote_app.pigeon_posts',
     ),
     dartPackageName: 'antinote_app',
   ),
