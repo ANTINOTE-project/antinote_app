@@ -267,8 +267,8 @@ class _ClassContent extends StatelessWidget {
 
       ClassroomContent(value: final v) => (v.label, HugeIconsSolid.meetingRoom),
 
-      VirtualClassroomContent() => (
-        context.l10n.virtualClassroom,
+      VirtualClassroomContent(value: final v) => (
+        v.comment,
         HugeIconsSolid.computerVideoCall,
       ),
 

@@ -772,4 +772,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get seeMeal => 'See the menu';
+
+  @override
+  String get classContents => 'Class properties';
 }

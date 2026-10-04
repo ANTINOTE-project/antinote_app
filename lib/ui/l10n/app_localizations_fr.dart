@@ -779,4 +779,7 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get seeMeal => 'Voir le menu';
+
+  @override
+  String get classContents => 'Propriétés du cours';
 }

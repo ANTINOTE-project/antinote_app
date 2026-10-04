@@ -3,9 +3,11 @@ import 'package:antinote_app/ui/utils/utils.dart';
 import 'package:antinote_app/ui/widgets/app_bar.dart';
 import 'package:antinote_app/ui/widgets/bottom_padding.dart';
 import 'package:antinote_app/ui/widgets/list.dart';
+import 'package:antinote_app/ui/widgets/text_icon.dart';
 import 'package:collection/collection.dart';
 import 'package:hugeicons_pro/hugeicons.dart';
 import 'package:material_ui/material_ui.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 Future<void> showClassModal(BuildContext context, Class defaultClass) async {
   final clazzCallback = context.ar.runTask<Class?>(
@@ -96,9 +98,8 @@ class _Modal extends StatelessWidget {
             slivers: [
               SliverToBoxAdapter(
                 child: Column(
-                  spacing: 12,
-
                   children: [
+                    // TODO: replace with a smaller widget.
                     AppBarWidget(
                       backButton: false,
                       title: Text(clazz.classTitle(context)),
@@ -167,6 +168,42 @@ class _Modal extends StatelessWidget {
                         );
                       },
                     ),
+
+                    if (clazz.contents.any(
+                      (element) => element is VirtualClassroomContent,
+                    )) ...[
+                      TextIcon(
+                        label: context.l10n.contentVirtualClassrooms,
+                        icon: HugeIconsSolid.computerVideoCall,
+                      ),
+                      ListWidget(
+                        shrinkWrap: true,
+                        isSliver: false,
+                        physics: const NeverScrollableScrollPhysics(),
+                        items: clazz.contents
+                            .whereType<VirtualClassroomContent>()
+                            .toList(growable: false),
+
+                        itemBuilder: (context, item, borderRadius) {
+                          return TileWidget(
+                            borderRadius: borderRadius,
+                            backgroundColor: scheme.primaryContainer,
+
+                            leading: const Icon(HugeIconsSolid.link01),
+                            title: Text(item.value.comment),
+                            subtitle: Text(item.value.linkLabel),
+                            trailing: const Icon(HugeIconsSolid.arrowRight01),
+
+                            onPressed: () {
+                              launchUrl(
+                                item.value.url,
+                                mode: .externalApplication,
+                              );
+                            },
+                          );
+                        },
+                      ),
+                    ],
 
                     Row(
                       mainAxisAlignment: .spaceAround,

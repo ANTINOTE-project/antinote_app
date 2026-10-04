@@ -1349,6 +1349,12 @@ abstract class AppLocalizations {
   /// In fr, this message translates to:
   /// **'Voir le menu'**
   String get seeMeal;
+
+  /// No description provided for @classContents.
+  ///
+  /// In fr, this message translates to:
+  /// **'Propriétés du cours'**
+  String get classContents;
 }
 
 class _AppLocalizationsDelegate

@@ -28,7 +28,6 @@ extension ClassHelpers on Class {
     UnknownContent,
     ClassGroupContent,
     StudentClassContent,
-    VirtualClassroomContent,
   ];
 
   List<ClassContent> listContents() {
@@ -56,7 +55,6 @@ extension ClassContentHelper on ClassContent {
     PersonalContent(value: final v) => v.name,
 
     ClassroomContent(value: final v) => v.label,
-    VirtualClassroomContent(value: final v) => v.toString(),
 
     ClassGroupContent(value: final v) => v.label,
     StudentClassContent(value: final v) => v.name,
@@ -70,7 +68,6 @@ extension ClassContentHelper on ClassContent {
     PersonalContent() => HugeIconsSolid.more,
 
     ClassroomContent() => HugeIconsSolid.meetingRoom,
-    VirtualClassroomContent() => HugeIconsSolid.computerVideoCall,
 
     ClassGroupContent() => HugeIconsSolid.userGroup,
     StudentClassContent() => HugeIconsSolid.students,
@@ -84,7 +81,6 @@ extension ClassContentHelper on ClassContent {
     PersonalContent() => context.l10n.contentPersonal,
 
     ClassroomContent() => context.l10n.contentClassrooms,
-    VirtualClassroomContent() => context.l10n.contentVirtualClassrooms,
 
     ClassGroupContent() => context.l10n.contentClassGroups,
     StudentClassContent() => context.l10n.contentClasses,
