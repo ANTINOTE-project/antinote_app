@@ -101,9 +101,6 @@ class _SearchCitiesScreenState extends State<SearchCitiesScreen> {
           children: [
             Padding(
               padding: const .only(bottom: 8),
-
-              // TODO: Faire en sorte que ça n'overflow pas.
-              // toujours problématique ?
               child: Row(
                 spacing: 4,
                 children: [
