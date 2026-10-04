@@ -1,5 +1,5 @@
 import 'package:antinote_api/antinote_api.dart';
-import 'package:antinote_app/ui/features/timetable/events/class/details.dart';
+import 'package:antinote_app/ui/features/timetable/events/class/modal.dart';
 import 'package:antinote_app/ui/utils/utils.dart';
 import 'package:antinote_app/ui/widgets/overflow_row.dart';
 import 'package:antinote_app/ui/widgets/pressable.dart';
@@ -53,7 +53,7 @@ class ClassWidget extends StatelessWidget {
       borderRadius: borderRadius,
 
       onPressed: () async {
-        await showClassDetails(context, clazz);
+        await showClassModal(context, clazz);
       },
 
       child: Ink(

@@ -8,9 +8,7 @@ class BottomPadding extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return SliverPadding(
-      padding: EdgeInsets.only(
-        bottom: MediaQuery.paddingOf(context).bottom + padding,
-      ),
+      padding: .only(bottom: MediaQuery.paddingOf(context).bottom + padding),
     );
   }
 }

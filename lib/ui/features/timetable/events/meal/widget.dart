@@ -1,11 +1,12 @@
 import 'package:antinote_api/antinote_api.dart';
 import 'package:antinote_app/ui/features/timetable/events/block.dart';
-import 'package:antinote_app/ui/features/timetable/events/meal/details.dart';
 import 'package:antinote_app/ui/utils/utils.dart';
 import 'package:antinote_app/ui/widgets/pressable.dart';
 import 'package:antinote_app/ui/widgets/stripes_painter.dart';
 import 'package:hugeicons_pro/hugeicons.dart';
 import 'package:material_ui/material_ui.dart';
+
+import 'modal.dart';
 
 class MealBlockWidget extends StatelessWidget {
   const MealBlockWidget({
@@ -23,7 +24,7 @@ class MealBlockWidget extends StatelessWidget {
       borderRadius: borderRadius,
 
       onPressed: () async {
-        await showMealDetails(context, block.range.start.toDay());
+        await showMealModal(context, block.range.start.toDay());
       },
 
       child: ClipRRect(
