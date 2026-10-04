@@ -47,7 +47,7 @@ protobuf {
 @Suppress("DEPRECATION")
 android {
     namespace = "fr.antinote.antinote_app"
-    compileSdk = flutter.compileSdkVersion
+    compileSdk = 37 /*flutter.compileSdkVersion*/
     ndkVersion = flutter.ndkVersion
 
     compileOptions {

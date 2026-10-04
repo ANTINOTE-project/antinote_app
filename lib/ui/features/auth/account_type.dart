@@ -1,3 +1,4 @@
+import 'package:antinote_api/antinote_api.dart';
 import 'package:antinote_app/data/src/session/wrapper.dart';
 import 'package:antinote_app/ui/features/auth/methods.dart';
 import 'package:antinote_app/ui/utils/src/context.dart';
@@ -6,7 +7,13 @@ import 'package:antinote_app/ui/widgets/list.dart';
 import 'package:hugeicons_pro/hugeicons.dart';
 import 'package:material_ui/material_ui.dart';
 
-enum AccountType { student, parent }
+enum AccountType({
+  required final WorkspaceType desktop,
+  required final WorkspaceType mobile,
+}) {
+  student(desktop: .eleve, mobile: .mobileEleve),
+  parent(desktop: .parent, mobile: .mobileParent),
+}
 
 class AccountTypeLoginScreen extends StatelessWidget {
   const AccountTypeLoginScreen({super.key});

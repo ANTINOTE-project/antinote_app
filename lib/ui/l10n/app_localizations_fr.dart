@@ -661,28 +661,19 @@ class AppLocalizationsFr extends AppLocalizations {
   String get loginDemoLabel => 'Démo';
 
   @override
-  String get loginGeolocation => 'Utilise ta position';
+  String get loginLocate => 'Localise ton établissement';
 
   @override
-  String get loginGeolocationSubtitle =>
-      'On te proposera les établissements à proximité';
+  String get loginLocateSubtitle => 'Nous suggérerons les écoles environnantes';
 
   @override
-  String get loginCity => 'Trouve ta ville';
-
-  @override
-  String get loginCitySubtitle =>
-      'On te proposera les établissements à proximité';
-
-  @override
-  String get loginCityHint => 'Recherche ta ville';
+  String get loginLocateHint => 'Rentre l\'adresse de ton établissement';
 
   @override
   String get loginSchool => 'Choisis ton établissement';
 
   @override
-  String get loginSchoolSubtitle =>
-      'Voici les établissements les plus proches de toi';
+  String get loginSchoolSubtitle => 'Voici les établissements les plus proches';
 
   @override
   String get loginSchoolHint => 'Recherche ton établissement';

@@ -348,15 +348,12 @@
   "loginAlternativeLabel": "Other methods",
   "loginDemoLabel": "Demo",
 
-  "loginGeolocation": "Use your location",
-  "loginGeolocationSubtitle": "We'll suggest nearby schools",
-
-  "loginCity": "Find your city",
-  "loginCitySubtitle": "We'll suggest nearby schools",
-  "loginCityHint": "Search for your city",
+  "loginLocate": "Locate your school",
+  "loginLocateSubtitle": "We'll suggest nearby schools",
+  "loginCityHint": "Search for your school's address",
 
   "loginSchool": "Pick your school",
-  "loginSchoolSubtitle": "Here are the schools closest to you",
+  "loginSchoolSubtitle": "Here are the closest schools",
   "loginSchoolHint": "Search for your school",
 
   "loginQrCode": "QR Code",

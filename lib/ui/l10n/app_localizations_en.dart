@@ -656,25 +656,19 @@ class AppLocalizationsEn extends AppLocalizations {
   String get loginDemoLabel => 'Demo';
 
   @override
-  String get loginGeolocation => 'Use your location';
+  String get loginLocate => 'Locate your school';
 
   @override
-  String get loginGeolocationSubtitle => 'We\'ll suggest nearby schools';
+  String get loginLocateSubtitle => 'We\'ll suggest nearby schools';
 
   @override
-  String get loginCity => 'Find your city';
-
-  @override
-  String get loginCitySubtitle => 'We\'ll suggest nearby schools';
-
-  @override
-  String get loginCityHint => 'Search for your city';
+  String get loginLocateHint => 'Rentre l\'adresse de ton établissement';
 
   @override
   String get loginSchool => 'Pick your school';
 
   @override
-  String get loginSchoolSubtitle => 'Here are the schools closest to you';
+  String get loginSchoolSubtitle => 'Here are the closest schools';
 
   @override
   String get loginSchoolHint => 'Search for your school';

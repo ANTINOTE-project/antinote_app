@@ -348,15 +348,12 @@
   "loginAlternativeLabel": "Autres méthodes",
   "loginDemoLabel": "Démo",
 
-  "loginGeolocation": "Utilise ta position",
-  "loginGeolocationSubtitle": "On te proposera les établissements à proximité",
-
-  "loginCity": "Trouve ta ville",
-  "loginCitySubtitle": "On te proposera les établissements à proximité",
-  "loginCityHint": "Recherche ta ville",
+  "loginLocate": "Localise ton établissement",
+  "loginLocateSubtitle": "Nous suggérerons les écoles environnantes",
+  "loginLocateHint": "Rentre l'adresse de ton établissement",
 
   "loginSchool": "Choisis ton établissement",
-  "loginSchoolSubtitle": "Voici les établissements les plus proches de toi",
+  "loginSchoolSubtitle": "Voici les établissements les plus proches",
   "loginSchoolHint": "Recherche ton établissement",
 
   "loginQrCode": "Scanne un QR code",

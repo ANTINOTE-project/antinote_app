@@ -1,5 +1,4 @@
 import 'package:antinote_api/antinote_api.dart';
-import 'package:antinote_app/data/src/accounts/geolocation.dart';
 import 'package:antinote_app/data/src/session/wrapper.dart';
 import 'package:antinote_app/ui/features/auth/account_type.dart';
 import 'package:antinote_app/ui/features/auth/qr_code.dart';
@@ -15,8 +14,6 @@ import 'package:hugeicons_pro/hugeicons.dart';
 import 'package:material_ui/material_ui.dart';
 import 'package:skeletonizer/skeletonizer.dart';
 
-import 'search_schools.dart';
-
 typedef Method = ({
   IconData icon,
   String title,
@@ -25,61 +22,17 @@ typedef Method = ({
   bool loading,
 });
 
-class LoginMethodsScreen extends StatefulWidget {
+class LoginMethodsScreen extends StatelessWidget {
   final AccountType accountType;
 
   const LoginMethodsScreen({super.key, required this.accountType});
 
-  @override
-  State<LoginMethodsScreen> createState() => _LoginMethodsScreenState();
-}
-
-class _LoginMethodsScreenState extends State<LoginMethodsScreen> {
-  bool _geolocationLoading = false;
-
   List<Method> buildLocationOptions(BuildContext context) {
     return [
       (
-        icon: HugeIconsSolid.location04,
-        title: context.l10n.loginGeolocation,
-        subtitle: context.l10n.loginGeolocationSubtitle,
-        loading: _geolocationLoading,
-
-        onPressed: () async {
-          if (_geolocationLoading) return;
-          setState(() => _geolocationLoading = true);
-
-          final position = await fetchPosition();
-          if (!context.mounted) return;
-
-          if (position == null) {
-            setState(() => _geolocationLoading = false);
-            return;
-          }
-
-          final result = await Navigator.push<RegisterableAccount>(
-            context,
-            MaterialPageRoute(
-              builder: (context) => SearchSchoolsScreen(
-                lat: position.latitude,
-                long: position.longitude,
-                accountType: widget.accountType,
-              ),
-            ),
-          );
-
-          if (!context.mounted) return;
-          setState(() => _geolocationLoading = false);
-
-          if (result != null && context.mounted) {
-            Navigator.pop(context, result);
-          }
-        },
-      ),
-      (
         icon: HugeIconsSolid.mapsSearch,
-        title: context.l10n.loginCity,
-        subtitle: context.l10n.loginCitySubtitle,
+        title: context.l10n.loginLocate,
+        subtitle: context.l10n.loginLocateSubtitle,
         loading: false,
 
         onPressed: () async {
@@ -87,7 +40,7 @@ class _LoginMethodsScreenState extends State<LoginMethodsScreen> {
             context,
             MaterialPageRoute(
               builder: (context) {
-                return SearchCitiesScreen(accountType: widget.accountType);
+                return SearchCitiesScreen(accountType: accountType);
               },
             ),
           );
@@ -132,7 +85,7 @@ class _LoginMethodsScreenState extends State<LoginMethodsScreen> {
             context,
             MaterialPageRoute(
               builder: (context) {
-                return UrlLoginScreen(accountType: widget.accountType);
+                return UrlLoginScreen(accountType: accountType);
               },
             ),
           );
@@ -156,9 +109,10 @@ class _LoginMethodsScreenState extends State<LoginMethodsScreen> {
           username: 'demonstration',
           password: 'pronotevs',
 
-          workspace: widget.accountType == .parent
-              ? .parentMobile
-              : .studentMobile,
+          workspace: switch (accountType) {
+            AccountType.student => .studentMobile,
+            AccountType.parent => .parentMobile,
+          },
 
           deviceUuid: Credentials.generateDeviceUuid(),
           baseUrl: Uri.parse('https://demo.index-education.net/pronote'),

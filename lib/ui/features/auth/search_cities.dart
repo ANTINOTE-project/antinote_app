@@ -9,6 +9,8 @@ import 'package:antinote_app/ui/widgets/app_bar.dart';
 import 'package:antinote_app/ui/widgets/bottom_padding.dart';
 import 'package:antinote_app/ui/widgets/field.dart';
 import 'package:antinote_app/ui/widgets/list.dart';
+import 'package:flutter_location_button/flutter_location_button.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:hugeicons_pro/hugeicons.dart';
 import 'package:material_ui/material_ui.dart';
 
@@ -86,8 +88,8 @@ class _SearchCitiesScreenState extends State<SearchCitiesScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBarWidget(
-        title: Text(context.l10n.loginCity),
-        subtitle: Text(context.l10n.loginCitySubtitle),
+        title: Text(context.l10n.loginLocate),
+        subtitle: Text(context.l10n.loginLocate),
       ),
 
       body: Padding(
@@ -102,12 +104,68 @@ class _SearchCitiesScreenState extends State<SearchCitiesScreen> {
 
               // TODO: Faire en sorte que ça n'overflow pas.
               // toujours problématique ?
-              child: FieldWidget(
-                controller: _controller,
-                hintText: context.l10n.loginCityHint,
-                onChanged: (_) => _onQueryChanged(),
-                leading: const Icon(HugeIconsSolid.globalSearch),
-                autofocus: true,
+              child: Row(
+                spacing: 4,
+                children: [
+                  Expanded(
+                    flex: 2,
+                    child: FieldWidget(
+                      controller: _controller,
+                      hintText: context.l10n.loginLocateHint,
+                      onChanged: (_) => _onQueryChanged(),
+                      leading: const Icon(HugeIconsSolid.globalSearch),
+                      autofocus: true,
+                    ),
+                  ),
+
+                  LocationButton(
+                    style: .new(
+                      height: 48,
+                      width: 48,
+                      textType: .none,
+                      backgroundColor: context.c.surfaceContainer,
+                      textColor: context.c.onSurface,
+                      iconTintColor: context.c.onSurface,
+                      cornerRadius: 24,
+                      pressedCornerRadius: 24,
+                    ),
+                    onPermissionGranted: (onlyGrantedForSession) async {
+                      final position = await Geolocator.getCurrentPosition(
+                        locationSettings: const .new(
+                          accuracy: .best,
+                          timeLimit: .new(seconds: 15),
+                        ),
+                      );
+
+                      if (!context.mounted) return;
+
+                      final result = await Navigator.push<RegisterableAccount>(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) {
+                            return SearchSchoolsScreen(
+                              lat: position.latitude,
+                              long: position.longitude,
+                              accountType: widget.accountType,
+                            );
+                          },
+                        ),
+                      );
+
+                      if (result != null && context.mounted) {
+                        Navigator.pop(context, result);
+                      }
+                    },
+                    askForBroaderPermission: () async {
+                      return !<LocationPermission>[
+                        .denied,
+                        .deniedForever,
+                        .unableToDetermine,
+                      ].contains(await Geolocator.requestPermission());
+                    },
+                    renderingStrategy: .always,
+                  ),
+                ],
               ),
             ),
 

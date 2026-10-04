@@ -32,9 +32,10 @@ dependencies:
   flutter_inappwebview: ^6.2.0-beta.3
   mobile_scanner: ^7.4.0
   flutter_widget_from_html_core: ^0.17.2
-  material_ui: any
+  material_ui: ^1.5.0
   package_info_plus: ^10.2.1
   expandable_page_view: ^1.3.0
+  flutter_location_button: ^0.1.0
 
   # Backend
   html: ^0.15.6

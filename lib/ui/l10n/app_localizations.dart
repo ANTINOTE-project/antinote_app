@@ -1128,35 +1128,23 @@ abstract class AppLocalizations {
   /// **'Démo'**
   String get loginDemoLabel;
 
-  /// No description provided for @loginGeolocation.
+  /// No description provided for @loginLocate.
   ///
   /// In fr, this message translates to:
-  /// **'Utilise ta position'**
-  String get loginGeolocation;
+  /// **'Localise ton établissement'**
+  String get loginLocate;
 
-  /// No description provided for @loginGeolocationSubtitle.
+  /// No description provided for @loginLocateSubtitle.
   ///
   /// In fr, this message translates to:
-  /// **'On te proposera les établissements à proximité'**
-  String get loginGeolocationSubtitle;
+  /// **'Nous suggérerons les écoles environnantes'**
+  String get loginLocateSubtitle;
 
-  /// No description provided for @loginCity.
+  /// No description provided for @loginLocateHint.
   ///
   /// In fr, this message translates to:
-  /// **'Trouve ta ville'**
-  String get loginCity;
-
-  /// No description provided for @loginCitySubtitle.
-  ///
-  /// In fr, this message translates to:
-  /// **'On te proposera les établissements à proximité'**
-  String get loginCitySubtitle;
-
-  /// No description provided for @loginCityHint.
-  ///
-  /// In fr, this message translates to:
-  /// **'Recherche ta ville'**
-  String get loginCityHint;
+  /// **'Rentre l\'adresse de ton établissement'**
+  String get loginLocateHint;
 
   /// No description provided for @loginSchool.
   ///
@@ -1167,7 +1155,7 @@ abstract class AppLocalizations {
   /// No description provided for @loginSchoolSubtitle.
   ///
   /// In fr, this message translates to:
-  /// **'Voici les établissements les plus proches de toi'**
+  /// **'Voici les établissements les plus proches'**
   String get loginSchoolSubtitle;
 
   /// No description provided for @loginSchoolHint.
