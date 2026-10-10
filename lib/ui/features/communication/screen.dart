@@ -6,7 +6,6 @@ import 'package:antinote_app/ui/features/communication/news.dart';
 import 'package:antinote_app/ui/features/shell/tab.dart';
 import 'package:antinote_app/ui/utils/utils.dart';
 import 'package:antinote_app/ui/widgets/list.dart';
-import 'package:flutter/foundation.dart';
 import 'package:hugeicons_pro/hugeicons.dart';
 import 'package:material_ui/material_ui.dart';
 
@@ -131,72 +130,66 @@ class _CommunicationScreenState extends State<CommunicationScreen>
                       await reload();
                     },
                     onPressed: () async {
-                      if (!kDebugMode) {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(
-                            behavior: .floating,
-                            content: Text(
-                              context.l10n.communicationUnavailable,
-                            ),
-                          ),
-                        );
-                      } else {
-                        await context.ar.runTask(
-                          context: context,
-                          channels: const {},
-                          callback: (session) {
-                            switch (thread.commType) {
-                              case .poll:
-                              case .news:
-                                {
-                                  if (!context.mounted ||
-                                      thread is! InformationThreadPreview) {
-                                    return;
-                                  }
+                      await context.ar.runTask(
+                        context: context,
+                        channels: const {},
+                        callback: (session) {
+                          switch (thread.commType) {
+                            case .poll:
+                            case .news:
+                              {
+                                if (!context.mounted ||
+                                    thread is! InformationThreadPreview) {
+                                  return;
+                                }
 
-                                  final found = session.getCachedValue<News?>(
-                                    .NEWS,
-                                    thread.visualId,
-                                  );
+                                final found = session.getCachedValue<News?>(
+                                  .NEWS,
+                                  thread.visualId,
+                                );
 
-                                  if (found == null) {
-                                    ScaffoldMessenger.of(context).showSnackBar(
-                                      SnackBar(
-                                        behavior: .floating,
-                                        content: Text(
-                                          context.l10n.threadMissing,
-                                        ),
-                                      ),
-                                    );
-
-                                    return;
-                                  }
-
-                                  Navigator.push(
-                                    context,
-
-                                    MaterialPageRoute(
-                                      builder: (context) => NewsScreen(
-                                        mode: thread.mode,
-                                        news: found,
-
-                                        deleteNews: () {
-                                          throw UnimplementedError();
-                                        },
-                                      ),
+                                if (found == null) {
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    SnackBar(
+                                      behavior: .floating,
+                                      content: Text(context.l10n.threadMissing),
                                     ),
                                   );
+
+                                  return;
                                 }
-                              case .discussion:
-                                {
-                                  throw UnimplementedError();
-                                }
-                            }
-                          },
-                          debugLabel:
-                              'Retrieve news and discussion data from cache.',
-                        );
-                      }
+
+                                Navigator.push(
+                                  context,
+
+                                  MaterialPageRoute(
+                                    builder: (context) => NewsScreen(
+                                      mode: thread.mode,
+                                      news: found,
+
+                                      deleteNews: () {
+                                        throw UnimplementedError();
+                                      },
+                                    ),
+                                  ),
+                                );
+                              }
+                            case .discussion:
+                              {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(
+                                    behavior: .floating,
+                                    content: Text(
+                                      context.l10n.communicationUnavailable,
+                                    ),
+                                  ),
+                                );
+                              }
+                          }
+                        },
+                        debugLabel:
+                            'Retrieve news and discussion data from cache.',
+                      );
                     },
                   );
                 },

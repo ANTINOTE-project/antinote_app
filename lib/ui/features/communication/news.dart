@@ -4,6 +4,7 @@ import 'package:antinote_app/ui/utils/utils.dart';
 import 'package:antinote_app/ui/widgets/attachment.dart';
 import 'package:antinote_app/ui/widgets/list.dart';
 import 'package:antinote_app/ui/widgets/remote_html.dart';
+import 'package:flutter/foundation.dart';
 import 'package:hugeicons_pro/hugeicons.dart';
 import 'package:material_ui/material_ui.dart';
 
@@ -27,10 +28,6 @@ class NewsScreen extends StatefulWidget {
 class _NewsScreenState extends State<NewsScreen>
     with PageMixin<NewsScreen>, TabMixin<NewsScreen> {
   final Map<String, NewsQuestionAnswer> _overriddenAnswers = {};
-
-  Future<void> _sendCompleted() async {
-    throw UnimplementedError();
-  }
 
   Future<void> _toggleReadStatus() async {
     throw UnimplementedError();
@@ -68,12 +65,12 @@ class _NewsScreenState extends State<NewsScreen>
 
             actions: [
               IconButton(
-                onPressed: _delete,
+                onPressed: kDebugMode ? _delete : null,
                 icon: const Icon(HugeIconsSolid.delete01, size: 22),
               ),
 
               IconButton(
-                onPressed: _toggleReadStatus,
+                onPressed: kDebugMode ? _toggleReadStatus : null,
                 icon: Icon(
                   _news.read
                       ? HugeIconsSolid.checkUnread01
@@ -224,7 +221,14 @@ class _Question extends StatelessWidget {
           _Answer(
             question: question,
 
-            answerEmitted: (newAnswer) async {}, // TODO,
+            answerEmitted: (newAnswer) async {
+              ScaffoldMessenger.maybeOf(context)?.showSnackBar(
+                .new(
+                  content: Text(context.l10n.communicationUnavailable),
+                  behavior: .floating,
+                ),
+              );
+            }, // TODO,
 
             borderRadius: borderRadius.copyWith(
               topLeft: ListWidget.defaultRadius,
