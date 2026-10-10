@@ -775,4 +775,8 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get classContents => 'Class properties';
+
+  @override
+  String get threadMissing =>
+      'Could not load thread data, try reloading the page.';
 }

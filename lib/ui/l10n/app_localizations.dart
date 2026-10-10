@@ -1355,6 +1355,12 @@ abstract class AppLocalizations {
   /// In fr, this message translates to:
   /// **'Propriétés du cours'**
   String get classContents;
+
+  /// No description provided for @threadMissing.
+  ///
+  /// In fr, this message translates to:
+  /// **'Données du fil introuvables, essayez de recharger la page.'**
+  String get threadMissing;
 }
 
 class _AppLocalizationsDelegate

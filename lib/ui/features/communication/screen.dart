@@ -2,9 +2,11 @@ import 'dart:async';
 
 import 'package:antinote_api/antinote_api.dart';
 import 'package:antinote_app/ui/features/communication/models.dart';
+import 'package:antinote_app/ui/features/communication/news.dart';
 import 'package:antinote_app/ui/features/shell/tab.dart';
 import 'package:antinote_app/ui/utils/utils.dart';
 import 'package:antinote_app/ui/widgets/list.dart';
+import 'package:flutter/foundation.dart';
 import 'package:hugeicons_pro/hugeicons.dart';
 import 'package:material_ui/material_ui.dart';
 
@@ -129,56 +131,72 @@ class _CommunicationScreenState extends State<CommunicationScreen>
                       await reload();
                     },
                     onPressed: () async {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(
-                          behavior: .floating,
-                          content: Text(context.l10n.communicationUnavailable),
-                        ),
-                      );
+                      if (!kDebugMode) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                            behavior: .floating,
+                            content: Text(
+                              context.l10n.communicationUnavailable,
+                            ),
+                          ),
+                        );
+                      } else {
+                        await context.ar.runTask(
+                          context: context,
+                          channels: const {},
+                          callback: (session) {
+                            switch (thread.commType) {
+                              case .poll:
+                              case .news:
+                                {
+                                  if (!context.mounted ||
+                                      thread is! InformationThreadPreview) {
+                                    return;
+                                  }
 
-                      // await context.ar.runTask(
-                      //   context: context,
-                      //   channels: const {},
-                      //   callback: (session) {
-                      //     switch (thread.commType) {
-                      //       case .poll:
-                      //       case .news:
-                      //         {
-                      //           if (!context.mounted ||
-                      //               thread is! InformationThreadPreview) {
-                      //             return;
-                      //           }
-                      //
-                      //           final notifier = ValueNotifier(
-                      //             session.getCachedValue<News>(
-                      //               .NEWS,
-                      //               thread.visualId,
-                      //             ),
-                      //           );
-                      //
-                      //           Navigator.push(
-                      //             context,
-                      //
-                      //             MaterialPageRoute(
-                      //               builder: (context) => NewsScreen(
-                      //                 mode: thread.mode,
-                      //                 news: notifier,
-                      //
-                      //                 deleteNews: () {
-                      //                   throw UnimplementedError();
-                      //                 },
-                      //               ),
-                      //             ),
-                      //           );
-                      //         }
-                      //       case .discussion:
-                      //         {
-                      //           throw UnimplementedError();
-                      //         }
-                      //     }
-                      //   },
-                      //   debugLabel: 'Retrieve news and discussion data from cache.',
-                      // );
+                                  final found = session.getCachedValue<News?>(
+                                    .NEWS,
+                                    thread.visualId,
+                                  );
+
+                                  if (found == null) {
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                      SnackBar(
+                                        behavior: .floating,
+                                        content: Text(
+                                          context.l10n.threadMissing,
+                                        ),
+                                      ),
+                                    );
+
+                                    return;
+                                  }
+
+                                  Navigator.push(
+                                    context,
+
+                                    MaterialPageRoute(
+                                      builder: (context) => NewsScreen(
+                                        mode: thread.mode,
+                                        news: found,
+
+                                        deleteNews: () {
+                                          throw UnimplementedError();
+                                        },
+                                      ),
+                                    ),
+                                  );
+                                }
+                              case .discussion:
+                                {
+                                  throw UnimplementedError();
+                                }
+                            }
+                          },
+                          debugLabel:
+                              'Retrieve news and discussion data from cache.',
+                        );
+                      }
                     },
                   );
                 },
@@ -291,6 +309,12 @@ class _CommunicationScreenState extends State<CommunicationScreen>
 
       // loadedCount++;
       // yield loadedCount / toLoad.length;
+    }
+
+    for (final thread in threads) {
+      logger.info(
+        'Thread "${thread.title ?? thread.authorName}": ${thread.visualId}==${thread.visualId} ${session.getCachedValue<News?>(.NEWS, thread.visualId) == null ? 'new entry' : 'already exists'}',
+      );
     }
 
     // Supposed to be 1 anyways but just to be sure...

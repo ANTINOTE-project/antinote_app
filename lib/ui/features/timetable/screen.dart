@@ -213,40 +213,88 @@ class _TimetableDisplayState extends State<TimetableDisplay>
             ),
           );
         } else {
-          final child = IntrinsicHeight(
-            child: Row(
-              spacing: 8,
-              children: [
-                if (window != null)
-                  Flexible(
-                    flex: days.length * 15,
-                    child: _buildTimeColumn(context, window, days),
-                  ),
-
-                for (final day in days)
-                  Expanded(
-                    flex: 85,
-                    child: ValueListenableBuilder(
-                      valueListenable: _blocks[day]!,
-                      builder: (context, dayClasses, child) {
-                        if (dayClasses == null) {
-                          return const LoadingWidget();
-                        }
-                        if (dayClasses.isEmpty || window == null) {
-                          return const SizedBox.shrink();
-                        }
-
-                        return _buildEventsColumn(
-                          context,
-                          day,
-                          window,
-                          dayClasses,
-                        );
-                      },
+          final child = Column(
+            children: [
+              if (window != null)
+                Row(
+                  spacing: 8,
+                  children: [
+                    Expanded(
+                      flex: 15,
+                      child: FittedBox(
+                        fit: .scaleDown,
+                        alignment: .bottomCenter,
+                        child: Text(
+                          window.startTime.asNumericTime(),
+                          textAlign: .center,
+                          style: .new(
+                            color: context.c.outline,
+                            fontWeight: .w800,
+                          ),
+                        ),
+                      ),
                     ),
-                  ),
-              ],
-            ),
+                    const Expanded(flex: 85, child: SizedBox.shrink()),
+                  ],
+                ),
+              IntrinsicHeight(
+                child: Row(
+                  spacing: 8,
+                  children: [
+                    if (window != null)
+                      Flexible(
+                        flex: days.length * 15,
+                        child: _buildTimeColumn(context, window, days),
+                      ),
+
+                    for (final day in days)
+                      Expanded(
+                        flex: 85,
+                        child: ValueListenableBuilder(
+                          valueListenable: _blocks[day]!,
+                          builder: (context, dayClasses, child) {
+                            if (dayClasses == null) {
+                              return const LoadingWidget();
+                            }
+                            if (dayClasses.isEmpty || window == null) {
+                              return const SizedBox.shrink();
+                            }
+
+                            return _buildEventsColumn(
+                              context,
+                              day,
+                              window,
+                              dayClasses,
+                            );
+                          },
+                        ),
+                      ),
+                  ],
+                ),
+              ),
+              if (window != null)
+                Row(
+                  spacing: 8,
+                  children: [
+                    Expanded(
+                      flex: 15,
+                      child: FittedBox(
+                        fit: .scaleDown,
+                        alignment: .topCenter,
+                        child: Text(
+                          window.endTime.asNumericTime(),
+                          textAlign: .center,
+                          style: .new(
+                            color: context.c.outline,
+                            fontWeight: .w800,
+                          ),
+                        ),
+                      ),
+                    ),
+                    const Expanded(flex: 85, child: SizedBox.shrink()),
+                  ],
+                ),
+            ],
           );
 
           if (widget.scrollable) {
@@ -446,18 +494,23 @@ class _TimetableDisplayState extends State<TimetableDisplay>
 
       final value = curEndSlot.timing.difference(curSlot.timing).inMinutes;
 
+      final isStartEdge = curSlot.timing == window.startTime;
       final showStart =
-          curSlot.active ||
-          lastApplied == null ||
-          (prevEndSlot != null &&
-              prevEndSlot.timing == curSlot.timing &&
-              prevEndSlot.active);
+          !isStartEdge &&
+          (curSlot.active ||
+              lastApplied == null ||
+              (prevEndSlot != null &&
+                  prevEndSlot.timing == curSlot.timing &&
+                  prevEndSlot.active));
 
+      final isEndEdge = curEndSlot.timing == window.endTime;
       final isLast =
           nexSlot == null || !nexSlot.timing.isBefore(window.endTime);
       final showEnd =
-          (curEndSlot.active || isLast) &&
-          !(nexSlot != null && nexSlot.timing == curEndSlot.timing && !isLast);
+          !isEndEdge &&
+          !isLast &&
+          curEndSlot.active &&
+          nexSlot.timing != curEndSlot.timing;
 
       displays.add(
         Expanded(
@@ -465,47 +518,50 @@ class _TimetableDisplayState extends State<TimetableDisplay>
           child: Container(
             decoration: BoxDecoration(
               border: Border(
-                top: showStart ? borderSide : .none,
-                bottom: showEnd ? borderSide : .none,
+                top: showStart || isStartEdge ? borderSide : .none,
+                bottom: showEnd || isEndEdge ? borderSide : .none,
               ),
             ),
             padding: const .symmetric(horizontal: 5),
-            child: Column(
-              children: [
-                if (showStart)
-                  FittedBox(
-                    fit: .scaleDown,
-                    alignment: .topCenter,
-                    child: Text(
-                      curSlot.label,
-                      maxLines: 1,
-                      textAlign: .center,
-                      style: TextStyle(
-                        color: context.c.outline,
-                        fontWeight: .w800,
-                        overflow: .clip,
+            child: SizedBox(
+              width: .infinity,
+              child: Column(
+                children: [
+                  if (showStart)
+                    FittedBox(
+                      alignment: .topCenter,
+                      fit: .scaleDown,
+                      child: Text(
+                        curSlot.label,
+                        maxLines: 1,
+                        textAlign: .center,
+                        style: TextStyle(
+                          color: context.c.outline,
+                          fontWeight: .w800,
+                          overflow: .visible,
+                        ),
                       ),
                     ),
-                  ),
 
-                const Spacer(),
+                  const Spacer(),
 
-                if (showEnd)
-                  FittedBox(
-                    fit: .scaleDown,
-                    alignment: .bottomCenter,
-                    child: Text(
-                      curEndSlot.label,
-                      maxLines: 1,
-                      textAlign: .center,
-                      style: TextStyle(
-                        color: context.c.outline,
-                        fontWeight: .w800,
-                        overflow: .clip,
+                  if (showEnd)
+                    FittedBox(
+                      alignment: .bottomCenter,
+                      fit: .scaleDown,
+                      child: Text(
+                        curEndSlot.label,
+                        maxLines: 1,
+                        textAlign: .center,
+                        style: TextStyle(
+                          color: context.c.outline,
+                          fontWeight: .w800,
+                          overflow: .visible,
+                        ),
                       ),
                     ),
-                  ),
-              ],
+                ],
+              ),
             ),
           ),
         ),

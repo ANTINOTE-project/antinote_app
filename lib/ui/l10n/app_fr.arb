@@ -398,5 +398,7 @@
 
   "seeMeal": "Voir le menu",
 
-  "classContents": "Propriétés du cours"
+  "classContents": "Propriétés du cours",
+
+  "threadMissing": "Données du fil introuvables, essayez de recharger la page."
 }

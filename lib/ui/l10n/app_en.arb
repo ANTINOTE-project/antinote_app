@@ -398,5 +398,7 @@
 
   "seeMeal": "See the menu",
 
-  "classContents": "Class properties"
+  "classContents": "Class properties",
+
+  "threadMissing": "Could not load thread data, try reloading the page."
 }

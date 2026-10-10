@@ -297,8 +297,11 @@ class _Day extends StatefulWidget {
   State<_Day> createState() => _DayState();
 }
 
-class _DayState extends State<_Day> {
+class _DayState extends State<_Day> with AutomaticKeepAliveClientMixin {
   final ExpansibleController controller = ExpansibleController();
+
+  @override
+  bool get wantKeepAlive => needToDisplay == controller.isExpanded;
 
   bool get needToDisplay =>
       !DateTime.now().copyWith(isUtc: true).toDay().isAfter(widget.day) ||
@@ -331,6 +334,8 @@ class _DayState extends State<_Day> {
 
   @override
   Widget build(BuildContext context) {
+    super.build(context);
+
     return Expansible(
       controller: controller,
 

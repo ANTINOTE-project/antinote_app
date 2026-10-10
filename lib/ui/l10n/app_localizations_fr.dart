@@ -782,4 +782,8 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get classContents => 'Propriétés du cours';
+
+  @override
+  String get threadMissing =>
+      'Données du fil introuvables, essayez de recharger la page.';
 }

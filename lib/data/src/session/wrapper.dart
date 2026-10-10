@@ -321,6 +321,25 @@ final class SessionWrapper({required final String accountUid}) {
         );
 
         if (task.session != null) {
+          final newSession = await RemoteSession.restoreBinary(
+            task.session!,
+            options: options,
+          );
+
+          // We try to preserve cache in this simple case. In the future, cache
+          // won't really matter as data that's fed inside the app will be
+          // interpreted and stored outside of the session system.
+          // For the time being, this will make simple interactions with the
+          // cache more reliable.
+          if (_state != null &&
+              _state!.session.stack.sessionId == newSession.stack.sessionId) {
+            for (final MapEntry(key: key, value: value)
+                in _state!.session.cache.entries) {
+              if (cacheTypesToSerialize.contains(key)) continue;
+              newSession.cache[key] = value;
+            }
+          }
+
           _state = .new(
             session: await RemoteSession.restoreBinary(
               task.session!,

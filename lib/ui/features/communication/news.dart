@@ -17,7 +17,7 @@ class NewsScreen extends StatefulWidget {
 
   final NewsDisplayMode mode;
 
-  final ValueNotifier<News> news;
+  final News news;
   final VoidCallback deleteNews;
 
   @override
@@ -40,7 +40,7 @@ class _NewsScreenState extends State<NewsScreen>
     throw UnimplementedError();
   }
 
-  News get _news => widget.news.value;
+  News get _news => widget.news;
 
   late List<NewsQuestion> questions;
 
@@ -255,7 +255,7 @@ class _Answer extends StatelessWidget {
 
     return switch (answer) {
       RANewsQuestionAnswer(withAnswer: final answered) => TileWidget(
-        backgroundColor: context.c.surfaceContainerHigh,
+        // backgroundColor: context.c.surfaceContainerHigh,
         borderRadius: borderRadius,
 
         title: Text(
@@ -267,11 +267,13 @@ class _Answer extends StatelessWidget {
         trailing: Checkbox(
           value: answered,
 
-          onChanged: (value) async {
-            if (answered) return;
+          onChanged: answered
+              ? null
+              : (value) async {
+                  if (answered) return;
 
-            await answerEmitted(answer.buildAnswered());
-          },
+                  await answerEmitted(answer.buildAnswered());
+                },
         ),
       ),
 
@@ -279,10 +281,7 @@ class _Answer extends StatelessWidget {
       NoResponseNewsQuestionAnswer() => const SizedBox.shrink(),
 
       // TODO
-      SingleChoiceNewsQuestionAnswer() => _ChoiceAnswer(question: question),
-
-      // TODO
-      MultipleChoiceNewsQuestionAnswer() => _ChoiceAnswer(question: question),
+      ChoiceNewsQuestionAnswer() => _ChoiceAnswer(question: question),
 
       // TODO
       TextualResponseNewsQuestionAnswer() => const SizedBox.shrink(),

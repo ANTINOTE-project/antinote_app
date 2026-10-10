@@ -11,7 +11,7 @@ extension StringExt on String {
 
 extension AsRelativeDateString on DateTime {
   static final DateFormat _numericDateFormatter = DateFormat('dd MMM');
-  static final DateFormat _shortTimeFormatter = DateFormat('HH:mm');
+  static final DateFormat _shortTimeFormatter = DateFormat('HH\'h\'mm');
   static final DateFormat _longDateFormatter = DateFormat('dd/MM/yy');
 
   String asLongNumericDate() {
