@@ -3,7 +3,6 @@ import 'dart:async';
 import 'package:antinote_api/antinote_api.dart';
 import 'package:antinote_app/ui/features/shell/tab.dart';
 import 'package:antinote_app/ui/utils/utils.dart';
-import 'package:antinote_app/ui/widgets/app_bar.dart';
 import 'package:antinote_app/ui/widgets/bottom_padding.dart';
 import 'package:antinote_app/ui/widgets/grade_text.dart';
 import 'package:antinote_app/ui/widgets/list.dart';

@@ -18,3 +18,22 @@ extension BuildContextExtensions on BuildContext {
 
   ShellController get sc => ShellController.of(this);
 }
+
+extension CustomTextThemeStyles on TextTheme {
+  TextStyle? get classTitle => titleLarge?.copyWith(
+    fontVariations: const [
+      .new('ROND', 100),
+      .weight(700),
+      .width(110),
+      .opticalSize(100),
+    ],
+  );
+
+  TextStyle? get classStatus => titleSmall?.copyWith(
+    fontVariations: const [.weight(800), .new('ROND', 50), .width(105)],
+  );
+
+  TextStyle? get classSubtitle => bodyLarge?.copyWith(
+    fontVariations: const [.weight(450), .new('ROND', 100), .width(90)],
+  );
+}

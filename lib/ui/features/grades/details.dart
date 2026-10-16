@@ -24,9 +24,14 @@ class _DetailsScreen extends StatelessWidget {
         : null;
 
     return Scaffold(
-      appBar: AppBarWidget(
+      appBar: AppBar(
         title: title != null ? Text(title!) : null,
-        subtitle: subtitle != null ? Text(subtitle!) : null,
+        bottom: subtitle != null
+            ? PreferredSize(
+                preferredSize: const .fromHeight(16),
+                child: Text(subtitle!),
+              )
+            : null,
       ),
 
       body: CustomScrollView(

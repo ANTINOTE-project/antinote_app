@@ -3,7 +3,6 @@ import 'dart:async';
 import 'package:antinote_api/antinote_api.dart';
 import 'package:antinote_app/data/src/session/wrapper.dart';
 import 'package:antinote_app/ui/utils/utils.dart';
-import 'package:antinote_app/ui/widgets/app_bar.dart';
 import 'package:antinote_app/ui/widgets/button.dart';
 import 'package:antinote_app/ui/widgets/field.dart';
 import 'package:antinote_app/ui/widgets/loading.dart';
@@ -70,9 +69,12 @@ class _QRCodeLoginScreenState extends State<QRCodeLoginScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBarWidget(
+      appBar: AppBar(
         title: Text(context.l10n.loginQrCode),
-        subtitle: Text(context.l10n.loginQrCodeSubtitle),
+        bottom: PreferredSize(
+          preferredSize: const .fromHeight(16),
+          child: Text(context.l10n.loginQrCodeSubtitle),
+        ),
       ),
 
       body: SafeArea(

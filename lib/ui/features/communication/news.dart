@@ -57,16 +57,17 @@ class _NewsScreenState extends State<NewsScreen>
     return Scaffold(
       body: CustomScrollView(
         slivers: [
-          SliverAppBar(
-            leading: IconButton(
-              onPressed: () => Navigator.pop(context),
-              icon: const Icon(HugeIconsSolid.arrowLeft01, size: 22),
-            ),
-
+          SliverAppBar.large(
+            title: _news.label == null
+                ? null
+                : Tooltip(
+                    message: _news.label!,
+                    child: Text(_news.label!, maxLines: 2, overflow: .ellipsis),
+                  ),
             actions: [
               IconButton(
                 onPressed: kDebugMode ? _delete : null,
-                icon: const Icon(HugeIconsSolid.delete01, size: 22),
+                icon: const Icon(HugeIconsSolid.delete01),
               ),
 
               IconButton(
@@ -74,8 +75,7 @@ class _NewsScreenState extends State<NewsScreen>
                 icon: Icon(
                   _news.read
                       ? HugeIconsSolid.checkUnread01
-                      : HugeIconsSolid.checkUnread02,
-                  size: 22,
+                      : HugeIconsSolid.checkUnread02, // TODO find better icons.
                 ),
               ),
             ],
@@ -85,47 +85,21 @@ class _NewsScreenState extends State<NewsScreen>
             child: Padding(
               padding: const .symmetric(horizontal: 12),
 
-              child: Column(
-                spacing: 8,
+              child: TileWidget(
+                borderRadius: const .all(ListWidget.radius),
 
-                children: [
-                  if (_news.label != null)
-                    Padding(
-                      padding: const .only(left: 6),
+                title: Text(_news.author, style: const TextStyle(fontSize: 16)),
+                subtitle: Text(subtitle),
 
-                      child: Align(
-                        alignment: .centerLeft,
+                trailing: Text(
+                  _news.creationTime.asRelativeDate(context),
 
-                        child: Text(
-                          _news.label!,
-                          style: const TextStyle(
-                            fontWeight: .w800,
-                            fontSize: 22,
-                          ),
-                        ),
-                      ),
-                    ),
-
-                  TileWidget(
-                    borderRadius: const .all(ListWidget.radius),
-
-                    title: Text(
-                      _news.author,
-                      style: const TextStyle(fontSize: 16),
-                    ),
-                    subtitle: Text(subtitle),
-
-                    trailing: Text(
-                      _news.creationTime.asRelativeDate(context),
-
-                      style: TextStyle(
-                        fontWeight: .w800,
-                        color: context.c.outline,
-                        fontSize: 13,
-                      ),
-                    ),
+                  style: TextStyle(
+                    fontWeight: .w800,
+                    color: context.c.outline,
+                    fontSize: 13,
                   ),
-                ],
+                ),
               ),
             ),
           ),
@@ -184,7 +158,7 @@ class _Question extends StatelessWidget {
     ].contains(question.responseType);
 
     return Column(
-      spacing: 3,
+      spacing: 2,
 
       children: [
         TileWidget(
@@ -196,9 +170,11 @@ class _Question extends StatelessWidget {
               : borderRadius,
           title: RemoteHtml(
             rawHtml: question.htmlText,
-            style: TextStyle(color: context.c.onSurface, fontWeight: .normal),
+            style: TextStyle(
+              color: context.c.onSurface,
+              fontVariations: const [.weight(400)],
+            ),
           ),
-          titleMaxLines: null,
         ),
 
         ListWidget(

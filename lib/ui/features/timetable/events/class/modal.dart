@@ -1,6 +1,5 @@
 import 'package:antinote_api/antinote_api.dart';
 import 'package:antinote_app/ui/utils/utils.dart';
-import 'package:antinote_app/ui/widgets/app_bar.dart';
 import 'package:antinote_app/ui/widgets/bottom_padding.dart';
 import 'package:antinote_app/ui/widgets/list.dart';
 import 'package:antinote_app/ui/widgets/text_icon.dart';
@@ -83,8 +82,10 @@ class _Modal extends StatelessWidget {
 
     final scheme = Utils.buildColorScheme(context, clazz.accentColor);
 
-    final hasStatus = clazz.status != null;
-    final canceled = clazz.canceled;
+    final List<String?> subtitles = [clazz.studentCountString, clazz.status];
+    final List<String> presentSubtitles = subtitles.whereType<String>().toList(
+      growable: false,
+    );
 
     return CustomScrollView(
       shrinkWrap: true,
@@ -99,43 +100,62 @@ class _Modal extends StatelessWidget {
               SliverToBoxAdapter(
                 child: Column(
                   children: [
-                    // TODO: replace with a smaller widget.
-                    AppBarWidget(
-                      backButton: false,
-                      title: Text(clazz.classTitle(context)),
-                      subtitle: AnimatedSize(
-                        duration: const Duration(milliseconds: 300),
-                        curve: Curves.fastOutSlowIn,
-                        alignment: .topCenter,
+                    Text(
+                      clazz.classTitle(context),
+                      style: context.tt.classTitle,
+                    ),
+                    AnimatedOpacity(
+                      opacity: presentSubtitles.isEmpty ? 0 : 1,
+                      duration: const .new(milliseconds: 300),
+                      curve: Curves.fastOutSlowIn,
+                      child: Text.rich(
+                        TextSpan(
+                          children: [
+                            for (final subtitle in subtitles)
+                              WidgetSpan(
+                                child: AnimatedOpacity(
+                                  duration: const .new(milliseconds: 300),
+                                  curve: Curves.fastOutSlowIn,
+                                  opacity: subtitle == null ? 0 : 1,
+                                  child: AnimatedSize(
+                                    duration: const .new(milliseconds: 300),
+                                    curve: Curves.fastOutSlowIn,
+                                    alignment:
+                                        presentSubtitles.singleOrNull ==
+                                            subtitle
+                                        ? .center
+                                        : presentSubtitles.firstOrNull ==
+                                              subtitle
+                                        ? .centerRight
+                                        : (presentSubtitles.firstOrNull ==
+                                                  subtitle
+                                              ? .centerLeft
+                                              : .center),
+                                    child: Container(
+                                      constraints: subtitle == null
+                                          ? const .new(maxWidth: 0)
+                                          : null,
+                                      child: Text(
+                                        '${presentSubtitles.firstOrNull != subtitle ? ' ' : ''}$subtitle${presentSubtitles.lastOrNull != subtitle ? ' •' : ''}',
+                                        maxLines: 1,
+                                        overflow: .clip,
+                                        style: context.tt.classSubtitle,
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ),
 
-                        child: clazz.studentCountString != null
-                            ? Text(clazz.studentCountString!)
-                            : const SizedBox.shrink(),
+                            if (presentSubtitles.isEmpty)
+                              const TextSpan(text: 'xxx'),
+                          ],
+                        ),
+                        style: context.tt.classSubtitle,
+                        maxLines: 2,
                       ),
                     ),
 
-                    if (hasStatus)
-                      TileWidget(
-                        borderRadius: const .all(ListWidget.radius),
-                        backgroundColor: canceled
-                            ? scheme.errorContainer
-                            : scheme.surfaceContainer,
-
-                        leading: Icon(
-                          canceled
-                              ? HugeIconsSolid.alertCircle
-                              : HugeIconsSolid.informationCircle,
-                          color: canceled ? scheme.error : scheme.secondary,
-                        ),
-
-                        title: Text(
-                          clazz.status!,
-                          style: TextStyle(
-                            color: canceled ? scheme.error : scheme.secondary,
-                            fontWeight: .w900,
-                          ),
-                        ),
-                      ),
+                    const Padding(padding: .symmetric(vertical: 4)),
 
                     ListWidget(
                       shrinkWrap: true,

@@ -5,7 +5,6 @@ import 'package:antinote_app/ui/features/auth/qr_code.dart';
 import 'package:antinote_app/ui/features/auth/search_cities.dart';
 import 'package:antinote_app/ui/features/auth/url.dart';
 import 'package:antinote_app/ui/utils/utils.dart';
-import 'package:antinote_app/ui/widgets/app_bar.dart';
 import 'package:antinote_app/ui/widgets/bottom_padding.dart';
 import 'package:antinote_app/ui/widgets/list.dart';
 import 'package:antinote_app/ui/widgets/loading.dart';
@@ -137,9 +136,12 @@ class LoginMethodsScreen extends StatelessWidget {
     final alternativeOptions = buildAlternativeOptions(context);
 
     return Scaffold(
-      appBar: AppBarWidget(
+      appBar: AppBar(
         title: Text(context.l10n.loginMethodsTitle),
-        subtitle: Text(context.l10n.loginMethodsSubtitle),
+        bottom: PreferredSize(
+          preferredSize: const .fromHeight(16),
+          child: Text(context.l10n.loginMethodsSubtitle),
+        ),
       ),
 
       body: CustomScrollView(

@@ -3,7 +3,6 @@ import 'dart:io';
 import 'package:antinote_api/antinote_api.dart';
 import 'package:antinote_app/data/src/session/wrapper.dart';
 import 'package:antinote_app/ui/utils/src/context.dart';
-import 'package:antinote_app/ui/widgets/app_bar.dart';
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 import 'package:material_ui/material_ui.dart';
 
@@ -47,9 +46,12 @@ class _WebviewLoginScreenState extends State<WebviewLoginScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBarWidget(
+      appBar: AppBar(
         title: Text(context.l10n.loginToAccount),
-        subtitle: Text(context.l10n.loginWebviewSubtitle),
+        bottom: PreferredSize(
+          preferredSize: const .fromHeight(16),
+          child: Text(context.l10n.loginWebviewSubtitle),
+        ),
       ),
 
       body: Stack(

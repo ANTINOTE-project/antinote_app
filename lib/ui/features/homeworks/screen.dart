@@ -5,7 +5,6 @@ import 'package:antinote_api/antinote_api.dart';
 import 'package:antinote_app/ui/features/homeworks/details.dart';
 import 'package:antinote_app/ui/features/shell/tab.dart';
 import 'package:antinote_app/ui/utils/utils.dart';
-import 'package:antinote_app/ui/widgets/app_bar.dart';
 import 'package:antinote_app/ui/widgets/bottom_padding.dart';
 import 'package:antinote_app/ui/widgets/loading.dart';
 import 'package:antinote_app/ui/widgets/pressable.dart';
@@ -198,7 +197,7 @@ class _HomeworksScreenState extends State<HomeworksScreen>
           }
 
           return Scaffold(
-            appBar: AppBarWidget(
+            appBar: AppBar(
               title: _WeekPicker(
                 weekNumber: weekNumber,
                 weekCount: _weeks.length,

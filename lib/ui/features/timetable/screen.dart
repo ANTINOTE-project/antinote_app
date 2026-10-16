@@ -4,7 +4,6 @@ import 'package:antinote_api/antinote_api.dart';
 import 'package:antinote_app/ui/features/shell/tab.dart';
 import 'package:antinote_app/ui/features/timetable/events/block.dart';
 import 'package:antinote_app/ui/utils/utils.dart';
-import 'package:antinote_app/ui/widgets/app_bar.dart';
 import 'package:antinote_app/ui/widgets/loading.dart';
 import 'package:collection/collection.dart';
 import 'package:expandable_page_view/expandable_page_view.dart';
@@ -387,8 +386,11 @@ class _TimetableDisplayState extends State<TimetableDisplay>
   }
 
   PreferredSizeWidget _buildAppBar(BuildContext context) {
-    return AppBarWidget(
-      titleAlign: .center,
+    return AppBar(
+      backgroundColor: widget.transparent ? Colors.transparent : null,
+      surfaceTintColor: widget.transparent ? Colors.transparent : null,
+      foregroundColor: widget.transparent ? Colors.transparent : null,
+      centerTitle: true,
       title: ValueListenableBuilder(
         valueListenable: _lastPageNotifier,
         builder: (context, value, child) {
@@ -410,6 +412,7 @@ class _TimetableDisplayState extends State<TimetableDisplay>
                   Text(
                     curPage.pprint(context),
                     key: ValueKey(curPage.start),
+                    overflow: .fade,
                     style: context.tt.titleMedium?.copyWith(
                       fontWeight: .w600,
                       color: context.c.primary,

@@ -33,9 +33,13 @@ Future<void> mainEntrypoint() async {
   );
 
   LicenseRegistry.addLicense(() async* {
-    yield LicenseEntryWithLineBreaks([
-      'SN Pro',
-    ], await rootBundle.loadString('assets/fonts/OFL.txt', cache: false));
+    yield LicenseEntryWithLineBreaks(
+      ['Google Sans'],
+      await rootBundle.loadString(
+        'assets/fonts/GoogleSansFlex/OFL.txt',
+        cache: false,
+      ),
+    );
   });
 
   final registry = SettingsRegistry();

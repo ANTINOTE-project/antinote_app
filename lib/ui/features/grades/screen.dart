@@ -26,11 +26,22 @@ class _GradesScreenState extends State<GradesScreen>
 
   late TabController _controller;
 
+  int curTabId = 0;
+
+  void tabControllerListener() {
+    if (_controller.index != curTabId) {
+      setState(() {
+        curTabId = _controller.index;
+      });
+    }
+  }
+
   @override
   void initState() {
     super.initState();
 
-    _controller = TabController(length: 3, vsync: this);
+    _controller = TabController(length: 3, vsync: this)
+      ..addListener(tabControllerListener);
   }
 
   @override
@@ -66,22 +77,24 @@ class _GradesScreenState extends State<GradesScreen>
                   child: TabBar(
                     controller: _controller,
 
-                    tabs:
-                        [
-                          context.l10n.grades,
-                          context.l10n.classGradesReport,
-                          context.l10n.gradesReport,
-                        ].mapL(
-                          (name) => Tab(
-                            child: Text(
-                              name,
-                              textAlign: .center,
-                              style: const TextStyle(
-                                fontWeight: FontWeight.w700,
-                              ),
+                    tabs: [
+                      for (final (i, title) in [
+                        context.l10n.grades,
+                        context.l10n.classGradesReport,
+                        context.l10n.gradesReport,
+                      ].indexed)
+                        Tab(
+                          child: Text(
+                            title,
+                            textAlign: .center,
+                            style: context.tt.titleSmall?.copyWith(
+                              color: _controller.index == i
+                                  ? context.c.primary
+                                  : context.c.onSurfaceVariant,
                             ),
                           ),
                         ),
+                    ],
                   ),
                 ),
 

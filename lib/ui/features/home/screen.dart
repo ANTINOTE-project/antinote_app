@@ -4,7 +4,6 @@ import 'package:antinote_app/data/src/home_page/manager.dart';
 import 'package:antinote_app/ui/features/settings/screen.dart';
 import 'package:antinote_app/ui/features/shell/tab.dart';
 import 'package:antinote_app/ui/utils/utils.dart';
-import 'package:antinote_app/ui/widgets/app_bar.dart';
 import 'package:hugeicons_pro/hugeicons.dart';
 import 'package:material_ui/material_ui.dart';
 
@@ -41,8 +40,7 @@ class _HomeScreenState extends State<HomeScreen>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBarWidget(
-        titleAlign: .start,
+      appBar: AppBar(
         title: account != null
             ? Padding(
                 padding: const .only(left: 8),
@@ -50,27 +48,31 @@ class _HomeScreenState extends State<HomeScreen>
               )
             : null,
 
-        subtitle: account != null
-            ? Padding(
-                padding: const .only(left: 8),
-                child: Text(account!.establishmentName),
+        bottom: account != null
+            ? PreferredSize(
+                preferredSize: const .fromHeight(16),
+                child: Padding(
+                  padding: const .only(left: 8),
+                  child: Text(account!.establishmentName),
+                ),
               )
             : null,
-
-        trailing: IconButton(
-          icon: const Icon(HugeIconsSolid.settings02),
-          tooltip: context.l10n.goToAppSettings,
-          onPressed: () async {
-            await Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (context) {
-                  return const SettingsScreen();
-                },
-              ),
-            );
-          },
-        ),
+        actions: [
+          IconButton(
+            icon: const Icon(HugeIconsSolid.settings02),
+            tooltip: context.l10n.goToAppSettings,
+            onPressed: () async {
+              await Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) {
+                    return const SettingsScreen();
+                  },
+                ),
+              );
+            },
+          ),
+        ],
       ),
 
       body: super.build(context),

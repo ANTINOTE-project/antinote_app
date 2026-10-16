@@ -23,7 +23,7 @@ dependencies:
 
   # Frontend - aesthetics
   hugeicons_pro: ^0.0.3
-  skeletonizer: ^2.1.3
+  skeletonizer: ^3.0.0
   dynamic_color: ^2.1.0
   intl: any
 
@@ -46,7 +46,7 @@ dependencies:
   http: ^1.6.0
   collection: ^1.19.1
   image_picker: ^1.2.3
-  permission_handler: ^12.0.3
+  permission_handler: ^13.0.2
   flutter_local_notifications: ^22.3.0
   geolocator: ^14.0.3
   # Disabled because it doesn't play nicely with R8
@@ -64,7 +64,7 @@ dev_dependencies:
     sdk: flutter
 
   flutter_lints: ^6.0.0
-  pigeon: ^28.0.0
+  pigeon: ^29.0.8
 
 flutter:
   uses-material-design: true
@@ -72,48 +72,51 @@ flutter:
 
   assets:
     - "assets/icon.png"
-    - "assets/fonts/OFL.txt"
+    - "assets/fonts/GoogleSansFlex/OFL.txt"
 
   fonts:
-    - family: SNPro
+    - family: GoogleSansFlex
       fonts:
-        - asset: assets/fonts/SNPro-ExtraLight.ttf
-          weight: 200
-        - asset: assets/fonts/SNPro-ExtraLightItalic.ttf
-          weight: 200
-          style: italic
-        - asset: assets/fonts/SNPro-Light.ttf
-          weight: 300
-        - asset: assets/fonts/SNPro-LightItalic.ttf
-          weight: 300
-          style: italic
-        - asset: assets/fonts/SNPro-Regular.ttf
-          weight: 400
-        - asset: assets/fonts/SNPro-Italic.ttf
-          weight: 400
-          style: italic
-        - asset: assets/fonts/SNPro-Medium.ttf
-          weight: 500
-        - asset: assets/fonts/SNPro-MediumItalic.ttf
-          weight: 500
-          style: italic
-        - asset: assets/fonts/SNPro-SemiBold.ttf
-          weight: 600
-        - asset: assets/fonts/SNPro-SemiBoldItalic.ttf
-          weight: 600
-          style: italic
-        - asset: assets/fonts/SNPro-Bold.ttf
-          weight: 700
-        - asset: assets/fonts/SNPro-BoldItalic.ttf
-          weight: 700
-          style: italic
-        - asset: assets/fonts/SNPro-ExtraBold.ttf
-          weight: 800
-        - asset: assets/fonts/SNPro-ExtraBoldItalic.ttf
-          weight: 800
-          style: italic
-        - asset: assets/fonts/SNPro-Black.ttf
-          weight: 900
-        - asset: assets/fonts/SNPro-BlackItalic.ttf
-          weight: 900
-          style: italic
+        - asset: assets/fonts/GoogleSansFlex/GoogleSansFlex-VariableFont_GRAD,ROND,opsz,slnt,wdth,wght.ttf
+#    - family: SNPro
+#      fonts:
+#        - asset: assets/fonts/SNPro/SNPro-ExtraLight.ttf
+#          weight: 200
+#        - asset: assets/fonts/SNPro/SNPro-ExtraLightItalic.ttf
+#          weight: 200
+#          style: italic
+#        - asset: assets/fonts/SNPro/SNPro-Light.ttf
+#          weight: 300
+#        - asset: assets/fonts/SNPro/SNPro-LightItalic.ttf
+#          weight: 300
+#          style: italic
+#        - asset: assets/fonts/SNPro/SNPro-Regular.ttf
+#          weight: 400
+#        - asset: assets/fonts/SNPro/SNPro-Italic.ttf
+#          weight: 400
+#          style: italic
+#        - asset: assets/fonts/SNPro/SNPro-Medium.ttf
+#          weight: 500
+#        - asset: assets/fonts/SNPro/SNPro-MediumItalic.ttf
+#          weight: 500
+#          style: italic
+#        - asset: assets/fonts/SNPro/SNPro-SemiBold.ttf
+#          weight: 600
+#        - asset: assets/fonts/SNPro/SNPro-SemiBoldItalic.ttf
+#          weight: 600
+#          style: italic
+#        - asset: assets/fonts/SNPro/SNPro-Bold.ttf
+#          weight: 700
+#        - asset: assets/fonts/SNPro/SNPro-BoldItalic.ttf
+#          weight: 700
+#          style: italic
+#        - asset: assets/fonts/SNPro/SNPro-ExtraBold.ttf
+#          weight: 800
+#        - asset: assets/fonts/SNPro/SNPro-ExtraBoldItalic.ttf
+#          weight: 800
+#          style: italic
+#        - asset: assets/fonts/SNPro/SNPro-Black.ttf
+#          weight: 900
+#        - asset: assets/fonts/SNPro/SNPro-BlackItalic.ttf
+#          weight: 900
+#          style: italic

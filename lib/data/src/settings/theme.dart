@@ -1,5 +1,6 @@
 import 'package:antinote_app/data/src/settings/category.dart';
 import 'package:antinote_app/ui/features/settings/screen.dart';
+import 'package:hugeicons_pro/hugeicons.dart';
 import 'package:material_ui/material_ui.dart';
 
 class ThemeSettings extends SettingsCategory {
@@ -45,10 +46,24 @@ class ThemeSettings extends SettingsCategory {
     return ThemeData(
       colorScheme: colorScheme,
       useMaterial3: true,
-      fontFamily: 'SNPro',
-      typography: Typography.material2021(colorScheme: colorScheme),
+      fontFamily: 'GoogleSansFlex',
+      typography: Typography.material2021(
+        colorScheme: colorScheme,
+        black: Typography.blackMountainView.apply(fontFamily: 'GoogleSansFlex'),
+        white: Typography.whiteMountainView.apply(fontFamily: 'GoogleSansFlex'),
+      ),
       scaffoldBackgroundColor: colorScheme.surface,
       canvasColor: colorScheme.surface,
+      actionIconTheme: .new(
+        backButtonIconBuilder: (context) =>
+            const Icon(HugeIconsSolid.arrowLeft01),
+        closeButtonIconBuilder: (context) =>
+            const Icon(HugeIconsSolid.cancel01),
+        drawerButtonIconBuilder: (context) =>
+            const Icon(HugeIconsSolid.panelLeftOpen),
+        endDrawerButtonIconBuilder: (context) =>
+            const Icon(HugeIconsSolid.panelRightOpen),
+      ),
     );
   }
 
