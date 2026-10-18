@@ -36,4 +36,9 @@ extension CustomTextThemeStyles on TextTheme {
   TextStyle? get classSubtitle => bodyLarge?.copyWith(
     fontVariations: const [.weight(450), .new('ROND', 100), .width(90)],
   );
+
+  TextStyle? get timeColumnText => labelMedium?.copyWith(
+    overflow: .visible,
+    fontVariations: const [.new('ROND', 50), .width(90)],
+  );
 }

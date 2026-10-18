@@ -83,7 +83,8 @@ final class AccountRegistry({
     if (pick) {
       _curAccount.value = accountUid;
     }
-    final wrapper = curSession ?? SessionWrapper(accountUid: accountUid);
+    final wrapper =
+        specificSession(accountUid) ?? SessionWrapper(accountUid: accountUid);
     _sessions[accountUid] = wrapper;
 
     try {
@@ -96,6 +97,7 @@ final class AccountRegistry({
         storage: _storage,
         options: settings.sessionOptions,
         channels: {},
+        sendSession: false,
         debugLabel: 'Logging in to account $accountUid',
         retry: true,
       );

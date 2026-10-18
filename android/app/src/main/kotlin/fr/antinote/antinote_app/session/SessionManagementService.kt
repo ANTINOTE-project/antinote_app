@@ -641,11 +641,10 @@ class SessionManagementService : Service() {
                         } catch (_: RemoteException) {
                         }
 
-                        val newTasks = result.second
-                        newTasks?.forEach { newTask ->
+                        result.second?.forEach { newTask ->
                             sendTaskScheduledMessage(
                                 target = newTask.scheduler,
-                                clientTaskId = newTask.clientTaskId, // Use clientTaskId, not id (which is internal)
+                                clientTaskId = newTask.clientTaskId,
                                 taskId = newTask.id,
                                 lastSessionVersion = newTask.existingVersion,
                                 accountId = newTask.accountId

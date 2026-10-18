@@ -1,6 +1,7 @@
 import 'package:antinote_api/antinote_api.dart';
 import 'package:antinote_app/data/protos/account.pb.dart';
 import 'package:antinote_app/data/src/home_page/manager.dart';
+import 'package:antinote_app/ui/features/home/chips.dart';
 import 'package:antinote_app/ui/features/settings/screen.dart';
 import 'package:antinote_app/ui/features/shell/tab.dart';
 import 'package:antinote_app/ui/utils/utils.dart';
@@ -34,29 +35,22 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen>
     with PageMixin<HomeScreen>, TabMixin<HomeScreen> {
-  late HomePageManager homePageManager;
+  HomePageManager homePageManager = HomePageManager();
   AntinoteAccount? account;
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: account != null
-            ? Padding(
-                padding: const .only(left: 8),
-                child: Text(context.l10n.homeHiName(account!.name)),
-              )
-            : null,
+        title: HomePageChips(
+          account: account,
+          manager: homePageManager,
+          reloadPage: () async {
+            if (!mounted) return;
 
-        bottom: account != null
-            ? PreferredSize(
-                preferredSize: const .fromHeight(16),
-                child: Padding(
-                  padding: const .only(left: 8),
-                  child: Text(account!.establishmentName),
-                ),
-              )
-            : null,
+            await reload();
+          },
+        ),
         actions: [
           IconButton(
             icon: const Icon(HugeIconsSolid.settings02),

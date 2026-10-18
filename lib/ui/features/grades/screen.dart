@@ -115,7 +115,7 @@ class _GradesScreenState extends State<GradesScreen>
                         selected: period == _selectedPeriod,
                         label: Text(
                           period.name,
-                          style: const TextStyle(fontWeight: FontWeight.w700),
+                          style: const TextStyle(fontWeight: .w500),
                         ),
 
                         onSelected: (value) async {
