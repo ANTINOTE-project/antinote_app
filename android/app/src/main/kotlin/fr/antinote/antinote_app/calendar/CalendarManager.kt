@@ -10,7 +10,7 @@ import android.provider.CalendarContract
 import androidx.annotation.RequiresApi
 import androidx.core.database.getStringOrNull
 import fr.antinote.antinote_app.auth.LoginManager
-import fr.antinote.studies_management.antinote_app.pigeon_posts.*
+import fr.antinote.antinote_app.pigeon_posts.*
 import java.time.OffsetDateTime
 import java.time.ZoneOffset
 import kotlin.time.ExperimentalTime
@@ -123,7 +123,8 @@ class CalendarManager(private val context: Context) : NativeCalendarManager {
                             visualId = eventVisualId,
                             rrule = eventRrule ?: "",
                             startTime = eventStart,
-                            exceptions = eventExceptions?.split(",")?.filter { s -> s.trim().isNotEmpty() }
+                            exceptions = eventExceptions?.split(",")
+                                ?.filter { s -> s.trim().isNotEmpty() }
                                 ?.map { ex -> parseDateTime(ex).toEpochMilliseconds() } ?: listOf(),
                             entryType = CalendarEventEntryType.ofRaw(eventEntryType)!!,
                         )
@@ -182,7 +183,9 @@ class CalendarManager(private val context: Context) : NativeCalendarManager {
     }
 
     private fun exceptionContentValues(
-        entry: NewExceptionCalendarEventEntry, originalEntry: NewRecurringCalendarEventEntry, originalId: Long
+        entry: NewExceptionCalendarEventEntry,
+        originalEntry: NewRecurringCalendarEventEntry,
+        originalId: Long
     ): ContentValues {
         return ContentValues().apply {
             put(CalendarContract.Events.CALENDAR_ID, originalEntry.calendarId)
@@ -230,7 +233,8 @@ class CalendarManager(private val context: Context) : NativeCalendarManager {
                 put(CalendarContract.Attendees.EVENT_ID, eventId)
                 put(CalendarContract.Attendees.ATTENDEE_NAME, attendee.name)
                 put(
-                    CalendarContract.Attendees.ATTENDEE_EMAIL, "${attendee.visualId}@${attendee.instanceDomain}"
+                    CalendarContract.Attendees.ATTENDEE_EMAIL,
+                    "${attendee.visualId}@${attendee.instanceDomain}"
                 )
                 put(
                     CalendarContract.Attendees.ATTENDEE_RELATIONSHIP, when (attendee.type) {
@@ -274,7 +278,8 @@ class CalendarManager(private val context: Context) : NativeCalendarManager {
         }
 
         for (pair in perAccount.entries) {
-            val withExceptions = pair.value.filter { it.exceptions.isNotEmpty() || it.attendees.isNotEmpty() }
+            val withExceptions =
+                pair.value.filter { it.exceptions.isNotEmpty() || it.attendees.isNotEmpty() }
 
             val eventsUrl = createUri(
                 CalendarContract.Events.CONTENT_URI, pair.key
@@ -316,15 +321,17 @@ class CalendarManager(private val context: Context) : NativeCalendarManager {
             val rawEventId = entry.id.toString()
 
             operations.add(
-                ContentProviderOperation.newDelete(CalendarContract.Events.CONTENT_URI).withSelection(
-                    "${CalendarContract.Events._ID} = ? OR ${CalendarContract.Events.ORIGINAL_ID} = ?",
-                    arrayOf(rawEventId, rawEventId)
-                ).build()
+                ContentProviderOperation.newDelete(CalendarContract.Events.CONTENT_URI)
+                    .withSelection(
+                        "${CalendarContract.Events._ID} = ? OR ${CalendarContract.Events.ORIGINAL_ID} = ?",
+                        arrayOf(rawEventId, rawEventId)
+                    ).build()
             )
             operations.add(
-                ContentProviderOperation.newDelete(CalendarContract.Attendees.CONTENT_URI).withSelection(
-                    "${CalendarContract.Attendees.EVENT_ID} = ?", arrayOf(rawEventId)
-                ).build()
+                ContentProviderOperation.newDelete(CalendarContract.Attendees.CONTENT_URI)
+                    .withSelection(
+                        "${CalendarContract.Attendees.EVENT_ID} = ?", arrayOf(rawEventId)
+                    ).build()
             )
         }
 
@@ -353,7 +360,8 @@ class CalendarManager(private val context: Context) : NativeCalendarManager {
 
         cursor.use {
             val calendarIdIndex = it.getColumnIndex(CalendarContract.Calendars._ID)
-            val calendarNameIndex = it.getColumnIndex(CalendarContract.Calendars.CALENDAR_DISPLAY_NAME)
+            val calendarNameIndex =
+                it.getColumnIndex(CalendarContract.Calendars.CALENDAR_DISPLAY_NAME)
             val calendarColorIndex = it.getColumnIndex(CalendarContract.Calendars.CALENDAR_COLOR)
             val deletedIndex = it.getColumnIndex(CalendarContract.Calendars.DELETED)
             val versionIndex = it.getColumnIndex(CALENDAR_VERSION)
@@ -409,14 +417,16 @@ class CalendarManager(private val context: Context) : NativeCalendarManager {
                 put(CalendarContract.Calendars.ACCOUNT_NAME, account.name)
                 put(CalendarContract.Calendars.ACCOUNT_TYPE, account.type)
                 put(
-                    CalendarContract.Calendars.NAME, calendar.accountUid + '_' + calendar.resourceVisualId
+                    CalendarContract.Calendars.NAME,
+                    calendar.accountUid + '_' + calendar.resourceVisualId
                 )
                 put(CalendarContract.Calendars.CALENDAR_DISPLAY_NAME, calendar.displayName)
                 put(CalendarContract.Calendars.CALENDAR_COLOR, calendar.color)
                 // Needs to be at least CAL_ACCESS_CONTRIBUTOR to be used in an AutomaticZenRule.
                 // See : https://cs.android.com/android/platform/superproject/+/android-latest-release:frameworks/base/services/core/java/com/android/server/notification/CalendarTracker.java;l=98-100;drc=1d5156d9cc4d8d64f331122ef2336752e263cce5
                 put(
-                    CalendarContract.Calendars.CALENDAR_ACCESS_LEVEL, CalendarContract.Calendars.CAL_ACCESS_CONTRIBUTOR
+                    CalendarContract.Calendars.CALENDAR_ACCESS_LEVEL,
+                    CalendarContract.Calendars.CAL_ACCESS_CONTRIBUTOR
                 )
                 put(CalendarContract.Calendars.OWNER_ACCOUNT, account.name)
                 put(CalendarContract.Calendars.CAN_ORGANIZER_RESPOND, 0)

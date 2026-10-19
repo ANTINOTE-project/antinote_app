@@ -13,8 +13,8 @@ import android.os.RemoteException
 import android.util.Log
 import com.google.protobuf.kotlin.toByteString
 import fr.antinote.antinote_app.App
+import fr.antinote.antinote_app.pigeon_posts.PollingState
 import fr.antinote.antinote_app.protos.copy
-import fr.antinote.studies_management.antinote_app.pigeon_posts.PollingState
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.runBlocking
 import java.lang.ref.WeakReference
@@ -135,7 +135,7 @@ const val MSG_POLLING_UPDATED = 7
  * Returns:
  * - `account` (string): The ID of the account whose polling state got fetched.
  * - `state` (int): The polling state for the account (see
- *   [fr.antinote.studies_management.antinote_app.pigeon_posts.PollingState]).
+ *   [fr.antinote.antinote_app.pigeon_posts.PollingState]).
  */
 const val MSG_GET_POLLING_STATE = 8
 
@@ -145,7 +145,7 @@ const val MSG_GET_POLLING_STATE = 8
  * Parameters are:
  * - `account` (string): The ID of the account whose polling state will get updated.
  * - `state` (int): The new polling state (see
- *   [fr.antinote.studies_management.antinote_app.pigeon_posts.PollingState]).
+ *   [fr.antinote.antinote_app.pigeon_posts.PollingState]).
  * - `server_signature` (string, optional): The newly enforced server signature, if available.
  *
  * Returns:
