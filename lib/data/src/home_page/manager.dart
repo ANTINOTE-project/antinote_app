@@ -605,6 +605,8 @@ final class HomePageWidgetState<
 final class HomePageManager() {
   bool initialized = false;
 
+  late HomePageConfiguration currentConfiguration;
+
   late HomePageCache cache;
 
   late final List<HomePageWidgetState> loadedWidgets;
@@ -662,15 +664,15 @@ final class HomePageManager() {
       anchorTime: session.stack.demo ? session.instance.demoDateTime : null,
     );
 
-    final config =
+    currentConfiguration =
         (await _findConfiguration(
           session,
           (await settings.homePage.getConditionalConfigurations(l10n)).toList(),
         )) ??
         await settings.homePage.getBaseConfiguration(l10n);
 
-    final loadedWidgetConfigurations = config.widgets.toList();
-    if (!config.exclusive) {
+    final loadedWidgetConfigurations = currentConfiguration.widgets.toList();
+    if (!currentConfiguration.exclusive) {
       final baseWidgets = (await settings.homePage.getBaseConfiguration(l10n))
           .widgets
           .toList();
