@@ -53,18 +53,19 @@ class _HomePageChipsState extends State<HomePageChips>
               clazz: null,
             ));
 
-  final GlobalKey scrollViewKey = GlobalKey(
-    debugLabel: 'Home page chips scroll view',
-  );
+  final GlobalKey accountsKey = GlobalKey(debugLabel: 'Home page account chip');
 
   Widget buildAlways(BuildContext context) {
     return SingleChildScrollView(
-      key: scrollViewKey,
       scrollDirection: .horizontal,
       child: Row(
+        spacing: 8,
         children: [
           HomePageChip(
-            leading: loaded && curProfile != null && curProfile!.picture == null
+            key: accountsKey,
+            leading:
+                (loaded && curProfile != null && curProfile!.picture == null) ||
+                    !context.s.theme.showProfilePicture
                 ? null
                 : CircleAvatar(
                     foregroundImage: curProfile?.picture == null
@@ -89,7 +90,7 @@ class _HomePageChipsState extends State<HomePageChips>
                     if (profiles?.isEmpty ?? true) return;
 
                     final chipRenderBox =
-                        scrollViewKey.currentContext?.findRenderObject()
+                        accountsKey.currentContext?.findRenderObject()
                             as RenderBox?;
                     final chipPosition = chipRenderBox
                         ?.globalToLocal(.zero)
@@ -127,16 +128,18 @@ class _HomePageChipsState extends State<HomePageChips>
                                 padding: const .only(left: 4),
                                 child: Row(
                                   children: [
-                                    SizedBox(
-                                      width: 18,
-                                      height: 18,
-                                      child: CircleAvatar(
-                                        foregroundImage: profile.picture == null
-                                            ? null
-                                            : MemoryImage(profile.picture!),
-                                        backgroundColor: context.c.surface,
+                                    if (context.s.theme.showProfilePicture)
+                                      SizedBox(
+                                        width: 18,
+                                        height: 18,
+                                        child: CircleAvatar(
+                                          foregroundImage:
+                                              profile.picture == null
+                                              ? null
+                                              : MemoryImage(profile.picture!),
+                                          backgroundColor: context.c.surface,
+                                        ),
                                       ),
-                                    ),
                                     Padding(
                                       padding: const .symmetric(horizontal: 8),
                                       child: Column(
@@ -199,6 +202,12 @@ class _HomePageChipsState extends State<HomePageChips>
                     if (mounted) widget.reloadPage();
                   }
                 : null,
+          ),
+
+          HomePageChip(
+            label: widget.manager.initialized
+                ? Text(widget.manager.currentConfiguration.name)
+                : const Skeletonizer(child: Text('Unknown')),
           ),
         ],
       ),

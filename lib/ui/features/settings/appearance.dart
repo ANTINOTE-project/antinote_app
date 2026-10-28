@@ -126,6 +126,22 @@ class _AppearanceState extends State<Appearance> {
                 }
               },
             ),
+
+            TileWidgetData(
+              title: Text(context.l10n.showProfilePicture),
+              subtitle: Text(
+                context.l10n.showProfilePictureDescription,
+                maxLines: 3,
+              ),
+              switchValue: context.s.theme.showProfilePicture,
+              onSwitchChanged: (value) async {
+                await context.s.theme.setShowProfilePicture(value);
+
+                if (context.mounted) {
+                  setState(() {});
+                }
+              },
+            ),
           ],
         ),
       ],
