@@ -605,7 +605,7 @@ final class HomePageWidgetState<
 final class HomePageManager() {
   bool initialized = false;
 
-  late HomePageConfiguration currentConfiguration;
+  HomePageConfiguration? currentConfiguration;
 
   late HomePageCache cache;
 
@@ -671,8 +671,8 @@ final class HomePageManager() {
         )) ??
         await settings.homePage.getBaseConfiguration(l10n);
 
-    final loadedWidgetConfigurations = currentConfiguration.widgets.toList();
-    if (!currentConfiguration.exclusive) {
+    final loadedWidgetConfigurations = currentConfiguration!.widgets.toList();
+    if (!currentConfiguration!.exclusive) {
       final baseWidgets = (await settings.homePage.getBaseConfiguration(l10n))
           .widgets
           .toList();

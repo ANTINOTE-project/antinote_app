@@ -67,7 +67,7 @@ Future<TaskReturnData> _syncNotifications(
                 ),
               );
 
-              entryResult[session.curResource]!.addAll(page.discussions);
+              entryResult[resource]!.addAll(page.discussions);
             }
             break;
           case SyncTaskData_Notification_EntryType.GRADE:
@@ -76,7 +76,7 @@ Future<TaskReturnData> _syncNotifications(
               final page = await session.access(
                 LatestGradesPageAccessor(
                   period:
-                      session.curResource.tabsForPeriods
+                      resource.tabsForPeriods
                           .firstWhere(
                             (element) =>
                                 element.location ==
@@ -89,7 +89,7 @@ Future<TaskReturnData> _syncNotifications(
                 ),
               );
 
-              entryResult[session.curResource]!.addAll(page.exams);
+              entryResult[resource]!.addAll(page.exams);
             }
             break;
           case SyncTaskData_Notification_EntryType.HOMEWORK:
@@ -124,7 +124,7 @@ Future<TaskReturnData> _syncNotifications(
                 ),
               );
 
-              entryResult[session.curResource]!.addAll(
+              entryResult[resource]!.addAll(
                 (page.homeworkSet?.homeworks ?? []).where(
                   (element) => range.contains(element.deadlineDate),
                 ),
@@ -139,7 +139,7 @@ Future<TaskReturnData> _syncNotifications(
               );
 
               for (final collection in page.collections) {
-                entryResult[session.curResource]!.addAll(collection.news);
+                entryResult[resource]!.addAll(collection.news);
               }
             }
             break;

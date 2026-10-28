@@ -22,6 +22,7 @@ import fr.antinote.antinote_app.pigeon_posts.NativeSyncManager
 import fr.antinote.antinote_app.pigeon_posts.SyncManager
 import fr.antinote.antinote_app.pigeon_posts.SyncMessageType
 import fr.antinote.antinote_app.pigeon_posts.SyncRequest
+import fr.antinote.antinote_app.pigeon_posts.SyncResponse
 import fr.antinote.antinote_app.pigeon_posts.SyncResultType
 import fr.antinote.antinote_app.protos.AntinoteAccount
 import fr.antinote.antinote_app.protos.SyncTaskData
@@ -167,11 +168,19 @@ class SyncWorker(val appContext: Context, workerParams: WorkerParameters) :
 
             val accounts = loginManager.scanAndGetAccounts(uidFilter = validUids)
             for (account in accounts) {
-                val res = syncManager.syncAccount(
-                    SyncRequest(
-                        account = account.toByteArray(),
-                        forcedScope = forcedTasks?.map { it.number.toLong() })
-                )
+                val res = try {
+                    syncManager.syncAccount(
+                        SyncRequest(
+                            account = account.toByteArray(),
+                            forcedScope = forcedTasks?.map { it.number.toLong() })
+                    )
+                } catch (e: Exception) {
+                    Log.w(TAG, "Failed to run account sync.", e)
+
+                    SyncResponse(
+                        result = SyncResultType.FAILURE
+                    )
+                }
 
                 // Success if all requests success, failure if all requests fail, else retry.
                 curResponseLevel = if (

@@ -32,7 +32,6 @@ class CalendarManager(private val context: Context) : NativeCalendarManager {
     }
 
     @RequiresApi(Build.VERSION_CODES.O)
-    @OptIn(ExperimentalTime::class)
     private fun parseDateTime(raw: String): Instant {
         val year = Regex("(?<year>\\d{4})")
         val month = Regex("(?<month>\\d{2})")
@@ -63,7 +62,6 @@ class CalendarManager(private val context: Context) : NativeCalendarManager {
             .appendQueryParameter(CalendarContract.Calendars.ACCOUNT_TYPE, account.type).build()
     }
 
-    @OptIn(ExperimentalTime::class)
     @RequiresApi(Build.VERSION_CODES.O)
     override fun listExisting(
         accountUid: String, calendarId: Long

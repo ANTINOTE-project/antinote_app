@@ -205,8 +205,10 @@ class _HomePageChipsState extends State<HomePageChips>
           ),
 
           HomePageChip(
-            label: widget.manager.initialized
-                ? Text(widget.manager.currentConfiguration.name)
+            label:
+                widget.manager.initialized &&
+                    widget.manager.currentConfiguration != null
+                ? Text(widget.manager.currentConfiguration!.name)
                 : const Skeletonizer(child: Text('Unknown')),
           ),
         ],
