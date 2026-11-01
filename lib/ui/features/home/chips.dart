@@ -283,51 +283,55 @@ class HomePageChip extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Ink(
-      padding: const .all(4),
-      decoration: BoxDecoration(
-        color: context.c.surfaceContainerLow,
-        borderRadius: .circular(16),
-      ),
-      height: 48,
-      child: InkWell(
-        borderRadius: .circular(12),
-        onTap: onTap,
-        child: Ink(
-          decoration: BoxDecoration(
-            borderRadius: .circular(12),
-            color: onTap != null
-                ? context.c.tertiaryContainer
-                : context.c.surface,
-          ),
-          padding: const .symmetric(horizontal: 8),
-          height: 44,
-          child: DefaultTextStyle(
-            style: (context.tt.labelLarge ?? DefaultTextStyle.of(context).style)
-                .copyWith(
-                  color: onTap != null
-                      ? context.c.onTertiaryContainer
-                      : context.c.onSurface,
+    return Material(
+      type: .transparency,
+      child: Ink(
+        padding: const .all(4),
+        decoration: BoxDecoration(
+          color: context.c.surfaceContainerLow,
+          borderRadius: .circular(16),
+        ),
+        height: 48,
+        child: InkWell(
+          borderRadius: .circular(12),
+          onTap: onTap,
+          child: Ink(
+            decoration: BoxDecoration(
+              borderRadius: .circular(12),
+              color: onTap != null
+                  ? context.c.tertiaryContainer
+                  : context.c.surface,
+            ),
+            padding: const .symmetric(horizontal: 8),
+            height: 44,
+            child: DefaultTextStyle(
+              style:
+                  (context.tt.labelLarge ?? DefaultTextStyle.of(context).style)
+                      .copyWith(
+                        color: onTap != null
+                            ? context.c.onTertiaryContainer
+                            : context.c.onSurface,
+                      ),
+              child: IconTheme(
+                data: .new(color: context.c.onTertiaryContainer, size: 18),
+                child: Row(
+                  children: [
+                    if (leading != null)
+                      ConstrainedBox(
+                        constraints: const .new(maxWidth: 18, maxHeight: 18),
+                        child: leading!,
+                      ),
+                    Padding(
+                      padding: const .symmetric(horizontal: 8),
+                      child: label,
+                    ),
+                    if (trailing != null)
+                      ConstrainedBox(
+                        constraints: const .new(maxWidth: 18, maxHeight: 18),
+                        child: trailing!,
+                      ),
+                  ],
                 ),
-            child: IconTheme(
-              data: .new(color: context.c.onTertiaryContainer, size: 18),
-              child: Row(
-                children: [
-                  if (leading != null)
-                    ConstrainedBox(
-                      constraints: const .new(maxWidth: 18, maxHeight: 18),
-                      child: leading!,
-                    ),
-                  Padding(
-                    padding: const .symmetric(horizontal: 8),
-                    child: label,
-                  ),
-                  if (trailing != null)
-                    ConstrainedBox(
-                      constraints: const .new(maxWidth: 18, maxHeight: 18),
-                      child: trailing!,
-                    ),
-                ],
               ),
             ),
           ),

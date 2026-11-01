@@ -16,10 +16,10 @@ if (keystorePropertiesFile.exists()) {
 
 
 dependencies {
-    implementation("androidx.datastore:datastore:1.2.1")
+    implementation("androidx.datastore:datastore:1.3.0")
     implementation("androidx.biometric:biometric:1.1.0")
-    implementation("com.google.protobuf:protobuf-kotlin-lite:4.36.1")
-    implementation("androidx.work:work-runtime-ktx:2.11.2")
+    implementation("com.google.protobuf:protobuf-kotlin-lite:4.36.2")
+    implementation("androidx.work:work-runtime-ktx:2.12.0")
     implementation("androidx.appcompat:appcompat:1.8.0")
 
     coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:2.1.5")
@@ -27,7 +27,7 @@ dependencies {
 
 protobuf {
     protoc {
-        artifact = "com.google.protobuf:protoc:4.35.1"
+        artifact = "com.google.protobuf:protoc:4.36.2"
     }
     generateProtoTasks {
         all().forEach { task ->
