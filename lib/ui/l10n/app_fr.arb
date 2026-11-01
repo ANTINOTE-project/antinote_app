@@ -400,5 +400,8 @@
 
   "classContents": "Propriétés du cours",
 
-  "threadMissing": "Données du fil introuvables, essayez de recharger la page."
+  "threadMissing": "Données du fil introuvables, essayez de recharger la page.",
+
+  "showProfilePicture": "Montrer les photos de profile",
+  "showProfilePictureDescription": "Afficher ou non les photos de profile dans la page d'accueil"
 }

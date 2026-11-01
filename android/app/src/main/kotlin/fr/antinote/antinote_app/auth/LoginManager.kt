@@ -18,10 +18,8 @@ import androidx.biometric.BiometricManager
 import androidx.biometric.BiometricPrompt
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.FragmentActivity
-import androidx.lifecycle.asFlow
 import androidx.work.ExistingWorkPolicy
 import androidx.work.OneTimeWorkRequestBuilder
-import androidx.work.Operation
 import androidx.work.OutOfQuotaPolicy
 import androidx.work.WorkInfo
 import androidx.work.WorkManager
@@ -37,7 +35,6 @@ import fr.antinote.antinote_app.protos.EncryptedCredentials
 import fr.antinote.antinote_app.protos.copy
 import fr.antinote.antinote_app.sync.SyncWorker
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.dropWhile
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.suspendCancellableCoroutine
@@ -172,9 +169,6 @@ class LoginManager(val context: Context, val activity: FragmentActivity?) : Nati
                     setSubtitle(context.getString(R.string.biometric_prompt_subtitle))
                     setDescription(context.getString(R.string.biometric_prompt_description))
 
-                    // Since we enable device credentials, we do not need to define this.
-                    // setNegativeButtonText(context.getString(R.string.biometric_prompt_cancel))
-
                     setConfirmationRequired(false)
                     setAllowedAuthenticators(AUTHENTICATORS)
                 }.build()
@@ -279,7 +273,10 @@ class LoginManager(val context: Context, val activity: FragmentActivity?) : Nati
             )
         }
 
-        val nativeAccount = Account(account.name, context.getString(R.string.account_type))
+        val nativeAccount = Account(
+            "${account.name} (${account.establishmentName})",
+            context.getString(R.string.account_type)
+        )
         val nativeResult = manager.addAccountExplicitly(
             nativeAccount,
             null,
@@ -451,7 +448,7 @@ class LoginManager(val context: Context, val activity: FragmentActivity?) : Nati
                             setTypeUrl("${TYPE_PREFIX}/${newCredentials.javaClass.name}")
                             build()
                         }
-                    } else if(!hasTokenCredentials()) {
+                    } else if (!hasTokenCredentials()) {
                         tokenCredentials = oldAccount.tokenCredentials
                     }
                 }
@@ -468,35 +465,12 @@ class LoginManager(val context: Context, val activity: FragmentActivity?) : Nati
     }
 
     suspend fun scanAndGetAccounts(uidFilter: List<String>?): List<AntinoteAccount> {
-        val accounts = mutableListOf<AntinoteAccount>()
-        val manager = AccountManager.get(context)
-
-        val remainingAccountUids =
-            manager.getAccountsByType(context.getString(R.string.account_type))
-                .mapNotNull { manager.getUserData(it, KEY_UID) }
-                .toMutableSet()
-        val filterSet = uidFilter?.toSet()
-
-        val accountsToDelete = mutableListOf<String>()
-
         val app = context.applicationContext as App
+        val accounts = app.accountStore.data.first().accountsList
 
-        for (account in app.accountStore.data.first().accountsList) {
-            if (remainingAccountUids.contains(account.uid)) {
-                remainingAccountUids.remove(account.uid)
-            } else {
-                accountsToDelete.add(account.uid)
-                continue
-            }
-
-            if (filterSet != null && !filterSet.contains(account.uid)) continue
-
-            accounts.add(account.copy { clearTokenCredentials() })
-        }
-
-        deleteAccounts((remainingAccountUids + accountsToDelete).toList())
-
-        return accounts.toList()
+        val filterSet = uidFilter?.toSet()
+        return accounts.filter { filterSet == null || filterSet.contains(it.uid) }
+            .map { it.copy { clearTokenCredentials() } }
     }
 
     override suspend fun getAccountWithCredentials(uid: String): ByteArray? {
@@ -511,7 +485,7 @@ class LoginManager(val context: Context, val activity: FragmentActivity?) : Nati
         }
 
         if (!account.storeSecurely) {
-            if(!account.hasTokenCredentials()) {
+            if (!account.hasTokenCredentials()) {
                 Log.e(TAG, "Non-secure account does not have credentials")
                 return null
             }

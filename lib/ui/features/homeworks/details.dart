@@ -1,7 +1,6 @@
 import 'package:antinote_api/antinote_api.dart';
 import 'package:antinote_app/ui/utils/utils.dart';
 import 'package:antinote_app/ui/widgets/animated_icon.dart';
-import 'package:antinote_app/ui/widgets/app_bar.dart';
 import 'package:antinote_app/ui/widgets/attachment.dart';
 import 'package:antinote_app/ui/widgets/bottom_padding.dart';
 import 'package:antinote_app/ui/widgets/list.dart';
@@ -25,16 +24,18 @@ class HomeworkDetailsScreen extends StatelessWidget {
     final scheme = Utils.buildColorScheme(context, homework.backgroundColor);
 
     return Scaffold(
-      appBar: AppBarWidget(
+      appBar: AppBar(
         title: Text(
           homework.subject.name ?? context.l10n.noSubject,
           style: TextStyle(color: scheme.primary, fontWeight: .w800),
         ),
-
-        subtitle: Text(
-          context.l10n.givenTheForThe(
-            homework.givenDate,
-            homework.deadlineDate,
+        bottom: PreferredSize(
+          preferredSize: const .fromHeight(16),
+          child: Text(
+            context.l10n.givenTheForThe(
+              homework.givenDate,
+              homework.deadlineDate,
+            ),
           ),
         ),
       ),

@@ -2,7 +2,6 @@ import 'package:antinote_api/antinote_api.dart';
 import 'package:antinote_app/data/src/session/wrapper.dart';
 import 'package:antinote_app/ui/utils/utils.dart';
 import 'package:antinote_app/ui/widgets/animated_icon.dart';
-import 'package:antinote_app/ui/widgets/app_bar.dart';
 import 'package:antinote_app/ui/widgets/button.dart';
 import 'package:antinote_app/ui/widgets/field.dart';
 import 'package:flutter/services.dart';
@@ -33,9 +32,12 @@ class _PasswordLoginScreenState extends State<PasswordLoginScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBarWidget(
+      appBar: AppBar(
         title: Text(context.l10n.loginToAccount),
-        subtitle: Text(context.l10n.loginPasswordSubtitle),
+        bottom: PreferredSize(
+          preferredSize: const .fromHeight(16),
+          child: Text(context.l10n.loginPasswordSubtitle),
+        ),
       ),
 
       floatingActionButtonAnimator: .noAnimation,

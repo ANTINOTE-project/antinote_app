@@ -4,10 +4,10 @@ import android.content.pm.ApplicationInfo
 import android.util.Log
 import fr.antinote.antinote_app.auth.LoginManager
 import fr.antinote.antinote_app.calendar.CalendarManager
+import fr.antinote.antinote_app.pigeon_posts.NativeCalendarManager
 import fr.antinote.antinote_app.pigeon_posts.NativeLoginManager
+import fr.antinote.antinote_app.pigeon_posts.NativeSessionManager
 import fr.antinote.antinote_app.session.SessionManager
-import fr.antinote.studies_management.antinote_app.pigeon_posts.NativeCalendarManager
-import fr.antinote.studies_management.antinote_app.pigeon_posts.NativeSessionManager
 import io.flutter.embedding.engine.FlutterEngine
 
 class MainActivity : GroupedFlutterFragmentActivity() {

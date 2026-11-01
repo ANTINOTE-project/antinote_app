@@ -341,10 +341,7 @@ final class SessionWrapper({required final String accountUid}) {
           }
 
           _state = .new(
-            session: await RemoteSession.restoreBinary(
-              task.session!,
-              options: options,
-            ),
+            session: newSession,
             polling: _state?.polling ?? .unavailable,
             version: task.sessionVersion,
             hooks: _state?.hooks ?? [],

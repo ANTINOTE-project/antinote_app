@@ -1361,6 +1361,18 @@ abstract class AppLocalizations {
   /// In fr, this message translates to:
   /// **'Données du fil introuvables, essayez de recharger la page.'**
   String get threadMissing;
+
+  /// No description provided for @showProfilePicture.
+  ///
+  /// In fr, this message translates to:
+  /// **'Montrer les photos de profile'**
+  String get showProfilePicture;
+
+  /// No description provided for @showProfilePictureDescription.
+  ///
+  /// In fr, this message translates to:
+  /// **'Afficher ou non les photos de profile dans la page d\'accueil'**
+  String get showProfilePictureDescription;
 }
 
 class _AppLocalizationsDelegate

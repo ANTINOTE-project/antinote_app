@@ -779,4 +779,11 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get threadMissing =>
       'Could not load thread data, try reloading the page.';
+
+  @override
+  String get showProfilePicture => 'Show profile picture';
+
+  @override
+  String get showProfilePictureDescription =>
+      'Whether to display profile pictures in the home page';
 }

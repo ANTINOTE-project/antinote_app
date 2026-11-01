@@ -4,7 +4,6 @@ import 'package:antinote_api/antinote_api.dart';
 import 'package:antinote_app/ui/features/shell/tab.dart';
 import 'package:antinote_app/ui/features/timetable/events/block.dart';
 import 'package:antinote_app/ui/utils/utils.dart';
-import 'package:antinote_app/ui/widgets/app_bar.dart';
 import 'package:antinote_app/ui/widgets/loading.dart';
 import 'package:collection/collection.dart';
 import 'package:expandable_page_view/expandable_page_view.dart';
@@ -227,10 +226,7 @@ class _TimetableDisplayState extends State<TimetableDisplay>
                         child: Text(
                           window.startTime.asNumericTime(),
                           textAlign: .center,
-                          style: .new(
-                            color: context.c.outline,
-                            fontWeight: .w800,
-                          ),
+                          style: context.tt.timeColumnText,
                         ),
                       ),
                     ),
@@ -284,10 +280,7 @@ class _TimetableDisplayState extends State<TimetableDisplay>
                         child: Text(
                           window.endTime.asNumericTime(),
                           textAlign: .center,
-                          style: .new(
-                            color: context.c.outline,
-                            fontWeight: .w800,
-                          ),
+                          style: context.tt.timeColumnText,
                         ),
                       ),
                     ),
@@ -387,8 +380,11 @@ class _TimetableDisplayState extends State<TimetableDisplay>
   }
 
   PreferredSizeWidget _buildAppBar(BuildContext context) {
-    return AppBarWidget(
-      titleAlign: .center,
+    return AppBar(
+      backgroundColor: widget.transparent ? Colors.transparent : null,
+      surfaceTintColor: widget.transparent ? Colors.transparent : null,
+      foregroundColor: widget.transparent ? Colors.transparent : null,
+      centerTitle: true,
       title: ValueListenableBuilder(
         valueListenable: _lastPageNotifier,
         builder: (context, value, child) {
@@ -410,6 +406,7 @@ class _TimetableDisplayState extends State<TimetableDisplay>
                   Text(
                     curPage.pprint(context),
                     key: ValueKey(curPage.start),
+                    overflow: .fade,
                     style: context.tt.titleMedium?.copyWith(
                       fontWeight: .w600,
                       color: context.c.primary,
@@ -535,11 +532,7 @@ class _TimetableDisplayState extends State<TimetableDisplay>
                         curSlot.label,
                         maxLines: 1,
                         textAlign: .center,
-                        style: TextStyle(
-                          color: context.c.outline,
-                          fontWeight: .w800,
-                          overflow: .visible,
-                        ),
+                        style: context.tt.timeColumnText,
                       ),
                     ),
 
@@ -553,11 +546,7 @@ class _TimetableDisplayState extends State<TimetableDisplay>
                         curEndSlot.label,
                         maxLines: 1,
                         textAlign: .center,
-                        style: TextStyle(
-                          color: context.c.outline,
-                          fontWeight: .w800,
-                          overflow: .visible,
-                        ),
+                        style: context.tt.timeColumnText,
                       ),
                     ),
                 ],
@@ -606,12 +595,16 @@ class _TimetableDisplayState extends State<TimetableDisplay>
         );
       }
 
-      displays.add(
-        Expanded(
-          flex: block.endTime.difference(block.startTime).inMinutes,
-          child: BlockWidget(block: block),
-        ),
-      );
+      final blockDuration = block.endTime.difference(block.startTime).inMinutes;
+
+      if (blockDuration > 0) {
+        displays.add(
+          Expanded(
+            flex: blockDuration,
+            child: BlockWidget(block: block),
+          ),
+        );
+      }
 
       curTime = block.endTime;
     }

@@ -1,10 +1,10 @@
 import 'package:antinote_api/antinote_api.dart';
 import 'package:antinote_app/data/protos/account.pb.dart';
 import 'package:antinote_app/data/src/home_page/manager.dart';
+import 'package:antinote_app/ui/features/home/chips.dart';
 import 'package:antinote_app/ui/features/settings/screen.dart';
 import 'package:antinote_app/ui/features/shell/tab.dart';
 import 'package:antinote_app/ui/utils/utils.dart';
-import 'package:antinote_app/ui/widgets/app_bar.dart';
 import 'package:hugeicons_pro/hugeicons.dart';
 import 'package:material_ui/material_ui.dart';
 
@@ -35,42 +35,38 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen>
     with PageMixin<HomeScreen>, TabMixin<HomeScreen> {
-  late HomePageManager homePageManager;
+  HomePageManager homePageManager = HomePageManager();
   AntinoteAccount? account;
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBarWidget(
-        titleAlign: .start,
-        title: account != null
-            ? Padding(
-                padding: const .only(left: 8),
-                child: Text(context.l10n.homeHiName(account!.name)),
-              )
-            : null,
+      appBar: AppBar(
+        title: HomePageChips(
+          account: account,
+          manager: homePageManager,
+          reloadPage: () async {
+            if (!mounted) return;
 
-        subtitle: account != null
-            ? Padding(
-                padding: const .only(left: 8),
-                child: Text(account!.establishmentName),
-              )
-            : null,
-
-        trailing: IconButton(
-          icon: const Icon(HugeIconsSolid.settings02),
-          tooltip: context.l10n.goToAppSettings,
-          onPressed: () async {
-            await Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (context) {
-                  return const SettingsScreen();
-                },
-              ),
-            );
+            await reload();
           },
         ),
+        actions: [
+          IconButton(
+            icon: const Icon(HugeIconsSolid.settings02),
+            tooltip: context.l10n.goToAppSettings,
+            onPressed: () async {
+              await Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) {
+                    return const SettingsScreen();
+                  },
+                ),
+              );
+            },
+          ),
+        ],
       ),
 
       body: super.build(context),

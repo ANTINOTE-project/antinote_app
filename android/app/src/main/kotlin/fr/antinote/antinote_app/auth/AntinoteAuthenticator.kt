@@ -83,4 +83,14 @@ class AntinoteAuthenticator(val context: Context) : AbstractAccountAuthenticator
         Log.i(TAG, "Tried to update credentials")
         TODO("Not yet implemented")
     }
+
+    override fun getAccountRemovalAllowed(
+        response: AccountAuthenticatorResponse,
+        account: Account
+    ): Bundle = Bundle().apply {
+        // Account removal must be done in the app, we don't get any callback when the account gets
+        // removed from the system UI. We don't have any reliable way to know whether an account
+        // was deleted or the fetch was unsuccessful.
+        putBoolean(AccountManager.KEY_BOOLEAN_RESULT, false)
+    }
 }

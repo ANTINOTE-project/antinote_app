@@ -7,7 +7,7 @@ enum ButtonVariant { primary, secondary, tertiary, dangerous }
 class ButtonWidget extends StatelessWidget {
   final VoidCallback? onPressed;
 
-  final String? label;
+  final String label;
   final IconData? icon;
 
   final ButtonVariant variant;
@@ -17,7 +17,7 @@ class ButtonWidget extends StatelessWidget {
     super.key,
     this.onPressed,
 
-    this.label,
+    required this.label,
     this.icon,
 
     this.variant = .primary,
@@ -83,17 +83,14 @@ class ButtonWidget extends StatelessWidget {
               else
                 const SizedBox.shrink(),
 
-              if (label != null)
-                Text(
-                  label!,
-                  style: TextStyle(
-                    color: _getTextColor(context),
-                    fontSize: 16,
-                    fontWeight: .w800,
-                  ),
-                )
-              else
-                const SizedBox.shrink(),
+              Text(
+                label,
+                style: TextStyle(
+                  color: _getTextColor(context),
+                  fontSize: 16,
+                  fontWeight: .w800,
+                ),
+              ),
             ],
           ),
         ),

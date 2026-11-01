@@ -57,8 +57,9 @@ Future<TaskReturnData> _syncNotifications(
         };
         switch (entryType) {
           case SyncTaskData_Notification_EntryType.DISCUSSION:
-            for (int i = 0; i < session.user.requestableResources.length; i++) {
-              session.currentUserResourceId = i;
+            for (final resource in session.user.requestableResources) {
+              session.changeUserResource(resource);
+
               final page = await session.access(
                 const DiscussionPageAccessor(
                   showRead: true,
@@ -66,16 +67,16 @@ Future<TaskReturnData> _syncNotifications(
                 ),
               );
 
-              entryResult[session.curResource]!.addAll(page.discussions);
+              entryResult[resource]!.addAll(page.discussions);
             }
             break;
           case SyncTaskData_Notification_EntryType.GRADE:
-            for (int i = 0; i < session.user.requestableResources.length; i++) {
-              session.currentUserResourceId = i;
+            for (final resource in session.user.requestableResources) {
+              session.changeUserResource(resource);
               final page = await session.access(
                 LatestGradesPageAccessor(
                   period:
-                      session.curResource.tabsForPeriods
+                      resource.tabsForPeriods
                           .firstWhere(
                             (element) =>
                                 element.location ==
@@ -88,12 +89,12 @@ Future<TaskReturnData> _syncNotifications(
                 ),
               );
 
-              entryResult[session.curResource]!.addAll(page.exams);
+              entryResult[resource]!.addAll(page.exams);
             }
             break;
           case SyncTaskData_Notification_EntryType.HOMEWORK:
-            for (int i = 0; i < session.user.requestableResources.length; i++) {
-              session.currentUserResourceId = i;
+            for (final resource in session.user.requestableResources) {
+              session.changeUserResource(resource);
               final startDay = (session.instance.demoDateTime ?? DateTime.now())
                   .toDay(true);
               final endDay = startDay.add(const .new(days: 14)).toDay();
@@ -123,7 +124,7 @@ Future<TaskReturnData> _syncNotifications(
                 ),
               );
 
-              entryResult[session.curResource]!.addAll(
+              entryResult[resource]!.addAll(
                 (page.homeworkSet?.homeworks ?? []).where(
                   (element) => range.contains(element.deadlineDate),
                 ),
@@ -131,19 +132,19 @@ Future<TaskReturnData> _syncNotifications(
             }
             break;
           case SyncTaskData_Notification_EntryType.INFORMATION:
-            for (int i = 0; i < session.user.requestableResources.length; i++) {
-              session.currentUserResourceId = i;
+            for (final resource in session.user.requestableResources) {
+              session.changeUserResource(resource);
               final page = await session.access(
                 const NewsPageAccessor.defaultMode(),
               );
 
               for (final collection in page.collections) {
-                entryResult[session.curResource]!.addAll(collection.news);
+                entryResult[resource]!.addAll(collection.news);
               }
             }
             break;
           case SyncTaskData_Notification_EntryType.MENU:
-            session.currentUserResourceId = 0;
+            session.changeUserResource(session.rootResource);
             final page = await session.access(
               MenuPageAccessor(date: DateTime.now().toDay(true)),
             );

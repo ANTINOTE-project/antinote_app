@@ -15,18 +15,19 @@ import fr.antinote.antinote_app.App
 import fr.antinote.antinote_app.R
 import fr.antinote.antinote_app.auth.LoginManager
 import fr.antinote.antinote_app.calendar.CalendarManager
+import fr.antinote.antinote_app.pigeon_posts.NativeCalendarManager
 import fr.antinote.antinote_app.pigeon_posts.NativeLoginManager
+import fr.antinote.antinote_app.pigeon_posts.NativeSessionManager
+import fr.antinote.antinote_app.pigeon_posts.NativeSyncManager
+import fr.antinote.antinote_app.pigeon_posts.SyncManager
+import fr.antinote.antinote_app.pigeon_posts.SyncMessageType
+import fr.antinote.antinote_app.pigeon_posts.SyncRequest
+import fr.antinote.antinote_app.pigeon_posts.SyncResponse
+import fr.antinote.antinote_app.pigeon_posts.SyncResultType
 import fr.antinote.antinote_app.protos.AntinoteAccount
 import fr.antinote.antinote_app.protos.SyncTaskData
 import fr.antinote.antinote_app.protos.SyncTaskType
 import fr.antinote.antinote_app.session.SessionManager
-import fr.antinote.studies_management.antinote_app.pigeon_posts.NativeCalendarManager
-import fr.antinote.studies_management.antinote_app.pigeon_posts.NativeSessionManager
-import fr.antinote.studies_management.antinote_app.pigeon_posts.NativeSyncManager
-import fr.antinote.studies_management.antinote_app.pigeon_posts.SyncManager
-import fr.antinote.studies_management.antinote_app.pigeon_posts.SyncMessageType
-import fr.antinote.studies_management.antinote_app.pigeon_posts.SyncRequest
-import fr.antinote.studies_management.antinote_app.pigeon_posts.SyncResultType
 import io.flutter.FlutterInjector
 import io.flutter.embedding.engine.FlutterEngine
 import io.flutter.embedding.engine.FlutterEngineGroup
@@ -167,11 +168,19 @@ class SyncWorker(val appContext: Context, workerParams: WorkerParameters) :
 
             val accounts = loginManager.scanAndGetAccounts(uidFilter = validUids)
             for (account in accounts) {
-                val res = syncManager.syncAccount(
-                    SyncRequest(
-                        account = account.toByteArray(),
-                        forcedScope = forcedTasks?.map { it.number.toLong() })
-                )
+                val res = try {
+                    syncManager.syncAccount(
+                        SyncRequest(
+                            account = account.toByteArray(),
+                            forcedScope = forcedTasks?.map { it.number.toLong() })
+                    )
+                } catch (e: Exception) {
+                    Log.w(TAG, "Failed to run account sync.", e)
+
+                    SyncResponse(
+                        result = SyncResultType.FAILURE
+                    )
+                }
 
                 // Success if all requests success, failure if all requests fail, else retry.
                 curResponseLevel = if (

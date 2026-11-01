@@ -3,7 +3,6 @@ import 'dart:math';
 import 'package:antinote_api/antinote_api.dart';
 import 'package:antinote_app/ui/features/auth/cas_modal.dart';
 import 'package:antinote_app/ui/utils/utils.dart';
-import 'package:antinote_app/ui/widgets/app_bar.dart';
 import 'package:antinote_app/ui/widgets/bottom_padding.dart';
 import 'package:antinote_app/ui/widgets/field.dart';
 import 'package:antinote_app/ui/widgets/list.dart';
@@ -82,9 +81,12 @@ class _SearchSchoolsScreenState extends State<SearchSchoolsScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBarWidget(
+      appBar: AppBar(
         title: Text(context.l10n.loginSchool),
-        subtitle: Text(context.l10n.loginSchoolSubtitle),
+        bottom: PreferredSize(
+          preferredSize: const .fromHeight(16),
+          child: Text(context.l10n.loginSchoolSubtitle),
+        ),
       ),
 
       body: Padding(

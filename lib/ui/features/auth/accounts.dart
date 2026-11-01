@@ -7,7 +7,6 @@ import 'package:antinote_app/ui/features/auth/account_type.dart';
 import 'package:antinote_app/ui/features/settings/sync_screen.dart';
 import 'package:antinote_app/ui/features/shell/tab.dart';
 import 'package:antinote_app/ui/utils/utils.dart';
-import 'package:antinote_app/ui/widgets/app_bar.dart';
 import 'package:antinote_app/ui/widgets/button.dart';
 import 'package:antinote_app/ui/widgets/field.dart';
 import 'package:antinote_app/ui/widgets/list.dart';
@@ -146,10 +145,10 @@ class _AccountsScreenState extends State<AccountsScreen>
     bool partial,
   ) {
     return Scaffold(
-      appBar: AppBarWidget(
+      appBar: AppBar(
+        automaticallyImplyLeading: false,
+        centerTitle: true,
         title: Text(context.l10n.chooseAnAccount),
-        titleAlign: .center,
-        backButton: false,
       ),
 
       floatingActionButtonLocation: .centerFloat,

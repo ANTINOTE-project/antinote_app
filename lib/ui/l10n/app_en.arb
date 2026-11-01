@@ -400,5 +400,8 @@
 
   "classContents": "Class properties",
 
-  "threadMissing": "Could not load thread data, try reloading the page."
+  "threadMissing": "Could not load thread data, try reloading the page.",
+
+  "showProfilePicture": "Show profile picture",
+  "showProfilePictureDescription": "Whether to display profile pictures in the home page"
 }

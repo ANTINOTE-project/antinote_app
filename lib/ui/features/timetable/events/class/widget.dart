@@ -103,10 +103,8 @@ class ClassWidget extends StatelessWidget {
                         overflow: .ellipsis,
                         maxLines: 1,
 
-                        style: TextStyle(
+                        style: context.tt.classStatus?.copyWith(
                           color: canceled ? scheme.error : scheme.secondary,
-                          fontWeight: .w900,
-                          fontSize: 14,
                         ),
                       ),
                     ),
@@ -121,12 +119,8 @@ class ClassWidget extends StatelessWidget {
                 Builder(
                   builder: (context) {
                     final title = clazz.classTitle(context);
-                    final style = TextStyle(
+                    final style = context.tt.classTitle?.copyWith(
                       color: canceled ? scheme.outline : scheme.primary,
-
-                      fontWeight: .w800,
-                      fontSize: 22,
-                      height: 1.2,
                     );
 
                     if (!canceled) {
@@ -147,7 +141,7 @@ class ClassWidget extends StatelessWidget {
                           overflow: .ellipsis,
                           maxLines: 1,
 
-                          style: style.copyWith(
+                          style: style?.copyWith(
                             foreground: Paint()
                               ..style = .stroke
                               ..strokeWidth = 2.5
@@ -161,7 +155,7 @@ class ClassWidget extends StatelessWidget {
                           overflow: .ellipsis,
                           maxLines: 1,
 
-                          style: style.copyWith(
+                          style: style?.copyWith(
                             color: scheme.surfaceContainerLow,
                           ),
                         ),

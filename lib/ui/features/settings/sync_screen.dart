@@ -1,7 +1,6 @@
 import 'package:antinote_app/data/data.dart';
 import 'package:antinote_app/ui/features/shell/tab.dart';
 import 'package:antinote_app/ui/utils/utils.dart';
-import 'package:antinote_app/ui/widgets/app_bar.dart';
 import 'package:antinote_app/ui/widgets/button.dart';
 import 'package:antinote_app/ui/widgets/list.dart';
 import 'package:hugeicons_pro/hugeicons.dart';
@@ -89,7 +88,7 @@ class _SettingsSyncScreenState extends State<SettingsSyncScreen>
     RefreshIndicatorBuilder buildRefreshIndicator,
     bool partial,
   ) {
-    final appBar = AppBarWidget(title: Text(context.l10n.accountSyncSettings));
+    final appBar = AppBar(title: Text(context.l10n.accountSyncSettings));
 
     if (!accountFound) {
       return Scaffold(

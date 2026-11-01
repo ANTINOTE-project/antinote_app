@@ -786,4 +786,11 @@ class AppLocalizationsFr extends AppLocalizations {
   @override
   String get threadMissing =>
       'Données du fil introuvables, essayez de recharger la page.';
+
+  @override
+  String get showProfilePicture => 'Montrer les photos de profile';
+
+  @override
+  String get showProfilePictureDescription =>
+      'Afficher ou non les photos de profile dans la page d\'accueil';
 }

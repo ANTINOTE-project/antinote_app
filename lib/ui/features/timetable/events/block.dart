@@ -319,7 +319,12 @@ class _BlockWidgetState extends State<BlockWidget> {
                             alignment: .center,
                             child: Text(
                               (i + 1).toString(),
-                              style: const TextStyle(fontWeight: .w800),
+                              style: context.tt.titleLarge?.copyWith(
+                                fontVariations: const [
+                                  .width(75),
+                                  .new('ROND', 100),
+                                ],
+                              ),
                             ),
                           ),
                         ),

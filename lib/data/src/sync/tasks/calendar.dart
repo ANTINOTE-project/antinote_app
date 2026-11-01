@@ -18,12 +18,15 @@ Future<TaskReturnData> _syncCalendar(
           in (session.user.childResources.isEmpty
               ? [session.user.rootResource]
               : session.user.childResources)) {
-        final recurringTimetable = (await session.access(
-          TimetableAccessor.forYear(
-            resource: session.curResource,
-            session: session,
+        final recurringTimetable = RecurringTimetable.decode(
+          session,
+          await session.access(
+            TimetableAccessor.forYear(
+              resource: session.curResource,
+              session: session,
+            ),
           ),
-        )).asRecurringTimetable(session);
+        );
         if (recurringTimetable.recurringClasses == null) continue;
         timetables[resource] = recurringTimetable.recurringClasses!;
       }
