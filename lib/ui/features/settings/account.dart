@@ -4,8 +4,8 @@ import 'package:antinote_app/ui/widgets/list.dart';
 import 'package:antinote_app/ui/widgets/loading.dart';
 import 'package:antinote_app/ui/widgets/text_icon.dart';
 import 'package:flutter/foundation.dart';
-import 'package:flutter/material.dart';
 import 'package:hugeicons_pro/hugeicons.dart';
+import 'package:material_ui/material_ui.dart';
 
 import 'sync_screen.dart';
 

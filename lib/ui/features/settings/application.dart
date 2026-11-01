@@ -1,8 +1,8 @@
 import 'package:antinote_app/ui/utils/src/context.dart';
 import 'package:antinote_app/ui/widgets/list.dart';
 import 'package:antinote_app/ui/widgets/text_icon.dart';
-import 'package:flutter/material.dart';
 import 'package:hugeicons_pro/hugeicons.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 
 class Application extends StatelessWidget {
