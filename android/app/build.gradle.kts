@@ -88,7 +88,6 @@ android {
         }
 
         release {
-            @Suppress("UnstableApiUsage")
             optimization {
                 enable = true
             }

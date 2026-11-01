@@ -11,5 +11,3 @@
 -keepclassmembers class * extends com.google.protobuf.GeneratedMessageLite$Builder {
     <fields>;
 }
-
--keep class com.google.protobuf.** { *; }
