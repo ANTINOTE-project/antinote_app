@@ -10,10 +10,17 @@ import android.provider.CalendarContract
 import androidx.annotation.RequiresApi
 import androidx.core.database.getStringOrNull
 import fr.antinote.antinote_app.auth.LoginManager
-import fr.antinote.antinote_app.pigeon_posts.*
+import fr.antinote.antinote_app.pigeon_posts.AttendeeEntry
+import fr.antinote.antinote_app.pigeon_posts.AttendeeType
+import fr.antinote.antinote_app.pigeon_posts.CalendarEventEntryType
+import fr.antinote.antinote_app.pigeon_posts.ExistingCalendarEntry
+import fr.antinote.antinote_app.pigeon_posts.ExistingCalendarEventEntry
+import fr.antinote.antinote_app.pigeon_posts.NativeCalendarManager
+import fr.antinote.antinote_app.pigeon_posts.NewCalendarEntry
+import fr.antinote.antinote_app.pigeon_posts.NewExceptionCalendarEventEntry
+import fr.antinote.antinote_app.pigeon_posts.NewRecurringCalendarEventEntry
 import java.time.OffsetDateTime
 import java.time.ZoneOffset
-import kotlin.time.ExperimentalTime
 import kotlin.time.Instant
 import kotlin.time.toKotlinInstant
 
@@ -275,14 +282,14 @@ class CalendarManager(private val context: Context) : NativeCalendarManager {
             }
         }
 
-        for (pair in perAccount.entries) {
+        for ((key, value) in perAccount) {
             val withExceptions =
-                pair.value.filter { it.exceptions.isNotEmpty() || it.attendees.isNotEmpty() }
+                value.filter { it.exceptions.isNotEmpty() || it.attendees.isNotEmpty() }
 
             val eventsUrl = createUri(
-                CalendarContract.Events.CONTENT_URI, pair.key
+                CalendarContract.Events.CONTENT_URI, key
             )
-            val attendeesUrl = createUri(CalendarContract.Attendees.CONTENT_URI, pair.key)
+            val attendeesUrl = createUri(CalendarContract.Attendees.CONTENT_URI, key)
 
             for (entry in withExceptions) {
                 val values = mainInstanceContentValues(entry)
@@ -315,8 +322,8 @@ class CalendarManager(private val context: Context) : NativeCalendarManager {
 
     override fun deleteExisting(entries: List<ExistingCalendarEventEntry>) {
         val operations = arrayListOf<ContentProviderOperation>()
-        for (entry in entries) {
-            val rawEventId = entry.id.toString()
+        for ((_, _, id) in entries) {
+            val rawEventId = id.toString()
 
             operations.add(
                 ContentProviderOperation.newDelete(CalendarContract.Events.CONTENT_URI)

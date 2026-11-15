@@ -86,7 +86,7 @@ class SyncWorker(val appContext: Context, workerParams: WorkerParameters) :
 
         val app = applicationContext as App
 
-        val uids = inputData.getStringArray(KEY_UIDS)
+        val uids = inputData.getNullableStringArray(KEY_UIDS)
         val validUids = mutableListOf<String>()
 
         val forcedTasks =
@@ -94,10 +94,22 @@ class SyncWorker(val appContext: Context, workerParams: WorkerParameters) :
 
         val canRetry = inputData.getBoolean(KEY_CAN_RETRY, false)
 
-        for (account in app.accountStore.data.first().accountsList) {
+        val accounts = app.accountStore.data.first().accountsList
+
+        Log.i(TAG, "Checking against ${accounts.size} accounts to check which ones to sync (forced: ${forcedTasks?.joinToString(", ")})")
+
+        for (account in accounts) {
             Log.i(TAG, "Checking whether we should sync ${account.uid}...")
 
-            if (account.storeSecurely) continue
+            if (account.storeSecurely) {
+                if(uids != null && uids.contains(account.uid)) {
+                    Log.i(
+                        TAG,
+                        "We skip sync for account ${account.uid} because it is stored securely."
+                    )
+                }
+                continue
+            }
             if (!shouldDoSync(account) && uids == null) {
                 Log.i(
                     TAG,

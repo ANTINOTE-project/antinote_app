@@ -84,6 +84,8 @@ class _TimetableDisplayState extends State<TimetableDisplay>
   late List<DateRange> _currentGroups;
   final Classes _blocks = {};
 
+  int? latestLoadedPage;
+
   PageController? _pageController;
 
   bool _animating = false;
@@ -187,135 +189,153 @@ class _TimetableDisplayState extends State<TimetableDisplay>
 
         if (anyLoading) {
           // we already got the refresh indicator spinning
-          partialChild = const SizedBox.shrink();
-        } else if (allEmpty) {
-          final holiday = _getHolidayForDay(days.first);
-
-          partialChild = Center(
-            child: Column(
-              mainAxisAlignment: .center,
-              spacing: 6,
-              children: [
-                Icon(
-                  holiday == null
-                      ? HugeIconsSolid.calendar04
-                      : HugeIconsSolid.beach,
-                  color: context.c.outline,
-                  size: 44,
-                ),
-                Text(
-                  holiday?.name ?? context.l10n.noCourseToday,
-                  textAlign: .center,
-                  style: TextStyle(fontWeight: .bold, color: context.c.outline),
-                ),
-              ],
-            ),
-          );
+          partialChild =
+              widget.resize &&
+                  latestLoadedPage != null &&
+                  latestLoadedPage != index
+              ? Visibility(
+                  visible: false,
+                  maintainSize: true,
+                  maintainAnimation: true,
+                  maintainState: true,
+                  child: _pageBuilder(context, latestLoadedPage!),
+                )
+              : const Center(child: LoadingWidget());
         } else {
-          final child = Column(
-            children: [
-              if (window != null)
-                Row(
-                  spacing: 8,
-                  children: [
-                    Expanded(
-                      flex: 15,
-                      child: FittedBox(
-                        fit: .scaleDown,
-                        alignment: .bottomCenter,
-                        child: Text(
-                          window.startTime.asNumericTime(),
-                          textAlign: .center,
-                          style: context.tt.timeColumnText,
-                        ),
-                      ),
+          latestLoadedPage = index;
+
+          if (allEmpty) {
+            final holiday = _getHolidayForDay(days.first);
+
+            partialChild = Center(
+              child: Column(
+                mainAxisAlignment: .center,
+                spacing: 6,
+                children: [
+                  Icon(
+                    holiday == null
+                        ? HugeIconsSolid.calendar04
+                        : HugeIconsSolid.beach,
+                    color: context.c.outline,
+                    size: 44,
+                  ),
+                  Text(
+                    holiday?.name ?? context.l10n.noCourseToday,
+                    textAlign: .center,
+                    style: TextStyle(
+                      fontWeight: .bold,
+                      color: context.c.outline,
                     ),
-                    const Expanded(flex: 85, child: SizedBox.shrink()),
-                  ],
-                ),
-              IntrinsicHeight(
-                child: Row(
-                  spacing: 8,
-                  children: [
-                    if (window != null)
-                      Flexible(
-                        flex: days.length * 15,
-                        child: _buildTimeColumn(context, window, days),
-                      ),
-
-                    for (final day in days)
-                      Expanded(
-                        flex: 85,
-                        child: ValueListenableBuilder(
-                          valueListenable: _blocks[day]!,
-                          builder: (context, dayClasses, child) {
-                            if (dayClasses == null) {
-                              return const LoadingWidget();
-                            }
-                            if (dayClasses.isEmpty || window == null) {
-                              return const SizedBox.shrink();
-                            }
-
-                            return _buildEventsColumn(
-                              context,
-                              day,
-                              window,
-                              dayClasses,
-                            );
-                          },
-                        ),
-                      ),
-                  ],
-                ),
+                  ),
+                ],
               ),
-              if (window != null)
-                Row(
-                  spacing: 8,
-                  children: [
-                    Expanded(
-                      flex: 15,
-                      child: FittedBox(
-                        fit: .scaleDown,
-                        alignment: .topCenter,
-                        child: Text(
-                          window.endTime.asNumericTime(),
-                          textAlign: .center,
-                          style: context.tt.timeColumnText,
-                        ),
-                      ),
-                    ),
-                    const Expanded(flex: 85, child: SizedBox.shrink()),
-                  ],
-                ),
-            ],
-          );
-
-          if (widget.scrollable) {
-            partialChild = Align(
-              alignment: .topCenter,
-              child: RefreshIndicator(
-                onRefresh: () => reload(fromRefreshIndicator: true),
-                child: SingleChildScrollView(
-                  padding: widget.transparent
-                      ? null
-                      : .only(
-                          bottom: MediaQuery.paddingOf(context).bottom + 20,
-                          right: 12,
-                        ),
-                  child: child,
-                ),
-              ),
-            );
-          } else if (!widget.resize) {
-            partialChild = Padding(
-              padding: .only(
-                bottom: MediaQuery.paddingOf(context).bottom + 20,
-                right: 12,
-              ),
-              child: child,
             );
           } else {
-            partialChild = child;
+            final child = Column(
+              children: [
+                if (window != null)
+                  Row(
+                    spacing: 8,
+                    children: [
+                      Expanded(
+                        flex: 15,
+                        child: FittedBox(
+                          fit: .scaleDown,
+                          alignment: .bottomCenter,
+                          child: Text(
+                            window.startTime.asNumericTime(),
+                            textAlign: .center,
+                            style: context.tt.timeColumnText,
+                          ),
+                        ),
+                      ),
+                      const Expanded(flex: 85, child: SizedBox.shrink()),
+                    ],
+                  ),
+                IntrinsicHeight(
+                  child: Row(
+                    spacing: 8,
+                    children: [
+                      if (window != null)
+                        Flexible(
+                          flex: days.length * 15,
+                          child: _buildTimeColumn(context, window, days),
+                        ),
+
+                      for (final day in days)
+                        Expanded(
+                          flex: 85,
+                          child: ValueListenableBuilder(
+                            valueListenable: _blocks[day]!,
+                            builder: (context, dayClasses, child) {
+                              if (dayClasses == null) {
+                                return const LoadingWidget();
+                              }
+                              if (dayClasses.isEmpty || window == null) {
+                                return const SizedBox.shrink();
+                              }
+
+                              return _buildEventsColumn(
+                                context,
+                                day,
+                                window,
+                                dayClasses,
+                              );
+                            },
+                          ),
+                        ),
+                    ],
+                  ),
+                ),
+                if (window != null)
+                  Row(
+                    spacing: 8,
+                    children: [
+                      Expanded(
+                        flex: 15,
+                        child: FittedBox(
+                          fit: .scaleDown,
+                          alignment: .topCenter,
+                          child: Text(
+                            window.endTime.asNumericTime(),
+                            textAlign: .center,
+                            style: context.tt.timeColumnText,
+                          ),
+                        ),
+                      ),
+                      const Expanded(flex: 85, child: SizedBox.shrink()),
+                    ],
+                  ),
+              ],
+            );
+
+            if (widget.scrollable) {
+              partialChild = Align(
+                alignment: .topCenter,
+                child: RefreshIndicator(
+                  onRefresh: () => reload(fromRefreshIndicator: true),
+                  child: SingleChildScrollView(
+                    padding: widget.transparent
+                        ? null
+                        : .only(
+                            bottom: MediaQuery.paddingOf(context).bottom + 20,
+                            right: 12,
+                          ),
+                    child: child,
+                  ),
+                ),
+              );
+            } else if (!widget.resize) {
+              partialChild = Padding(
+                padding: .only(
+                  bottom: MediaQuery.paddingOf(context).bottom + 20,
+                  right: 12,
+                ),
+                child: child,
+              );
+            } else {
+              partialChild = child;
+            }
           }
         }
 

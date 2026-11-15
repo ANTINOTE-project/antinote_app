@@ -9,20 +9,20 @@ import 'package:hugeicons_pro/hugeicons.dart';
 import 'package:material_ui/material_ui.dart';
 
 class HomePageScope extends InheritedWidget {
+  final HomePageManager manager;
+
   const HomePageScope({super.key, required this.manager, required super.child});
 
-  final HomePageManager manager;
+  @override
+  bool updateShouldNotify(HomePageScope old) {
+    return old.manager != manager;
+  }
 
   static HomePageScope of(BuildContext context) {
     final HomePageScope? result = context
         .dependOnInheritedWidgetOfExactType<HomePageScope>();
     assert(result != null, 'No HomePageScope found in context');
     return result!;
-  }
-
-  @override
-  bool updateShouldNotify(HomePageScope old) {
-    return old.manager != manager;
   }
 }
 
@@ -70,6 +70,23 @@ class _HomeScreenState extends State<HomeScreen>
       ),
 
       body: super.build(context),
+    );
+  }
+
+  @override
+  Widget buildErrored(
+    BuildContext context,
+    RefreshIndicatorBuilder buildRefreshIndicator,
+    Object? error,
+    StackTrace? stackTrace,
+  ) {
+    return Center(
+      child: super.buildErrored(
+        context,
+        buildRefreshIndicator,
+        error,
+        stackTrace,
+      ),
     );
   }
 

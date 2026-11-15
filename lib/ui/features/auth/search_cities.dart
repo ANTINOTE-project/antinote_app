@@ -90,7 +90,7 @@ class _SearchCitiesScreenState extends State<SearchCitiesScreen> {
         title: Text(context.l10n.loginLocate),
         bottom: PreferredSize(
           preferredSize: const .fromHeight(16),
-          child: Text(context.l10n.loginLocate),
+          child: Text(context.l10n.loginLocateSubtitle),
         ),
       ),
 
@@ -131,7 +131,6 @@ class _SearchCitiesScreenState extends State<SearchCitiesScreen> {
                     onPermissionGranted: (onlyGrantedForSession) async {
                       final position = await Geolocator.getCurrentPosition(
                         locationSettings: const .new(
-                          accuracy: .best,
                           timeLimit: .new(seconds: 15),
                         ),
                       );
