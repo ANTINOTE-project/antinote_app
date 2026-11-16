@@ -110,6 +110,7 @@ class HomeworkDetailsScreen extends StatelessWidget {
                         attachment: attachment,
                         borderRadius: borderRadius,
                         backgroundColor: scheme.surfaceContainer,
+                        textColor: scheme.onSurface,
                       );
                     },
                   ),
@@ -272,7 +273,7 @@ class _HomeworkRenderSection extends StatelessWidget {
         borderRadius: const .all(ListWidget.radius),
 
         leading: renderIcon != null
-            ? Icon(renderIcon, color: scheme.onSurface, size: 21)
+            ? Icon(renderIcon, color: scheme.onSurface)
             : null,
 
         title: Text(renderLabel, style: TextStyle(color: scheme.onSurface)),

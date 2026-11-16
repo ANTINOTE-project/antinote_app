@@ -11,11 +11,13 @@ class AttachmentItemWidget extends StatelessWidget {
     required this.attachment,
     required this.borderRadius,
     required this.backgroundColor,
+    this.textColor,
   });
 
   final Attachment attachment;
   final BorderRadius borderRadius;
   final Color backgroundColor;
+  final Color? textColor;
 
   @override
   Widget build(BuildContext context) {
@@ -63,8 +65,13 @@ class AttachmentItemWidget extends StatelessWidget {
           browserConfiguration: const BrowserConfiguration(showTitle: true),
         );
       },
+
       leading: Icon(icon),
-      title: Text(attachment.title, maxLines: 3),
+      title: Text(
+        attachment.title,
+        maxLines: 3,
+        style: TextStyle(color: textColor),
+      ),
     );
   }
 }
