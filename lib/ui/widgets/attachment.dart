@@ -11,13 +11,13 @@ class AttachmentItemWidget extends StatelessWidget {
     required this.attachment,
     required this.borderRadius,
     required this.backgroundColor,
-    this.textColor,
+    this.foregroundColor,
   });
 
   final Attachment attachment;
   final BorderRadius borderRadius;
   final Color backgroundColor;
-  final Color? textColor;
+  final Color? foregroundColor;
 
   @override
   Widget build(BuildContext context) {
@@ -66,11 +66,11 @@ class AttachmentItemWidget extends StatelessWidget {
         );
       },
 
-      leading: Icon(icon),
+      leading: Icon(icon, color: foregroundColor),
       title: Text(
         attachment.title,
         maxLines: 3,
-        style: TextStyle(color: textColor),
+        style: TextStyle(color: foregroundColor),
       ),
     );
   }

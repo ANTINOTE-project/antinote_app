@@ -110,7 +110,7 @@ class HomeworkDetailsScreen extends StatelessWidget {
                         attachment: attachment,
                         borderRadius: borderRadius,
                         backgroundColor: scheme.surfaceContainer,
-                        textColor: scheme.onSurface,
+                        foregroundColor: scheme.onSurface,
                       );
                     },
                   ),
