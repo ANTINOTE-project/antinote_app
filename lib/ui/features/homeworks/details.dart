@@ -9,6 +9,8 @@ import 'package:antinote_app/ui/widgets/text_icon.dart';
 import 'package:hugeicons_pro/hugeicons.dart';
 import 'package:material_ui/material_ui.dart';
 
+import 'render_ui.dart';
+
 class HomeworkDetailsScreen extends StatelessWidget {
   final void Function(bool value) onHomeworkChange;
   final Homework homework;
@@ -251,21 +253,8 @@ class _HomeworkRenderSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final renderLabel = switch (homework.assignmentToRenderType) {
-      .remoteRender => context.l10n.homeworkRenderPronote,
-      .noRender => context.l10n.homeworkRenderNone,
-      .paperRender => context.l10n.homeworkRenderPaper,
-      .kiosqueRender => context.l10n.homeworkRenderKiosque, // unknown
-      .remoteAudioRecordingRender => context.l10n.homeworkRenderPronoteAudio,
-    };
-
-    final renderIcon = switch (homework.assignmentToRenderType) {
-      .remoteRender => HugeIconsSolid.fileUpload,
-      .noRender => null,
-      .paperRender => HugeIconsSolid.course,
-      .kiosqueRender => HugeIconsSolid.note01, // unknown
-      .remoteAudioRecordingRender => HugeIconsSolid.mic01,
-    };
+    final renderIcon = homework.renderIcon;
+    final renderLabel = homework.renderLabel(context);
 
     return SliverToBoxAdapter(
       child: TileWidget(
