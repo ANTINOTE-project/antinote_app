@@ -303,9 +303,9 @@ class TileWidget extends StatelessWidget {
                 children: [
                   if (title != null)
                     DefaultTextStyle.merge(
-                      style: context.tt.labelLarge?.copyWith(
+                      style: context.tt.bodyLarge?.copyWith(
                         color: context.c.onSurface,
-                        // TODO: Edit labelLarge directly with the custom font weights
+                        // TODO: Edit bodyLarge directly with the custom font weights
                         fontWeight: .w800,
                         height: 1.25,
                       ),

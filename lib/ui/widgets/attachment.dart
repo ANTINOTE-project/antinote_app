@@ -70,7 +70,10 @@ class AttachmentItemWidget extends StatelessWidget {
       title: Text(
         attachment.title,
         maxLines: 3,
-        style: TextStyle(color: foregroundColor),
+        style: context.tt.labelLarge?.copyWith(
+          color: foregroundColor,
+          fontWeight: .w800,
+        ),
       ),
     );
   }

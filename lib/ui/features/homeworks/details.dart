@@ -276,7 +276,13 @@ class _HomeworkRenderSection extends StatelessWidget {
             ? Icon(renderIcon, color: scheme.onSurface)
             : null,
 
-        title: Text(renderLabel, style: TextStyle(color: scheme.onSurface)),
+        title: Text(
+          renderLabel,
+          style: context.tt.labelLarge?.copyWith(
+            color: scheme.onSurface,
+            fontWeight: .w800,
+          ),
+        ),
       ),
     );
   }
