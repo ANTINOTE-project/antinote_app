@@ -191,6 +191,14 @@
   "homeworkRenderPronoteAudio": "Enregistrement audio à rendre en ligne",
   "noHomeworkForWeek": "Pas de travaux à faire pour cette semaine !",
   "homeworkRenderLabel": "Restitution",
+  "homeworkAttachmentsCount": "{count, plural, =1{1 pièce jointe} other{{count} pièces jointes}}",
+  "@homeworkAttachmentsCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
 
   "appSettings": "Paramètres de l'application",
   "goToAppSettings": "Naviguer vers les paramètres de l'application",

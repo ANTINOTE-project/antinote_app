@@ -684,6 +684,12 @@ abstract class AppLocalizations {
   /// **'Restitution'**
   String get homeworkRenderLabel;
 
+  /// No description provided for @homeworkAttachmentsCount.
+  ///
+  /// In fr, this message translates to:
+  /// **'{count, plural, =1{1 pièce jointe} other{{count} pièces jointes}}'**
+  String homeworkAttachmentsCount(int count);
+
   /// No description provided for @appSettings.
   ///
   /// In fr, this message translates to:

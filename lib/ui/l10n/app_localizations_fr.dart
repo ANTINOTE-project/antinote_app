@@ -391,6 +391,17 @@ class AppLocalizationsFr extends AppLocalizations {
   String get homeworkRenderLabel => 'Restitution';
 
   @override
+  String homeworkAttachmentsCount(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count pièces jointes',
+      one: '1 pièce jointe',
+    );
+    return '$_temp0';
+  }
+
+  @override
   String get appSettings => 'Paramètres de l\'application';
 
   @override

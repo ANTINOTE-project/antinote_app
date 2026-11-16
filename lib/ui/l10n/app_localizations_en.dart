@@ -391,6 +391,17 @@ class AppLocalizationsEn extends AppLocalizations {
   String get homeworkRenderLabel => 'Submission';
 
   @override
+  String homeworkAttachmentsCount(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count attachments',
+      one: '1 attachment',
+    );
+    return '$_temp0';
+  }
+
+  @override
   String get appSettings => 'App settings';
 
   @override
