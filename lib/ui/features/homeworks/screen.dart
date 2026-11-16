@@ -655,6 +655,7 @@ class _MarkDoneButtonState extends State<_MarkDoneButton> {
   Widget build(BuildContext context) {
     return Pressable(
       borderRadius: const .vertical(bottom: .circular(21)),
+      hasScale: false,
 
       onPressed: _isLoading
           ? null
