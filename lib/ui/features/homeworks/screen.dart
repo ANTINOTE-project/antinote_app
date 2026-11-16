@@ -1,3 +1,5 @@
+// ignore_for_file: unused_import
+
 import 'dart:async';
 import 'dart:math';
 
@@ -7,12 +9,15 @@ import 'package:antinote_app/ui/features/shell/tab.dart';
 import 'package:antinote_app/ui/utils/utils.dart';
 import 'package:antinote_app/ui/widgets/bottom_padding.dart';
 import 'package:antinote_app/ui/widgets/loading.dart';
+import 'package:antinote_app/ui/widgets/overflow_row.dart';
 import 'package:antinote_app/ui/widgets/pressable.dart';
 import 'package:antinote_app/ui/widgets/remote_html.dart';
 import 'package:collection/collection.dart';
-import 'package:flutter/services.dart';
 import 'package:hugeicons_pro/hugeicons.dart';
 import 'package:material_ui/material_ui.dart';
+
+import 'card.dart';
+import 'render_ui.dart';
 
 typedef Homeworks = Map<DateTime, ValueNotifier<List<Homework>?>>;
 
@@ -434,125 +439,11 @@ class _DayState extends State<_Day> with AutomaticKeepAliveClientMixin {
 
             children: [
               for (final homework in widget.homeworks)
-                _HomeworkCard(homework: homework, onReturn: widget.onReturn),
+                HomeworkCard(homework: homework, onReturn: widget.onReturn),
             ],
           ),
         );
       },
-    );
-  }
-}
-
-class _HomeworkCard extends StatelessWidget {
-  final Homework homework;
-  final VoidCallback onReturn;
-
-  const _HomeworkCard({required this.homework, required this.onReturn});
-
-  @override
-  Widget build(BuildContext context) {
-    final scheme = Utils.buildColorScheme(context, homework.backgroundColor);
-    final date = homework.deadlineDate.asLongNumericDate();
-
-    return Pressable(
-      borderRadius: .circular(22),
-
-      onPressed: () async {
-        await Navigator.push(
-          context,
-
-          MaterialPageRoute(
-            builder: (context) {
-              return HomeworkDetailsScreen(
-                homework: homework,
-                onHomeworkChange: (_) => onReturn(),
-              );
-            },
-          ),
-        );
-      },
-
-      child: Ink(
-        decoration: BoxDecoration(
-          borderRadius: .circular(22),
-          color: scheme.primaryContainer,
-        ),
-
-        child: Column(
-          crossAxisAlignment: .start,
-          spacing: 6,
-
-          children: [
-            Padding(
-              padding: const .symmetric(horizontal: 12, vertical: 8),
-
-              child: Column(
-                children: [
-                  Row(
-                    mainAxisAlignment: .spaceBetween,
-                    spacing: 10,
-
-                    children: [
-                      Expanded(
-                        child: Text(
-                          homework.subject.name ?? context.l10n.noSubject,
-
-                          overflow: .ellipsis,
-                          maxLines: 1,
-
-                          style: TextStyle(
-                            color: scheme.primary,
-                            fontWeight: .w800,
-                            fontSize: 21,
-                          ),
-                        ),
-                      ),
-
-                      Text(
-                        date,
-                        style: TextStyle(
-                          fontWeight: .bold,
-                          color: scheme.outline,
-                        ),
-                      ),
-                    ],
-                  ),
-
-                  RemoteHtml(
-                    rawHtml: homework.description,
-                    compact: true,
-                    maxLines: 3,
-
-                    style: TextStyle(
-                      color: scheme.onSurface,
-                      fontWeight: .w600,
-                      fontSize: 15,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-
-            Column(
-              children: [
-                Divider(
-                  height: 1,
-                  thickness: 1,
-                  indent: 16,
-                  endIndent: 16,
-                  color: scheme.inversePrimary,
-                ),
-
-                _MarkDoneButton(
-                  homework: homework,
-                  scheme: scheme,
-                  onReturn: onReturn,
-                ),
-              ],
-            ),
-          ],
-        ),
-      ),
     );
   }
 }
@@ -613,179 +504,6 @@ class _DotIndicator extends StatelessWidget {
       decoration: BoxDecoration(
         color: active ? context.c.onSurface : context.c.outlineVariant,
         shape: .circle,
-      ),
-    );
-  }
-}
-
-class _MarkDoneButton extends StatefulWidget {
-  final Homework homework;
-  final ColorScheme scheme;
-  final VoidCallback onReturn;
-
-  const _MarkDoneButton({
-    required this.homework,
-    required this.scheme,
-    required this.onReturn,
-  });
-
-  @override
-  State<_MarkDoneButton> createState() => _MarkDoneButtonState();
-}
-
-class _MarkDoneButtonState extends State<_MarkDoneButton> {
-  bool _isLoading = false;
-  bool? _optimisticIsDone;
-
-  bool get _isDone => _optimisticIsDone ?? widget.homework.isDone;
-
-  Color get _color =>
-      _isDone ? widget.scheme.onPrimaryContainer : widget.scheme.outline;
-
-  @override
-  void didUpdateWidget(covariant _MarkDoneButton oldWidget) {
-    super.didUpdateWidget(oldWidget);
-
-    if (widget.homework.isDone == _optimisticIsDone) {
-      _optimisticIsDone = null;
-    }
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Pressable(
-      borderRadius: const .vertical(bottom: .circular(21)),
-      hasScale: false,
-
-      onPressed: _isLoading
-          ? null
-          : () async {
-              final target = !_isDone;
-
-              setState(() {
-                _isLoading = true;
-                _optimisticIsDone = target;
-              });
-
-              if (target) {
-                await HapticFeedback.lightImpact();
-              } else {
-                await HapticFeedback.selectionClick();
-              }
-
-              if (!context.mounted) return;
-
-              await context.ar.runTask(
-                context: context,
-
-                callback: (session) async {
-                  final cachedHomework = session.getCachedValue<Homework>(
-                    .HOMEWORK,
-                    widget.homework.visualId,
-                  );
-
-                  await session.access(
-                    ChangeHomeworkStateAccessor(
-                      homeworksToUpdate: {cachedHomework: target},
-                    ),
-                  );
-                },
-                debugLabel: 'Update state for homework',
-              );
-
-              if (mounted) setState(() => _isLoading = false);
-              widget.onReturn();
-            },
-
-      child: Padding(
-        padding: const .symmetric(horizontal: 12, vertical: 8),
-
-        child: Row(
-          spacing: 6,
-
-          children: [
-            SizedBox(
-              width: 21,
-              height: 21,
-
-              child: AnimatedSwitcher(
-                duration: const Duration(milliseconds: 200),
-                switchInCurve: Curves.easeOutExpo,
-                switchOutCurve: Curves.easeIn,
-
-                transitionBuilder: (child, anim) {
-                  return ScaleTransition(scale: anim, child: child);
-                },
-
-                child: _isLoading
-                    ? SizedBox(
-                        key: const ValueKey('loading'),
-                        width: 16,
-                        height: 16,
-
-                        child: CircularProgressIndicator(
-                          strokeWidth: 3,
-                          strokeCap: .round,
-                          color: _color,
-                        ),
-                      )
-                    : Icon(
-                        _isDone
-                            ? HugeIconsSolid.tick03
-                            : HugeIconsStroke.tick03,
-                        key: ValueKey(_isDone),
-                        color: _color,
-                        size: 21,
-                      ),
-              ),
-            ),
-
-            AnimatedSize(
-              duration: const Duration(milliseconds: 200),
-              curve: Curves.easeInOutCubic,
-
-              child: AnimatedSwitcher(
-                duration: const Duration(milliseconds: 200),
-                switchInCurve: Curves.easeOutCubic,
-                switchOutCurve: Curves.easeInCubic,
-
-                transitionBuilder: (child, animation) {
-                  return FadeTransition(
-                    opacity: animation,
-
-                    child: SlideTransition(
-                      position:
-                          Tween<Offset>(
-                            begin: const Offset(0.1, 0.0),
-                            end: Offset.zero,
-                          ).animate(
-                            CurvedAnimation(
-                              parent: animation,
-                              curve: Curves.easeOutCubic,
-                            ),
-                          ),
-
-                      child: child,
-                    ),
-                  );
-                },
-
-                child: Text(
-                  _isDone
-                      ? context.l10n.homeworkSetDone
-                      : context.l10n.homeworkSetNotDone,
-
-                  key: ValueKey(_isDone),
-                  style: TextStyle(
-                    color: _color,
-                    fontWeight: .w800,
-                    fontSize: 15.5,
-                  ),
-                ),
-              ),
-            ),
-          ],
-        ),
       ),
     );
   }
