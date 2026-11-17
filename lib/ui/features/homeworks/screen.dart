@@ -162,12 +162,32 @@ class _HomeworksScreenState extends State<HomeworksScreen>
           final Widget child;
 
           if (!loaded) {
+            // loading state
             child = const Center(key: ValueKey(false), child: LoadingWidget());
+
+            // empty state
           } else if (displayableDays.isEmpty) {
             child = Center(
               key: const ValueKey(true),
-              child: Text(context.l10n.noHomeworkForWeek),
+              child: Column(
+                mainAxisAlignment: .center,
+                spacing: 6,
+
+                children: [
+                  Icon(HugeIconsSolid.work, color: context.c.outline, size: 44),
+
+                  Text(
+                    context.l10n.noHomeworkForWeek,
+                    style: TextStyle(
+                      color: context.c.outline,
+                      fontWeight: .bold,
+                    ),
+                  ),
+                ],
+              ),
             );
+
+            // loaded state
           } else {
             child = CustomScrollView(
               slivers: [
