@@ -236,7 +236,7 @@ class _HomeworksScreenState extends State<HomeworksScreen>
               await _goToWeek(index);
             },
 
-            icon: const Icon(HugeIconsSolid.calendar01),
+            icon: const Icon(HugeIconsSolid.calendar02),
           ),
         ],
       ),
