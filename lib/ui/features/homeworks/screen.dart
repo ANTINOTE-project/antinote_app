@@ -18,6 +18,7 @@ import 'package:material_ui/material_ui.dart';
 
 import 'card.dart';
 import 'render_ui.dart';
+import 'urgency.dart';
 
 typedef Homeworks = Map<DateTime, ValueNotifier<List<Homework>?>>;
 
@@ -335,6 +336,8 @@ class _DayState extends State<_Day> with AutomaticKeepAliveClientMixin {
       widget.homeworks.where((element) => element.isDone).length /
       widget.homeworks.length;
 
+  bool get isUrgent => widget.homeworks.any((h) => h.urgency != .none);
+
   void _displayIfNeeded() {
     if (needToDisplay) {
       controller.expand();
@@ -380,11 +383,13 @@ class _DayState extends State<_Day> with AutomaticKeepAliveClientMixin {
                     curve: Curves.easeOutCubic,
 
                     builder: (context, value, _) {
-                      final color = Color.lerp(
-                        context.c.outline,
-                        context.c.primary,
-                        value,
-                      );
+                      final color = isUrgent
+                          ? context.c.error
+                          : Color.lerp(
+                              context.c.outline,
+                              context.c.primary,
+                              value,
+                            );
 
                       return Row(
                         children: [
@@ -402,6 +407,39 @@ class _DayState extends State<_Day> with AutomaticKeepAliveClientMixin {
                           ),
 
                           const SizedBox(width: 12),
+
+                          AnimatedSize(
+                            duration: const Duration(milliseconds: 250),
+                            curve: Curves.easeInOutCubic,
+                            alignment: .centerLeft,
+
+                            child: AnimatedSwitcher(
+                              duration: const Duration(milliseconds: 250),
+                              switchInCurve: Curves.easeOutExpo,
+                              switchOutCurve: Curves.easeIn,
+
+                              transitionBuilder: (child, anim) {
+                                return ScaleTransition(
+                                  scale: anim,
+                                  child: child,
+                                );
+                              },
+
+                              child: isUrgent
+                                  ? Padding(
+                                      key: const ValueKey('urgent'),
+                                      padding: const .only(right: 6),
+                                      child: Icon(
+                                        HugeIconsSolid.alert02,
+                                        color: color,
+                                        size: 18,
+                                      ),
+                                    )
+                                  : const SizedBox.shrink(
+                                      key: ValueKey('none'),
+                                    ),
+                            ),
+                          ),
 
                           Expanded(
                             child: Text(

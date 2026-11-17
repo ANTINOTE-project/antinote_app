@@ -9,6 +9,7 @@ import 'package:hugeicons_pro/hugeicons.dart';
 import 'package:material_ui/material_ui.dart';
 
 import 'render_ui.dart';
+import 'urgency.dart';
 
 class HomeworkCard extends StatelessWidget {
   final Homework homework;
@@ -25,6 +26,9 @@ class HomeworkCard extends StatelessWidget {
     final scheme = Utils.buildColorScheme(context, homework.backgroundColor);
     final done = homework.isDone;
     final renderIcon = homework.renderIcon;
+
+    final urgent = homework.urgency != .none;
+    final dateColor = urgent ? scheme.error : scheme.outline;
 
     final chips = <Widget>[
       if (homework.assignmentToRenderType != .noRender && renderIcon != null)
@@ -112,12 +116,26 @@ class HomeworkCard extends StatelessWidget {
                           ),
                         ),
 
-                        Text(
-                          homework.deadlineDate.asLongNumericDate(),
-                          style: context.tt.labelMedium?.copyWith(
-                            color: scheme.outline,
-                            fontWeight: .bold,
-                          ),
+                        Row(
+                          mainAxisSize: .min,
+                          spacing: 4,
+
+                          children: [
+                            if (urgent)
+                              Icon(
+                                HugeIconsSolid.alert02,
+                                color: dateColor,
+                                size: 14,
+                              ),
+
+                            Text(
+                              homework.deadlineDate.asLongNumericDate(),
+                              style: context.tt.labelMedium?.copyWith(
+                                color: dateColor,
+                                fontWeight: .bold,
+                              ),
+                            ),
+                          ],
                         ),
                       ],
                     ),
