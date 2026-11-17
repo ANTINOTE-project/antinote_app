@@ -402,6 +402,9 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
+  String get homeworkUpdateFailed => 'Impossible de mettre à jour le devoir';
+
+  @override
   String get appSettings => 'App settings';
 
   @override

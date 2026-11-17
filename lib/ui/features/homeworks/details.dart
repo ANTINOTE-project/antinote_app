@@ -9,6 +9,7 @@ import 'package:antinote_app/ui/widgets/text_icon.dart';
 import 'package:hugeicons_pro/hugeicons.dart';
 import 'package:material_ui/material_ui.dart';
 
+import 'actions.dart';
 import 'render_ui.dart';
 
 class HomeworkDetailsScreen extends StatelessWidget {
@@ -155,36 +156,23 @@ class _HomeworkStateSectionState extends State<_HomeworkStateSection> {
   @override
   Widget build(BuildContext context) {
     final scheme = widget.scheme;
-    final homework = widget.homework;
 
     return TileWidget(
       backgroundColor: scheme.primaryContainer,
       borderRadius: const .all(ListWidget.radius),
 
       onPressed: () async {
-        setState(() {
-          _isDone = !_isDone;
-        });
+        final target = !_isDone;
+        setState(() => _isDone = target);
 
-        await context.ar.runTask(
-          context: context,
+        final ok = await updateHomeworkState(context, widget.homework, target);
+        if (!mounted) return;
 
-          callback: (session) async {
-            final cachedHomework = session.getCachedValue<Homework>(
-              .HOMEWORK,
-              homework.visualId,
-            );
-
-            await session.access(
-              ChangeHomeworkStateAccessor(
-                homeworksToUpdate: {cachedHomework: _isDone},
-              ),
-            );
-          },
-          debugLabel: 'Update state for homework',
-        );
-
-        widget.onHomeworkChange.call(_isDone);
+        if (ok) {
+          widget.onHomeworkChange(target);
+        } else {
+          setState(() => _isDone = !target);
+        }
       },
 
       leading: AnimatedIconWidget(

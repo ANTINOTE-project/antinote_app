@@ -199,6 +199,7 @@
       }
     }
   },
+  "homeworkUpdateFailed": "Impossible de mettre à jour le devoir",
 
   "appSettings": "Paramètres de l'application",
   "goToAppSettings": "Naviguer vers les paramètres de l'application",

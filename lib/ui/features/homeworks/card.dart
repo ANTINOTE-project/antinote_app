@@ -4,10 +4,10 @@ import 'package:antinote_app/ui/utils/utils.dart';
 import 'package:antinote_app/ui/widgets/overflow_row.dart';
 import 'package:antinote_app/ui/widgets/pressable.dart';
 import 'package:antinote_app/ui/widgets/remote_html.dart';
-import 'package:flutter/services.dart';
 import 'package:hugeicons_pro/hugeicons.dart';
 import 'package:material_ui/material_ui.dart';
 
+import 'actions.dart';
 import 'render_ui.dart';
 import 'urgency.dart';
 
@@ -296,34 +296,20 @@ class _MarkDoneButtonState extends State<_MarkDoneButton> {
                 _optimisticIsDone = target;
               });
 
-              if (target) {
-                await HapticFeedback.lightImpact();
-              } else {
-                await HapticFeedback.selectionClick();
-              }
-
-              if (!context.mounted) return;
-
-              await context.ar.runTask(
-                context: context,
-
-                callback: (session) async {
-                  final cachedHomework = session.getCachedValue<Homework>(
-                    .HOMEWORK,
-                    widget.homework.visualId,
-                  );
-
-                  await session.access(
-                    ChangeHomeworkStateAccessor(
-                      homeworksToUpdate: {cachedHomework: target},
-                    ),
-                  );
-                },
-                debugLabel: 'Update state for homework',
+              final ok = await updateHomeworkState(
+                context,
+                widget.homework,
+                target,
               );
 
-              if (mounted) setState(() => _isLoading = false);
-              widget.onReturn();
+              if (!mounted) return;
+
+              setState(() {
+                _isLoading = false;
+                if (!ok) _optimisticIsDone = null;
+              });
+
+              if (ok) widget.onReturn();
             },
 
       child: Padding(

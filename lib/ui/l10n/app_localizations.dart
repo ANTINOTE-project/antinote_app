@@ -690,6 +690,12 @@ abstract class AppLocalizations {
   /// **'{count, plural, =1{1 pièce jointe} other{{count} pièces jointes}}'**
   String homeworkAttachmentsCount(int count);
 
+  /// No description provided for @homeworkUpdateFailed.
+  ///
+  /// In fr, this message translates to:
+  /// **'Impossible de mettre à jour le devoir'**
+  String get homeworkUpdateFailed;
+
   /// No description provided for @appSettings.
   ///
   /// In fr, this message translates to:
