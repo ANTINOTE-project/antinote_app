@@ -35,12 +35,32 @@ class _HomeworksScreenState extends State<HomeworksScreen>
   late SpecificInstanceParameters _data;
   final Homeworks _homeworks = {};
 
+  final ValueNotifier<int> _currentWeek = ValueNotifier(0);
+
   PageController? _pageController;
   int? _lastPage;
+
+  int get _todayWeekIndex {
+    final now =
+        _data.demoDateTime ??
+        _data.findBusinessDay(DateTime.now().toDay(true), const .new(days: 1));
+
+    final diffWeeks = now.difference(_data.firstMonday).inDays ~/ 7;
+
+    return diffWeeks.clamp(0, _weeks.length - 1);
+  }
+
+  Date _weekStart(int index) {
+    return _data.firstMonday.add(Duration(days: 7 * index)).toDay();
+  }
 
   void _onPageDrag() {
     final curPage = _pageController?.page?.round();
     if (curPage == null) return;
+
+    if (_currentWeek.value != curPage) {
+      _currentWeek.value = curPage;
+    }
 
     _lastPage ??= curPage;
 
@@ -48,6 +68,26 @@ class _HomeworksScreenState extends State<HomeworksScreen>
       _lastPage = curPage;
 
       reload();
+    }
+  }
+
+  Future<void> _goToWeek(int index) async {
+    final controller = _pageController;
+    if (controller == null || !controller.hasClients) return;
+
+    final distance = (controller.page!.round() - index).abs();
+
+    if (distance > 3) {
+      // we do this because if the user go to
+      // a week that is very far when we will
+      // animate it will load all the pages
+      controller.jumpToPage(index);
+    } else {
+      await controller.animateToPage(
+        index,
+        duration: const Duration(milliseconds: 300),
+        curve: Curves.easeInOutCubic,
+      );
     }
   }
 
@@ -115,6 +155,7 @@ class _HomeworksScreenState extends State<HomeworksScreen>
   void dispose() {
     _pageController?.removeListener(_onPageDrag);
     _pageController?.dispose();
+    _currentWeek.dispose();
     super.dispose();
   }
 
@@ -124,114 +165,185 @@ class _HomeworksScreenState extends State<HomeworksScreen>
     RefreshIndicatorBuilder buildRefreshIndicator,
     bool partial,
   ) {
-    return buildRefreshIndicator(
-      child: PageView.builder(
-        itemCount: _weeks.length,
-        controller: _pageController,
+    return Scaffold(
+      appBar: AppBar(
+        centerTitle: true,
 
-        itemBuilder: (context, index) {
-          final weekStart = _data.firstMonday
-              .add(Duration(days: 7 * index))
-              .toDay();
-          final weekNumber = _data.getWeekNumberForDate(
-            weekStart,
-            forceRelativeToSchoolYear: true,
-          );
+        title: ValueListenableBuilder<int>(
+          valueListenable: _currentWeek,
 
-          final rawWeekEnd = weekStart.add(const Duration(days: 6));
-          final weekEnd = DateTime.fromMillisecondsSinceEpoch(
-            min(
-              _data.lastDate.millisecondsSinceEpoch,
-              rawWeekEnd.millisecondsSinceEpoch,
-            ),
-            isUtc: true,
-          ).toDay();
+          builder: (context, index, _) {
+            final weekStart = _weekStart(index);
+            final weekNumber = _data.getWeekNumberForDate(
+              weekStart,
+              forceRelativeToSchoolYear: true,
+            );
 
-          final days = DateRange(start: weekStart, end: weekEnd).listDays();
+            return Text(
+              context.l10n.weekNumber(weekNumber),
+              style: const TextStyle(fontWeight: .bold, fontSize: 18),
+            );
+          },
+        ),
 
-          final loaded = days.every(
-            (element) => _homeworks[element]?.value != null,
-          );
+        leading: ValueListenableBuilder<int>(
+          valueListenable: _currentWeek,
 
-          final displayableDays = days
-              .where(
-                (element) =>
-                    _homeworks[element]!.value?.isNotEmpty ?? true, // TODO: Fix
-              )
-              .toList(growable: false);
+          builder: (context, index, _) {
+            final isToday = index == _todayWeekIndex;
+            final isBefore = _todayWeekIndex > index;
 
-          final Widget child;
+            return AnimatedSwitcher(
+              duration: const Duration(milliseconds: 200),
+              switchInCurve: Curves.easeOutBack,
+              switchOutCurve: Curves.easeIn,
 
-          if (!loaded) {
-            // loading state
-            child = const Center(key: ValueKey(false), child: LoadingWidget());
+              transitionBuilder: (child, anim) {
+                return ScaleTransition(scale: anim, child: child);
+              },
 
-            // empty state
-          } else if (displayableDays.isEmpty) {
-            child = Center(
-              key: const ValueKey(true),
-              child: Column(
-                mainAxisAlignment: .center,
-                spacing: 6,
+              child: isToday
+                  ? const SizedBox.shrink(key: ValueKey('hidden'))
+                  : IconButton(
+                      key: const ValueKey('today'),
+                      onPressed: () => _goToWeek(_todayWeekIndex),
+                      icon: Icon(
+                        isBefore
+                            ? HugeIconsSolid.calendarCheckOut02
+                            : HugeIconsSolid.calendarCheckIn02,
+                      ),
+                    ),
+            );
+          },
+        ),
 
-                children: [
-                  Icon(HugeIconsSolid.work, color: context.c.outline, size: 44),
+        actions: [
+          IconButton(
+            onPressed: () async {
+              final selected = await showDatePicker(
+                context: context,
+                initialDate: _weekStart(_currentWeek.value),
+                firstDate: _data.firstDate,
+                lastDate: _data.lastDate,
+              );
 
-                  Text(
-                    context.l10n.noHomeworkForWeek,
-                    style: TextStyle(
+              if (selected == null) return;
+
+              final day = selected.copyWith(isUtc: true).toDay();
+              final index = (day.difference(_data.firstMonday).inDays ~/ 7)
+                  .clamp(0, _weeks.length - 1);
+
+              await _goToWeek(index);
+            },
+
+            icon: const Icon(HugeIconsSolid.calendar01),
+          ),
+        ],
+      ),
+
+      body: buildRefreshIndicator(
+        child: PageView.builder(
+          itemCount: _weeks.length,
+          controller: _pageController,
+
+          itemBuilder: (context, index) {
+            final weekStart = _data.firstMonday
+                .add(Duration(days: 7 * index))
+                .toDay();
+
+            final rawWeekEnd = weekStart.add(const Duration(days: 6));
+            final weekEnd = DateTime.fromMillisecondsSinceEpoch(
+              min(
+                _data.lastDate.millisecondsSinceEpoch,
+                rawWeekEnd.millisecondsSinceEpoch,
+              ),
+              isUtc: true,
+            ).toDay();
+
+            final days = DateRange(start: weekStart, end: weekEnd).listDays();
+
+            final loaded = days.every(
+              (element) => _homeworks[element]?.value != null,
+            );
+
+            final displayableDays = days
+                .where(
+                  (element) =>
+                      _homeworks[element]!.value?.isNotEmpty ??
+                      true, // TODO: Fix
+                )
+                .toList(growable: false);
+
+            final Widget child;
+
+            if (!loaded) {
+              // loading state
+              child = const Center(
+                key: ValueKey(false),
+                child: LoadingWidget(),
+              );
+
+              // empty state
+            } else if (displayableDays.isEmpty) {
+              child = Center(
+                key: const ValueKey(true),
+                child: Column(
+                  mainAxisAlignment: .center,
+                  spacing: 6,
+
+                  children: [
+                    Icon(
+                      HugeIconsSolid.work,
                       color: context.c.outline,
-                      fontWeight: .bold,
+                      size: 44,
+                    ),
+
+                    Text(
+                      context.l10n.noHomeworkForWeek,
+                      style: TextStyle(
+                        color: context.c.outline,
+                        fontWeight: .bold,
+                      ),
+                    ),
+                  ],
+                ),
+              );
+
+              // loaded state
+            } else {
+              child = CustomScrollView(
+                slivers: [
+                  SliverPadding(
+                    padding: const .symmetric(horizontal: 4),
+
+                    sliver: SliverList.builder(
+                      itemCount: displayableDays.length,
+
+                      itemBuilder: (context, index) {
+                        final day = displayableDays[index];
+                        final value = _homeworks[day]!.value;
+
+                        if (value == null) {
+                          return const SizedBox.shrink();
+                        }
+
+                        return _Day(
+                          day: day,
+                          homeworks: value,
+                          onReturn: () {
+                            reload(fromRefreshIndicator: true);
+                          },
+                        );
+                      },
                     ),
                   ),
+
+                  const BottomPadding(padding: 20),
                 ],
-              ),
-            );
+              );
+            }
 
-            // loaded state
-          } else {
-            child = CustomScrollView(
-              slivers: [
-                SliverPadding(
-                  padding: const .symmetric(horizontal: 4),
-
-                  sliver: SliverList.builder(
-                    itemCount: displayableDays.length,
-
-                    itemBuilder: (context, index) {
-                      final day = displayableDays[index];
-                      final value = _homeworks[day]!.value;
-
-                      if (value == null) {
-                        return const SizedBox.shrink();
-                      }
-
-                      return _Day(
-                        day: day,
-                        homeworks: value,
-                        onReturn: () {
-                          reload(fromRefreshIndicator: true);
-                        },
-                      );
-                    },
-                  ),
-                ),
-
-                const BottomPadding(padding: 20),
-              ],
-            );
-          }
-
-          return Scaffold(
-            appBar: AppBar(
-              title: _WeekPicker(
-                weekNumber: weekNumber,
-                weekCount: _weeks.length,
-                curWeekIndex: index,
-              ),
-            ),
-
-            body: RefreshIndicator(
+            return RefreshIndicator(
               onRefresh: () => reload(fromRefreshIndicator: true),
 
               child: AnimatedSwitcher(
@@ -239,9 +351,9 @@ class _HomeworksScreenState extends State<HomeworksScreen>
                 duration: const Duration(milliseconds: 300),
                 child: child,
               ),
-            ),
-          );
-        },
+            );
+          },
+        ),
       ),
     );
   }
@@ -267,26 +379,15 @@ class _HomeworksScreenState extends State<HomeworksScreen>
       };
     }
 
+    final isPageControllerNull =
+        _pageController == null ||
+        !_pageController!.hasClients ||
+        _pageController?.page == null;
+
     final int currentWeekIndex;
 
-    if (_pageController == null ||
-        !_pageController!.hasClients ||
-        _pageController?.page == null) {
-      final now =
-          session.instance.demoDateTime ??
-          session.instance.findBusinessDay(
-            DateTime.now().toDay(true),
-            const .new(days: 1),
-          );
-      final diffWeeks =
-          ((now.millisecondsSinceEpoch -
-                  session.instance.firstMonday.millisecondsSinceEpoch) ~/
-              (Duration.millisecondsPerSecond *
-                  Duration.secondsPerMinute *
-                  Duration.minutesPerHour *
-                  Duration.hoursPerDay)) ~/
-          7;
-      currentWeekIndex = diffWeeks.clamp(0, weekCount - 1);
+    if (isPageControllerNull) {
+      currentWeekIndex = _todayWeekIndex;
     } else {
       currentWeekIndex = _pageController!.page!.round();
     }
@@ -299,6 +400,7 @@ class _HomeworksScreenState extends State<HomeworksScreen>
         _homeworks[day] = ValueNotifier(null);
       }
 
+      _currentWeek.value = currentWeekIndex;
       _pageController = PageController(initialPage: currentWeekIndex);
       _pageController?.addListener(_onPageDrag);
     }
@@ -502,67 +604,6 @@ class _DayState extends State<_Day> with AutomaticKeepAliveClientMixin {
           ),
         );
       },
-    );
-  }
-}
-
-class _WeekPicker extends StatefulWidget {
-  final int weekCount;
-  final int curWeekIndex;
-  final int weekNumber;
-
-  const _WeekPicker({
-    required this.weekCount,
-    required this.curWeekIndex,
-    required this.weekNumber,
-  });
-
-  @override
-  State<_WeekPicker> createState() => _WeekPickerState();
-}
-
-class _WeekPickerState extends State<_WeekPicker>
-    with SingleTickerProviderStateMixin {
-  @override
-  Widget build(BuildContext context) {
-    final canGoBack = widget.curWeekIndex > 0;
-    final canGoForward = widget.curWeekIndex < widget.weekCount - 1;
-
-    return Row(
-      mainAxisAlignment: .center,
-      spacing: 8,
-
-      children: [
-        _DotIndicator(active: canGoBack),
-
-        Text(
-          context.l10n.weekNumber(widget.weekNumber),
-          style: const TextStyle(fontWeight: .bold, fontSize: 18),
-        ),
-
-        _DotIndicator(active: canGoForward),
-      ],
-    );
-  }
-}
-
-class _DotIndicator extends StatelessWidget {
-  final bool active;
-
-  const _DotIndicator({required this.active});
-
-  @override
-  Widget build(BuildContext context) {
-    return AnimatedContainer(
-      duration: const Duration(milliseconds: 200),
-
-      width: 7,
-      height: 7,
-
-      decoration: BoxDecoration(
-        color: active ? context.c.onSurface : context.c.outlineVariant,
-        shape: .circle,
-      ),
     );
   }
 }
