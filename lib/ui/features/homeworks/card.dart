@@ -14,11 +14,13 @@ import 'urgency.dart';
 class HomeworkCard extends StatelessWidget {
   final Homework homework;
   final VoidCallback onReturn;
+  final bool canSetDone;
 
   const HomeworkCard({
     super.key,
     required this.homework,
     required this.onReturn,
+    required this.canSetDone,
   });
 
   @override
@@ -187,6 +189,7 @@ class HomeworkCard extends StatelessWidget {
               homework: homework,
               scheme: scheme,
               onReturn: onReturn,
+              canSetDone: canSetDone,
             ),
           ],
         ),
@@ -251,11 +254,13 @@ class _MarkDoneButton extends StatefulWidget {
   final Homework homework;
   final ColorScheme scheme;
   final VoidCallback onReturn;
+  final bool canSetDone;
 
   const _MarkDoneButton({
     required this.homework,
     required this.scheme,
     required this.onReturn,
+    required this.canSetDone,
   });
 
   @override
@@ -267,6 +272,8 @@ class _MarkDoneButtonState extends State<_MarkDoneButton> {
   bool? _optimisticIsDone;
 
   bool get _isDone => _optimisticIsDone ?? widget.homework.isDone;
+
+  bool get _canPress => !_isLoading && widget.canSetDone;
 
   Color get _color =>
       _isDone ? widget.scheme.onPrimaryContainer : widget.scheme.outline;
@@ -286,9 +293,8 @@ class _MarkDoneButtonState extends State<_MarkDoneButton> {
       borderRadius: const .vertical(bottom: .circular(21)),
       hasScale: false,
 
-      onPressed: _isLoading
-          ? null
-          : () async {
+      onPressed: _canPress
+          ? () async {
               final target = !_isDone;
 
               setState(() {
@@ -310,7 +316,8 @@ class _MarkDoneButtonState extends State<_MarkDoneButton> {
               });
 
               if (ok) widget.onReturn();
-            },
+            }
+          : null,
 
       child: Padding(
         padding: const .symmetric(horizontal: 12, vertical: 8),

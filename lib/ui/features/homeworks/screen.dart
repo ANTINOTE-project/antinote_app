@@ -4,6 +4,7 @@ import 'dart:async';
 import 'dart:math';
 
 import 'package:antinote_api/antinote_api.dart';
+import 'package:antinote_app/ui/features/auth/account_type.dart';
 import 'package:antinote_app/ui/features/homeworks/details.dart';
 import 'package:antinote_app/ui/features/shell/tab.dart';
 import 'package:antinote_app/ui/utils/utils.dart';
@@ -33,9 +34,10 @@ class _HomeworksScreenState extends State<HomeworksScreen>
     with PageMixin<HomeworksScreen>, TabMixin<HomeworksScreen> {
   late Map<int, GlobalKey<SliverAnimatedListState>> _weeks;
   late SpecificInstanceParameters _data;
-  final Homeworks _homeworks = {};
+  late AccountType _accountType;
 
   final ValueNotifier<int> _currentWeek = ValueNotifier(0);
+  final Homeworks _homeworks = {};
 
   PageController? _pageController;
   int? _lastPage;
@@ -133,7 +135,13 @@ class _HomeworksScreenState extends State<HomeworksScreen>
               scale: animation.value,
               duration: const Duration(seconds: 4),
               curve: Curves.fastOutSlowIn,
-              child: _Day(day: day, homeworks: const [], onReturn: () {}),
+
+              child: _Day(
+                day: day,
+                homeworks: const [],
+                onReturn: () {},
+                accountType: _accountType,
+              ),
             );
           });
         }
@@ -330,6 +338,7 @@ class _HomeworksScreenState extends State<HomeworksScreen>
                         return _Day(
                           day: day,
                           homeworks: value,
+                          accountType: _accountType,
                           onReturn: () {
                             reload(fromRefreshIndicator: true);
                           },
@@ -361,6 +370,7 @@ class _HomeworksScreenState extends State<HomeworksScreen>
   @override
   Future<void> load(RemoteSession session) async {
     _data = session.instance;
+    _accountType = .fromWorkspaceType(_data.workspace.type);
 
     final weekCount =
         ((session.instance.lastDate.millisecondsSinceEpoch -
@@ -413,11 +423,13 @@ class _Day extends StatefulWidget {
   final DateTime day;
   final List<Homework> homeworks;
   final VoidCallback onReturn;
+  final AccountType accountType;
 
   const _Day({
     required this.day,
     required this.homeworks,
     required this.onReturn,
+    required this.accountType,
   });
 
   @override
@@ -599,7 +611,11 @@ class _DayState extends State<_Day> with AutomaticKeepAliveClientMixin {
 
             children: [
               for (final homework in widget.homeworks)
-                HomeworkCard(homework: homework, onReturn: widget.onReturn),
+                HomeworkCard(
+                  homework: homework,
+                  onReturn: widget.onReturn,
+                  canSetDone: widget.accountType.isStudent,
+                ),
             ],
           ),
         );
