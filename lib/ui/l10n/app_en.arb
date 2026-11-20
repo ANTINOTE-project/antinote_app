@@ -163,8 +163,10 @@
 
   "virtualClassroom": "Conf. call",
 
-  "homeworkSetDone": "I finished",
-  "homeworkSetNotDone": "I did not finish",
+  "homeworkDoneStudent": "I finished",
+  "homeworkNotDoneStudent": "I did not finish",
+  "homeworkDoneParent": "Done",
+  "homeworkNotDoneParent": "Not done",
   "weekNumber": "Week {weekNumber}",
   "homeworkDescription": "Description",
   "homeworkAttachments": "Attachments",
