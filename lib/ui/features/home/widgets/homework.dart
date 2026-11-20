@@ -77,6 +77,8 @@ class _HomeworkCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final scheme = Utils.buildColorScheme(context, homework.backgroundColor);
 
+    final accountType = context.ar.curAccountType;
+
     return Padding(
       padding: const .symmetric(vertical: 1),
 
@@ -94,6 +96,7 @@ class _HomeworkCard extends StatelessWidget {
                   onHomeworkChange: (_) async {
                     await update();
                   },
+                  canSetDone: accountType?.isStudent ?? false,
                 );
               },
             ),

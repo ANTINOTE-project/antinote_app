@@ -333,10 +333,16 @@ class AppLocalizationsEn extends AppLocalizations {
   String get virtualClassroom => 'Conf. call';
 
   @override
-  String get homeworkSetDone => 'I finished';
+  String get homeworkDoneStudent => 'I finished';
 
   @override
-  String get homeworkSetNotDone => 'I did not finish';
+  String get homeworkNotDoneStudent => 'I did not finish';
+
+  @override
+  String get homeworkDoneParent => 'Done';
+
+  @override
+  String get homeworkNotDoneParent => 'Not done';
 
   @override
   String weekNumber(Object weekNumber) {
@@ -389,6 +395,20 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get homeworkRenderLabel => 'Submission';
+
+  @override
+  String homeworkAttachmentsCount(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count attachments',
+      one: '1 attachment',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get homeworkUpdateFailed => 'Impossible de mettre à jour le devoir';
 
   @override
   String get appSettings => 'App settings';

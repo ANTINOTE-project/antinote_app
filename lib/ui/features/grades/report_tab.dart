@@ -65,7 +65,7 @@ class _ReportTabState extends State<ReportTab>
 
     return Column(
       mainAxisAlignment: .center,
-      spacing: 4,
+      spacing: 6,
 
       children: [
         Icon(

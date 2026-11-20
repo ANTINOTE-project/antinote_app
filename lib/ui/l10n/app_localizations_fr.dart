@@ -333,10 +333,16 @@ class AppLocalizationsFr extends AppLocalizations {
   String get virtualClassroom => 'Visio';
 
   @override
-  String get homeworkSetDone => 'J\'ai terminé';
+  String get homeworkDoneStudent => 'J\'ai terminé';
 
   @override
-  String get homeworkSetNotDone => 'Je n\'ai pas terminé';
+  String get homeworkNotDoneStudent => 'Je n\'ai pas terminé';
+
+  @override
+  String get homeworkDoneParent => 'Fait';
+
+  @override
+  String get homeworkNotDoneParent => 'Non fait';
 
   @override
   String weekNumber(Object weekNumber) {
@@ -389,6 +395,20 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get homeworkRenderLabel => 'Restitution';
+
+  @override
+  String homeworkAttachmentsCount(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count pièces jointes',
+      one: '1 pièce jointe',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get homeworkUpdateFailed => 'Impossible de mettre à jour le devoir';
 
   @override
   String get appSettings => 'Paramètres de l\'application';
