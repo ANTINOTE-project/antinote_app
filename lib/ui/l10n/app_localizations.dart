@@ -900,6 +900,12 @@ abstract class AppLocalizations {
   /// **'La page de communication sera disponible dans une prochaine mise à jour'**
   String get communicationUnavailable;
 
+  /// No description provided for @communicationSearchHint.
+  ///
+  /// In fr, this message translates to:
+  /// **'Rechercher'**
+  String get communicationSearchHint;
+
   /// No description provided for @application.
   ///
   /// In fr, this message translates to:

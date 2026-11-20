@@ -5,6 +5,7 @@ import 'package:antinote_app/ui/features/communication/models.dart';
 import 'package:antinote_app/ui/features/communication/news.dart';
 import 'package:antinote_app/ui/features/shell/tab.dart';
 import 'package:antinote_app/ui/utils/utils.dart';
+import 'package:antinote_app/ui/widgets/field.dart';
 import 'package:antinote_app/ui/widgets/list.dart';
 import 'package:hugeicons_pro/hugeicons.dart';
 import 'package:material_ui/material_ui.dart';
@@ -19,7 +20,42 @@ class CommunicationScreen extends StatefulWidget {
 class _CommunicationScreenState extends State<CommunicationScreen>
     with PageMixin<CommunicationScreen>, TabMixin<CommunicationScreen> {
   CommunicationFilter filter = CommunicationFilter.defaultFilter;
-  late List<CommunicationThreadPreview> threads;
+
+  List<CommunicationThreadPreview> filteredThreads = [];
+  List<CommunicationThreadPreview> threads = [];
+
+  final _searchController = TextEditingController();
+
+  void _filterThreads() {
+    final query = _searchController.text.toLowerCase().trim();
+
+    if (query.isEmpty) {
+      setState(() => filteredThreads = threads);
+      return;
+    }
+
+    setState(() {
+      filteredThreads = threads
+          .where((thread) {
+            final title = thread.title;
+            final category = thread.category;
+            final author = thread.authorName;
+
+            final cleanedValues = '$title $category $author'
+                .toLowerCase()
+                .trim();
+
+            return cleanedValues.contains(query);
+          })
+          .toList(growable: false);
+    });
+  }
+
+  @override
+  void dispose() {
+    _searchController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget buildLoaded(
@@ -30,175 +66,248 @@ class _CommunicationScreenState extends State<CommunicationScreen>
     return buildRefreshIndicator(
       child: CustomScrollView(
         slivers: [
-          SliverSafeArea(
-            sliver: SliverPadding(
-              padding: const .symmetric(horizontal: 12, vertical: 4),
+          SliverAppBar(
+            title: FieldWidget(
+              controller: _searchController,
+              hintText: context.l10n.communicationSearchHint,
+              leading: const Icon(HugeIconsSolid.searchList01),
 
-              sliver: ListWidget(
-                items: threads,
+              onChanged: (_) {
+                _filterThreads();
+              },
+            ),
 
-                itemBuilder: (context, thread, borderRadius) {
-                  final subtitle = thread.category != null
-                      ? '${thread.category} - ${thread.authorName}'
-                      : thread.authorName;
+            actions: [
+              IconButton(
+                onPressed: () {},
+                icon: const Icon(HugeIconsSolid.filter),
+              ),
+            ],
 
-                  return TileWidget(
-                    borderRadius: borderRadius,
+            pinned: true,
+          ),
 
-                    title: Text(
-                      thread.title == null ? subtitle : thread.title!,
+          SliverPadding(
+            padding: const .symmetric(horizontal: 12, vertical: 4),
+
+            sliver: ListWidget(
+              items: filteredThreads,
+
+              itemBuilder: (context, thread, borderRadius) {
+                final subtitle = thread.category != null
+                    ? '${thread.category} - ${thread.authorName}'
+                    : thread.authorName;
+
+                return TileWidget(
+                  borderRadius: borderRadius,
+
+                  title: Text(thread.title == null ? subtitle : thread.title!),
+                  subtitle: thread.title == null ? null : Text(subtitle),
+
+                  leading: Badge(
+                    isLabelVisible: !thread.read,
+                    smallSize: 7,
+
+                    child: Icon(switch (thread.commType) {
+                      .discussion => HugeIconsSolid.conversation,
+                      .news => HugeIconsSolid.news01,
+                      .poll => HugeIconsSolid.pieChart,
+                    }, size: 24),
+                  ),
+
+                  trailing: Text(
+                    context.l10n.monthDay(thread.publishDate),
+
+                    style: TextStyle(
+                      fontWeight: .w800,
+                      color: context.c.outline,
+                      fontSize: 13,
                     ),
-                    subtitle: thread.title == null ? null : Text(subtitle),
+                  ),
 
-                    leading: Badge(
-                      isLabelVisible: !thread.read,
-                      smallSize: 7,
+                  onLongPress: () async {
+                    await context.ar.runTask(
+                      context: context,
+                      channels: const {},
+                      callback: (session) async {
+                        switch (thread.commType) {
+                          case .poll:
+                          case .news:
+                            {
+                              if (!context.mounted ||
+                                  thread is! InformationThreadPreview) {
+                                return;
+                              }
 
-                      child: Icon(switch (thread.commType) {
-                        .discussion => HugeIconsSolid.conversation,
-                        .news => HugeIconsSolid.news01,
-                        .poll => HugeIconsSolid.pieChart,
-                      }, size: 24),
-                    ),
+                              final cachedValue = session.getCachedValue<News?>(
+                                .NEWS,
+                                thread.visualId,
+                              );
 
-                    trailing: Text(
-                      context.l10n.monthDay(thread.publishDate),
+                              if (cachedValue == null || cachedValue.read) {
+                                return;
+                              }
 
-                      style: TextStyle(
-                        fontWeight: .w800,
-                        color: context.c.outline,
-                        fontSize: 13,
+                              await session.access(
+                                ChangeNewsStateAccessor(
+                                  updatesToPerform: {
+                                    cachedValue: const .new(
+                                      read: true,
+                                      onlyMarkedRead: true,
+                                      deleted: null,
+                                      answersToChange: {},
+                                    ),
+                                  },
+                                ),
+                              );
+                            }
+                          case .discussion:
+                            {
+                              throw UnimplementedError();
+                            }
+                        }
+                      },
+                      debugLabel:
+                          'Retrieve news and discussion data from cache.',
+                    );
+
+                    if (!context.mounted) return;
+
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        behavior: .floating,
+                        content: Text(context.l10n.markedThreadRead),
                       ),
-                    ),
+                    );
 
-                    onLongPress: () async {
-                      await context.ar.runTask(
-                        context: context,
-                        channels: const {},
-                        callback: (session) async {
-                          switch (thread.commType) {
-                            case .poll:
-                            case .news:
-                              {
-                                if (!context.mounted ||
-                                    thread is! InformationThreadPreview) {
-                                  return;
-                                }
-
-                                final cachedValue = session
-                                    .getCachedValue<News?>(
-                                      .NEWS,
-                                      thread.visualId,
-                                    );
-
-                                if (cachedValue == null || cachedValue.read) {
-                                  return;
-                                }
-
-                                await session.access(
-                                  ChangeNewsStateAccessor(
-                                    updatesToPerform: {
-                                      cachedValue: const .new(
-                                        read: true,
-                                        onlyMarkedRead: true,
-                                        deleted: null,
-                                        answersToChange: {},
-                                      ),
-                                    },
-                                  ),
-                                );
+                    await reload();
+                  },
+                  onPressed: () async {
+                    await context.ar.runTask(
+                      context: context,
+                      channels: const {},
+                      callback: (session) {
+                        switch (thread.commType) {
+                          case .poll:
+                          case .news:
+                            {
+                              if (!context.mounted ||
+                                  thread is! InformationThreadPreview) {
+                                return;
                               }
-                            case .discussion:
-                              {
-                                throw UnimplementedError();
-                              }
-                          }
-                        },
-                        debugLabel:
-                            'Retrieve news and discussion data from cache.',
-                      );
 
-                      if (!context.mounted) return;
+                              final found = session.getCachedValue<News?>(
+                                .NEWS,
+                                thread.visualId,
+                              );
 
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(
-                          behavior: .floating,
-                          content: Text(context.l10n.markedThreadRead),
-                        ),
-                      );
-
-                      await reload();
-                    },
-                    onPressed: () async {
-                      await context.ar.runTask(
-                        context: context,
-                        channels: const {},
-                        callback: (session) {
-                          switch (thread.commType) {
-                            case .poll:
-                            case .news:
-                              {
-                                if (!context.mounted ||
-                                    thread is! InformationThreadPreview) {
-                                  return;
-                                }
-
-                                final found = session.getCachedValue<News?>(
-                                  .NEWS,
-                                  thread.visualId,
-                                );
-
-                                if (found == null) {
-                                  ScaffoldMessenger.of(context).showSnackBar(
-                                    SnackBar(
-                                      behavior: .floating,
-                                      content: Text(context.l10n.threadMissing),
-                                    ),
-                                  );
-
-                                  return;
-                                }
-
-                                Navigator.push(
-                                  context,
-
-                                  MaterialPageRoute(
-                                    builder: (context) => NewsScreen(
-                                      mode: thread.mode,
-                                      news: found,
-
-                                      deleteNews: () {
-                                        throw UnimplementedError();
-                                      },
-                                    ),
-                                  ),
-                                );
-                              }
-                            case .discussion:
-                              {
+                              if (found == null) {
                                 ScaffoldMessenger.of(context).showSnackBar(
                                   SnackBar(
                                     behavior: .floating,
-                                    content: Text(
-                                      context.l10n.communicationUnavailable,
-                                    ),
+                                    content: Text(context.l10n.threadMissing),
                                   ),
                                 );
+
+                                return;
                               }
-                          }
-                        },
-                        debugLabel:
-                            'Retrieve news and discussion data from cache.',
-                      );
-                    },
-                  );
-                },
-              ),
+
+                              Navigator.push(
+                                context,
+
+                                MaterialPageRoute(
+                                  builder: (context) => NewsScreen(
+                                    mode: thread.mode,
+                                    news: found,
+
+                                    deleteNews: () {
+                                      throw UnimplementedError();
+                                    },
+                                  ),
+                                ),
+                              );
+                            }
+                          case .discussion:
+                            {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(
+                                  behavior: .floating,
+                                  content: Text(
+                                    context.l10n.communicationUnavailable,
+                                  ),
+                                ),
+                              );
+                            }
+                        }
+                      },
+                      debugLabel:
+                          'Retrieve news and discussion data from cache.',
+                    );
+                  },
+                );
+              },
             ),
           ),
         ],
       ),
     );
+  }
+
+  @override
+  Future<void> load(RemoteSession session) async {
+    final threads = <CommunicationThreadPreview>[];
+
+    final curPage = session.stack.clientSignature?.tab;
+    final toLoad = filter.allowedTypes.toSet();
+
+    if (!loaded) {
+      this.threads = [];
+    }
+
+    // yield 0;
+
+    // int loadedCount = 0;
+
+    for (final commType in filter.allowedTypes.where(
+      (element) => session.user.hasAccessToTab(element.pageId),
+    )) {
+      if (commType.pageId == curPage) {
+        threads.addAll(await _loadThreads(session, commType));
+        toLoad.remove(commType);
+
+        if (!loaded) {
+          this.threads = threads
+            ..sort((a, b) => b.publishDate.compareTo(a.publishDate));
+        }
+
+        // loadedCount++;
+        // yield loadedCount / toLoad.length;
+        break;
+      }
+    }
+
+    for (final commType in toLoad) {
+      threads.addAll(await _loadThreads(session, commType));
+
+      if (!loaded) {
+        this.threads = threads
+          ..sort((a, b) => b.publishDate.compareTo(a.publishDate));
+      }
+
+      // loadedCount++;
+      // yield loadedCount / toLoad.length;
+    }
+
+    for (final thread in threads) {
+      logger.info(
+        'Thread "${thread.title ?? thread.authorName}": ${thread.visualId}==${thread.visualId} ${session.getCachedValue<News?>(.NEWS, thread.visualId) == null ? 'new entry' : 'already exists'}',
+      );
+    }
+
+    // Supposed to be 1 anyways but just to be sure...
+    // yield 1;
+
+    _filterThreads();
   }
 
   Future<List<CommunicationThreadPreview>> _loadThreads(
@@ -257,60 +366,5 @@ class _CommunicationScreenState extends State<CommunicationScreen>
           );
         }
     }
-  }
-
-  @override
-  Future<void> load(RemoteSession session) async {
-    final threads = <CommunicationThreadPreview>[];
-
-    final curPage = session.stack.clientSignature?.tab;
-    final toLoad = filter.allowedTypes.toSet();
-
-    if (!loaded) {
-      this.threads = [];
-    }
-
-    // yield 0;
-
-    // int loadedCount = 0;
-
-    for (final commType in filter.allowedTypes.where(
-      (element) => session.user.hasAccessToTab(element.pageId),
-    )) {
-      if (commType.pageId == curPage) {
-        threads.addAll(await _loadThreads(session, commType));
-        toLoad.remove(commType);
-
-        if (!loaded) {
-          this.threads = threads
-            ..sort((a, b) => b.publishDate.compareTo(a.publishDate));
-        }
-
-        // loadedCount++;
-        // yield loadedCount / toLoad.length;
-        break;
-      }
-    }
-
-    for (final commType in toLoad) {
-      threads.addAll(await _loadThreads(session, commType));
-
-      if (!loaded) {
-        this.threads = threads
-          ..sort((a, b) => b.publishDate.compareTo(a.publishDate));
-      }
-
-      // loadedCount++;
-      // yield loadedCount / toLoad.length;
-    }
-
-    for (final thread in threads) {
-      logger.info(
-        'Thread "${thread.title ?? thread.authorName}": ${thread.visualId}==${thread.visualId} ${session.getCachedValue<News?>(.NEWS, thread.visualId) == null ? 'new entry' : 'already exists'}',
-      );
-    }
-
-    // Supposed to be 1 anyways but just to be sure...
-    // yield 1;
   }
 }

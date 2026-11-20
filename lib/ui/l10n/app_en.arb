@@ -282,6 +282,7 @@
   },
 
   "communicationUnavailable": "The communication page will be available in an upcoming update, stay tuned!",
+  "communicationSearchHint": "Research",
 
   "application": "Application",
   "about": "About",

@@ -531,6 +531,9 @@ class AppLocalizationsFr extends AppLocalizations {
       'La page de communication sera disponible dans une prochaine mise à jour';
 
   @override
+  String get communicationSearchHint => 'Rechercher';
+
+  @override
   String get application => 'Application';
 
   @override

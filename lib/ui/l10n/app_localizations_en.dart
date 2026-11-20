@@ -530,6 +530,9 @@ class AppLocalizationsEn extends AppLocalizations {
       'The communication page will be available in an upcoming update, stay tuned!';
 
   @override
+  String get communicationSearchHint => 'Research';
+
+  @override
   String get application => 'Application';
 
   @override
