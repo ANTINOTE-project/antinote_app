@@ -15,11 +15,13 @@ import 'render_ui.dart';
 class HomeworkDetailsScreen extends StatelessWidget {
   final void Function(bool value) onHomeworkChange;
   final Homework homework;
+  final bool canSetDone;
 
   const HomeworkDetailsScreen({
     super.key,
     required this.homework,
     required this.onHomeworkChange,
+    required this.canSetDone,
   });
 
   @override
@@ -57,6 +59,7 @@ class HomeworkDetailsScreen extends StatelessWidget {
                     homework: homework,
                     scheme: scheme,
                     onHomeworkChange: onHomeworkChange,
+                    canSetDone: canSetDone,
                   ),
                 ),
 
@@ -133,11 +136,13 @@ class _HomeworkStateSection extends StatefulWidget {
   final Homework homework;
   final ColorScheme scheme;
   final void Function(bool value) onHomeworkChange;
+  final bool canSetDone;
 
   const _HomeworkStateSection({
     required this.homework,
     required this.scheme,
     required this.onHomeworkChange,
+    required this.canSetDone,
   });
 
   @override
@@ -161,19 +166,25 @@ class _HomeworkStateSectionState extends State<_HomeworkStateSection> {
       backgroundColor: scheme.primaryContainer,
       borderRadius: const .all(ListWidget.radius),
 
-      onPressed: () async {
-        final target = !_isDone;
-        setState(() => _isDone = target);
+      onPressed: widget.canSetDone
+          ? () async {
+              final target = !_isDone;
+              setState(() => _isDone = target);
 
-        final ok = await updateHomeworkState(context, widget.homework, target);
-        if (!mounted) return;
+              final ok = await updateHomeworkState(
+                context,
+                widget.homework,
+                target,
+              );
+              if (!mounted) return;
 
-        if (ok) {
-          widget.onHomeworkChange(target);
-        } else {
-          setState(() => _isDone = !target);
-        }
-      },
+              if (ok) {
+                widget.onHomeworkChange(target);
+              } else {
+                setState(() => _isDone = !target);
+              }
+            }
+          : null,
 
       leading: AnimatedIconWidget(
         iconOn: HugeIconsSolid.tick03,
@@ -219,8 +230,12 @@ class _HomeworkStateSectionState extends State<_HomeworkStateSection> {
 
           child: Text(
             _isDone
-                ? context.l10n.homeworkSetDone
-                : context.l10n.homeworkSetNotDone,
+                ? (widget.canSetDone
+                      ? context.l10n.homeworkDoneStudent
+                      : context.l10n.homeworkDoneParent)
+                : (widget.canSetDone
+                      ? context.l10n.homeworkNotDoneStudent
+                      : context.l10n.homeworkNotDoneParent),
 
             key: ValueKey(_isDone),
             style: TextStyle(

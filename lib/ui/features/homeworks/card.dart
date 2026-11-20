@@ -77,6 +77,7 @@ class HomeworkCard extends StatelessWidget {
             builder: (context) => HomeworkDetailsScreen(
               homework: homework,
               onHomeworkChange: (_) => onReturn(),
+              canSetDone: canSetDone,
             ),
           ),
         );
@@ -394,8 +395,12 @@ class _MarkDoneButtonState extends State<_MarkDoneButton> {
 
                 child: Text(
                   _isDone
-                      ? context.l10n.homeworkSetDone
-                      : context.l10n.homeworkSetNotDone,
+                      ? (widget.canSetDone
+                            ? context.l10n.homeworkDoneStudent
+                            : context.l10n.homeworkDoneParent)
+                      : (widget.canSetDone
+                            ? context.l10n.homeworkNotDoneStudent
+                            : context.l10n.homeworkNotDoneParent),
 
                   key: ValueKey(_isDone),
                   style: context.tt.bodyMedium?.copyWith(

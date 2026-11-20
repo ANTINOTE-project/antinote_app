@@ -163,8 +163,10 @@
 
   "virtualClassroom": "Visio",
 
-  "homeworkSetDone": "J'ai terminé",
-  "homeworkSetNotDone": "Je n'ai pas terminé",
+  "homeworkDoneStudent": "J'ai terminé",
+  "homeworkNotDoneStudent": "Je n'ai pas terminé",
+  "homeworkDoneParent": "Fait",
+  "homeworkNotDoneParent": "Non fait",
   "weekNumber": "Semaine {weekNumber}",
   "homeworkDescription": "Description",
   "homeworkAttachments": "Pièces jointes",

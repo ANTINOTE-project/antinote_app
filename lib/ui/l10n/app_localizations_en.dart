@@ -333,10 +333,16 @@ class AppLocalizationsEn extends AppLocalizations {
   String get virtualClassroom => 'Conf. call';
 
   @override
-  String get homeworkSetDone => 'I finished';
+  String get homeworkDoneStudent => 'J\'ai terminé';
 
   @override
-  String get homeworkSetNotDone => 'I did not finish';
+  String get homeworkNotDoneStudent => 'Je n\'ai pas terminé';
+
+  @override
+  String get homeworkDoneParent => 'Fait';
+
+  @override
+  String get homeworkNotDoneParent => 'Non fait';
 
   @override
   String weekNumber(Object weekNumber) {

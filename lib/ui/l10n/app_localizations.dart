@@ -600,17 +600,29 @@ abstract class AppLocalizations {
   /// **'Visio'**
   String get virtualClassroom;
 
-  /// No description provided for @homeworkSetDone.
+  /// No description provided for @homeworkDoneStudent.
   ///
   /// In fr, this message translates to:
   /// **'J\'ai terminé'**
-  String get homeworkSetDone;
+  String get homeworkDoneStudent;
 
-  /// No description provided for @homeworkSetNotDone.
+  /// No description provided for @homeworkNotDoneStudent.
   ///
   /// In fr, this message translates to:
   /// **'Je n\'ai pas terminé'**
-  String get homeworkSetNotDone;
+  String get homeworkNotDoneStudent;
+
+  /// No description provided for @homeworkDoneParent.
+  ///
+  /// In fr, this message translates to:
+  /// **'Fait'**
+  String get homeworkDoneParent;
+
+  /// No description provided for @homeworkNotDoneParent.
+  ///
+  /// In fr, this message translates to:
+  /// **'Non fait'**
+  String get homeworkNotDoneParent;
 
   /// No description provided for @weekNumber.
   ///

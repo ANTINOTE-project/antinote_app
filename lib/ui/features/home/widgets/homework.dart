@@ -1,5 +1,6 @@
 import 'package:antinote_api/antinote_api.dart';
 import 'package:antinote_app/data/src/home_page/manager.dart';
+import 'package:antinote_app/ui/features/auth/account_type.dart';
 import 'package:antinote_app/ui/features/home/screen.dart';
 import 'package:antinote_app/ui/features/home/widgets.dart';
 import 'package:antinote_app/ui/features/homeworks/details.dart';
@@ -77,6 +78,11 @@ class _HomeworkCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final scheme = Utils.buildColorScheme(context, homework.backgroundColor);
 
+    // TODO: surely not the best way to do it
+    final accountType = AccountType.fromWorkspaceType(
+      context.ar.curSession!.unsafeSession!.instance.workspace.type,
+    );
+
     return Padding(
       padding: const .symmetric(vertical: 1),
 
@@ -94,6 +100,7 @@ class _HomeworkCard extends StatelessWidget {
                   onHomeworkChange: (_) async {
                     await update();
                   },
+                  canSetDone: accountType.isStudent,
                 );
               },
             ),
