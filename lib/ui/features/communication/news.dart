@@ -54,75 +54,75 @@ class _NewsScreenState extends State<NewsScreen>
     final subtitle =
         '${context.l10n.recipient(_news.recipientFirstName ?? context.l10n.self)}$pollSuffix';
 
-    return Scaffold(
-      body: CustomScrollView(
-        slivers: [
-          SliverAppBar.large(
-            title: _news.label == null
-                ? null
-                : Tooltip(
-                    message: _news.label!,
-                    child: Text(_news.label!, maxLines: 2, overflow: .ellipsis),
-                  ),
-            actions: [
-              IconButton(
-                onPressed: kDebugMode ? _delete : null,
-                icon: const Icon(HugeIconsSolid.delete01),
-              ),
-
-              IconButton(
-                onPressed: kDebugMode ? _toggleReadStatus : null,
-                icon: Icon(
-                  _news.read
-                      ? HugeIconsSolid.checkUnread01
-                      : HugeIconsSolid.checkUnread02, // TODO find better icons.
+    return CustomScrollView(
+      slivers: [
+        SliverAppBar.large(
+          title: _news.label == null
+              ? null
+              : Tooltip(
+                  message: _news.label!,
+                  child: Text(_news.label!, maxLines: 2, overflow: .ellipsis),
                 ),
-              ),
-            ],
-          ),
+          actions: [
+            IconButton(
+              onPressed: kDebugMode ? _delete : null,
+              icon: const Icon(HugeIconsSolid.delete01),
+            ),
 
-          PinnedHeaderSliver(
-            child: Padding(
-              padding: const .symmetric(horizontal: 12),
-
-              child: TileWidget(
-                borderRadius: const .all(ListWidget.radius),
-
-                title: Text(_news.author, style: const TextStyle(fontSize: 16)),
-                subtitle: Text(subtitle),
-
-                trailing: Text(
-                  _news.creationTime.asRelativeDate(context),
-
-                  style: TextStyle(
-                    fontWeight: .w800,
-                    color: context.c.outline,
-                    fontSize: 13,
-                  ),
-                ),
+            IconButton(
+              onPressed: kDebugMode ? _toggleReadStatus : null,
+              icon: Icon(
+                _news.read
+                    ? HugeIconsSolid.checkUnread01
+                    : HugeIconsSolid.checkUnread02, // TODO find better icons.
               ),
             ),
-          ),
+          ],
+        ),
 
-          const SliverToBoxAdapter(child: SizedBox(height: 16)),
-
-          SliverPadding(
+        PinnedHeaderSliver(
+          child: Padding(
             padding: const .symmetric(horizontal: 12),
 
-            sliver: ListWidget(
-              items: questions,
+            child: TileWidget(
+              borderRadius: const .all(ListWidget.radius),
 
-              itemBuilder: (context, question, borderRadius) {
-                return _Question(
-                  question: question,
-                  borderRadius: borderRadius,
-                );
-              },
+              title: Text(_news.author, style: const TextStyle(fontSize: 16)),
+              subtitle: Text(subtitle),
+
+              trailing: Text(
+                _news.creationTime.asRelativeDate(context),
+
+                style: TextStyle(
+                  fontWeight: .w800,
+                  color: context.c.outline,
+                  fontSize: 13,
+                ),
+              ),
             ),
           ),
-        ],
-      ),
+        ),
+
+        const SliverToBoxAdapter(child: SizedBox(height: 16)),
+
+        SliverPadding(
+          padding: const .symmetric(horizontal: 12),
+
+          sliver: ListWidget(
+            items: questions,
+
+            itemBuilder: (context, question, borderRadius) {
+              return _Question(question: question, borderRadius: borderRadius);
+            },
+          ),
+        ),
+      ],
     );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(body: super.build(context));
   }
 
   @override

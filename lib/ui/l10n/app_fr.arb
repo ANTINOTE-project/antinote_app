@@ -112,6 +112,7 @@
   "gradesReport": "Bulletin",
   "classGradesReport": "Bulletin de classe",
   "reportUnpublished": "Bulletin non publié",
+
   "reportComment": "Appréciations",
   "reportOtherSubjects": "Autres matières",
   "reportCoefficient": "Coeff. {value}",

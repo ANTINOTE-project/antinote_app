@@ -47,11 +47,7 @@ class ThemeSettings extends SettingsCategory {
       colorScheme: colorScheme,
       useMaterial3: true,
       fontFamily: 'GoogleSansFlex',
-      typography: .material2021(
-        colorScheme: colorScheme,
-        black: Typography.blackMountainView.apply(fontFamily: 'GoogleSansFlex'),
-        white: Typography.whiteMountainView.apply(fontFamily: 'GoogleSansFlex'),
-      ),
+      typography: .material2021(colorScheme: colorScheme),
       scaffoldBackgroundColor: colorScheme.surface,
       canvasColor: colorScheme.surface,
       actionIconTheme: .new(

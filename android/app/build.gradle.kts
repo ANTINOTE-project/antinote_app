@@ -5,7 +5,7 @@ plugins {
     id("com.android.application")
     id("dev.flutter.flutter-gradle-plugin")
 
-    id("com.google.protobuf") version "0.10.0"
+    id("com.google.protobuf") version "0.10.1"
 }
 
 val keystoreProperties = Properties()
@@ -88,6 +88,7 @@ android {
         }
 
         release {
+            @Suppress("UnstableApiUsage")
             optimization {
                 enable = true
             }
@@ -107,7 +108,6 @@ android {
             applicationIdSuffix = ".dev"
             versionNameSuffix = "-dev"
             resValue("string", "app_name", "ANTINOTE DEV")
-            resValue("string", "account_type", "fr.antinote.antinote_app.dev.account")
         }
 
         create("prod") {
@@ -122,9 +122,12 @@ android {
 
         create("independent") {
             dimension = "store"
-            applicationIdSuffix = ".indep"
             versionNameSuffix = "-indep"
         }
+    }
+
+    applicationVariants.forEach { variant ->
+        variant.resValue("string", "account_type", "\"${variant.applicationId}.accounts\"")
     }
 }
 

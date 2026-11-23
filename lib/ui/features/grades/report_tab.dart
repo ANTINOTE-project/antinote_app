@@ -61,25 +61,29 @@ class _ReportTabState extends State<ReportTab>
           ],
         ),
       );
+    } else if (_data is UnpublishedReport) {
+      final report = _data as UnpublishedReport;
+
+      return Column(
+        mainAxisAlignment: .center,
+        spacing: 4,
+
+        children: [
+          Icon(
+            HugeIconsSolid.schoolReportCard,
+            color: context.c.outline,
+            size: 44,
+          ),
+
+          Text(
+            report.publishDateString,
+            style: TextStyle(color: context.c.outline, fontWeight: .bold),
+          ),
+        ],
+      );
+    } else {
+      throw UnimplementedError();
     }
-
-    return Column(
-      mainAxisAlignment: .center,
-      spacing: 4,
-
-      children: [
-        Icon(
-          HugeIconsSolid.schoolReportCard,
-          color: context.c.outline,
-          size: 44,
-        ),
-
-        Text(
-          context.l10n.reportUnpublished,
-          style: TextStyle(color: context.c.outline, fontWeight: .bold),
-        ),
-      ],
-    );
   }
 
   @override

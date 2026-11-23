@@ -219,15 +219,15 @@ class SessionManagementService : Service() {
     private fun advertisePollingJob(accountId: String) {
         Log.i(TAG, "Advertising polling job...")
 
-        for (client in clients) {
-            if (client.value.listenedAccounts?.contains(accountId) ?: false) {
-                Log.i(TAG, "Sending ad to client ${client.key}")
+        for ((key, value) in clients) {
+            if (value.listenedAccounts?.contains(accountId) ?: false) {
+                Log.i(TAG, "Sending ad to client $key")
                 val msg = Message.obtain(null, MSG_ASK_TO_TAKE_POLLING)
                 msg.data.putBoolean("confirmed", false)
                 msg.data.putString("account", accountId)
                 msg.replyTo = messenger
 
-                client.value.dest.send(msg)
+                value.dest.send(msg)
             }
         }
     }
@@ -249,8 +249,8 @@ class SessionManagementService : Service() {
     private fun sendAccountUpdate(accountId: String, newServerSignature: String?) {
         val manager = createOrGetManager(accountId)
 
-        for (client in clients) {
-            if (client.value.listenedAccounts?.contains(accountId) ?: false) {
+        for ((_, value) in clients) {
+            if (value.listenedAccounts?.contains(accountId) ?: false) {
                 val msg = Message.obtain(null, MSG_POLLING_UPDATED)
                 msg.data.putString("account", accountId)
                 msg.data.putInt("polling_state", manager.pollingState.raw)
@@ -258,7 +258,7 @@ class SessionManagementService : Service() {
                     msg.data.putString("server_signature", newServerSignature)
                 }
 
-                client.value.dest.send(msg)
+                value.dest.send(msg)
             }
         }
     }
@@ -314,9 +314,9 @@ class SessionManagementService : Service() {
                 TAG,
                 "Task got scheduled, waiting for the following tasks to end to start task $clientTaskId:"
             )
-            for (task in manager.taskQueue) {
-                if (channels.none { task.channels.contains(it) }) continue
-                Log.d(TAG, "- ${task.clientTaskId} (${task.channels.joinToString(", ")})")
+            for ((_, _, clientTaskId, _, channels) in manager.taskQueue) {
+                if (channels.none { channels.contains(it) }) continue
+                Log.d(TAG, "- $clientTaskId (${channels.joinToString(", ")})")
             }
             Log.d(TAG, "Label: '$debugLabel'")
 
