@@ -164,8 +164,10 @@
 
   "virtualClassroom": "Visio",
 
-  "homeworkSetDone": "J'ai terminé",
-  "homeworkSetNotDone": "Je n'ai pas terminé",
+  "homeworkDoneStudent": "J'ai terminé",
+  "homeworkNotDoneStudent": "Je n'ai pas terminé",
+  "homeworkDoneParent": "Fait",
+  "homeworkNotDoneParent": "Non fait",
   "weekNumber": "Semaine {weekNumber}",
   "homeworkDescription": "Description",
   "homeworkAttachments": "Pièces jointes",
@@ -192,6 +194,15 @@
   "homeworkRenderPronoteAudio": "Enregistrement audio à rendre en ligne",
   "noHomeworkForWeek": "Pas de travaux à faire pour cette semaine !",
   "homeworkRenderLabel": "Restitution",
+  "homeworkAttachmentsCount": "{count, plural, =1{1 pièce jointe} other{{count} pièces jointes}}",
+  "@homeworkAttachmentsCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "homeworkUpdateFailed": "Impossible de mettre à jour le devoir",
 
   "appSettings": "Paramètres de l'application",
   "goToAppSettings": "Naviguer vers les paramètres de l'application",

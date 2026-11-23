@@ -11,7 +11,19 @@ enum AccountType({
   required final WorkspaceType mobile,
 }) {
   student(desktop: .eleve, mobile: .mobileEleve),
-  parent(desktop: .parent, mobile: .mobileParent),
+  parent(desktop: .parent, mobile: .mobileParent);
+
+  factory fromWorkspaceType(WorkspaceType type) {
+    return switch (type) {
+      .eleve || .mobileEleve => student,
+      .parent || .mobileParent => parent,
+      _ => throw UnimplementedError(),
+    };
+  }
+
+  bool get isParent => this == .parent;
+
+  bool get isStudent => this == .student;
 }
 
 class AccountTypeLoginScreen extends StatelessWidget {

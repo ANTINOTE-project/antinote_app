@@ -9,14 +9,19 @@ import 'package:antinote_app/ui/widgets/text_icon.dart';
 import 'package:hugeicons_pro/hugeicons.dart';
 import 'package:material_ui/material_ui.dart';
 
+import 'actions.dart';
+import 'render_ui.dart';
+
 class HomeworkDetailsScreen extends StatelessWidget {
   final void Function(bool value) onHomeworkChange;
   final Homework homework;
+  final bool canSetDone;
 
   const HomeworkDetailsScreen({
     super.key,
     required this.homework,
     required this.onHomeworkChange,
+    required this.canSetDone,
   });
 
   @override
@@ -54,6 +59,7 @@ class HomeworkDetailsScreen extends StatelessWidget {
                     homework: homework,
                     scheme: scheme,
                     onHomeworkChange: onHomeworkChange,
+                    canSetDone: canSetDone,
                   ),
                 ),
 
@@ -110,6 +116,7 @@ class HomeworkDetailsScreen extends StatelessWidget {
                         attachment: attachment,
                         borderRadius: borderRadius,
                         backgroundColor: scheme.surfaceContainer,
+                        foregroundColor: scheme.onSurface,
                       );
                     },
                   ),
@@ -129,11 +136,13 @@ class _HomeworkStateSection extends StatefulWidget {
   final Homework homework;
   final ColorScheme scheme;
   final void Function(bool value) onHomeworkChange;
+  final bool canSetDone;
 
   const _HomeworkStateSection({
     required this.homework,
     required this.scheme,
     required this.onHomeworkChange,
+    required this.canSetDone,
   });
 
   @override
@@ -152,37 +161,30 @@ class _HomeworkStateSectionState extends State<_HomeworkStateSection> {
   @override
   Widget build(BuildContext context) {
     final scheme = widget.scheme;
-    final homework = widget.homework;
 
     return TileWidget(
       backgroundColor: scheme.primaryContainer,
       borderRadius: const .all(ListWidget.radius),
 
-      onPressed: () async {
-        setState(() {
-          _isDone = !_isDone;
-        });
+      onPressed: widget.canSetDone
+          ? () async {
+              final target = !_isDone;
+              setState(() => _isDone = target);
 
-        await context.ar.runTask(
-          context: context,
+              final ok = await updateHomeworkState(
+                context,
+                widget.homework,
+                target,
+              );
+              if (!mounted) return;
 
-          callback: (session) async {
-            final cachedHomework = session.getCachedValue<Homework>(
-              .HOMEWORK,
-              homework.visualId,
-            );
-
-            await session.access(
-              ChangeHomeworkStateAccessor(
-                homeworksToUpdate: {cachedHomework: _isDone},
-              ),
-            );
-          },
-          debugLabel: 'Update state for homework',
-        );
-
-        widget.onHomeworkChange.call(_isDone);
-      },
+              if (ok) {
+                widget.onHomeworkChange(target);
+              } else {
+                setState(() => _isDone = !target);
+              }
+            }
+          : null,
 
       leading: AnimatedIconWidget(
         iconOn: HugeIconsSolid.tick03,
@@ -228,8 +230,12 @@ class _HomeworkStateSectionState extends State<_HomeworkStateSection> {
 
           child: Text(
             _isDone
-                ? context.l10n.homeworkSetDone
-                : context.l10n.homeworkSetNotDone,
+                ? (widget.canSetDone
+                      ? context.l10n.homeworkDoneStudent
+                      : context.l10n.homeworkDoneParent)
+                : (widget.canSetDone
+                      ? context.l10n.homeworkNotDoneStudent
+                      : context.l10n.homeworkNotDoneParent),
 
             key: ValueKey(_isDone),
             style: TextStyle(
@@ -250,21 +256,8 @@ class _HomeworkRenderSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final renderLabel = switch (homework.assignmentToRenderType) {
-      .remoteRender => context.l10n.homeworkRenderPronote,
-      .noRender => context.l10n.homeworkRenderNone,
-      .paperRender => context.l10n.homeworkRenderPaper,
-      .kiosqueRender => context.l10n.homeworkRenderKiosque, // unknown
-      .remoteAudioRecordingRender => context.l10n.homeworkRenderPronoteAudio,
-    };
-
-    final renderIcon = switch (homework.assignmentToRenderType) {
-      .remoteRender => HugeIconsSolid.fileUpload,
-      .noRender => null,
-      .paperRender => HugeIconsSolid.course,
-      .kiosqueRender => HugeIconsSolid.note01, // unknown
-      .remoteAudioRecordingRender => HugeIconsSolid.mic01,
-    };
+    final renderIcon = homework.renderIcon;
+    final renderLabel = homework.renderLabel(context);
 
     return SliverToBoxAdapter(
       child: TileWidget(
@@ -272,10 +265,16 @@ class _HomeworkRenderSection extends StatelessWidget {
         borderRadius: const .all(ListWidget.radius),
 
         leading: renderIcon != null
-            ? Icon(renderIcon, color: scheme.onSurface, size: 21)
+            ? Icon(renderIcon, color: scheme.onSurface)
             : null,
 
-        title: Text(renderLabel, style: TextStyle(color: scheme.onSurface)),
+        title: Text(
+          renderLabel,
+          style: context.tt.labelLarge?.copyWith(
+            color: scheme.onSurface,
+            fontWeight: .w800,
+          ),
+        ),
       ),
     );
   }

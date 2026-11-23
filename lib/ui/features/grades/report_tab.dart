@@ -78,6 +78,7 @@ class _ReportTabState extends State<ReportTab>
           Text(
             report.publishDateString,
             style: TextStyle(color: context.c.outline, fontWeight: .bold),
+            textAlign: .center,
           ),
         ],
       );
